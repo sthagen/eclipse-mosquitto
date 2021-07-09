@@ -191,7 +191,7 @@
 				<listitem>
 					<para>An openssl compatible list of TLS ciphers to support
 						in the client. See
-						<citerefentry><refentrytitle>ciphers</refentrytitle><manvolnum>1</manvolnum></citerefentry>
+						<citerefentry><refentrytitle><link xlink:href="https://linux.die.net/man/1/ciphers">ciphers</link></refentrytitle><manvolnum>1</manvolnum></citerefentry>
 						for more information.</para>
 				</listitem>
 			</varlistentry>
@@ -375,7 +375,7 @@
 					<para>More SOCKS versions may be available in the future,
 						depending on demand, and will use different protocol
 						prefixes as described in <citerefentry>
-							<refentrytitle>curl</refentrytitle>
+							<refentrytitle><link xlink:href="https://linux.die.net/man/1/curl">curl</link></refentrytitle>
 							<manvolnum>1</manvolnum> </citerefentry>.</para>
 				</listitem>
 			</varlistentry>

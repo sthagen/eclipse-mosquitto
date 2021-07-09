@@ -764,6 +764,9 @@ int mosquitto_unpwd_check(struct mosquitto *context)
 	rc = MOSQ_ERR_PLUGIN_DEFER;
 
 	if(db.config->per_listener_settings){
+		if(context->listener == NULL){
+			return MOSQ_ERR_AUTH;
+		}
 		opts = &context->listener->security_options;
 	}else{
 		opts = &db.config->security_options;

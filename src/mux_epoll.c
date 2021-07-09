@@ -152,7 +152,9 @@ int mux_epoll__add_in(struct mosquitto *context)
 	ev.events = EPOLLIN;
 	ev.data.ptr = context;
 	if (epoll_ctl(db.epollfd, EPOLL_CTL_ADD, context->sock, &ev) == -1) {
-		log__printf(NULL, MOSQ_LOG_ERR, "Error in epoll accepting: %s", strerror(errno));
+		if(errno != EEXIST){
+			log__printf(NULL, MOSQ_LOG_ERR, "Error in epoll accepting: %s", strerror(errno));
+		}
 	}
 	context->events = EPOLLIN;
 	return MOSQ_ERR_SUCCESS;

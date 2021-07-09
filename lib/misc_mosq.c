@@ -57,6 +57,8 @@ FILE *mosquitto__fopen(const char *path, const char *mode, bool restrict_read)
 			DWORD ulen = UNLEN;
 			SECURITY_DESCRIPTOR sd;
 			DWORD dwCreationDisposition;
+			int fd;
+			FILE *fptr;
 
 			switch(mode[0]){
 				case 'a':
@@ -97,12 +99,12 @@ FILE *mosquitto__fopen(const char *path, const char *mode, bool restrict_read)
 
 			LocalFree(pacl);
 
-			int fd = _open_osfhandle((intptr_t)hfile, 0);
+			fd = _open_osfhandle((intptr_t)hfile, 0);
 			if (fd < 0) {
 				return NULL;
 			}
 
-			FILE *fptr = _fdopen(fd, mode);
+			fptr = _fdopen(fd, mode);
 			if (!fptr) {
 				_close(fd);
 				return NULL;

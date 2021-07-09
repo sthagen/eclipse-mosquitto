@@ -114,6 +114,7 @@ tests = [
     (3, './06-bridge-per-listener-settings.py'),
     (2, './06-bridge-reconnect-local-out.py'),
 
+    (1, './07-will-delay-invalid-573191.py'),
     (1, './07-will-delay-reconnect.py'),
     (1, './07-will-delay-recover.py'),
     (1, './07-will-delay-session-expiry.py'),

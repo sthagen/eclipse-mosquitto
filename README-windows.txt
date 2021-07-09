@@ -8,9 +8,9 @@ Capabilities
 ------------
 
 Some versions of Windows have limitations on the number of concurrent
-connections. In modern versions of Windows, e.g. Windows 10 or Windows Server
-2019, this is approximately 8192 connections. In earlier versions of Windows,
-this limit is 2048 connections.
+connections due to the Windows API being used. In modern versions of Windows,
+e.g. Windows 10 or Windows Server 2019, this is approximately 8192 connections.
+In earlier versions of Windows, t his limit is 2048 connections.
 
 
 Websockets

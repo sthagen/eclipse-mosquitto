@@ -53,7 +53,7 @@ static int check_format(const char *str)
 	for(i=0; i<len; i++){
 		if(str[i] == '%'){
 			if(i == len-1){
-				// error
+				/* error */
 				fprintf(stderr, "Error: Incomplete format specifier.\n");
 				return 1;
 			}else{
@@ -61,7 +61,7 @@ static int check_format(const char *str)
 					/* Flag characters */
 					i++;
 					if(i == len-1){
-						// error
+						/* error */
 						fprintf(stderr, "Error: Incomplete format specifier.\n");
 						return 1;
 					}
@@ -71,7 +71,7 @@ static int check_format(const char *str)
 				while(str[i+1] >= '0' && str[i+1] <= '9'){
 					i++;
 					if(i == len-1){
-						// error
+						/* error */
 						fprintf(stderr, "Error: Incomplete format specifier.\n");
 						return 1;
 					}
@@ -81,7 +81,7 @@ static int check_format(const char *str)
 					/* Precision specifier */
 					i++;
 					if(i == len-1){
-						// error
+						/* error */
 						fprintf(stderr, "Error: Incomplete format specifier.\n");
 						return 1;
 					}
@@ -89,7 +89,7 @@ static int check_format(const char *str)
 					while(str[i+1] >= '0' && str[i+1] <= '9'){
 						i++;
 						if(i == len-1){
-							// error
+							/* error */
 							fprintf(stderr, "Error: Incomplete format specifier.\n");
 							return 1;
 						}
@@ -97,49 +97,49 @@ static int check_format(const char *str)
 				}
 
 				if(str[i+1] == '%'){
-					// Print %, ignore
+					/* Print %, ignore */
 				}else if(str[i+1] == 'A'){
-					// MQTT v5 property topic-alias
+					/* MQTT v5 property topic-alias */
 				}else if(str[i+1] == 'C'){
-					// MQTT v5 property content-type
+					/* MQTT v5 property content-type */
 				}else if(str[i+1] == 'D'){
-					// MQTT v5 property correlation-data
+					/* MQTT v5 property correlation-data */
 				}else if(str[i+1] == 'E'){
-					// MQTT v5 property message-expiry-interval
+					/* MQTT v5 property message-expiry-interval */
 				}else if(str[i+1] == 'F'){
-					// MQTT v5 property payload-format-indicator
+					/* MQTT v5 property payload-format-indicator */
 				}else if(str[i+1] == 'I'){
-					// ISO 8601 date+time
+					/* ISO 8601 date+time */
 				}else if(str[i+1] == 'l'){
-					// payload length
+					/* payload length */
 				}else if(str[i+1] == 'm'){
-					// mid
+					/* mid */
 				}else if(str[i+1] == 'P'){
-					// MQTT v5 property user-property
+					/* MQTT v5 property user-property */
 				}else if(str[i+1] == 'p'){
-					// payload
+					/* payload */
 				}else if(str[i+1] == 'q'){
-					// qos
+					/* qos */
 				}else if(str[i+1] == 'R'){
-					// MQTT v5 property response-topic
+					/* MQTT v5 property response-topic */
 				}else if(str[i+1] == 'S'){
-					// MQTT v5 property subscription-identifier
+					/* MQTT v5 property subscription-identifier */
 				}else if(str[i+1] == 'r'){
-					// retain
+					/* retain */
 				}else if(str[i+1] == 't'){
-					// topic
+					/* topic */
 				}else if(str[i+1] == 'j'){
-					// JSON output, escaped payload
+					/* JSON output, escaped payload */
 				}else if(str[i+1] == 'J'){
-					// JSON output, assuming JSON payload
+					/* JSON output, assuming JSON payload */
 				}else if(str[i+1] == 'U'){
-					// Unix time+nanoseconds
+					/* Unix time+nanoseconds */
 #ifdef WIN32
 					fprintf(stderr, "Error: The %%U format option is not supported on Windows.\n");
 					return 1;
 #endif
 				}else if(str[i+1] == 'x' || str[i+1] == 'X'){
-					// payload in hex
+					/* payload in hex */
 				}else{
 					fprintf(stderr, "Error: Invalid format specifier '%c'.\n", str[i+1]);
 					return 1;
@@ -148,26 +148,26 @@ static int check_format(const char *str)
 			}
 		}else if(str[i] == '@'){
 			if(i == len-1){
-				// error
+				/* error */
 				fprintf(stderr, "Error: Incomplete format specifier.\n");
 				return 1;
 			}
 			i++;
 		}else if(str[i] == '\\'){
 			if(i == len-1){
-				// error
+				/* error */
 				fprintf(stderr, "Error: Incomplete escape specifier.\n");
 				return 1;
 			}else{
 				switch(str[i+1]){
-					case '\\': // '\'
-					case '0':  // 0 (NULL)
-					case 'a':  // alert
-					case 'e':  // escape
-					case 'n':  // new line
-					case 'r':  // carriage return
-					case 't':  // horizontal tab
-					case 'v':  // vertical tab
+					case '\\': /* '\' */
+					case '0':  /* 0 (NULL) */
+					case 'a':  /* alert */
+					case 'e':  /* escape */
+					case 'n':  /* new line */
+					case 'r':  /* carriage return */
+					case 't':  /* horizontal tab */
+					case 'v':  /* vertical tab */
 						break;
 
 					default:
@@ -756,8 +756,9 @@ int client_config_line_proc(struct mosq_config *cfg, int pub_or_sub, int argc, c
 
 				tmp = strchr(url, '@');
 				if(tmp) {
+					char *colon;
 					*tmp++ = 0;
-					char *colon = strchr(url, ':');
+					colon = strchr(url, ':');
 					if(colon) {
 						*colon = 0;
 						cfg->password = strdup(colon + 1);
@@ -1462,12 +1463,13 @@ static int mosquitto__parse_socks_url(struct mosq_config *cfg, char *url)
 		return 1;
 	}
 
-	// socks5h://username:password@host:1883
-	// socks5h://username:password@host
-	// socks5h://username@host:1883
-	// socks5h://username@host
-	// socks5h://host:1883
-	// socks5h://host
+	/* socks5h://username:password@host:1883
+	 * socks5h://username:password@host
+	 * socks5h://username@host:1883
+	 * socks5h://username@host
+	 * socks5h://host:1883
+	 * socks5h://host
+	 */
 
 	start = 0;
 	for(i=0; i<strlen(str); i++){

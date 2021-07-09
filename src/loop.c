@@ -182,9 +182,6 @@ int mosquitto_main_loop(struct mosquitto__listener_sock *listensock, int listens
 	db.now_s = mosquitto_time();
 	db.now_real_s = time(NULL);
 
-	rc = mux__init(listensock, listensock_count);
-	if(rc) return rc;
-
 #ifdef WITH_BRIDGE
 	rc = bridge__register_local_connections();
 	if(rc) return rc;

@@ -24,7 +24,9 @@ Contributors:
 #endif
 
 #ifdef WIN32
+#if !(defined(_MSC_VER) && _MSC_VER <= 1500)
 #  define _WIN32_WINNT _WIN32_WINNT_VISTA
+#endif
 #  include <windows.h>
 #else
 #  include <unistd.h>

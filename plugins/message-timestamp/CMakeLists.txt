@@ -1,7 +1,7 @@
 include_directories(${mosquitto_SOURCE_DIR} ${mosquitto_SOURCE_DIR}/include
 			${OPENSSL_INCLUDE_DIR} ${STDBOOL_H_PATH} ${STDINT_H_PATH})
 
-add_library(mosquitto_message_timestamp SHARED mosquitto_message_timestamp.c)
+add_library(mosquitto_message_timestamp MODULE mosquitto_message_timestamp.c)
 set_target_properties(mosquitto_message_timestamp PROPERTIES
 	POSITION_INDEPENDENT_CODE 1
 )

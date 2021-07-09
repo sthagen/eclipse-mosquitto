@@ -12,7 +12,7 @@ if (CJSON_FOUND AND WITH_TLS)
 	include_directories(${CLIENT_INC})
 	link_directories(${CLIENT_DIR} ${mosquitto_SOURCE_DIR})
 
-	add_library(mosquitto_dynamic_security SHARED
+	add_library(mosquitto_dynamic_security MODULE
 		acl.c
 		auth.c
 		clients.c

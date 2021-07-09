@@ -96,6 +96,9 @@ static void my_message_callback(struct mosquitto *mosq, void *obj, const struct 
 	}
 
 	print_message(&cfg, message, properties);
+	if(ferror(stdout)){
+		mosquitto_disconnect_v5(mosq, 0, cfg.disconnect_props);
+	}
 
 	if(cfg.msg_count>0){
 		msg_count++;

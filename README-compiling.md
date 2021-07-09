@@ -10,6 +10,8 @@ are optional.
 * libsystemd-dev (optional, if building with systemd support on Linux)
 * On Windows, a pthreads library is required if threading support is to be
   included.
+* xsltproc (only if building from git)
+* docbook-xsl (only if building from git)
 
 To compile, run "make", but also see the file config.mk for more details on the
 various options that can be compiled in.

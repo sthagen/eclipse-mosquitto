@@ -544,6 +544,9 @@ int main(int argc, char *argv[])
 
 	if(listeners__start()) return 1;
 
+	rc = mux__init(listensock, listensock_count);
+	if(rc) return rc;
+
 	signal__setup();
 
 #ifdef WITH_BRIDGE

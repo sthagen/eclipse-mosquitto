@@ -106,33 +106,41 @@ int mux_poll__init(struct mosquitto__listener_sock *listensock, int listensock_c
 }
 
 
-int mux_poll__add_out(struct mosquitto *context)
+static int mux_poll__add(struct mosquitto* context, uint16_t evt)
 {
 	size_t i;
 
-	if(!(context->events & POLLOUT)) {
-		if(context->pollfd_index != -1){
-			pollfds[context->pollfd_index].fd = context->sock;
-			pollfds[context->pollfd_index].events = POLLIN | POLLOUT;
-			pollfds[context->pollfd_index].revents = 0;
-		}else{
-			for(i=0; i<pollfd_max; i++){
-				if(pollfds[i].fd == INVALID_SOCKET){
-					pollfds[i].fd = context->sock;
-					pollfds[i].events = POLLIN | POLLOUT;
-					pollfds[i].revents = 0;
-					context->pollfd_index = (int )i;
-					if(i > pollfd_current_max){
-						pollfd_current_max = i;
-					}
-					break;
-				}
-			}
-		}
-		context->events = POLLIN | POLLOUT;
+	if(context->events == evt){
+		return MOSQ_ERR_SUCCESS;
 	}
 
+	if(context->pollfd_index != -1){
+		pollfds[context->pollfd_index].fd = context->sock;
+		pollfds[context->pollfd_index].events = (short int)evt;
+		pollfds[context->pollfd_index].revents = 0;
+	}else{
+		for(i=0; i<pollfd_max; i++) {
+			if(pollfds[i].fd == INVALID_SOCKET){
+				pollfds[i].fd = context->sock;
+				pollfds[i].events = POLLIN;
+				pollfds[i].revents = 0;
+				context->pollfd_index = (int)i;
+				if(i > pollfd_current_max){
+					pollfd_current_max = i;
+				}
+				break;
+			}
+		}
+	}
+	context->events = evt;
+
 	return MOSQ_ERR_SUCCESS;
+}
+
+
+int mux_poll__add_out(struct mosquitto *context)
+{
+	return mux_poll__add(context, POLLIN | POLLOUT);
 }
 
 
@@ -148,29 +156,7 @@ int mux_poll__remove_out(struct mosquitto *context)
 
 int mux_poll__add_in(struct mosquitto *context)
 {
-	size_t i;
-
-	if(context->pollfd_index != -1){
-		pollfds[context->pollfd_index].fd = context->sock;
-		pollfds[context->pollfd_index].events = POLLIN;
-		pollfds[context->pollfd_index].revents = 0;
-	}else{
-		for(i=0; i<pollfd_max; i++){
-			if(pollfds[i].fd == INVALID_SOCKET){
-				pollfds[i].fd = context->sock;
-				pollfds[i].events = POLLIN;
-				pollfds[i].revents = 0;
-				context->pollfd_index = (int )i;
-				if(i > pollfd_current_max){
-					pollfd_current_max = i;
-				}
-				break;
-			}
-		}
-	}
-	context->events = POLLIN;
-
-	return MOSQ_ERR_SUCCESS;
+	return mux_poll__add(context, POLLIN);
 }
 
 int mux_poll__delete(struct mosquitto *context)

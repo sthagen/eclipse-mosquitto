@@ -35,10 +35,17 @@ Contributors:
  * @param qos qos for the packet of interest
  * @return true if more in flight are allowed.
  */
-bool db__ready_for_flight(struct mosquitto_msg_data *msgs, int qos)
+bool db__ready_for_flight(struct mosquitto *context, enum mosquitto_msg_direction dir, int qos)
 {
+	struct mosquitto_msg_data *msgs;
 	bool valid_bytes;
 	bool valid_count;
+
+	if(dir == mosq_md_out){
+		msgs = &context->msgs_out;
+	}else{
+		msgs = &context->msgs_in;
+	}
 
 	if(msgs->inflight_maximum == 0 && db.config->max_inflight_bytes == 0){
 		return true;
@@ -54,7 +61,11 @@ bool db__ready_for_flight(struct mosquitto_msg_data *msgs, int qos)
 			return true;
 		}
 		valid_bytes = ((msgs->msg_bytes - (ssize_t)db.config->max_inflight_bytes) < (ssize_t)db.config->max_queued_bytes);
-		valid_count = msgs->msg_count - msgs->inflight_maximum < db.config->max_queued_messages;
+		if(dir == mosq_md_out){
+			valid_count = context->out_packet_count < db.config->max_queued_messages;
+		}else{
+			valid_count = msgs->msg_count - msgs->inflight_maximum < db.config->max_queued_messages;
+		}
 
 		if(db.config->max_queued_messages == 0){
 			return valid_bytes;
@@ -63,7 +74,7 @@ bool db__ready_for_flight(struct mosquitto_msg_data *msgs, int qos)
 			return valid_count;
 		}
 	}else{
-		valid_bytes = msgs->msg_bytes12 < db.config->max_inflight_bytes;
+		valid_bytes = (ssize_t)msgs->msg_bytes12 < (ssize_t)db.config->max_inflight_bytes;
 		valid_count = msgs->inflight_quota > 0;
 
 		if(msgs->inflight_maximum == 0){
@@ -99,10 +110,10 @@ bool db__ready_for_queue(struct mosquitto *context, int qos, struct mosquitto_ms
 		return true;
 	}
 
-	if(qos == 0){
+	if(qos == 0 && db.config->queue_qos0_messages == false){
 		return false; /* This case is handled in db__ready_for_flight() */
 	}else{
-		source_bytes = msg_data->msg_bytes12;
+		source_bytes = (ssize_t)msg_data->msg_bytes12;
 		source_count = msg_data->msg_count12;
 	}
 	adjust_count = msg_data->inflight_maximum;
@@ -113,7 +124,7 @@ bool db__ready_for_queue(struct mosquitto *context, int qos, struct mosquitto_ms
 		adjust_count = 0;
 	}
 
-	valid_bytes = source_bytes - adjust_bytes < db.config->max_queued_bytes;
+	valid_bytes = (source_bytes - (ssize_t)adjust_bytes) < (ssize_t)db.config->max_queued_bytes;
 	valid_count = source_count - adjust_count < db.config->max_queued_messages;
 
 	if(db.config->max_queued_bytes == 0){
@@ -429,7 +440,7 @@ int db__message_insert(struct mosquitto *context, uint16_t mid, enum mosquitto_m
 	}
 
 	if(context->sock != INVALID_SOCKET){
-		if(db__ready_for_flight(msg_data, qos)){
+		if(db__ready_for_flight(context, dir, qos)){
 			if(dir == mosq_md_out){
 				switch(qos){
 					case 0:
@@ -677,7 +688,6 @@ int db__messages_easy_queue(struct mosquitto *context, const char *topic, uint8_
 
 /* This function requires topic to be allocated on the heap. Once called, it owns topic and will free it on error. Likewise payload and properties. */
 int db__message_store(const struct mosquitto *source, struct mosquitto_msg_store *stored, uint32_t message_expiry_interval, dbid_t store_id, enum mosquitto_msg_origin origin)
-//int db__message_store(const struct mosquitto *source, uint16_t source_mid, char *topic, int qos, uint32_t payloadlen, mosquitto__payload_uhpa *payload, int retain, struct mosquitto_msg_store **stored, uint32_t message_expiry_interval, mosquitto_property *properties, dbid_t store_id, enum mosquitto_msg_origin origin)
 {
 	assert(stored);
 
@@ -800,7 +810,7 @@ static int db__message_reconnect_reset_outgoing(struct mosquitto *context)
 			context->msgs_out.msg_count12++;
 			context->msgs_out.msg_bytes12 += msg->store->payloadlen;
 		}
-		if(db__ready_for_flight(&context->msgs_out, msg->qos)){
+		if(db__ready_for_flight(context, mosq_md_out, msg->qos)){
 			switch(msg->qos){
 				case 0:
 					msg->state = mosq_ms_publish_qos0;
@@ -863,7 +873,7 @@ static int db__message_reconnect_reset_incoming(struct mosquitto *context)
 			context->msgs_in.msg_count12++;
 			context->msgs_in.msg_bytes12 += msg->store->payloadlen;
 		}
-		if(db__ready_for_flight(&context->msgs_in, msg->qos)){
+		if(db__ready_for_flight(context, mosq_md_in, msg->qos)){
 			switch(msg->qos){
 				case 0:
 					msg->state = mosq_ms_publish_qos0;

@@ -2,7 +2,7 @@ include_directories(${mosquitto_SOURCE_DIR} ${mosquitto_SOURCE_DIR}/include
 			${OPENSSL_INCLUDE_DIR} ${STDBOOL_H_PATH} ${STDINT_H_PATH})
 link_directories(${mosquitto_SOURCE_DIR})
 
-add_library(mosquitto_payload_modification SHARED mosquitto_payload_modification.c)
+add_library(mosquitto_payload_modification MODULE mosquitto_payload_modification.c)
 set_target_properties(mosquitto_payload_modification PROPERTIES
 	POSITION_INDEPENDENT_CODE 1
 )

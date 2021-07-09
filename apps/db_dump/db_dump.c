@@ -99,7 +99,6 @@ static void free__client_msg(struct P_client_msg *chunk)
 
 static void free__msg_store(struct P_msg_store *chunk)
 {
-	//free(chunk->source_id);
 	free(chunk->topic);
 	free(chunk->payload);
 	mosquitto_property_free_all(&chunk->properties);
@@ -425,7 +424,7 @@ int main(int argc, char *argv[])
 	read_e(fd, &header, 15);
 	if(!memcmp(header, magic, 15)){
 		if(do_print) printf("Mosquitto DB dump\n");
-		// Restore DB as normal
+		/* Restore DB as normal */
 		read_e(fd, &crc, sizeof(uint32_t));
 		if(do_print) printf("CRC: %d\n", crc);
 		read_e(fd, &i32temp, sizeof(uint32_t));

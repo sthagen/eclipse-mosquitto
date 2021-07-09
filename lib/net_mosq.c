@@ -943,11 +943,42 @@ int net__socket_connect(struct mosquitto *mosq, const char *host, uint16_t port,
 }
 
 
+#ifdef WITH_TLS
+static int net__handle_ssl(struct mosquitto* mosq, int ret)
+{
+	int err;
+
+	err = SSL_get_error(mosq->ssl, ret);
+	if (err == SSL_ERROR_WANT_READ) {
+		ret = -1;
+		errno = EAGAIN;
+	}
+	else if (err == SSL_ERROR_WANT_WRITE) {
+		ret = -1;
+#ifdef WITH_BROKER
+		mux__add_out(mosq);
+#else
+		mosq->want_write = true;
+#endif
+		errno = EAGAIN;
+	}
+	else {
+		net__print_ssl_error(mosq);
+		errno = EPROTO;
+	}
+	ERR_clear_error();
+#ifdef WIN32
+	WSASetLastError(errno);
+#endif
+
+	return ret;
+}
+#endif
+
 ssize_t net__read(struct mosquitto *mosq, void *buf, size_t count)
 {
 #ifdef WITH_TLS
 	int ret;
-	int err;
 #endif
 	assert(mosq);
 	errno = 0;
@@ -955,22 +986,7 @@ ssize_t net__read(struct mosquitto *mosq, void *buf, size_t count)
 	if(mosq->ssl){
 		ret = SSL_read(mosq->ssl, buf, (int)count);
 		if(ret <= 0){
-			err = SSL_get_error(mosq->ssl, ret);
-			if(err == SSL_ERROR_WANT_READ){
-				ret = -1;
-				errno = EAGAIN;
-			}else if(err == SSL_ERROR_WANT_WRITE){
-				ret = -1;
-				mosq->want_write = true;
-				errno = EAGAIN;
-			}else{
-				net__print_ssl_error(mosq);
-				errno = EPROTO;
-			}
-			ERR_clear_error();
-#ifdef WIN32
-			WSASetLastError(errno);
-#endif
+			ret = net__handle_ssl(mosq, ret);
 		}
 		return (ssize_t )ret;
 	}else{
@@ -993,7 +1009,6 @@ ssize_t net__write(struct mosquitto *mosq, const void *buf, size_t count)
 {
 #ifdef WITH_TLS
 	int ret;
-	int err;
 #endif
 	assert(mosq);
 
@@ -1003,22 +1018,7 @@ ssize_t net__write(struct mosquitto *mosq, const void *buf, size_t count)
 		mosq->want_write = false;
 		ret = SSL_write(mosq->ssl, buf, (int)count);
 		if(ret < 0){
-			err = SSL_get_error(mosq->ssl, ret);
-			if(err == SSL_ERROR_WANT_READ){
-				ret = -1;
-				errno = EAGAIN;
-			}else if(err == SSL_ERROR_WANT_WRITE){
-				ret = -1;
-				mosq->want_write = true;
-				errno = EAGAIN;
-			}else{
-				net__print_ssl_error(mosq);
-				errno = EPROTO;
-			}
-			ERR_clear_error();
-#ifdef WIN32
-			WSASetLastError(errno);
-#endif
+			ret = net__handle_ssl(mosq, ret);
 		}
 		return (ssize_t )ret;
 	}else{

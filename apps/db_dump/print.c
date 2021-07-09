@@ -183,8 +183,8 @@ void print__msg_store(struct P_msg_store *chunk, uint32_t length)
 	printf("DB_CHUNK_MSG_STORE:\n");
 	printf("\tLength: %d\n", length);
 	printf("\tStore ID: %" PRIu64 "\n", chunk->F.store_id);
-	//printf("\tSource ID: %s\n", chunk->source_id);
-	//printf("\tSource Username: %s\n", chunk->source_username);
+	/* printf("\tSource ID: %s\n", chunk->source_id); */
+	/* printf("\tSource Username: %s\n", chunk->source_username); */
 	printf("\tSource Port: %d\n", chunk->F.source_port);
 	printf("\tSource MID: %d\n", chunk->F.source_mid);
 	printf("\tTopic: %s\n", chunk->topic);

@@ -208,7 +208,7 @@
 				<listitem>
 					<para>An openssl compatible list of TLS ciphers to support
 						in the client. See
-						<citerefentry><refentrytitle>ciphers</refentrytitle><manvolnum>1</manvolnum></citerefentry>
+						<citerefentry><refentrytitle><link xlink:href="https://linux.die.net/man/1/ciphers">ciphers</link></refentrytitle><manvolnum>1</manvolnum></citerefentry>
 						for more information.</para>
 				</listitem>
 			</varlistentry>
@@ -403,7 +403,7 @@
 				<listitem>
 					<para>Disable Nagle's algorithm for the socket. This means
 						that latency of sent messages is reduced, which is
-						particularly noticable for small, reasonably infrequent
+						particularly noticeable for small, reasonably infrequent
 						messages. Using this option may result in more packets
 						being sent than would normally be necessary.</para>
 				</listitem>
@@ -455,7 +455,7 @@
 					<para>More SOCKS versions may be available in the future,
 						depending on demand, and will use different protocol
 						prefixes as described in <citerefentry>
-							<refentrytitle>curl</refentrytitle>
+							<refentrytitle><link xlink:href="https://linux.die.net/man/1/curl">curl</link></refentrytitle>
 							<manvolnum>1</manvolnum> </citerefentry>.</para>
 				</listitem>
 			</varlistentry>
@@ -483,7 +483,7 @@
 				<listitem>
 					<para>Specify the quality of service desired for the
 					incoming messages, from 0, 1 and 2. Defaults to 0. See
-					<citerefentry><refentrytitle>mqtt</refentrytitle><manvolnum>7</manvolnum></citerefentry>
+					<citerefentry><refentrytitle><link xlink:href="mqtt-7.html">mqtt</link></refentrytitle><manvolnum>7</manvolnum></citerefentry>
 					for more information on QoS.</para>
 					<para>The QoS is identical for all topics subscribed to in
 					a single instance of mosquitto_sub.</para>
@@ -591,7 +591,7 @@ mosquitto_sub -t 'bbc/#' -T bbc/bbc1 --remove-retained</programlisting>
 				<term><option>--topic</option></term>
 				<listitem>
 					<para>The MQTT topic to subscribe to. See
-					<citerefentry><refentrytitle>mqtt</refentrytitle><manvolnum>7</manvolnum></citerefentry>
+					<citerefentry><refentrytitle><link xlink:href="mqtt-7.html">mqtt</link></refentrytitle><manvolnum>7</manvolnum></citerefentry>
 					for more information on MQTT topics.</para>
 					<para>This option may be repeated to subscribe to multiple topics.</para>
 				</listitem>
@@ -826,7 +826,7 @@ mosquitto_sub -t 'bbc/#' -T bbc/bbc1 --remove-retained</programlisting>
 			related to the MQTT message being printed, or are helper sequences
 			to avoid the need to type long date format strings for example.
 			Sequences starting with <option>@</option> are passed to the
-			<citerefentry><refentrytitle>strftime</refentrytitle><manvolnum>3</manvolnum></citerefentry>
+			<citerefentry><refentrytitle><link xlink:href="https://linux.die.net/man/3/strftime">strftime</link></refentrytitle><manvolnum>3</manvolnum></citerefentry>
 			function (with the @ replaced with a % - note that only the
 			character immediately after the @ is passed to strftime). This
 			allows the construction of a wide variety of time based outputs.
@@ -960,7 +960,7 @@ mosquitto_sub -t 'bbc/#' -T bbc/bbc1 --remove-retained</programlisting>
 				<listitem><para><option>\0</option> a null character. Can be used
 						to separate different parameters that may contain spaces
 						(e.g. topic, payload) so that processing with tools such as
-						<citerefentry><refentrytitle>xargs</refentrytitle><manvolnum>1</manvolnum></citerefentry>
+				<citerefentry><refentrytitle><link xlink:href="https://linux.die.net/man/1/xargs">xargs</link></refentrytitle><manvolnum>1</manvolnum></citerefentry>
 						is easier.</para></listitem>
 				<listitem><para><option>\a</option> alert/bell.</para></listitem>
 				<listitem><para><option>\e</option> the escape sequence, which can
@@ -978,7 +978,7 @@ mosquitto_sub -t 'bbc/#' -T bbc/bbc1 --remove-retained</programlisting>
 		<title>Wills</title>
 		<para>mosquitto_sub can register a message with the broker that will be
 		sent out if it disconnects unexpectedly. See
-		<citerefentry><refentrytitle>mqtt</refentrytitle><manvolnum>7</manvolnum></citerefentry>
+		<citerefentry><refentrytitle><link xlink:href="mqtt-7.html">mqtt</link></refentrytitle><manvolnum>7</manvolnum></citerefentry>
 		for more information.</para>
 		<para>The minimum requirement for this is to use <option>--will-topic</option> to
 		specify which topic the will should be sent out on. This will result in

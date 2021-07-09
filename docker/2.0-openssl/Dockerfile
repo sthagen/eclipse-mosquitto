@@ -3,11 +3,11 @@ FROM alpine:3.12
 LABEL maintainer="Roger Light <roger@atchoo.org>" \
     description="Eclipse Mosquitto MQTT Broker"
 
-ENV VERSION=2.0.10 \
-    DOWNLOAD_SHA256=0188f7b21b91d6d80e992b8d6116ba851468b3bd154030e8a003ed28fb6f4a44 \
+ENV VERSION=2.0.11 \
+    DOWNLOAD_SHA256=7b36a7198bce85cf31b132f5c6ee36dcf5dadf86fb768501eb1e11ce95d4f78a \
     GPG_KEYS=A0D6EEA1DCAE49A635A3B2F0779B22DFB3E717B7 \
-    LWS_VERSION=2.4.2 \
-    LWS_SHA256=73012d7fcf428dedccc816e83a63a01462e27819d5537b8e0d0c7264bfacfad6 \
+    LWS_VERSION=4.2.0 \
+    LWS_SHA256=a57e9a4765dbcd4d880feba8089b43ed69995eaf10d5d61a07981d9ddd975f40 \
     CJSON_VERSION=1.7.14 \
     CJSON_SHA256=fb50a663eefdc76bafa80c82bc045af13b1363e8f45cec8b442007aef6a41343
 
@@ -16,6 +16,7 @@ RUN set -x && \
         build-base \
         cmake \
         gnupg \
+        linux-headers \
         openssl-dev \
         util-linux-dev && \
     wget https://github.com/warmcat/libwebsockets/archive/v${LWS_VERSION}.tar.gz -O /tmp/lws.tar.gz && \
@@ -27,11 +28,13 @@ RUN set -x && \
     cmake . \
         -DCMAKE_BUILD_TYPE=MinSizeRel \
         -DCMAKE_INSTALL_PREFIX=/usr \
+        -DDISABLE_WERROR=ON \
         -DLWS_IPV6=ON \
         -DLWS_WITHOUT_BUILTIN_GETIFADDRS=ON \
         -DLWS_WITHOUT_CLIENT=ON \
         -DLWS_WITHOUT_EXTENSIONS=ON \
         -DLWS_WITHOUT_TESTAPPS=ON \
+        -DLWS_WITH_EXTERNAL_POLL=ON \
         -DLWS_WITH_SHARED=OFF \
         -DLWS_WITH_ZIP_FOPS=OFF \
         -DLWS_WITH_ZLIB=OFF && \
@@ -97,6 +100,10 @@ RUN set -x && \
     install -s -m755 /build/mosq/apps/mosquitto_passwd/mosquitto_passwd /usr/bin/mosquitto_passwd && \
     install -s -m755 /build/mosq/plugins/dynamic-security/mosquitto_dynamic_security.so /usr/lib/mosquitto_dynamic_security.so && \
     install -m644 /build/mosq/mosquitto.conf /mosquitto/config/mosquitto.conf && \
+    install -Dm644 /build/cjson/LICENSE /usr/share/licenses/cJSON/LICENSE && \
+    install -Dm644 /build/lws/LICENSE /usr/share/licenses/libwebsockets/LICENSE && \
+    install -Dm644 /build/mosq/epl-v20 /usr/share/licenses/mosquitto/epl-v20 && \
+    install -Dm644 /build/mosq/edl-v10 /usr/share/licenses/mosquitto/edl-v10 && \
     chown -R mosquitto:mosquitto /mosquitto && \
     apk --no-cache add \
         ca-certificates && \

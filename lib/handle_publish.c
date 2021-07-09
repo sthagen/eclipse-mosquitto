@@ -92,7 +92,10 @@ int handle__publish(struct mosquitto *mosq)
 
 	if(mosq->protocol == mosq_p_mqtt5){
 		rc = property__read_all(CMD_PUBLISH, &mosq->in_packet, &properties);
-		if(rc) return rc;
+		if(rc){
+			message__cleanup(&message);
+			return rc;
+		}
 	}
 
 	message->msg.payloadlen = (int)(mosq->in_packet.remaining_length - mosq->in_packet.pos);

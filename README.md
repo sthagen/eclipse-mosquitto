@@ -67,11 +67,14 @@ already be built. Use `make binary` to skip building the man pages, or install
 ### Build Dependencies
 
 * c-ares (libc-ares-dev on Debian based systems) - only when compiled with `make WITH_SRV=yes`
+* cJSON - for client JSON output support. Disable with `make WITH_CJSON=no` Auto detected with CMake.
 * libwebsockets (libwebsockets-dev) - enable with `make WITH_WEBSOCKETS=yes`
 * openssl (libssl-dev on Debian based systems) - disable with `make WITH_TLS=no`
-* xsltproc (xsltproc and docbook-xsl on Debian based systems) - only needed when building from git sources - disable with `make WITH_DOCS=no`
+* pthreads - for client library thread support. This is required to support the
+  `mosquitto_loop_start()` and `mosquitto_loop_stop()` functions. If compiled
+  without pthread support, the library isn't guaranteed to be thread safe.
 * uthash / utlist - bundled versions of these headers are provided, disable their use with `make WITH_BUNDLED_DEPS=no`
-* cJSON - for client JSON output support. Disable with `make WITH_CJSON=no` Auto detected with CMake.
+* xsltproc (xsltproc and docbook-xsl on Debian based systems) - only needed when building from git sources - disable with `make WITH_DOCS=no`
 
 Equivalent options for enabling/disabling features are available when using the CMake build.
 

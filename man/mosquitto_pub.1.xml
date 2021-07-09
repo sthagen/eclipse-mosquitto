@@ -195,7 +195,7 @@
 				<listitem>
 					<para>An openssl compatible list of TLS ciphers to support
 						in the client. See
-						<citerefentry><refentrytitle>ciphers</refentrytitle><manvolnum>1</manvolnum></citerefentry>
+						<citerefentry><refentrytitle><link xlink:href="https://linux.die.net/man/1/ciphers">ciphers</link></refentrytitle><manvolnum>1</manvolnum></citerefentry>
 						for more information.</para>
 				</listitem>
 			</varlistentry>
@@ -371,7 +371,7 @@
 				<listitem>
 					<para>Disable Nagle's algorithm for the socket. This means
 						that latency of sent messages is reduced, which is
-						particularly noticable for small, reasonably infrequent
+						particularly noticeable for small, reasonably infrequent
 						messages. Using this option may result in more packets
 						being sent than would normally be necessary.</para>
 				</listitem>
@@ -413,7 +413,7 @@
 					<para>More SOCKS versions may be available in the future,
 						depending on demand, and will use different protocol
 						prefixes as described in <citerefentry>
-							<refentrytitle>curl</refentrytitle>
+							<refentrytitle><link xlink:href="https://linux.die.net/man/1/curl">curl</link></refentrytitle>
 							<manvolnum>1</manvolnum> </citerefentry>.</para>
 				</listitem>
 			</varlistentry>
@@ -458,7 +458,7 @@
 					<para>
 						If retain is given, the message will be retained as a
 						"last known good" value on the broker. See 
-						<citerefentry><refentrytitle>mqtt</refentrytitle><manvolnum>7</manvolnum></citerefentry>
+						<citerefentry><refentrytitle><link xlink:href="mqtt-7.html">mqtt</link></refentrytitle><manvolnum>7</manvolnum></citerefentry>
 						for more information. Note that zero length payloads
 						are never retained. If you send a zero length
 						payload retained message it will clear any retained
@@ -515,7 +515,7 @@
 				<term><option>-t</option></term>
 				<term><option>--topic</option></term>
 				<listitem>
-					<para>The MQTT topic on which to publish the message. See <citerefentry><refentrytitle>mqtt</refentrytitle><manvolnum>7</manvolnum></citerefentry> for more information on MQTT topics.</para>
+					<para>The MQTT topic on which to publish the message. See <citerefentry><refentrytitle><link xlink:href="mqtt-7.html">mqtt</link></refentrytitle><manvolnum>7</manvolnum></citerefentry> for more information on MQTT topics.</para>
 				</listitem>
 			</varlistentry>
 			<varlistentry>
@@ -662,7 +662,7 @@
 		<title>Wills</title>
 		<para>mosquitto_sub can register a message with the broker that will be
 		sent out if it disconnects unexpectedly. See
-		<citerefentry><refentrytitle>mqtt</refentrytitle><manvolnum>7</manvolnum></citerefentry>
+		<citerefentry><refentrytitle><link xlink:href="mqtt-7.html">mqtt</link></refentrytitle><manvolnum>7</manvolnum></citerefentry>
 		for more information.</para>
 		<para>The minimum requirement for this is to use <option>--will-topic</option> to
 		specify which topic the will should be sent out on. This will result in

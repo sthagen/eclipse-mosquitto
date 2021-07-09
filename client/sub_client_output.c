@@ -353,6 +353,9 @@ static int json_print(const struct mosquitto_message *message, const mosquitto_p
 		json_str = cJSON_PrintUnformatted(root);
 	}
 	cJSON_Delete(root);
+	if(json_str == NULL){
+		return MOSQ_ERR_NOMEM;
+	}
 
 	fputs(json_str, stdout);
 	free(json_str);

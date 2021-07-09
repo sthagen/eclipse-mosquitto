@@ -50,7 +50,7 @@
 			password files for the mosquitto MQTT broker.</para>
 		<para>Usernames must not contain ":". Passwords are stored in a similar
 			format to
-			<citerefentry><refentrytitle>crypt</refentrytitle><manvolnum>3</manvolnum></citerefentry>.</para>
+		<citerefentry><refentrytitle><link xlink:href="https://linux.die.net/man/3/crypt">crypt</link></refentrytitle><manvolnum>3</manvolnum></citerefentry>.</para>
 	</refsect1>
 
 	<refsect1>

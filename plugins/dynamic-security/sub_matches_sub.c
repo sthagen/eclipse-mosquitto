@@ -95,7 +95,7 @@ bool sub_acl_check(const char *acl, const char *sub)
 	}
 
 	sub_len = strlen(sub);
-	//mosquitto_validate_utf8(acl, acl_len);
+	/* mosquitto_validate_utf8(acl, acl_len); */
 
 	acl_local = strdup(acl);
 	sub_local = strdup(sub);

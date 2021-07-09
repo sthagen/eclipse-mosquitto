@@ -659,7 +659,7 @@ void db__msg_store_clean(void);
 void db__msg_store_compact(void);
 void db__msg_store_free(struct mosquitto_msg_store *store);
 int db__message_reconnect_reset(struct mosquitto *context);
-bool db__ready_for_flight(struct mosquitto_msg_data *msgs, int qos);
+bool db__ready_for_flight(struct mosquitto *context, enum mosquitto_msg_direction dir, int qos);
 bool db__ready_for_queue(struct mosquitto *context, int qos, struct mosquitto_msg_data *msg_data);
 void sys_tree__init(void);
 void sys_tree__update(int interval, time_t start_time);

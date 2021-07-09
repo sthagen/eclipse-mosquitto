@@ -645,7 +645,7 @@ static int client__set_password(struct dynsec__client *client, const char *passw
 		return MOSQ_ERR_SUCCESS;
 	}else{
 		client->pw.valid = false;
-		// FIXME - this should fail safe without modifying the existing password
+		/* FIXME - this should fail safe without modifying the existing password */
 		return MOSQ_ERR_NOMEM;
 	}
 }
