@@ -41,6 +41,9 @@ int handle__auth(struct mosquitto *mosq)
 	if(mosq->protocol != mosq_p_mqtt5){
 		return MOSQ_ERR_PROTOCOL;
 	}
+	if(mosq->in_packet.command != CMD_AUTH){
+		return MOSQ_ERR_MALFORMED_PACKET;
+	}
 
 	if(packet__read_byte(&mosq->in_packet, &reason_code)) return 1;
 

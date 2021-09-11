@@ -108,6 +108,12 @@ int mosquitto_socks5_set(struct mosquitto *mosq, const char *host, int port, con
 
 	return MOSQ_ERR_SUCCESS;
 #else
+	UNUSED(mosq);
+	UNUSED(host);
+	UNUSED(port);
+	UNUSED(username);
+	UNUSED(password);
+
 	return MOSQ_ERR_NOT_SUPPORTED;
 #endif
 }

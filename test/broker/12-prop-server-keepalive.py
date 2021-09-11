@@ -22,8 +22,10 @@ rc = 1
 keepalive = 61
 connect_packet = mosq_test.gen_connect("test", proto_ver=5, keepalive=keepalive)
 
-props = mqtt5_props.gen_uint16_prop(mqtt5_props.PROP_SERVER_KEEP_ALIVE, 60)
-connack_packet = mosq_test.gen_connack(rc=0, proto_ver=5, properties=props)
+props = mqtt5_props.gen_uint16_prop(mqtt5_props.PROP_SERVER_KEEP_ALIVE, 60) \
+        + mqtt5_props.gen_uint16_prop(mqtt5_props.PROP_TOPIC_ALIAS_MAXIMUM, 10) \
+        + mqtt5_props.gen_uint16_prop(mqtt5_props.PROP_RECEIVE_MAXIMUM, 20)
+connack_packet = mosq_test.gen_connack(rc=0, proto_ver=5, properties=props, property_helper=False)
 
 broker = mosq_test.start_broker(filename=os.path.basename(__file__), port=port, use_conf=True)
 

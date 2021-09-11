@@ -44,6 +44,9 @@ int handle__disconnect(struct mosquitto *mosq)
 	if(mosq->protocol != mosq_p_mqtt5){
 		return MOSQ_ERR_PROTOCOL;
 	}
+	if(mosq->in_packet.command != CMD_DISCONNECT){
+		return MOSQ_ERR_MALFORMED_PACKET;
+	}
 
 	rc = packet__read_byte(&mosq->in_packet, &reason_code);
 	if(rc) return rc;

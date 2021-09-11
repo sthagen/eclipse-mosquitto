@@ -37,8 +37,10 @@ password_mosq.o : ../../src/password_mosq.c ../../src/password_mosq.h
 	${CROSS_COMPILE}${CC} $(APP_CPPFLAGS) $(APP_CFLAGS) -c $< -o $@
 
 install : all
+ifeq ($(WITH_TLS),yes)
 	$(INSTALL) -d "${DESTDIR}$(prefix)/bin"
 	$(INSTALL) ${STRIP_OPTS} mosquitto_passwd "${DESTDIR}${prefix}/bin/mosquitto_passwd"
+endif
 
 uninstall :
 	-rm -f "${DESTDIR}${prefix}/bin/mosquitto_passwd"

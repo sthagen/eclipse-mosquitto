@@ -40,24 +40,31 @@ int handle__packet(struct mosquitto *context)
 
 	switch((context->in_packet.command)&0xF0){
 		case CMD_PINGREQ:
-			return handle__pingreq(context);
+			rc = handle__pingreq(context);
+			break;
 		case CMD_PINGRESP:
-			return handle__pingresp(context);
+			rc = handle__pingresp(context);
+			break;
 		case CMD_PUBACK:
-			return handle__pubackcomp(context, "PUBACK");
+			rc = handle__pubackcomp(context, "PUBACK");
+			break;
 		case CMD_PUBCOMP:
-			return handle__pubackcomp(context, "PUBCOMP");
+			rc = handle__pubackcomp(context, "PUBCOMP");
+			break;
 		case CMD_PUBLISH:
 			rc = handle__publish(context);
 			break;
 		case CMD_PUBREC:
-			return handle__pubrec(context);
+			rc = handle__pubrec(context);
+			break;
 		case CMD_PUBREL:
-			return handle__pubrel(context);
+			rc = handle__pubrel(context);
+			break;
 		case CMD_CONNECT:
 			return handle__connect(context);
 		case CMD_DISCONNECT:
-			return handle__disconnect(context);
+			rc = handle__disconnect(context);
+			break;
 		case CMD_SUBSCRIBE:
 			rc = handle__subscribe(context);
 			break;
@@ -66,20 +73,24 @@ int handle__packet(struct mosquitto *context)
 			break;
 #ifdef WITH_BRIDGE
 		case CMD_CONNACK:
-			return handle__connack(context);
+			rc = handle__connack(context);
+			break;
 		case CMD_SUBACK:
-			return handle__suback(context);
+			rc = handle__suback(context);
+			break;
 		case CMD_UNSUBACK:
-			return handle__unsuback(context);
+			rc = handle__unsuback(context);
+			break;
 #endif
 		case CMD_AUTH:
-			return handle__auth(context);
+			rc = handle__auth(context);
+			break;
 		default:
 			rc = MOSQ_ERR_PROTOCOL;
 	}
 
 	if(context->protocol == mosq_p_mqtt5){
-		if(rc == MOSQ_ERR_PROTOCOL){
+		if(rc == MOSQ_ERR_PROTOCOL || rc == MOSQ_ERR_DUPLICATE_PROPERTY){
 			send__disconnect(context, MQTT_RC_PROTOCOL_ERROR, NULL);
 		}else if(rc == MOSQ_ERR_MALFORMED_PACKET){
 			send__disconnect(context, MQTT_RC_MALFORMED_PACKET, NULL);
@@ -95,4 +106,3 @@ int handle__packet(struct mosquitto *context)
 	}
 	return rc;
 }
-

@@ -37,6 +37,7 @@ Contributors:
 #endif
 
 #include "misc_mosq.h"
+#include "logging_mosq.h"
 
 
 FILE *mosquitto__fopen(const char *path, const char *mode, bool restrict_read)
@@ -116,6 +117,18 @@ FILE *mosquitto__fopen(const char *path, const char *mode, bool restrict_read)
 		}
 	}
 #else
+	if(mode[0] == 'r'){
+		struct stat statbuf;
+		if(stat(path, &statbuf) < 0){
+			return NULL;
+		}
+
+		if(!S_ISREG(statbuf.st_mode) && !S_ISLNK(statbuf.st_mode)){
+			log__printf(NULL, MOSQ_LOG_ERR, "Error: %s is not a file.", path);
+			return NULL;
+		}
+	}
+
 	if (restrict_read) {
 		FILE *fptr;
 		mode_t old_mask;
@@ -156,6 +169,7 @@ char *fgets_extending(char **buf, int *buflen, FILE *stream)
 	char endchar;
 	int offset = 0;
 	char *newbuf;
+	size_t len;
 
 	if(stream == NULL || buf == NULL || buflen == NULL || *buflen < 1){
 		return NULL;
@@ -163,11 +177,15 @@ char *fgets_extending(char **buf, int *buflen, FILE *stream)
 
 	do{
 		rc = fgets(&((*buf)[offset]), (*buflen)-offset, stream);
-		if(feof(stream)){
+		if(feof(stream) || rc == NULL){
 			return rc;
 		}
 
-		endchar = (*buf)[strlen(*buf)-1];
+		len = strlen(*buf);
+		if(len == 0){
+			return rc;
+		}
+		endchar = (*buf)[len-1];
 		if(endchar == '\n'){
 			return rc;
 		}

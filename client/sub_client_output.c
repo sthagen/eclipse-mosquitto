@@ -21,6 +21,8 @@ Contributors:
 #ifdef WIN32
    /* For rand_s on Windows */
 #  define _CRT_RAND_S
+#  include <fcntl.h>
+#  include <io.h>
 #endif
 
 #include <assert.h>
@@ -764,7 +766,7 @@ static void formatted_print(const struct mosq_config *lcfg, const struct mosquit
 }
 
 
-void rand_init(void)
+void output_init(void)
 {
 #ifndef WIN32
 	struct tm *ti = NULL;
@@ -773,6 +775,9 @@ void rand_init(void)
 	if(!get_time(&ti, &ns)){
 		srandom((unsigned int)ns);
 	}
+#else
+	/* Disable text translation so binary payloads aren't modified */
+	_setmode(_fileno(stdout), _O_BINARY);
 #endif
 }
 

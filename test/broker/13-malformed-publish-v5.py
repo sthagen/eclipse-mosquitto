@@ -62,7 +62,7 @@ try:
     # Incorrect property
     props = mqtt5_props.gen_uint32_prop(mqtt5_props.PROP_SESSION_EXPIRY_INTERVAL, 0)
     publish_packet = mosq_test.gen_publish(topic="test/topic", qos=1, mid=1, proto_ver=5, properties=props)
-    do_test(publish_packet, mqtt5_rc.MQTT_RC_MALFORMED_PACKET, "Incorrect property")
+    do_test(publish_packet, mqtt5_rc.MQTT_RC_PROTOCOL_ERROR, "Incorrect property")
 
     # Truncated packet, remaining length only
     publish_packet = struct.pack("!BB", 48, 0)
@@ -86,7 +86,7 @@ try:
 
     # Bad topic
     publish_packet = mosq_test.gen_publish(topic="#/test/topic", qos=1, mid=1, proto_ver=5)
-    do_test(publish_packet, mqtt5_rc.MQTT_RC_PROTOCOL_ERROR, "Bad topic")
+    do_test(publish_packet, mqtt5_rc.MQTT_RC_MALFORMED_PACKET, "Bad topic")
 except mosq_test.TestError:
     pass
 finally:

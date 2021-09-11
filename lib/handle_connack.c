@@ -65,6 +65,10 @@ int handle__connack(struct mosquitto *mosq)
 	char *clientid = NULL;
 
 	assert(mosq);
+	if(mosq->in_packet.command != CMD_CONNACK){
+		return MOSQ_ERR_MALFORMED_PACKET;
+	}
+
 	rc = packet__read_byte(&mosq->in_packet, &connect_flags);
 	if(rc) return rc;
 	rc = packet__read_byte(&mosq->in_packet, &reason_code);

@@ -37,6 +37,9 @@ static void srv_callback(void *arg, int status, int timeouts, unsigned char *abu
 {   
 	struct mosquitto *mosq = arg;
 	struct ares_srv_reply *reply = NULL;
+
+	UNUSED(timeouts);
+
 	if(status == ARES_SUCCESS){
 		status = ares_parse_srv_reply(abuf, alen, &reply);
 		if(status == ARES_SUCCESS){
@@ -68,6 +71,8 @@ int mosquitto_connect_srv(struct mosquitto *mosq, const char *host, int keepaliv
 	char *h;
 	int rc;
 	if(!mosq) return MOSQ_ERR_INVAL;
+
+	UNUSED(bind_address);
 
 	if(keepalive < 0 || keepalive > UINT16_MAX){
 		return MOSQ_ERR_INVAL;

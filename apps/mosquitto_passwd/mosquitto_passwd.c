@@ -106,6 +106,15 @@ static FILE *mpw_tmpfile(void)
 }
 #endif
 
+int log__printf(void *mosq, unsigned int level, const char *fmt, ...)
+{
+	/* Stub for misc_mosq.c */
+	UNUSED(mosq);
+	UNUSED(level);
+	UNUSED(fmt);
+	return 0;
+}
+
 
 static void print_usage(void)
 {

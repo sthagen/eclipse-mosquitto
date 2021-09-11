@@ -52,6 +52,9 @@ int handle__subscribe(struct mosquitto *context)
 	if(context->state != mosq_cs_active){
 		return MOSQ_ERR_PROTOCOL;
 	}
+	if(context->in_packet.command != (CMD_SUBSCRIBE|2)){
+		return MOSQ_ERR_MALFORMED_PACKET;
+	}
 
 	log__printf(NULL, MOSQ_LOG_DEBUG, "Received SUBSCRIBE from %s", context->id);
 

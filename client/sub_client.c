@@ -324,7 +324,7 @@ int main(int argc, char *argv[])
 
 	mosquitto_lib_init();
 
-	rand_init();
+	output_init();
 
 	rc = client_config_load(&cfg, CLIENT_SUB, argc, argv);
 	if(rc){

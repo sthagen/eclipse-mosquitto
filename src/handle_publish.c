@@ -64,6 +64,12 @@ int handle__publish(struct mosquitto *context)
 
 	dup = (header & 0x08)>>3;
 	msg->qos = (header & 0x06)>>1;
+	if(dup == 1 && msg->qos == 0){
+		log__printf(NULL, MOSQ_LOG_INFO,
+				"Invalid PUBLISH (QoS=0 and DUP=1) from %s, disconnecting.", context->id);
+		db__msg_store_free(msg);
+		return MOSQ_ERR_MALFORMED_PACKET;
+	}
 	if(msg->qos == 3){
 		log__printf(NULL, MOSQ_LOG_INFO,
 				"Invalid QoS in PUBLISH from %s, disconnecting.", context->id);
@@ -112,11 +118,7 @@ int handle__publish(struct mosquitto *context)
 		rc = property__read_all(CMD_PUBLISH, &context->in_packet, &properties);
 		if(rc){
 			db__msg_store_free(msg);
-			if(rc == MOSQ_ERR_PROTOCOL){
-				return MOSQ_ERR_MALFORMED_PACKET;
-			}else{
-				return rc;
-			}
+			return rc;
 		}
 
 		p = properties;
@@ -202,7 +204,7 @@ int handle__publish(struct mosquitto *context)
 	if(mosquitto_pub_topic_check(msg->topic) != MOSQ_ERR_SUCCESS){
 		/* Invalid publish topic, just swallow it. */
 		db__msg_store_free(msg);
-		return MOSQ_ERR_PROTOCOL;
+		return MOSQ_ERR_MALFORMED_PACKET;
 	}
 
 	msg->payloadlen = context->in_packet.remaining_length - context->in_packet.pos;

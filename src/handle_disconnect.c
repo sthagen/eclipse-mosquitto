@@ -37,6 +37,10 @@ int handle__disconnect(struct mosquitto *context)
 		return MOSQ_ERR_INVAL;
 	}
 
+	if(context->in_packet.command != CMD_DISCONNECT){
+		return MOSQ_ERR_MALFORMED_PACKET;
+	}
+
 	if(context->protocol == mosq_p_mqtt5 && context->in_packet.remaining_length > 0){
 		/* FIXME - must handle reason code */
 		rc = packet__read_byte(&context->in_packet, &reason_code);
@@ -49,9 +53,6 @@ int handle__disconnect(struct mosquitto *context)
 	}
 	rc = property__process_disconnect(context, &properties);
 	if(rc){
-		if(rc == MOSQ_ERR_PROTOCOL){
-			send__disconnect(context, MQTT_RC_PROTOCOL_ERROR, NULL);
-		}
 		mosquitto_property_free_all(&properties);
 		return rc;
 	}

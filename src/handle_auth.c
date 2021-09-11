@@ -47,6 +47,9 @@ int handle__auth(struct mosquitto *context)
 	if(context->protocol != mosq_p_mqtt5 || context->auth_method == NULL){
 		return MOSQ_ERR_PROTOCOL;
 	}
+	if(context->in_packet.command != CMD_AUTH){
+		return MOSQ_ERR_MALFORMED_PACKET;
+	}
 
 	if(context->in_packet.remaining_length > 0){
 		if(packet__read_byte(&context->in_packet, &reason_code)) return MOSQ_ERR_MALFORMED_PACKET;

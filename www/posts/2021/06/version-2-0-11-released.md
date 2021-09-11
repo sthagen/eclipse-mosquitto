@@ -1,7 +1,7 @@
 <!--
 .. title: Version 2.0.11 released.
 .. slug: version-2-0-11-released
-.. date: 2021-04-03 11:54:38 UTC+1
+.. date: 2021-06-08 11:54:38 UTC+1
 .. tags: Releases
 .. category:
 .. link:

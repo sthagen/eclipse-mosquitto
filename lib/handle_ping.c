@@ -44,11 +44,14 @@ int handle__pingreq(struct mosquitto *mosq)
 	if(mosquitto__get_state(mosq) != mosq_cs_active){
 		return MOSQ_ERR_PROTOCOL;
 	}
+	if(mosq->in_packet.command != CMD_PINGREQ){
+		return MOSQ_ERR_MALFORMED_PACKET;
+	}
 
 #ifdef WITH_BROKER
 	log__printf(NULL, MOSQ_LOG_DEBUG, "Received PINGREQ from %s", mosq->id);
 #else
-	log__printf(mosq, MOSQ_LOG_DEBUG, "Client %s received PINGREQ", mosq->id);
+	return MOSQ_ERR_PROTOCOL;
 #endif
 	return send__pingresp(mosq);
 }
@@ -63,6 +66,9 @@ int handle__pingresp(struct mosquitto *mosq)
 
 	mosq->ping_t = 0; /* No longer waiting for a PINGRESP. */
 #ifdef WITH_BROKER
+	if(mosq->bridge == NULL){
+		return MOSQ_ERR_PROTOCOL;
+	}
 	log__printf(NULL, MOSQ_LOG_DEBUG, "Received PINGRESP from %s", mosq->id);
 #else
 	log__printf(mosq, MOSQ_LOG_DEBUG, "Client %s received PINGRESP", mosq->id);

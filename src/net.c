@@ -329,21 +329,28 @@ int net__tls_server_ctx(struct mosquitto__listener *listener)
 		return MOSQ_ERR_TLS;
 	}
 
+#ifdef SSL_OP_NO_TLSv1_3
+	if(db.config->per_listener_settings){
+		if(listener->security_options.psk_file){
+			SSL_CTX_set_options(listener->ssl_ctx, SSL_OP_NO_TLSv1_3);
+		}
+	}else{
+		if(db.config->security_options.psk_file){
+			SSL_CTX_set_options(listener->ssl_ctx, SSL_OP_NO_TLSv1_3);
+		}
+	}
+#endif
+
 	if(listener->tls_version == NULL){
 		SSL_CTX_set_options(listener->ssl_ctx, SSL_OP_NO_SSLv3 | SSL_OP_NO_TLSv1);
 #ifdef SSL_OP_NO_TLSv1_3
 	}else if(!strcmp(listener->tls_version, "tlsv1.3")){
 		SSL_CTX_set_options(listener->ssl_ctx, SSL_OP_NO_SSLv3 | SSL_OP_NO_TLSv1 | SSL_OP_NO_TLSv1_1 | SSL_OP_NO_TLSv1_2);
-	}else if(!strcmp(listener->tls_version, "tlsv1.2")){
-		SSL_CTX_set_options(listener->ssl_ctx, SSL_OP_NO_SSLv3 | SSL_OP_NO_TLSv1 | SSL_OP_NO_TLSv1_1);
-	}else if(!strcmp(listener->tls_version, "tlsv1.1")){
-		SSL_CTX_set_options(listener->ssl_ctx, SSL_OP_NO_SSLv3 | SSL_OP_NO_TLSv1);
-#else
-	}else if(!strcmp(listener->tls_version, "tlsv1.2")){
-		SSL_CTX_set_options(listener->ssl_ctx, SSL_OP_NO_SSLv3 | SSL_OP_NO_TLSv1 | SSL_OP_NO_TLSv1_1);
-	}else if(!strcmp(listener->tls_version, "tlsv1.1")){
-		SSL_CTX_set_options(listener->ssl_ctx, SSL_OP_NO_SSLv3 | SSL_OP_NO_TLSv1);
 #endif
+	}else if(!strcmp(listener->tls_version, "tlsv1.2")){
+		SSL_CTX_set_options(listener->ssl_ctx, SSL_OP_NO_SSLv3 | SSL_OP_NO_TLSv1 | SSL_OP_NO_TLSv1_1);
+	}else if(!strcmp(listener->tls_version, "tlsv1.1")){
+		SSL_CTX_set_options(listener->ssl_ctx, SSL_OP_NO_SSLv3 | SSL_OP_NO_TLSv1);
 	}else{
 		log__printf(NULL, MOSQ_LOG_ERR, "Error: Unsupported tls_version \"%s\".", listener->tls_version);
 		return MOSQ_ERR_TLS;
@@ -397,7 +404,7 @@ int net__tls_server_ctx(struct mosquitto__listener *listener)
 			return MOSQ_ERR_TLS;
 		}
 	}
-#if OPENSSL_VERSION_NUMBER >= 0x10101000 && !defined(LIBRESSL_VERSION_NUMBER)
+#if OPENSSL_VERSION_NUMBER >= 0x10101000 && (!defined(LIBRESSL_VERSION_NUMBER) || LIBRESSL_VERSION_NUMBER > 0x3040000FL)
 	if(listener->ciphers_tls13){
 		rc = SSL_CTX_set_ciphersuites(listener->ssl_ctx, listener->ciphers_tls13);
 		if(rc == 0){
@@ -427,9 +434,9 @@ int net__tls_server_ctx(struct mosquitto__listener *listener)
 #endif
 
 
+#ifdef WITH_TLS
 static int net__load_crl_file(struct mosquitto__listener *listener)
 {
-#ifdef WITH_TLS
 	X509_STORE *store;
 	X509_LOOKUP *lookup;
 	int rc;
@@ -449,10 +456,10 @@ static int net__load_crl_file(struct mosquitto__listener *listener)
 		return MOSQ_ERR_TLS;
 	}
 	X509_STORE_set_flags(store, X509_V_FLAG_CRL_CHECK);
-#endif
 
 	return MOSQ_ERR_SUCCESS;
 }
+#endif
 
 
 int net__load_certificates(struct mosquitto__listener *listener)
@@ -492,14 +499,16 @@ int net__load_certificates(struct mosquitto__listener *listener)
 			return rc;
 		}
 	}
+#else
+	UNUSED(listener);
 #endif
 	return MOSQ_ERR_SUCCESS;
 }
 
 
+#if defined(WITH_TLS) && !defined(OPENSSL_NO_ENGINE)
 static int net__load_engine(struct mosquitto__listener *listener)
 {
-#if defined(WITH_TLS) && !defined(OPENSSL_NO_ENGINE)
 	ENGINE *engine = NULL;
 	UI_METHOD *ui_method;
 	EVP_PKEY *pkey;
@@ -549,10 +558,10 @@ static int net__load_engine(struct mosquitto__listener *listener)
 		}
 	}
 	ENGINE_free(engine); /* release the structural reference from ENGINE_by_id() */
-#endif
 
 	return MOSQ_ERR_SUCCESS;
 }
+#endif
 
 
 int net__tls_load_verify(struct mosquitto__listener *listener)
@@ -879,8 +888,9 @@ int net__socket_listen(struct mosquitto__listener *listener)
 			if(net__tls_load_verify(listener)){
 				return 1;
 			}
+		}
 #  ifdef FINAL_WITH_TLS_PSK
-		}else if(listener->psk_hint){
+		if(listener->psk_hint){
 			if(tls_ex_index_context == -1){
 				tls_ex_index_context = SSL_get_ex_new_index(0, "client context", NULL, NULL, NULL);
 			}
@@ -888,8 +898,10 @@ int net__socket_listen(struct mosquitto__listener *listener)
 				tls_ex_index_listener = SSL_get_ex_new_index(0, "listener", NULL, NULL, NULL);
 			}
 
-			if(net__tls_server_ctx(listener)){
-				return 1;
+			if(listener->certfile == NULL || listener->keyfile == NULL){
+				if(net__tls_server_ctx(listener)){
+					return 1;
+				}
 			}
 			SSL_CTX_set_psk_server_callback(listener->ssl_ctx, psk_server_callback);
 			if(listener->psk_hint){
@@ -900,8 +912,8 @@ int net__socket_listen(struct mosquitto__listener *listener)
 					return 1;
 				}
 			}
-#  endif /* FINAL_WITH_TLS_PSK */
 		}
+#  endif /* FINAL_WITH_TLS_PSK */
 #endif /* WITH_TLS */
 		return 0;
 	}else{

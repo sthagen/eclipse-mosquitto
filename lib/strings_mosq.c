@@ -42,7 +42,7 @@ const char *mosquitto_strerror(int mosq_errno)
 		case MOSQ_ERR_PROTOCOL:
 			return "A network protocol error occurred when communicating with the broker.";
 		case MOSQ_ERR_INVAL:
-			return "Invalid function arguments provided.";
+			return "Invalid arguments provided.";
 		case MOSQ_ERR_NO_CONN:
 			return "The client is not currently connected.";
 		case MOSQ_ERR_CONN_REFUSED:

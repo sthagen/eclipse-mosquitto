@@ -42,7 +42,7 @@
 					<para>
 						Load configuration from a file. If not given, then the broker will listen on port 1883 bound to the loopback interface,
 						and the default values as described in
-						<citerefentry><refentrytitle><link xlink:href="mosquitto_conf-5.html">mosquitto.conf</link></refentrytitle><manvolnum>5</manvolnum></citerefentry>
+						<citerefentry><refentrytitle><link xlink:href="mosquitto-conf-5.html">mosquitto.conf</link></refentrytitle><manvolnum>5</manvolnum></citerefentry>
 						are used.
 					</para>
 					<important><para>See the <option>-p</option> option for a description of changes in behaviour from 1.6.x to 2.0.</para></important>
@@ -84,10 +84,21 @@
 		<title>Configuration</title>
 		<para>The broker can be configured using a configuration file as
 			described in
-			<citerefentry><refentrytitle><link xlink:href="mosquitto_conf-5.html">mosquitto.conf</link></refentrytitle><manvolnum>5</manvolnum></citerefentry>
+			<citerefentry><refentrytitle><link xlink:href="mosquitto-conf-5.html">mosquitto.conf</link></refentrytitle><manvolnum>5</manvolnum></citerefentry>
 			and this is the main point of information for mosquitto.
 			The files required for SSL/TLS support are described in 
 			<citerefentry><refentrytitle><link xlink:href="mosquitto-tls-7.html">mosquitto-tls</link></refentrytitle><manvolnum>7</manvolnum></citerefentry>.
+		</para>
+	</refsect1>
+
+	<refsect1>
+		<title>Platform limitations</title>
+		<para>
+			Some versions of Windows have limitations on the number of
+			concurrent connections due to the Windows API being used. In
+			modern versions of Windows, e.g. Windows 10 or Windows Server
+			2019, this is approximately 8192 connections. In earlier
+			versions of Windows, this limit is 2048 connections.
 		</para>
 	</refsect1>
 
@@ -534,7 +545,7 @@
 						dropped due to inflight/queuing limits. See the
 						max_inflight_messages and max_queued_messages options
 						in
-						<citerefentry><refentrytitle><link xlink:href="mosquitto_conf-5.html">mosquitto.conf</link></refentrytitle><manvolnum>5</manvolnum></citerefentry>
+						<citerefentry><refentrytitle><link xlink:href="mosquitto-conf-5.html">mosquitto.conf</link></refentrytitle><manvolnum>5</manvolnum></citerefentry>
 						for more information.</para>
 				</listitem>
 			</varlistentry>
@@ -641,11 +652,16 @@
 		local to each
 		broker.</para>
 		<para>For information on configuring bridges, see
-		<citerefentry><refentrytitle><link xlink:href="mosquitto_conf-5.html">mosquitto.conf</link></refentrytitle><manvolnum>5</manvolnum></citerefentry>.</para>
+		<citerefentry><refentrytitle><link xlink:href="mosquitto-conf-5.html">mosquitto.conf</link></refentrytitle><manvolnum>5</manvolnum></citerefentry>.</para>
 	</refsect1>
 
 	<refsect1>
 		<title>Signals</title>
+		<para>
+			On POSIX systems Mosquitto can receive signals and act on them as
+			described below. To send signals, use e.g.
+			<command>kill -HUP &lt;process id of mosquitto&gt;</command>
+		</para>
 		<variablelist>
 			<varlistentry>
 				<term>SIGHUP</term>
@@ -655,7 +671,7 @@
 					the <option>-c</option> argument was provided when
 					mosquitto was started. Not all configuration parameters can
 					be reloaded without restarting. See
-					<citerefentry><refentrytitle><link xlink:href="mosquitto_conf-5.html">mosquitto.conf</link></refentrytitle><manvolnum>5</manvolnum></citerefentry>
+					<citerefentry><refentrytitle><link xlink:href="mosquitto-conf-5.html">mosquitto.conf</link></refentrytitle><manvolnum>5</manvolnum></citerefentry>
 					for details.</para>
 					<para>If TLS certificates are in use, then mosquitto will
 					also reload certificate on receiving a SIGHUP.</para>
@@ -687,7 +703,7 @@
 			<varlistentry>
 				<term><filename>/etc/mosquitto/mosquitto.conf</filename></term>
 				<listitem>
-					<para>Configuration file. See <citerefentry><refentrytitle><link xlink:href="mosquitto_conf-5.html">mosquitto.conf</link></refentrytitle><manvolnum>5</manvolnum></citerefentry>.</para>
+					<para>Configuration file. See <citerefentry><refentrytitle><link xlink:href="mosquitto-conf-5.html">mosquitto.conf</link></refentrytitle><manvolnum>5</manvolnum></citerefentry>.</para>
 				</listitem>
 			</varlistentry>
 			<varlistentry>

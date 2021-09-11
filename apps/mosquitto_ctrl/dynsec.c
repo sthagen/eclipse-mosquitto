@@ -455,6 +455,7 @@ static void dynsec__payload_callback(struct mosq_ctrl *ctrl, long payloadlen, co
 static int dynsec__set_default_acl_access(int argc, char *argv[], cJSON *j_command)
 {
 	char *acltype, *access;
+	bool b_access;
 	cJSON *j_acls, *j_acl;
 
 	if(argc == 2){
@@ -472,7 +473,11 @@ static int dynsec__set_default_acl_access(int argc, char *argv[], cJSON *j_comma
 		return MOSQ_ERR_INVAL;
 	}
 
-	if(strcasecmp(access, "allow") && strcasecmp(access, "deny")){
+	if(!strcasecmp(access, "allow")){
+		b_access = true;
+	}else if(!strcasecmp(access, "deny")){
+		b_access = false;
+	}else{
 		fprintf(stderr, "Error: access must be \"allow\" or \"deny\".\n");
 		return MOSQ_ERR_INVAL;
 	}
@@ -490,7 +495,7 @@ static int dynsec__set_default_acl_access(int argc, char *argv[], cJSON *j_comma
 	}
 	cJSON_AddItemToArray(j_acls, j_acl);
 	if(cJSON_AddStringToObject(j_acl, "acltype", acltype) == NULL
-			|| cJSON_AddStringToObject(j_acl, "access", access) == NULL
+			|| cJSON_AddBoolToObject(j_acl, "allow", b_access) == NULL
 			){
 
 		return MOSQ_ERR_NOMEM;

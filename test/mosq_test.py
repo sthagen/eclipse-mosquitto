@@ -19,7 +19,7 @@ class TestError(Exception):
     def __init__(self, message="Mismatched packets"):
         self.message = message
 
-def start_broker(filename, cmd=None, port=0, use_conf=False, expect_fail=False):
+def start_broker(filename, cmd=None, port=0, use_conf=False, expect_fail=False, nolog=False):
     global vg_index
     global vg_logfiles
 
@@ -48,7 +48,10 @@ def start_broker(filename, cmd=None, port=0, use_conf=False, expect_fail=False):
 
     #print(port)
     #print(cmd)
-    broker = subprocess.Popen(cmd, stderr=subprocess.PIPE)
+    if nolog == False:
+        broker = subprocess.Popen(cmd, stderr=subprocess.PIPE)
+    else:
+        broker = subprocess.Popen(cmd, stderr=subprocess.DEVNULL)
     for i in range(0, 20):
         time.sleep(delay)
         c = None
@@ -60,7 +63,6 @@ def start_broker(filename, cmd=None, port=0, use_conf=False, expect_fail=False):
 
         if c is not None:
             c.close()
-            time.sleep(delay)
             return broker
 
     if expect_fail == False:
@@ -159,10 +161,14 @@ def do_receive_send(sock, receive_packet, send_packet, error_string="receive sen
         raise ValueError
 
 
-def do_client_connect(connect_packet, connack_packet, hostname="localhost", port=1888, timeout=10, connack_error="connack"):
+def client_connect_only(hostname="localhost", port=1888, timeout=10):
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     sock.settimeout(timeout)
     sock.connect((hostname, port))
+    return sock
+
+def do_client_connect(connect_packet, connack_packet, hostname="localhost", port=1888, timeout=10, connack_error="connack"):
+    sock = client_connect_only(hostname, port, timeout)
 
     return do_send_receive(sock, connect_packet, connack_packet, connack_error)
 
@@ -415,6 +421,16 @@ def read_publish(sock, proto_ver=4):
 
     payload = sock.recv(rl).decode('utf-8')
     return payload
+
+
+def gen_fixed_hdr(command, remaining_length):
+    return struct.pack("B", command) + pack_remaining_length(remaining_length)
+
+def gen_variable_hdr(mid=None):
+    if mid is not None:
+        return struct.pack("!H", mid)
+    else:
+        return b""
 
 
 def gen_connect(client_id, clean_session=True, keepalive=60, username=None, password=None, will_topic=None, will_qos=0, will_retain=False, will_payload=b"", proto_ver=4, connect_reserved=False, properties=b"", will_properties=b"", session_expiry=-1):
@@ -709,7 +725,7 @@ def get_port(count=1):
         else:
             return 1888
     else:
-        if len(sys.argv) == 1+count:
+        if len(sys.argv) >= 1+count:
             p = ()
             for i in range(0, count):
                 p = p + (int(sys.argv[1+i]),)

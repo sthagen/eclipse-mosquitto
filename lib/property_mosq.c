@@ -48,7 +48,9 @@ static int property__read(struct mosquitto__packet *packet, uint32_t *len, mosqu
 	if(!property) return MOSQ_ERR_INVAL;
 
 	rc = packet__read_varint(packet, &property_identifier, NULL);
-	if(rc) return rc;
+	if(rc){
+		return rc;
+	}
 	*len -= 1;
 
 	memset(property, 0, sizeof(mosquitto_property));
@@ -932,6 +934,7 @@ int mosquitto_property_check_all(int command, const mosquitto_property *properti
 	while(p){
 		/* Validity checks */
 		if(p->identifier == MQTT_PROP_REQUEST_PROBLEM_INFORMATION
+				|| p->identifier == MQTT_PROP_PAYLOAD_FORMAT_INDICATOR
 				|| p->identifier == MQTT_PROP_REQUEST_RESPONSE_INFORMATION
 				|| p->identifier == MQTT_PROP_MAXIMUM_QOS
 				|| p->identifier == MQTT_PROP_RETAIN_AVAILABLE
@@ -959,14 +962,14 @@ int mosquitto_property_check_all(int command, const mosquitto_property *properti
 		if(rc) return rc;
 
 		/* Check for duplicates */
-		tail = p->next;
-		while(tail){
-			if(p->identifier == tail->identifier
-					&& p->identifier != MQTT_PROP_USER_PROPERTY){
-
-				return MOSQ_ERR_DUPLICATE_PROPERTY;
+		if(p->identifier != MQTT_PROP_USER_PROPERTY){
+			tail = p->next;
+			while(tail){
+				if(p->identifier == tail->identifier){
+					return MOSQ_ERR_DUPLICATE_PROPERTY;
+				}
+				tail = tail->next;
 			}
-			tail = tail->next;
 		}
 
 		p = p->next;

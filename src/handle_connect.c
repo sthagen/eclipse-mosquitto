@@ -86,22 +86,25 @@ static char *client_id_gen(uint16_t *idlen, const char *auto_id_prefix, uint16_t
 static void connection_check_acl(struct mosquitto *context, struct mosquitto_client_msg **head)
 {
 	struct mosquitto_client_msg *msg_tail, *tmp;
+	int access;
 
 	DL_FOREACH_SAFE((*head), msg_tail, tmp){
 		if(msg_tail->direction == mosq_md_out){
-			if(mosquitto_acl_check(context, msg_tail->store->topic,
-								   msg_tail->store->payloadlen, msg_tail->store->payload,
-								   msg_tail->store->qos, msg_tail->store->retain, MOSQ_ACL_READ) != MOSQ_ERR_SUCCESS){
+			access = MOSQ_ACL_READ;
+		}else{
+			access = MOSQ_ACL_WRITE;
+		}
+		if(mosquitto_acl_check(context, msg_tail->store->topic,
+							   msg_tail->store->payloadlen, msg_tail->store->payload,
+							   msg_tail->store->qos, msg_tail->store->retain, access) != MOSQ_ERR_SUCCESS){
 
-				DL_DELETE((*head), msg_tail);
-				db__msg_store_ref_dec(&msg_tail->store);
-				mosquitto_property_free_all(&msg_tail->properties);
-				mosquitto__free(msg_tail);
-			}
+			DL_DELETE((*head), msg_tail);
+			db__msg_store_ref_dec(&msg_tail->store);
+			mosquitto_property_free_all(&msg_tail->properties);
+			mosquitto__free(msg_tail);
 		}
 	}
 }
-
 
 int connect__on_authorised(struct mosquitto *context, void *auth_data_out, uint16_t auth_data_out_len)
 {
@@ -163,12 +166,22 @@ int connect__on_authorised(struct mosquitto *context, void *auth_data_out, uint1
 
 			for(i=0; i<context->sub_count; i++){
 				if(context->subs[i]){
-					leaf = context->subs[i]->subs;
+					leaf = context->subs[i]->hier->subs;
 					while(leaf){
 						if(leaf->context == found_context){
 							leaf->context = context;
 						}
 						leaf = leaf->next;
+					}
+
+					if(context->subs[i]->shared){
+						leaf = context->subs[i]->shared->subs;
+						while(leaf){
+							if(leaf->context == found_context){
+								leaf->context = context;
+							}
+							leaf = leaf->next;
+						}
 					}
 				}
 			}
@@ -249,18 +262,25 @@ int connect__on_authorised(struct mosquitto *context, void *auth_data_out, uint1
 #endif
 	context->max_qos = context->listener->max_qos;
 
-	if(context->protocol == mosq_p_mqtt5){
-		if(context->listener->max_topic_alias > 0){
-			if(mosquitto_property_add_int16(&connack_props, MQTT_PROP_TOPIC_ALIAS_MAXIMUM, context->listener->max_topic_alias)){
+	if(db.config->max_keepalive &&
+			(context->keepalive > db.config->max_keepalive || context->keepalive == 0)){
+
+		context->keepalive = db.config->max_keepalive;
+		if(context->protocol == mosq_p_mqtt5){
+			if(mosquitto_property_add_int16(&connack_props, MQTT_PROP_SERVER_KEEP_ALIVE, context->keepalive)){
 				rc = MOSQ_ERR_NOMEM;
 				goto error;
 			}
+		}else{
+			send__connack(context, connect_ack, CONNACK_REFUSED_IDENTIFIER_REJECTED, NULL);
+			rc = MOSQ_ERR_INVAL;
+			goto error;
 		}
-		if(db.config->max_keepalive &&
-				(context->keepalive > db.config->max_keepalive || context->keepalive == 0)){
+	}
 
-			context->keepalive = db.config->max_keepalive;
-			if(mosquitto_property_add_int16(&connack_props, MQTT_PROP_SERVER_KEEP_ALIVE, context->keepalive)){
+	if(context->protocol == mosq_p_mqtt5){
+		if(context->listener->max_topic_alias > 0){
+			if(mosquitto_property_add_int16(&connack_props, MQTT_PROP_TOPIC_ALIAS_MAXIMUM, context->listener->max_topic_alias)){
 				rc = MOSQ_ERR_NOMEM;
 				goto error;
 			}
@@ -437,6 +457,9 @@ int handle__connect(struct mosquitto *context)
 		log__printf(NULL, MOSQ_LOG_NOTICE, "Bad client %s sending multiple CONNECT messages.", context->id);
 		rc = MOSQ_ERR_PROTOCOL;
 		goto handle_connect_error;
+	}
+	if(context->in_packet.command != CMD_CONNECT){
+		return MOSQ_ERR_MALFORMED_PACKET;
 	}
 
 	/* Read protocol name as length then bytes rather than with read_string
@@ -666,7 +689,7 @@ int handle__connect(struct mosquitto *context)
 		if(rc == MOSQ_ERR_NOMEM){
 			rc = MOSQ_ERR_NOMEM;
 			goto handle_connect_error;
-		}else if(rc == MOSQ_ERR_PROTOCOL){
+		}else if(rc == MOSQ_ERR_MALFORMED_PACKET){
 			if(context->protocol == mosq_p_mqtt31){
 				/* Password flag given, but no password. Ignore. */
 			}else{

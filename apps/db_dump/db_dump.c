@@ -130,7 +130,7 @@ static int dump__cfg_chunk_process(FILE *db_fd, uint32_t length)
 	if(do_print) printf("\tShutdown: %d\n", chunk.shutdown);
 	if(do_print) printf("\tDB ID size: %d\n", chunk.dbid_size);
 	if(chunk.dbid_size != sizeof(dbid_t)){
-		fprintf(stderr, "Error: Incompatible database configuration (dbid size is %d bytes, expected %ld)",
+		fprintf(stderr, "Error: Incompatible database configuration (dbid size is %d bytes, expected %zu)",
 				chunk.dbid_size, sizeof(dbid_t));
 		fclose(db_fd);
 		return 1;

@@ -25,7 +25,7 @@ def do_test(proto_ver):
         if proto_ver == 4:
             mosq_test.do_send_receive(sock, publish_packet, b"", "puback")
         else:
-            disconnect_packet = mosq_test.gen_disconnect(proto_ver=5, reason_code=mqtt5_rc.MQTT_RC_PROTOCOL_ERROR)
+            disconnect_packet = mosq_test.gen_disconnect(proto_ver=5, reason_code=mqtt5_rc.MQTT_RC_MALFORMED_PACKET)
             mosq_test.do_send_receive(sock, publish_packet, disconnect_packet, "puback")
 
         rc = 0

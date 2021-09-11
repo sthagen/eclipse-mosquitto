@@ -65,5 +65,4 @@ finally:
         print(stde.decode('utf-8'))
 
 if rc != 0:
-    print(test)
     exit(rc)

@@ -28,6 +28,12 @@
 		use the default values listed below. See
 		<citerefentry><refentrytitle><link xlink:href="mosquitto-8.html">mosquitto</link></refentrytitle><manvolnum>8</manvolnum></citerefentry>
 		for information on how to load a configuration file.</para>
+		<para>
+			Mosquitto can be instructed to reload the configuration file by sending
+			a SIGHUP signal as described in the Signals section of
+			<citerefentry><refentrytitle><link xlink:href="mosquitto-8.html">mosquitto</link></refentrytitle><manvolnum>8</manvolnum></citerefentry>.
+			Not all configuration options can be reloaded, as detailed in the options below.
+		</para>
 	</refsect1>
 
 	<refsect1>
@@ -250,35 +256,6 @@
 						to all listeners.</para>
 
 					<para>Reloaded on reload signal.</para>
-				</listitem>
-			</varlistentry>
-			<varlistentry>
-				<term><option>auth_opt_*</option> <replaceable>value</replaceable></term>
-				<listitem>
-					<para>Options to be passed to the auth plugin. See the
-						specific plugin instructions.</para>
-
-					<para>Applies to the current authentication plugin being configured.</para>
-				</listitem>
-			</varlistentry>
-			<varlistentry>
-				<term><option>auth_plugin</option> <replaceable>file path</replaceable></term>
-				<listitem>
-					<para>Specify an external module to use for authentication
-						and access control. This allows custom
-						username/password and access control functions to be
-						created.</para>
-					<para>Can be specified multiple times to load multiple
-						plugins. The plugins will be processed in the order
-						that they are specified.</para>
-					<para>If <option>password_file</option>, or
-						<option>acl_file</option> are used in the config file
-						alongsize <option>auth_plugin</option>, the plugin
-						checks will run after the built in checks.</para>
-					<para>Not currently reloaded on reload signal.</para>
-					<para>See also 
-						<ulink url="https://mosquitto.org/documentation/dynamic-security/"/>
-					</para>
 				</listitem>
 			</varlistentry>
 			<varlistentry>
@@ -624,6 +601,15 @@ log_timestamp_format %Y-%m-%dT%H:%M:%S
 						The maximum value allowable, and default value, is
 						65535. Do not set below 10 seconds.</para>
 
+					<para>
+						For MQTT v3.1.1 and v3.1 clients, there is no mechanism
+						to tell the client what keepalive value they should use.
+						If an MQTT v3.1.1 or v3.1 client specifies a keepalive
+						time greater than max_keepalive they will be sent a
+						CONNACK message with the "identifier rejected" reason
+						code, and disconnected.
+					</para>
+
 					<para>This option applies globally.</para>
 
 					<para>Reloaded on reload signal.</para>
@@ -781,9 +767,9 @@ log_timestamp_format %Y-%m-%dT%H:%M:%S
 						<option>acl_file</option>, <option>psk_file</option>,
 						<option>allow_anonymous</option>,
 						<option>allow_zero_length_clientid</option>,
-						<option>auth_plugin</option>,
-						<option>auth_opt_*</option>,
 						<option>auto_id_prefix</option>.</para>
+						<option>plugin</option>,
+						<option>plugin_opt_*</option>,
 					<para>Note that if set to true, then a durable client (i.e.
 						with clean session set to false) that has disconnected
 						will use the ACL settings defined for the listener that
@@ -884,6 +870,50 @@ log_timestamp_format %Y-%m-%dT%H:%M:%S
 						file. This should then be configured as e.g.
 						/var/run/mosquitto/mosquitto.pid</para>
 					<para>Not reloaded on reload signal.</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term><option>plugin_opt_*</option> <replaceable>value</replaceable></term>
+				<listitem>
+					<para>
+						Options to be passed to the most recent
+						<option>plugin</option> defined in the
+						configuration file. See the specific
+						plugin instructions for details of what
+						options are available.
+					</para>
+
+					<para>Applies to the current plugin being configured.</para>
+					<para>
+                        This is also available as the <option>auth_opt_*</option>
+                        option, but this use is deprecated and will be removed
+                        in a future version.
+					</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term><option>plugin</option> <replaceable>file path</replaceable></term>
+				<listitem>
+					<para>Specify an external module to use for authentication
+						and access control. This allows custom
+						username/password and access control functions to be
+						created.</para>
+					<para>Can be specified multiple times to load multiple
+						plugins. The plugins will be processed in the order
+						that they are specified.</para>
+					<para>If <option>password_file</option>, or
+						<option>acl_file</option> are used in the config file
+						alongsize <option>plugin</option>, the plugin
+						checks will run after the built in checks.</para>
+					<para>Not currently reloaded on reload signal.</para>
+					<para>See also
+						<ulink url="https://mosquitto.org/documentation/dynamic-security/"/>
+					</para>
+					<para>
+                        This is also available as the <option>auth_plugin</option>
+                        option, but this use is deprecated and will be removed
+                        in a future version.
+					</para>
 				</listitem>
 			</varlistentry>
 			<varlistentry>

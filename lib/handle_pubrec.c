@@ -49,6 +49,9 @@ int handle__pubrec(struct mosquitto *mosq)
 	if(mosquitto__get_state(mosq) != mosq_cs_active){
 		return MOSQ_ERR_PROTOCOL;
 	}
+	if(mosq->in_packet.command != CMD_PUBREC){
+		return MOSQ_ERR_MALFORMED_PACKET;
+	}
 
 	rc = packet__read_uint16(&mosq->in_packet, &mid);
 	if(rc) return rc;
@@ -58,12 +61,32 @@ int handle__pubrec(struct mosquitto *mosq)
 		rc = packet__read_byte(&mosq->in_packet, &reason_code);
 		if(rc) return rc;
 
+		if(reason_code != MQTT_RC_SUCCESS
+				&& reason_code != MQTT_RC_NO_MATCHING_SUBSCRIBERS
+				&& reason_code != MQTT_RC_UNSPECIFIED
+				&& reason_code != MQTT_RC_IMPLEMENTATION_SPECIFIC
+				&& reason_code != MQTT_RC_NOT_AUTHORIZED
+				&& reason_code != MQTT_RC_TOPIC_NAME_INVALID
+				&& reason_code != MQTT_RC_PACKET_ID_IN_USE
+				&& reason_code != MQTT_RC_QUOTA_EXCEEDED){
+
+			return MOSQ_ERR_PROTOCOL;
+		}
+
 		if(mosq->in_packet.remaining_length > 3){
 			rc = property__read_all(CMD_PUBREC, &mosq->in_packet, &properties);
 			if(rc) return rc;
+
 			/* Immediately free, we don't do anything with Reason String or User Property at the moment */
 			mosquitto_property_free_all(&properties);
 		}
+	}
+
+	if(mosq->in_packet.pos < mosq->in_packet.remaining_length){
+#ifdef WITH_BROKER
+		mosquitto_property_free_all(&properties);
+#endif
+		return MOSQ_ERR_MALFORMED_PACKET;
 	}
 
 #ifdef WITH_BROKER

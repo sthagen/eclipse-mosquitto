@@ -12,4 +12,4 @@ props_out = props_out+mqtt5_props.gen_uint16_prop(mqtt5_props.PROP_TOPIC_ALIAS, 
 
 props_in = mqtt5_props.gen_string_prop(mqtt5_props.PROP_CONTENT_TYPE, "text")
 
-helper.prop_subpub_helper(props_out, props_in)
+helper.prop_subpub_helper(props_out, props_in, expect_proto_error=False)

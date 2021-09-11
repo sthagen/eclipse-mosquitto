@@ -106,7 +106,10 @@ int retain__store(const char *topic, struct mosquitto_msg_store *stored, char **
 		 * they aren't for $SYS. */
 		db.persistence_changes++;
 	}
+#else
+	UNUSED(topic);
 #endif
+
 	if(retainhier->retained){
 		db__msg_store_ref_dec(&retainhier->retained);
 #ifdef WITH_SYS_TREE

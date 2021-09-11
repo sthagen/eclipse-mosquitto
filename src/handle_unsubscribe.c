@@ -45,6 +45,9 @@ int handle__unsubscribe(struct mosquitto *context)
 	if(context->state != mosq_cs_active){
 		return MOSQ_ERR_PROTOCOL;
 	}
+	if(context->in_packet.command != (CMD_UNSUBSCRIBE|2)){
+		return MOSQ_ERR_MALFORMED_PACKET;
+	}
 	log__printf(NULL, MOSQ_LOG_DEBUG, "Received UNSUBSCRIBE from %s", context->id);
 
 	if(context->protocol != mosq_p_mqtt31){

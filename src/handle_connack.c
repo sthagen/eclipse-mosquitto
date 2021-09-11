@@ -39,8 +39,14 @@ int handle__connack(struct mosquitto *context)
 	uint16_t server_keepalive;
 	uint8_t max_qos = 255;
 
-	if(context == NULL || context->bridge == NULL){
+	if(context == NULL){
 		return MOSQ_ERR_INVAL;
+	}
+	if(context->bridge == NULL){
+		return MOSQ_ERR_PROTOCOL;
+	}
+	if(context->in_packet.command != CMD_CONNACK){
+		return MOSQ_ERR_MALFORMED_PACKET;
 	}
 	log__printf(NULL, MOSQ_LOG_DEBUG, "Received CONNACK on connection %s.", context->id);
 	if(packet__read_byte(&context->in_packet, &connect_acknowledge)) return MOSQ_ERR_MALFORMED_PACKET;

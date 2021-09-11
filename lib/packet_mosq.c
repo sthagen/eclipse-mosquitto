@@ -423,7 +423,7 @@ int packet__read(struct mosquitto *mosq)
 				 * Anything more likely means a broken/malicious client.
 				 */
 				if(mosq->in_packet.remaining_count < -4){
-					return MOSQ_ERR_PROTOCOL;
+					return MOSQ_ERR_MALFORMED_PACKET;
 				}
 
 				G_BYTES_RECEIVED_INC(1);
@@ -455,6 +455,37 @@ int packet__read(struct mosquitto *mosq)
 		mosq->in_packet.remaining_count = (int8_t)(mosq->in_packet.remaining_count * -1);
 
 #ifdef WITH_BROKER
+		switch(mosq->in_packet.command & 0xF0){
+			case CMD_CONNECT:
+				if(mosq->in_packet.remaining_length > 100000){ /* Arbitrary limit, make configurable */
+					return MOSQ_ERR_MALFORMED_PACKET;
+				}
+				break;
+
+			case CMD_PUBACK:
+			case CMD_PUBREC:
+			case CMD_PUBREL:
+			case CMD_PUBCOMP:
+			case CMD_UNSUBACK:
+				if(mosq->protocol != mosq_p_mqtt5 && mosq->in_packet.remaining_length != 2){
+					return MOSQ_ERR_MALFORMED_PACKET;
+				}
+				break;
+
+			case CMD_PINGREQ:
+			case CMD_PINGRESP:
+				if(mosq->in_packet.remaining_length != 0){
+					return MOSQ_ERR_MALFORMED_PACKET;
+				}
+				break;
+
+			case CMD_DISCONNECT:
+				if(mosq->protocol != mosq_p_mqtt5 && mosq->in_packet.remaining_length != 0){
+					return MOSQ_ERR_MALFORMED_PACKET;
+				}
+				break;
+		}
+
 		if(db.config->max_packet_size > 0 && mosq->in_packet.remaining_length+1 > db.config->max_packet_size){
 			if(mosq->protocol == mosq_p_mqtt5){
 				send__disconnect(mosq, MQTT_RC_PACKET_TOO_LARGE, NULL);

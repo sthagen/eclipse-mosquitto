@@ -1,20 +1,19 @@
-FROM alpine:3.12
+FROM alpine:3.14
 
 LABEL maintainer="Roger Light <roger@atchoo.org>" \
     description="Eclipse Mosquitto MQTT Broker"
 
-ENV VERSION=2.0.11 \
-    DOWNLOAD_SHA256=7b36a7198bce85cf31b132f5c6ee36dcf5dadf86fb768501eb1e11ce95d4f78a \
+ENV VERSION=2.0.12 \
+    DOWNLOAD_SHA256=31cf0065cb431d6f4e57a5f4d56663e839c9d177362eff89582d7cfde191c933 \
     GPG_KEYS=A0D6EEA1DCAE49A635A3B2F0779B22DFB3E717B7 \
-    LWS_VERSION=4.2.0 \
-    LWS_SHA256=a57e9a4765dbcd4d880feba8089b43ed69995eaf10d5d61a07981d9ddd975f40 \
-    CJSON_VERSION=1.7.14 \
-    CJSON_SHA256=fb50a663eefdc76bafa80c82bc045af13b1363e8f45cec8b442007aef6a41343
+    LWS_VERSION=4.2.1 \
+    LWS_SHA256=842da21f73ccba2be59e680de10a8cce7928313048750eb6ad73b6fa50763c51
 
 RUN set -x && \
     apk --no-cache add --virtual build-deps \
         build-base \
         cmake \
+        cjson-dev \
         gnupg \
         linux-headers \
         openssl-dev \
@@ -41,21 +40,6 @@ RUN set -x && \
         -DLWS_WITH_ZLIB=OFF && \
     make -j "$(nproc)" && \
     rm -rf /root/.cmake && \
-    wget https://github.com/DaveGamble/cJSON/archive/v${CJSON_VERSION}.tar.gz -O /tmp/cjson.tar.gz && \
-    echo "$CJSON_SHA256  /tmp/cjson.tar.gz" | sha256sum -c - && \
-    mkdir -p /build/cjson && \
-    tar --strip=1 -xf /tmp/cjson.tar.gz -C /build/cjson && \
-    rm /tmp/cjson.tar.gz && \
-    cd /build/cjson && \
-    cmake . \
-        -DCMAKE_BUILD_TYPE=MinSizeRel \
-        -DBUILD_SHARED_AND_STATIC_LIBS=OFF \
-        -DBUILD_SHARED_LIBS=OFF \
-        -DCJSON_BUILD_SHARED_LIBS=OFF \
-        -DCJSON_OVERRIDE_BUILD_SHARED_LIBS=OFF \
-        -DCMAKE_INSTALL_PREFIX=/usr && \
-    make -j "$(nproc)" && \
-    rm -rf /root/.cmake && \
     wget https://mosquitto.org/files/source/mosquitto-${VERSION}.tar.gz -O /tmp/mosq.tar.gz && \
     echo "$DOWNLOAD_SHA256  /tmp/mosq.tar.gz" | sha256sum -c - && \
     wget https://mosquitto.org/files/source/mosquitto-${VERSION}.tar.gz.asc -O /tmp/mosq.tar.gz.asc && \
@@ -79,7 +63,7 @@ RUN set -x && \
     rm /tmp/mosq.tar.gz && \
     make -C /build/mosq -j "$(nproc)" \
         CFLAGS="-Wall -O2 -I/build/lws/include -I/build" \
-        LDFLAGS="-L/build/lws/lib -L/build/cjson" \
+        LDFLAGS="-L/build/lws/lib" \
         WITH_ADNS=no \
         WITH_DOCS=no \
         WITH_SHARED_LIBRARIES=yes \
@@ -101,13 +85,13 @@ RUN set -x && \
     install -s -m755 /build/mosq/apps/mosquitto_passwd/mosquitto_passwd /usr/bin/mosquitto_passwd && \
     install -s -m755 /build/mosq/plugins/dynamic-security/mosquitto_dynamic_security.so /usr/lib/mosquitto_dynamic_security.so && \
     install -m644 /build/mosq/mosquitto.conf /mosquitto/config/mosquitto.conf && \
-    install -Dm644 /build/cjson/LICENSE /usr/share/licenses/cJSON/LICENSE && \
     install -Dm644 /build/lws/LICENSE /usr/share/licenses/libwebsockets/LICENSE && \
     install -Dm644 /build/mosq/epl-v20 /usr/share/licenses/mosquitto/epl-v20 && \
     install -Dm644 /build/mosq/edl-v10 /usr/share/licenses/mosquitto/edl-v10 && \
     chown -R mosquitto:mosquitto /mosquitto && \
     apk --no-cache add \
-        ca-certificates && \
+        ca-certificates \
+        cjson && \
     apk del build-deps && \
     rm -rf /build
 
