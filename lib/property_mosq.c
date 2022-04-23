@@ -169,7 +169,7 @@ int property__read_all(int command, struct mosquitto__packet *packet, mosquitto_
 			return MOSQ_ERR_NOMEM;
 		}
 
-		rc = property__read(packet, &proplen, p); 
+		rc = property__read(packet, &proplen, p);
 		if(rc){
 			mosquitto__free(p);
 			mosquitto_property_free_all(properties);

@@ -119,7 +119,8 @@
 				{"type":"send", "payload":"10 17 00 04 4D515454 04 C2 000A 0001 70 0001 70 0005 746F700000"},
 				{"type":"recv", "payload":"20 02 00 00", "comment": "CONNACK"}
 			]},
-			{ "name": "duplicate CONNECT", "msgs":[{"type":"send", "payload":"10 0D 0004 4D515454 04 02 000A 0001 70", "comment":"minimal valid duplicate CONNECT"}]}
+			{ "name": "duplicate CONNECT", "msgs":[{"type":"send", "payload":"10 0D 0004 4D515454 04 02 000A 0001 70", "comment":"minimal valid duplicate CONNECT"}]},
+			{ "name": "NanoMQ CWE-119", "msgs":[{"type":"send", "payload":"10 07 0004 4D515454 04 C2 003C 000B 746573742D707974686F6E 0005 61646d696E 0008 70617373776F7264"}]}
 		]
 	},
 	{

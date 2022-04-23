@@ -461,7 +461,7 @@
 				<listitem>
 					<para>
 						If retain is given, the message will be retained as a
-						"last known good" value on the broker. See 
+						"last known good" value on the broker. See
 						<citerefentry><refentrytitle><link xlink:href="mqtt-7.html">mqtt</link></refentrytitle><manvolnum>7</manvolnum></citerefentry>
 						for more information. Note that zero length payloads
 						are never retained. If you send a zero length
@@ -555,7 +555,7 @@
 				<listitem>
                     <para>
                         If used, this will load and trust the OS provided CA
-                        certificates. This can be used in conjunction with 
+                        certificates. This can be used in conjunction with
                         <option>--cafile</option> and <option>--capath</option>
                         and can be used on its own to enable TLS mode. This
 						will be set by default if <option>-L mqtts://...</option>

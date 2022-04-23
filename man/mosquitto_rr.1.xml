@@ -572,7 +572,7 @@
 				<listitem>
                     <para>
                         If used, this will load and trust the OS provided CA
-                        certificates. This can be used in conjunction with 
+                        certificates. This can be used in conjunction with
                         <option>--cafile</option> and <option>--capath</option>
                         and can be used on its own to enable TLS mode. This
 						will be set by default if <option>-L mqtts://...</option>

@@ -92,7 +92,7 @@ def do_test(proto_ver):
 
         # Send a legitimate publish packet to verify everything is still ok
         conn.send(publish_packet)
-        
+
         mosq_test.expect_packet(conn, "puback", puback_packet)
         rc = 0
 

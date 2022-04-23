@@ -253,7 +253,7 @@ int connect__on_authorised(struct mosquitto *context, void *auth_data_out, uint1
 	connection_check_acl(context, &context->msgs_out.inflight);
 	connection_check_acl(context, &context->msgs_out.queued);
 
-	HASH_ADD_KEYPTR(hh_id, db.contexts_by_id, context->id, strlen(context->id), context);
+	context__add_to_by_id(context);
 
 #ifdef WITH_PERSISTENCE
 	if(!context->clean_start){
@@ -908,12 +908,6 @@ int handle__connect(struct mosquitto *context)
 #endif
 		{
 			rc = mosquitto_unpwd_check(context);
-			if(rc != MOSQ_ERR_SUCCESS){
-				/* We must have context->id == NULL here so we don't later try and
-				* remove the client from the by_id hash table */
-				mosquitto__free(context->id);
-				context->id = NULL;
-			}
 			switch(rc){
 				case MOSQ_ERR_SUCCESS:
 					break;

@@ -32,6 +32,7 @@ msg_sequence_test:
 	./01-connect-uname-or-anon.py
 	./01-connect-uname-password-denied-no-will.py
 	./01-connect-uname-password-denied.py
+	./01-connect-windows-line-endings.py
 	./01-connect-zero-length-id.py
 
 
@@ -53,6 +54,7 @@ msg_sequence_test:
 	./02-subpub-qos1-oversize-payload.py
 	./02-subpub-qos1.py
 	./02-subpub-qos2-1322.py
+	./02-subpub-qos2-max-inflight-bytes.py
 	./02-subpub-qos2-pubrec-error.py
 	./02-subpub-qos2-receive-maximum-1.py
 	./02-subpub-qos2-receive-maximum-2.py
@@ -133,6 +135,7 @@ msg_sequence_test:
 	./07-will-null-topic.py
 	./07-will-null.py
 	./07-will-oversize-payload.py
+	./07-will-per-listener.py
 	./07-will-properties.py
 	./07-will-qos0.py
 	./07-will-reconnect-1273.py
@@ -165,6 +168,7 @@ endif
 	./09-extended-auth-change-username.py
 	./09-extended-auth-multistep-reauth.py
 	./09-extended-auth-multistep.py
+	./09-extended-auth-reauth.py
 	./09-extended-auth-single.py
 	./09-plugin-acl-change.py
 	./09-plugin-auth-acl-pub.py

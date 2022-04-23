@@ -86,7 +86,7 @@
 			described in
 			<citerefentry><refentrytitle><link xlink:href="mosquitto-conf-5.html">mosquitto.conf</link></refentrytitle><manvolnum>5</manvolnum></citerefentry>
 			and this is the main point of information for mosquitto.
-			The files required for SSL/TLS support are described in 
+			The files required for SSL/TLS support are described in
 			<citerefentry><refentrytitle><link xlink:href="mosquitto-tls-7.html">mosquitto-tls</link></refentrytitle><manvolnum>7</manvolnum></citerefentry>.
 		</para>
 	</refsect1>

@@ -1,4 +1,4 @@
-# Docker Images 
+# Docker Images
 
 This directory contains Docker files for Mosquitto.
 

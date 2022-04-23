@@ -63,7 +63,7 @@ static void TEST_sub_add_single(void)
 	CU_ASSERT_PTR_NOT_NULL(db.subs);
 	if(db.subs){
 		sub = db.subs;
-		
+
 		hier_quick_check(&sub, NULL, "");
 		hier_quick_check(&sub, NULL, "");
 		hier_quick_check(&sub, NULL, "a");

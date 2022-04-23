@@ -21,7 +21,7 @@
 #mosquitto_pub -t "topic1" -q 2 -c --id "foobar" -m "message3"
 ## message3 on topic1 IS NOT RECEIVED
 #
-## listen on topic2 
+## listen on topic2
 #mosquitto_sub -t "topic2"
 #
 ## publish to topic1 without clean session
@@ -112,7 +112,7 @@ def do_test(proto_ver):
 
         # We expect nothing on sub2
         mosq_test.do_ping(sub2, error_string="pingresp2")
-    
+
         mosq_test.expect_packet(sub1, "publish4", publish4r_packet)
         pub = mosq_test.do_client_connect(pub_connect_packet, pub_connack2_packet, timeout=10, port=port)
         mosq_test.do_send_receive(pub, publish5s_packet, pubrec_packet, "pubrec5")
@@ -121,7 +121,7 @@ def do_test(proto_ver):
 
         # We expect nothing on sub2
         mosq_test.do_ping(sub2, error_string="pingresp2")
-            
+
         mosq_test.expect_packet(sub1, "publish5", publish5r_packet)
         rc = 0
 

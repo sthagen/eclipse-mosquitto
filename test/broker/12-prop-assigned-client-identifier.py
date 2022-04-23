@@ -35,7 +35,7 @@ def do_test(clean_start):
         if connack_recvd[0:12] == connack_packet[0:12]:
             # FIXME - this test could be tightened up a lot
             rc = 0
-    
+
         sock.close()
     except mosq_test.TestError:
         pass

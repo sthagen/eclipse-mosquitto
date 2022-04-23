@@ -4,12 +4,12 @@ Copyright (c) 2010-2020 Roger Light <roger@atchoo.org>
 All rights reserved. This program and the accompanying materials
 are made available under the terms of the Eclipse Public License 2.0
 and Eclipse Distribution License v1.0 which accompany this distribution.
- 
+
 The Eclipse Public License is available at
    https://www.eclipse.org/legal/epl-2.0/
 and the Eclipse Distribution License is available at
   http://www.eclipse.org/org/documents/edl-v10.php.
- 
+
 SPDX-License-Identifier: EPL-2.0 OR BSD-3-Clause
 
 Contributors:
@@ -155,6 +155,8 @@ int mosquitto_reinitialise(struct mosquitto *mosq, const char *id, bool clean_st
 	}
 	mosq->protocol = mosq_p_mqtt311;
 	mosq->sock = INVALID_SOCKET;
+	mosq->sockpairR = INVALID_SOCKET;
+	mosq->sockpairW = INVALID_SOCKET;
 	mosq->keepalive = 60;
 	mosq->clean_start = clean_start;
 	if(id){

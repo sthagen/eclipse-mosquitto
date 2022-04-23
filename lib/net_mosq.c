@@ -668,7 +668,7 @@ static int net__init_ssl_ctx(struct mosquitto *mosq)
 #if !defined(OPENSSL_NO_ENGINE)
 	EVP_PKEY *pkey;
 #endif
- 
+
 #ifndef WITH_BROKER
 	if(mosq->user_ssl_ctx){
 		mosq->ssl_ctx = mosq->user_ssl_ctx;

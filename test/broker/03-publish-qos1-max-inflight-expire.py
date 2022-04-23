@@ -14,7 +14,7 @@ def write_config(filename, port):
 def do_test(proto_ver):
     rc = 1
     keepalive = 60
-    
+
     properties = mqtt5_props.gen_uint32_prop(mqtt5_props.PROP_SESSION_EXPIRY_INTERVAL, 1000)
     sub_connect_packet = mosq_test.gen_connect("sub", keepalive=keepalive, properties=properties, proto_ver=proto_ver, clean_session=False)
 
@@ -61,7 +61,7 @@ def do_test(proto_ver):
         #mosq_test.expect_packet(sub_sock, "publish 2", r_publish_packet)
         #sub_sock.send(r_puback_packet)
 
-        # 
+        #
         mid = 1
         s_publish_packet = mosq_test.gen_publish("pub/qos1/test", qos=1, mid=mid, payload="message2", proto_ver=proto_ver)
         s_puback_packet = mosq_test.gen_puback(mid, proto_ver=proto_ver)

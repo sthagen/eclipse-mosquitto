@@ -52,7 +52,7 @@ def do_test():
         mosq_test.do_send_receive(helper, publish2s_packet, puback2s_packet, "puback 2")
 
         time.sleep(2)
-    
+
         sock = mosq_test.do_client_connect(connect_packet, connack2_packet, timeout=20, port=port)
         packet = sock.recv(len(publish2s_packet))
         for i in range(9, 5, -1):

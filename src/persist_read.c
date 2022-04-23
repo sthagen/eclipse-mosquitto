@@ -64,7 +64,7 @@ static struct mosquitto *persist__find_or_add_context(const char *client_id, uin
 
 		context->clean_start = false;
 
-		HASH_ADD_KEYPTR(hh_id, db.contexts_by_id, context->id, strlen(context->id), context);
+		context__add_to_by_id(context);
 	}
 	if(last_mid){
 		context->last_mid = last_mid;
@@ -156,17 +156,13 @@ static int persist__client_msg_restore(struct P_client_msg *chunk)
 
 	if(chunk->F.state == mosq_ms_queued || (chunk->F.qos > 0 && msg_data->inflight_quota == 0)){
 		DL_APPEND(msg_data->queued, cmsg);
+		db__msg_add_to_queued_stats(msg_data, cmsg);
 	}else{
 		DL_APPEND(msg_data->inflight, cmsg);
 		if(chunk->F.qos > 0 && msg_data->inflight_quota > 0){
 			msg_data->inflight_quota--;
 		}
-	}
-	msg_data->msg_count++;
-	msg_data->msg_bytes += cmsg->store->payloadlen;
-	if(chunk->F.qos > 0){
-		msg_data->msg_count12++;
-		msg_data->msg_bytes12 += cmsg->store->payloadlen;
+		db__msg_add_to_inflight_stats(msg_data, cmsg);
 	}
 
 	return MOSQ_ERR_SUCCESS;

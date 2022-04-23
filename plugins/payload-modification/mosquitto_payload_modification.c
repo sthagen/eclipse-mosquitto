@@ -4,12 +4,12 @@ Copyright (c) 2020 Roger Light <roger@atchoo.org>
 All rights reserved. This program and the accompanying materials
 are made available under the terms of the Eclipse Public License 2.0
 and Eclipse Distribution License v1.0 which accompany this distribution.
- 
+
 The Eclipse Public License is available at
    https://www.eclipse.org/legal/epl-2.0/
 and the Eclipse Distribution License is available at
   http://www.eclipse.org/org/documents/edl-v10.php.
- 
+
 SPDX-License-Identifier: EPL-2.0 OR BSD-3-Clause
 
 Contributors:
@@ -19,7 +19,7 @@ Contributors:
 /*
  * This is an *example* plugin which demonstrates how to modify the payload of
  * a message after it is received by the broker and before it is sent on to
- * other clients. 
+ * other clients.
  *
  * You should be very sure of what you are doing before making use of this feature.
  *
@@ -76,7 +76,7 @@ static int callback_message(int event, void *event_data, void *userdata)
 	 * broker. */
 	ed->payload = new_payload;
 	ed->payloadlen = new_payloadlen;
-	
+
 	return MOSQ_ERR_SUCCESS;
 }
 

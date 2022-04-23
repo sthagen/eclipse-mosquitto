@@ -4,12 +4,12 @@ Copyright (c) 2009-2020 Roger Light <roger@atchoo.org>
 All rights reserved. This program and the accompanying materials
 are made available under the terms of the Eclipse Public License 2.0
 and Eclipse Distribution License v1.0 which accompany this distribution.
- 
+
 The Eclipse Public License is available at
    https://www.eclipse.org/legal/epl-2.0/
 and the Eclipse Distribution License is available at
   http://www.eclipse.org/org/documents/edl-v10.php.
- 
+
 SPDX-License-Identifier: EPL-2.0 OR BSD-3-Clause
 
 Contributors:
@@ -324,7 +324,7 @@ void sys_tree__update(int interval, time_t start_time)
 			len = (uint32_t)snprintf(buf, BUFLEN, "%lu", msgs_received);
 			db__messages_easy_queue(NULL, "$SYS/broker/messages/received", SYS_TREE_QOS, len, buf, 1, 60, NULL);
 		}
-		
+
 		if(msgs_sent != g_msgs_sent){
 			msgs_sent = g_msgs_sent;
 			len = (uint32_t)snprintf(buf, BUFLEN, "%lu", msgs_sent);
@@ -342,7 +342,7 @@ void sys_tree__update(int interval, time_t start_time)
 			len = (uint32_t)snprintf(buf, BUFLEN, "%lu", pub_msgs_received);
 			db__messages_easy_queue(NULL, "$SYS/broker/publish/messages/received", SYS_TREE_QOS, len, buf, 1, 60, NULL);
 		}
-		
+
 		if(pub_msgs_sent != g_pub_msgs_sent){
 			pub_msgs_sent = g_pub_msgs_sent;
 			len = (uint32_t)snprintf(buf, BUFLEN, "%lu", pub_msgs_sent);
@@ -354,13 +354,13 @@ void sys_tree__update(int interval, time_t start_time)
 			len = (uint32_t)snprintf(buf, BUFLEN, "%llu", bytes_received);
 			db__messages_easy_queue(NULL, "$SYS/broker/bytes/received", SYS_TREE_QOS, len, buf, 1, 60, NULL);
 		}
-		
+
 		if(bytes_sent != g_bytes_sent){
 			bytes_sent = g_bytes_sent;
 			len = (uint32_t)snprintf(buf, BUFLEN, "%llu", bytes_sent);
 			db__messages_easy_queue(NULL, "$SYS/broker/bytes/sent", SYS_TREE_QOS, len, buf, 1, 60, NULL);
 		}
-		
+
 		if(pub_bytes_received != g_pub_bytes_received){
 			pub_bytes_received = g_pub_bytes_received;
 			len = (uint32_t)snprintf(buf, BUFLEN, "%llu", pub_bytes_received);

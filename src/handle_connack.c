@@ -37,6 +37,7 @@ int handle__connack(struct mosquitto *context)
 	uint32_t maximum_packet_size;
 	uint8_t retain_available;
 	uint16_t server_keepalive;
+	uint16_t inflight_maximum;
 	uint8_t max_qos = 255;
 
 	if(context == NULL){
@@ -83,9 +84,12 @@ int handle__connack(struct mosquitto *context)
 		}
 
 		/* receive-maximum */
-		mosquitto_property_read_int16(properties, MQTT_PROP_RECEIVE_MAXIMUM,
-				&context->msgs_out.inflight_maximum, false);
-		context->msgs_out.inflight_quota = context->msgs_out.inflight_maximum;
+		inflight_maximum = context->msgs_out.inflight_maximum;
+		mosquitto_property_read_int16(properties, MQTT_PROP_RECEIVE_MAXIMUM, &inflight_maximum, false);
+		if(context->msgs_out.inflight_maximum != inflight_maximum){
+			context->msgs_out.inflight_maximum = inflight_maximum;
+			db__message_reconnect_reset(context);
+		}
 
 		/* retain-available */
 		if(mosquitto_property_read_byte(properties, MQTT_PROP_RETAIN_AVAILABLE,

@@ -4,12 +4,12 @@ Copyright (c) 2009-2020 Roger Light <roger@atchoo.org>
 All rights reserved. This program and the accompanying materials
 are made available under the terms of the Eclipse Public License 2.0
 and Eclipse Distribution License v1.0 which accompany this distribution.
- 
+
 The Eclipse Public License is available at
    https://www.eclipse.org/legal/epl-2.0/
 and the Eclipse Distribution License is available at
   http://www.eclipse.org/org/documents/edl-v10.php.
- 
+
 SPDX-License-Identifier: EPL-2.0 OR BSD-3-Clause
 
 Contributors:
@@ -39,7 +39,7 @@ struct mosquitto *context__init(mosq_sock_t sock)
 
 	context = mosquitto__calloc(1, sizeof(struct mosquitto));
 	if(!context) return NULL;
-	
+
 #ifdef WITH_EPOLL
 	context->ident = id_client;
 #else
@@ -212,9 +212,8 @@ void context__disconnect(struct mosquitto *context)
 
 	plugin__handle_disconnect(context, -1);
 
-	net__socket_close(context);
-
 	context__send_will(context);
+	net__socket_close(context);
 	if(context->session_expiry_interval == 0){
 		/* Client session is due to be expired now */
 #ifdef WITH_BRIDGE
@@ -282,16 +281,25 @@ void context__free_disused(void)
 }
 
 
+void context__add_to_by_id(struct mosquitto *context)
+{
+	if(context->in_by_id == false){
+		context->in_by_id = true;
+		HASH_ADD_KEYPTR(hh_id, db.contexts_by_id, context->id, strlen(context->id), context);
+	}
+}
+
+
 void context__remove_from_by_id(struct mosquitto *context)
 {
 	struct mosquitto *context_found;
 
-	if(context->removed_from_by_id == false && context->id){
+	if(context->in_by_id == true && context->id){
 		HASH_FIND(hh_id, db.contexts_by_id, context->id, strlen(context->id), context_found);
 		if(context_found){
 			HASH_DELETE(hh_id, db.contexts_by_id, context_found);
 		}
-		context->removed_from_by_id = true;
+		context->in_by_id = false;
 	}
 }
 

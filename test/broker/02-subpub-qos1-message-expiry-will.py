@@ -45,7 +45,7 @@ def do_test():
         helper = mosq_test.do_client_connect(helper_connect, helper_connack, timeout=20, port=port)
 
         time.sleep(2)
-    
+
         sock = mosq_test.do_client_connect(connect_packet, connack2_packet, timeout=20, port=port)
         packet = sock.recv(len(publish2s_packet))
         for i in range(10, 5, -1):

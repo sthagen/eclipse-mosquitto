@@ -60,7 +60,7 @@ int mosquitto_auth_acl_check(void *user_data, int access, struct mosquitto *clie
 		abort();
 		return MOSQ_ERR_ACL_DENIED;
 	}
-	
+
 	return MOSQ_ERR_SUCCESS;
 }
 

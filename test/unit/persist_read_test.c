@@ -574,7 +574,7 @@ static void TEST_v6_client(void)
 	memset(&config, 0, sizeof(struct mosquitto__config));
 	memset(&listener, 0, sizeof(struct mosquitto__listener));
 	db.config = &config;
-	
+
 	listener.port = 1883;
 	config.per_listener_settings = true;
 	config.listeners = &listener;

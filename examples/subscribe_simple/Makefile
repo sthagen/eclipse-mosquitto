@@ -25,5 +25,5 @@ multiple.o : multiple.c ../../lib/libmosquitto.so.${SOVERSION}
 ../../lib/libmosquitto.so.${SOVERSION} :
 	$(MAKE) -C ../../lib
 
-clean : 
+clean :
 	-rm -f *.o sub_single sub_multiple

@@ -55,7 +55,7 @@ int main(int argc, char *argv[])
 	if(rc){
 		printf("loop_start failed: %s\n", mosquitto_strerror(rc));
 	}
-	
+
 	/* 50 millis to be system polite */
 	struct timespec tv = { 0, 50e6 };
 	while(should_run){

@@ -32,6 +32,7 @@ Contributors:
 #  include <aclapi.h>
 #  include <io.h>
 #  include <lmcons.h>
+#  include <fcntl.h>
 #else
 #  include <sys/stat.h>
 #endif
@@ -45,6 +46,8 @@ FILE *mosquitto__fopen(const char *path, const char *mode, bool restrict_read)
 #ifdef WIN32
 	char buf[4096];
 	int rc;
+	int flags = 0;
+
 	rc = ExpandEnvironmentStringsA(path, buf, 4096);
 	if(rc == 0 || rc > 4096){
 		return NULL;
@@ -64,9 +67,11 @@ FILE *mosquitto__fopen(const char *path, const char *mode, bool restrict_read)
 			switch(mode[0]){
 				case 'a':
 					dwCreationDisposition = OPEN_ALWAYS;
+					flags = _O_APPEND;
 					break;
 				case 'r':
 					dwCreationDisposition = OPEN_EXISTING;
+					flags = _O_RDONLY;
 					break;
 				case 'w':
 					dwCreationDisposition = CREATE_ALWAYS;
@@ -88,6 +93,7 @@ FILE *mosquitto__fopen(const char *path, const char *mode, bool restrict_read)
 				return NULL;
 			}
 
+			memset(&sec, 0, sizeof(sec));
 			sec.nLength = sizeof(SECURITY_ATTRIBUTES);
 			sec.bInheritHandle = FALSE;
 			sec.lpSecurityDescriptor = &sd;
@@ -100,7 +106,7 @@ FILE *mosquitto__fopen(const char *path, const char *mode, bool restrict_read)
 
 			LocalFree(pacl);
 
-			fd = _open_osfhandle((intptr_t)hfile, 0);
+			fd = _open_osfhandle((intptr_t)hfile, flags);
 			if (fd < 0) {
 				return NULL;
 			}
@@ -109,6 +115,9 @@ FILE *mosquitto__fopen(const char *path, const char *mode, bool restrict_read)
 			if (!fptr) {
 				_close(fd);
 				return NULL;
+			}
+			if(mode[0] == 'a'){
+				fseek(fptr, 0, SEEK_END);
 			}
 			return fptr;
 

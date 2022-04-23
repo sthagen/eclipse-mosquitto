@@ -176,7 +176,7 @@
 					<para>Reloaded on reload signal. The currently loaded ACLs
 						will be freed and reloaded. Existing subscriptions will
 						be affected after the reload.</para>
-					<para>See also 
+					<para>See also
 						<ulink url="https://mosquitto.org/documentation/dynamic-security/"/>
 					</para>
 				</listitem>
@@ -456,7 +456,7 @@ D.conf
 					<para>Send log messages to a particular destination.
 						Possible destinations are: <option>stdout</option>
 						<option>stderr</option> <option>syslog</option>
-						<option>topic</option> <option>file</option> 
+						<option>topic</option> <option>file</option>
 						<option>dlt</option>.</para>
 					<para><option>stdout</option> and
 						<option>stderr</option> log to the console on the
@@ -599,7 +599,15 @@ log_timestamp_format %Y-%m-%dT%H:%M:%S
 						be sent a server keepalive telling them to use
 						max_keepalive. This only applies to MQTT v5 clients.
 						The maximum value allowable, and default value, is
-						65535. Do not set below 10 seconds.</para>
+						65535.</para>
+
+					<para>
+						Set to 0 to allow clients to set keepalive = 0, which
+						means no keepalive checks are made and the client will
+						never be disconnected by the broker if no messages are
+						received. You should be very sure this is the behaviour
+						that you want.
+					</para>
 
 					<para>
 						For MQTT v3.1.1 and v3.1 clients, there is no mechanism

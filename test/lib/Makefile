@@ -16,10 +16,10 @@ test : c cpp
 
 test-compile : test-compile-c test-compile-cpp
 
-test-compile-c : 
+test-compile-c :
 	$(MAKE) -C c
 
-test-compile-cpp : 
+test-compile-cpp :
 	$(MAKE) -C cpp
 
 c : test-compile
@@ -75,6 +75,6 @@ endif
 	./11-prop-recv-qos1.py $@/11-prop-recv-qos1.test
 	./11-prop-recv-qos2.py $@/11-prop-recv-qos2.test
 
-clean : 
+clean :
 	$(MAKE) -C c clean
 	$(MAKE) -C cpp clean

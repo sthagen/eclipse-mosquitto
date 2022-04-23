@@ -42,7 +42,7 @@ def run_test(msg, opts):
     proc = subprocess.run(args, stdout=subprocess.DEVNULL)
     if proc.returncode != 0:
         raise RuntimeError("BUILD FAILED: %s" % (' '.join(args)))
-    
+
 def simple_tests():
     for bv in build_variants:
         for enabled in ["yes", "no"]:

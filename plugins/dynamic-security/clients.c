@@ -153,7 +153,7 @@ int dynsec_clients__config_load(cJSON *tree)
 			j_password = cJSON_GetObjectItem(j_client, "password");
 			j_iterations = cJSON_GetObjectItem(j_client, "iterations");
 
-			if(j_salt && cJSON_IsString(j_salt) 
+			if(j_salt && cJSON_IsString(j_salt)
 					&& j_password && cJSON_IsString(j_password)
 					&& j_iterations && cJSON_IsNumber(j_iterations)){
 

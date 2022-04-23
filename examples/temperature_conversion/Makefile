@@ -14,5 +14,5 @@ main.o : main.cpp
 temperature_conversion.o : temperature_conversion.cpp
 	${CXX} -c $^ -o $@ ${CFLAGS}
 
-clean : 
+clean :
 	-rm -f *.o mqtt_temperature_conversion

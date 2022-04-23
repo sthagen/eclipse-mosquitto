@@ -19,7 +19,7 @@ auth_plugin.so : auth_plugin.c
 ../lib/libmosquitto.a :
 	$(MAKE) -C ../../lib libmosquitto.a
 
-clean : 
+clean :
 	-rm -f *.o random_client *.gcda *.gcno
 
 test : all

@@ -127,7 +127,7 @@ WITH_XTREPORT=no
 
 # Also bump lib/mosquitto.h, CMakeLists.txt,
 # installer/mosquitto.nsi, installer/mosquitto64.nsi
-VERSION=2.0.12
+VERSION=2.0.14
 
 # Client library SO version. Bump if incompatible API/ABI changes are made.
 SOVERSION=1
@@ -331,11 +331,6 @@ endif
 ifeq ($(WITH_WEBSOCKETS),yes)
 	BROKER_CPPFLAGS:=$(BROKER_CPPFLAGS) -DWITH_WEBSOCKETS
 	BROKER_LDADD:=$(BROKER_LDADD) -lwebsockets
-endif
-
-ifeq ($(WITH_WEBSOCKETS),static)
-	BROKER_CPPFLAGS:=$(BROKER_CPPFLAGS) -DWITH_WEBSOCKETS
-	BROKER_LDADD:=$(BROKER_LDADD) -static -lwebsockets
 endif
 
 INSTALL?=install

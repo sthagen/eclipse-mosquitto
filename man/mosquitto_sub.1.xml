@@ -651,7 +651,7 @@ mosquitto_sub -t 'bbc/#' -T bbc/bbc1 --remove-retained</programlisting>
 				<listitem>
                     <para>
                         If used, this will load and trust the OS provided CA
-                        certificates. This can be used in conjunction with 
+                        certificates. This can be used in conjunction with
                         <option>--cafile</option> and <option>--capath</option>
                         and can be used on its own to enable TLS mode. This
 						will be set by default if <option>-L mqtts://...</option>
@@ -889,7 +889,7 @@ mosquitto_sub -t 'bbc/#' -T bbc/bbc1 --remove-retained</programlisting>
                 </para>
 				<para>
 					For example <option>%10.10t</option> would set the minimum topic
-					field width to 10 characters, and the maximum topic width to 
+					field width to 10 characters, and the maximum topic width to
                     10 characters, i.e. the field will always be exactly 10
                     characters long.
 				</para>

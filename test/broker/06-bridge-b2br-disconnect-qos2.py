@@ -22,7 +22,7 @@ def do_test(proto_ver):
     else:
         bridge_protocol = "mqttv50"
         proto_ver_connect = 5
-        
+
     (port1, port2) = mosq_test.get_port(2)
     conf_file = os.path.basename(__file__).replace('.py', '.conf')
     write_config(conf_file, port1, port2, bridge_protocol)

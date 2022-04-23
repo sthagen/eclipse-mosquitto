@@ -35,7 +35,7 @@ Version 2.0.5 of Mosquitto has been released. This is a bugfix release.
 # Build
 - `install` Makefile target should depend on `all`, not `mosquitto`, to ensure
   that man pages are always built. Closes [#1989].
-- Fixes for lots of minor build warnings highlighted by Visual Studio. 
+- Fixes for lots of minor build warnings highlighted by Visual Studio.
 
 # Apps
 - Disallow control characters in mosquitto_passwd usernames.

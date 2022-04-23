@@ -113,3 +113,11 @@ int send__pubrel(struct mosquitto *mosq, uint16_t mid, const mosquitto_property 
 
 	return MOSQ_ERR_SUCCESS;
 }
+
+void context__add_to_by_id(struct mosquitto *context)
+{
+	if(context->in_by_id == false){
+		context->in_by_id = true;
+		HASH_ADD_KEYPTR(hh_id, db.contexts_by_id, context->id, strlen(context->id), context);
+	}
+}

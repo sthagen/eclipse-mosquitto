@@ -11,5 +11,5 @@ mosquitto_mysql_log : mysql_log.o
 mysql_log.o : mysql_log.c
 	${CC} -c $^ -o $@ ${CFLAGS} -I../../lib
 
-clean : 
+clean :
 	-rm -f *.o mosquitto_mysql_log

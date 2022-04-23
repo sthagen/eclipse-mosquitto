@@ -76,7 +76,7 @@ try:
     broker = mosq_test.start_broker(filename=os.path.basename(__file__), use_conf=True, port=port)
 
     time.sleep(7)
-    
+
     sock = mosq_test.do_client_connect(connect_packet, connack2_packet, timeout=20, port=port)
     packet = sock.recv(len(publish2s_packet))
     for i in range(100, 1, -1):

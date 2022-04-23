@@ -64,7 +64,6 @@ mosqpp_EXPORT int subscribe_callback(
 		void *userdata,
 		const char *topic,
 		int qos=0,
-		bool retained=true,
 		const char *host="localhost",
 		int port=1883,
 		const char *client_id=NULL,

@@ -26,7 +26,7 @@ import time
 #   * 4431 - encrypted MQTT over WebSockets with password authentication
 #   * 4432 - encrypted MQTT over WebSockets with plugin authentication
 #   * 4433 - encrypted MQTT over WebSockets with password and plugin authentication
-#  
+#
 # The client randomly picks:
 #   * A port out of the list
 #   * Whether to use encryption

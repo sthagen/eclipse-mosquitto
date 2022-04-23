@@ -4,12 +4,12 @@ Copyright (c) 2009-2020 Roger Light <roger@atchoo.org>
 All rights reserved. This program and the accompanying materials
 are made available under the terms of the Eclipse Public License 2.0
 and Eclipse Distribution License v1.0 which accompany this distribution.
- 
+
 The Eclipse Public License is available at
    https://www.eclipse.org/legal/epl-2.0/
 and the Eclipse Distribution License is available at
   http://www.eclipse.org/org/documents/edl-v10.php.
- 
+
 SPDX-License-Identifier: EPL-2.0 OR BSD-3-Clause
 
 Contributors:
@@ -63,7 +63,7 @@ void bridge__start_all(void)
 
 	for(i=0; i<db.config->bridge_count; i++){
 		if(bridge__new(&(db.config->bridges[i])) > 0){
-			log__printf(NULL, MOSQ_LOG_WARNING, "Warning: Unable to connect to bridge %s.", 
+			log__printf(NULL, MOSQ_LOG_WARNING, "Warning: Unable to connect to bridge %s.",
 					db.config->bridges[i].name);
 		}
 	}
@@ -92,7 +92,7 @@ int bridge__new(struct mosquitto__bridge *bridge)
 			return MOSQ_ERR_NOMEM;
 		}
 		new_context->id = local_id;
-		HASH_ADD_KEYPTR(hh_id, db.contexts_by_id, new_context->id, strlen(new_context->id), new_context);
+		context__add_to_by_id(new_context);
 	}
 	new_context->bridge = bridge;
 	new_context->is_bridge = true;

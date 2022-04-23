@@ -4,12 +4,12 @@ Copyright (c) 2011-2020 Roger Light <roger@atchoo.org>
 All rights reserved. This program and the accompanying materials
 are made available under the terms of the Eclipse Public License 2.0
 and Eclipse Distribution License v1.0 which accompany this distribution.
- 
+
 The Eclipse Public License is available at
    https://www.eclipse.org/legal/epl-2.0/
 and the Eclipse Distribution License is available at
   http://www.eclipse.org/org/documents/edl-v10.php.
- 
+
 SPDX-License-Identifier: EPL-2.0 OR BSD-3-Clause
 
 Contributors:
@@ -682,7 +682,7 @@ static int acl__cleanup(bool reload)
 	/* As we're freeing ACLs, we must clear context->acl_list to ensure no
 	 * invalid memory accesses take place later.
 	 * This *requires* the ACLs to be reapplied after acl__cleanup()
-	 * is called if we are reloading the config. If this is not done, all 
+	 * is called if we are reloading the config. If this is not done, all
 	 * access will be denied to currently connected clients.
 	 */
 	HASH_ITER(hh_id, db.contexts_by_id, context, ctxt_tmp){
@@ -754,7 +754,7 @@ static int pwfile__parse(const char *file, struct mosquitto__unpwd **root)
 		log__printf(NULL, MOSQ_LOG_ERR, "Error: Out of memory.");
 		return MOSQ_ERR_NOMEM;
 	}
-	
+
 	pwfile = mosquitto__fopen(file, "rt", false);
 	if(!pwfile){
 		log__printf(NULL, MOSQ_LOG_ERR, "Error: Unable to open pwfile \"%s\".", file);

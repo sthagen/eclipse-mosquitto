@@ -757,6 +757,10 @@ static int config__read_file_core(struct mosquitto__config *config, bool reload,
 			}
 			while((*buf)[slen-1] == 10 || (*buf)[slen-1] == 13){
 				(*buf)[slen-1] = 0;
+				slen = strlen(*buf);
+				if(slen == 0){
+					continue;
+				}
 			}
 			token = strtok_r((*buf), " ", &saveptr);
 			if(token){
@@ -1671,7 +1675,7 @@ static int config__read_file_core(struct mosquitto__config *config, bool reload,
 					config->max_inflight_messages = (uint16_t)tmp_int;
 				}else if(!strcmp(token, "max_keepalive")){
 					if(conf__parse_int(&token, "max_keepalive", &tmp_int, saveptr)) return MOSQ_ERR_INVAL;
-					if(tmp_int < 10 || tmp_int > UINT16_MAX){
+					if(tmp_int < 0 || tmp_int > UINT16_MAX){
 						log__printf(NULL, MOSQ_LOG_ERR, "Error: Invalid max_keepalive value (%d).", tmp_int);
 						return MOSQ_ERR_INVAL;
 					}

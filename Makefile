@@ -70,7 +70,7 @@ clean :
 	set -e; for d in ${DOCDIRS}; do $(MAKE) -C $${d} clean; done
 	$(MAKE) -C test clean
 
-reallyclean : 
+reallyclean :
 	set -e; for d in ${DIRS}; do $(MAKE) -C $${d} reallyclean; done
 	set -e; for d in ${DOCDIRS}; do $(MAKE) -C $${d} reallyclean; done
 	$(MAKE) -C test reallyclean
@@ -107,7 +107,6 @@ uninstall :
 
 dist : reallyclean
 	set -e; for d in ${DISTDIRS}; do $(MAKE) -C $${d} dist; done
-	
 	mkdir -p dist/mosquitto-${VERSION}
 	cp -r ${DISTFILES} dist/mosquitto-${VERSION}/
 	cd dist; tar -zcf mosquitto-${VERSION}.tar.gz mosquitto-${VERSION}/
@@ -125,7 +124,6 @@ coverage :
 
 localdocker : reallyclean
 	set -e; for d in ${DISTDIRS}; do $(MAKE) -C $${d} dist; done
-	
 	rm -rf dockertmp/
 	mkdir -p dockertmp/mosquitto-${VERSION}
 	cp -r ${DISTFILES} dockertmp/mosquitto-${VERSION}/

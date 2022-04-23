@@ -180,7 +180,7 @@ test-broker : build
 
 test : test-broker test-lib
 
-clean : 
+clean :
 	-rm -rf mosq_test bridge_topic_test persist_read_test persist_write_test
 	-rm -rf *.o *.gcda *.gcno coverage.info out/
 

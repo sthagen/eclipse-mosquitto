@@ -20,7 +20,7 @@ utest :
 	$(MAKE) -C unit test
 
 reallyclean : clean
-clean : 
+clean :
 	$(MAKE) -C lib clean
 	$(MAKE) -C broker clean
 	$(MAKE) -C unit clean

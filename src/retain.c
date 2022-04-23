@@ -265,6 +265,10 @@ int retain__queue(struct mosquitto *context, const char *sub, uint8_t sub_qos, u
 	assert(context);
 	assert(sub);
 
+	if(!strncmp(sub, "$share/", strlen("$share/"))){
+		return MOSQ_ERR_SUCCESS;
+	}
+
 	rc = sub__topic_tokenise(sub, &local_sub, &split_topics, NULL);
 	if(rc) return rc;
 

@@ -4,12 +4,12 @@ Copyright (c) 2010-2020 Roger Light <roger@atchoo.org>
 All rights reserved. This program and the accompanying materials
 are made available under the terms of the Eclipse Public License 2.0
 and Eclipse Distribution License v1.0 which accompany this distribution.
- 
+
 The Eclipse Public License is available at
    https://www.eclipse.org/legal/epl-2.0/
 and the Eclipse Distribution License is available at
   http://www.eclipse.org/org/documents/edl-v10.php.
- 
+
 SPDX-License-Identifier: EPL-2.0 OR BSD-3-Clause
 
 Contributors:
@@ -46,10 +46,10 @@ int persist__chunk_header_read_v234(FILE *db_fptr, uint32_t *chunk, uint32_t *le
 
 	rlen = fread(&i16temp, sizeof(uint16_t), 1, db_fptr);
 	if(rlen != 1) return 1;
-	
+
 	rlen = fread(&i32temp, sizeof(uint32_t), 1, db_fptr);
 	if(rlen != 1) return 1;
-	
+
 	*chunk = ntohs(i16temp);
 	*length = ntohl(i32temp);
 
@@ -167,7 +167,7 @@ int persist__chunk_msg_store_read_v234(FILE *db_fptr, struct P_msg_store *chunk,
 
 	read_e(db_fptr, &chunk->F.qos, sizeof(uint8_t));
 	read_e(db_fptr, &chunk->F.retain, sizeof(uint8_t));
-	
+
 	read_e(db_fptr, &i32temp, sizeof(uint32_t));
 	chunk->F.payloadlen = ntohl(i32temp);
 

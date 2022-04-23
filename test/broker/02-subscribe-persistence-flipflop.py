@@ -9,17 +9,17 @@
 # ^C
 # mosquitto_sub -i sub -t 'topic' -v -p 29883 -q 1 -d
 # ^C
-# 
+#
 # SUBSCRIBE to topic is no longer respected by mosquitto
-# 
+#
 # run:
-# 
+#
 # mosquitto_sub -i sub -t 'topic' -v -p 29883 -q 1 -d -c
-# 
+#
 # and in a separate shell
-# 
+#
 # mosquitto_pub -i pub -t topic -m 'hello' -p 29883 -q 1
-# 
+#
 # sub does not receive the message
 
 from mosq_test_helper import *
@@ -64,7 +64,7 @@ def do_test(proto_ver):
         mosq_test.do_send_receive(sub_sock, subscribe_packet, suback_packet, "subscribe persistent 2")
 
         # and in a separate shell
-        # 
+        #
         # mosquitto_pub -i pub -t topic -m 'hello' -p 29883 -q 1
         pub_sock = mosq_test.do_client_connect(connect_packet_pub, connack_packet_pub, port=port)
         mosq_test.do_send_receive(pub_sock, publish_packet, puback_packet, "publish")

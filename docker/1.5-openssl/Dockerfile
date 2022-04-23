@@ -1,4 +1,4 @@
-FROM alpine:3.12
+FROM alpine:3.14
 
 LABEL maintainer="Roger Light <roger@atchoo.org>" \
     description="Eclipse Mosquitto MQTT Broker"
@@ -40,9 +40,8 @@ RUN set -x && \
     export GNUPGHOME="$(mktemp -d)" && \
     found=''; \
     for server in \
-        ha.pool.sks-keyservers.net \
+        htps://keys.openpgp.org \
         hkp://keyserver.ubuntu.com:80 \
-        hkp://p80.pool.sks-keyservers.net:80 \
         pgp.mit.edu \
     ; do \
         echo "Fetching GPG key $GPG_KEYS from $server"; \

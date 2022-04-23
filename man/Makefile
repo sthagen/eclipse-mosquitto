@@ -1,6 +1,6 @@
 include ../config.mk
 
-.PHONY : all clean install uninstall dist 
+.PHONY : all clean install uninstall dist
 
 MANPAGES = \
 	libmosquitto.3 \

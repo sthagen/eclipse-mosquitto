@@ -373,7 +373,7 @@ static void print_default_acl_access(cJSON *j_response)
 		if(j_acltype == NULL || !cJSON_IsString(j_acltype)
 				|| j_allow == NULL || !cJSON_IsBool(j_allow)
 				){
-			
+
 			fprintf(stderr, "Error: Invalid response from server.\n");
 			return;
 		}

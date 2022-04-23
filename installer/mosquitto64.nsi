@@ -9,7 +9,7 @@
 !define env_hklm 'HKLM "SYSTEM\CurrentControlSet\Control\Session Manager\Environment"'
 
 Name "Eclipse Mosquitto"
-!define VERSION 2.0.12
+!define VERSION 2.0.14
 OutFile "mosquitto-${VERSION}-install-windows-x64.exe"
 
 !include "x64.nsh"
@@ -107,7 +107,7 @@ Section "Uninstall"
 	Delete "$INSTDIR\ChangeLog.txt"
 	Delete "$INSTDIR\mosquitto.conf"
 	Delete "$INSTDIR\pwfile.example"
-	Delete "$INSTDIR\README.txt"
+	Delete "$INSTDIR\README.md"
 	Delete "$INSTDIR\README-windows.txt"
 	Delete "$INSTDIR\README-letsencrypt.md"
 	;Delete "$INSTDIR\pthreadVC2.dll"
@@ -124,6 +124,7 @@ Section "Uninstall"
 	Delete "$INSTDIR\devel\mosquittopp.h"
 	Delete "$INSTDIR\devel\mosquittopp.lib"
 	Delete "$INSTDIR\devel\mqtt_protocol.h"
+	RMDir "$INSTDIR\devel"
 
 	Delete "$INSTDIR\Uninstall.exe"
 	RMDir "$INSTDIR"

@@ -22,7 +22,7 @@ int main(int argc, char *argv[])
 	struct mosquitto *mosq;
 	int i;
 	uint8_t buf[MESSAGE_SIZE];
-	
+
 	mosquitto_lib_init();
 
 	mosq = mosquitto_new(NULL, true, NULL);

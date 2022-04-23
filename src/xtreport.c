@@ -53,10 +53,10 @@ static void client_cost(FILE *fptr, struct mosquitto *context, int fn_index)
 		pkt_tmp = pkt_tmp->next;
 	}
 
-	cmsg_count = context->msgs_in.msg_count;
-	cmsg_bytes = context->msgs_in.msg_bytes;
-	cmsg_count += context->msgs_out.msg_count;
-	cmsg_bytes += context->msgs_out.msg_bytes;
+	cmsg_count = context->msgs_in.inflight_count + context->msgs_in.queued_count;
+	cmsg_bytes = context->msgs_in.inflight_bytes + context->msgs_in.queued_bytes;
+	cmsg_count += context->msgs_out.inflight_count + context->msgs_out.queued_count;
+	cmsg_bytes += context->msgs_out.inflight_bytes + context->msgs_out.queued_bytes;
 
 	tBytes = pkt_bytes + cmsg_bytes;
 	if(context->id){
