@@ -31,6 +31,15 @@
 * [Using the snap package] - specific instructions on installing and configuring the Mosquitto snap package.
 * [Migrating from 1.x to 2.0] - details of changes needed to migrate to version 2.0.
 
+# Third party
+
+These are some Mosquitto documentation hosted by third parties.
+
+* [Steve's internet guide] - a broad range of documentation and examples
+  covering Mosquitto and the Paho Python client, amongst others.
+* [docs.cedalo.com] - includes documentation for both Mosquitto and Eclipse
+  Streamsheets
+
 [mosquitto]:/man/mosquitto-8.html
 [mosquitto.conf]:/man/mosquitto-conf-5.html
 [mosquitto_passwd]:/man/mosquitto_passwd-1.html
@@ -46,3 +55,6 @@
 [Using the snap package]:/documentation/using-the-snap/
 [Dynamic Security plugin]:/documentation/dynamic-security/
 [Migrating from 1.x to 2.0]:/documentation/migrating-to-2-0/
+
+[Steve's internet guide]: http://www.steves-internet-guide.com/
+[docs.cedalo.com]: https://docs.cedalo.com/
