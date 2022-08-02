@@ -1,4 +1,4 @@
-name: Coverity Scan fixes and develop branches on a weekly basis
+name: Coverity Scan develop branch on a weekly basis
 
 on:
   workflow_dispatch:
@@ -9,7 +9,9 @@ jobs:
   coverity:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
+      with:
+        ref: develop
 
     - name: Dependencies
       run: sudo apt-get install -y libcjson-dev libsqlite3-dev libssl-dev uthash-dev
