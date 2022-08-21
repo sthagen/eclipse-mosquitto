@@ -10,6 +10,7 @@ tests = [
     (1, './01-connect-disconnect-v5.py'),
     (1, './01-connect-max-connections.py'),
     (1, './01-connect-max-keepalive.py'),
+    (1, './01-connect-take-over.py'),
     (1, './01-connect-uname-no-password-denied.py'),
     (1, './01-connect-uname-or-anon.py'),
     (1, './01-connect-uname-password-denied-no-will.py'),
@@ -153,6 +154,7 @@ tests = [
     (1, './09-plugin-auth-v2-unpwd-fail.py'),
     (1, './09-plugin-auth-v2-unpwd-success.py'),
     (1, './09-plugin-publish.py'),
+    (1, './09-plugin-tick.py'),
     (1, './09-pwfile-parse-invalid.py'),
 
     (2, './10-listener-mount-point.py'),

@@ -4,13 +4,13 @@
 # To configure the build options either use the CMake gui, or run the command
 # line utility including the "-i" option.
 
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.1)
 cmake_policy(SET CMP0042 NEW)
 
 project(mosquitto)
-set (VERSION 2.0.14)
+set (VERSION 2.0.15)
 
-list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/")
+list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake/")
 
 add_definitions (-DCMAKE -DVERSION=\"${VERSION}\")
 
@@ -67,12 +67,9 @@ option(WITH_THREADING "Include client library threading support?" ON)
 if (WITH_THREADING)
 	add_definitions("-DWITH_THREADING")
 	if (WIN32)
-		if (CMAKE_CL_64)
-			set (PTHREAD_LIBRARIES C:\\pthreads\\Pre-built.2\\lib\\x64\\pthreadVC2.lib)
-		else (CMAKE_CL_64)
-			set (PTHREAD_LIBRARIES C:\\pthreads\\Pre-built.2\\lib\\x86\\pthreadVC2.lib)
-		endif (CMAKE_CL_64)
-		set (PTHREAD_INCLUDE_DIR C:\\pthreads\\Pre-built.2\\include)
+		find_package(Threads REQUIRED)
+		set (PTHREAD_LIBRARIES Threads::Threads)
+		set (PTHREAD_INCLUDE_DIR "")
 	elseif (ANDROID)
 		set (PTHREAD_LIBRARIES "")
 		set (PTHREAD_INCLUDE_DIR "")

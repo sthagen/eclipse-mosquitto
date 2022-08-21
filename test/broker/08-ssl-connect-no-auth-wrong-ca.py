@@ -29,7 +29,8 @@ connack_packet = mosq_test.gen_connack(rc=0)
 broker = mosq_test.start_broker(filename=os.path.basename(__file__), port=port2, use_conf=True)
 
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-ssock = ssl.wrap_socket(sock, ca_certs="../ssl/test-alt-ca.crt", cert_reqs=ssl.CERT_REQUIRED)
+context = ssl.create_default_context(ssl.Purpose.SERVER_AUTH, cafile="../ssl/test-alt-ca.crt")
+ssock = context.wrap_socket(sock, server_hostname="localhost")
 ssock.settimeout(20)
 try:
     ssock.connect(("localhost", port1))

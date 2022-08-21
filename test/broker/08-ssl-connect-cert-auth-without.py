@@ -28,7 +28,8 @@ connect_packet = mosq_test.gen_connect("connect-cert-test", keepalive=keepalive)
 broker = mosq_test.start_broker(filename=os.path.basename(__file__), port=port2, use_conf=True)
 
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-ssock = ssl.wrap_socket(sock, ca_certs="../ssl/test-root-ca.crt", cert_reqs=ssl.CERT_REQUIRED)
+context = ssl.create_default_context(ssl.Purpose.SERVER_AUTH)
+ssock = context.wrap_socket(sock, server_hostname="localhost")
 ssock.settimeout(20)
 try:
     ssock.connect(("localhost", port1))

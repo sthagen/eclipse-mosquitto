@@ -89,11 +89,12 @@ int ctrl_config_parse(struct mosq_config *cfg, int *argc, char **argv[])
 
 	init_config(cfg);
 
-	rc = client_config_load(cfg);
-	if(rc) return rc;
-
 	/* Deal with real argc/argv */
 	rc = client_config_line_proc(cfg, argc, argv);
+	if(rc) return rc;
+
+	/* Load options from config file - this must be after `-o` has been processed */
+	rc = client_config_load(cfg);
 	if(rc) return rc;
 
 #ifdef WITH_TLS
@@ -531,7 +532,7 @@ int client_config_load(struct mosq_config *cfg)
 			fclose(fptr);
 			return 1;
 		}
-		while(fgets(line, 1024, fptr)){
+		while(fgets(line, sizeof(line), fptr)){
 			if(line[0] == '#') continue; /* Comments */
 
 			while(line[strlen(line)-1] == 10 || line[strlen(line)-1] == 13){

@@ -135,6 +135,7 @@ void my_connect_callback(struct mosquitto *mosq, void *obj, int result, int flag
 	connack_result = result;
 
 	if(!result){
+		first_publish = true;
 		switch(cfg.pub_mode){
 			case MSGMODE_CMD:
 			case MSGMODE_FILE:

@@ -1,3 +1,5 @@
+include ../../../config.mk
+
 .PHONY: all clean reallyclean
 
 CFLAGS=-I../../../include -Werror
@@ -54,6 +56,13 @@ SRC = \
 	11-prop-recv-qos2.c \
 	11-prop-send-payload-format.c \
 	11-prop-send-content-type.c
+
+ifeq ($(WITH_TLS),yes)
+SRC += \
+	08-ssl-connect-cert-auth-custom-ssl-ctx.c \
+	08-ssl-connect-cert-auth-custom-ssl-ctx-default.c
+LIBS += -lssl -lcrypto
+endif
 
 TESTS = ${SRC:.c=.test}
 

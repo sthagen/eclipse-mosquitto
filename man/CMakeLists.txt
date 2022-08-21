@@ -8,10 +8,10 @@ if(NOT WIN32)
 	find_program(XSLTPROC xsltproc OPTIONAL)
 	if(XSLTPROC)
 		function(compile_manpage page)
-			add_custom_command(OUTPUT ${CMAKE_SOURCE_DIR}/man/${page}
-				COMMAND xsltproc ${CMAKE_SOURCE_DIR}/man/${page}.xml -o ${CMAKE_SOURCE_DIR}/man/
-				MAIN_DEPENDENCY ${CMAKE_SOURCE_DIR}/man/${page}.xml)
-			add_custom_target(${page} ALL DEPENDS ${CMAKE_SOURCE_DIR}/man/${page})
+			add_custom_command(OUTPUT ${PROJECT_SOURCE_DIR}/man/${page}
+				COMMAND xsltproc ${PROJECT_SOURCE_DIR}/man/${page}.xml -o ${PROJECT_SOURCE_DIR}/man/
+				MAIN_DEPENDENCY ${PROJECT_SOURCE_DIR}/man/${page}.xml)
+			add_custom_target(${page} ALL DEPENDS ${PROJECT_SOURCE_DIR}/man/${page})
 		endfunction()
 
 		compile_manpage("mosquitto_ctrl.1")

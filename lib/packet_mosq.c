@@ -236,11 +236,7 @@ int packet__write(struct mosquitto *mosq)
 #endif
 
 	state = mosquitto__get_state(mosq);
-#if defined(WITH_TLS) && !defined(WITH_BROKER)
-	if(state == mosq_cs_connect_pending || mosq->want_connect){
-#else
 	if(state == mosq_cs_connect_pending){
-#endif
 		pthread_mutex_unlock(&mosq->current_out_packet_mutex);
 		return MOSQ_ERR_SUCCESS;
 	}
@@ -546,7 +542,7 @@ int packet__read(struct mosquitto *mosq)
 	mosq->in_packet.pos = 0;
 #ifdef WITH_BROKER
 	G_MSGS_RECEIVED_INC(1);
-	if(((mosq->in_packet.command)&0xF5) == CMD_PUBLISH){
+	if(((mosq->in_packet.command)&0xF0) == CMD_PUBLISH){
 		G_PUB_MSGS_RECEIVED_INC(1);
 	}
 #endif

@@ -19,6 +19,9 @@ follow the steps on [Eclipse Security] page to report it.
 Listed with most recent first. Further information on security related issues
 can be found in the [security category].
 
+* August 2022: Deleting the anonymous group in the dynamic security plugin
+  could lead to a crash. Affecting versions **2.0.0** to **2.0.14** inclusive,
+  fixed in **2.0.15**.
 * August 2021: [CVE-2021-34434] Affecting versions **2.0.0** to **2.0.11**
   inclusive, fixed in **2.0.12**.
 * April 2021: [CVE-2021-28166] Affecting versions **2.0.0** to **2.0.9**

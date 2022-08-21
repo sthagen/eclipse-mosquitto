@@ -24,6 +24,10 @@ Contributors:
 #include <stdlib.h>
 #include <string.h>
 
+#ifndef WIN32
+#  include <strings.h>
+#endif
+
 #include "lib_load.h"
 #include "mosquitto.h"
 #include "mosquitto_ctrl.h"

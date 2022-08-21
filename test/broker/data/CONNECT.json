@@ -3,6 +3,14 @@
 		"comment": "CONNECT TESTS ARE INCOMPLETE",
 		"group": "v3.1   CONNECT",
 		"tests": [
+			{ "name": "10 ok ", "connect":false, "expect_disconnect":false, "msgs":[
+				{"type":"send", "payload":"10 0F 0006 4D5149736470 03 01 000A 0001 70", "comment":"minimal valid CONNECT"},
+				{"type":"recv", "payload":"20 02 00 00", "comment": "CONNACK"}
+			]},
+			{ "name": "14 ok ", "connect":false, "expect_disconnect":false, "msgs":[
+				{"type":"send", "payload":"14 0F 0006 4D5149736470 03 01 000A 0001 70", "comment":"CONNECT with QoS=1"},
+				{"type":"recv", "payload":"20 02 00 00", "comment": "CONNACK"}
+			]},
 			{ "name": "10 proto ver 2", "connect":false, "msgs":[
 				{"type":"send", "payload":"10 0F 0006 4D5149736470 02 00 000A 0001 70", "comment":"CONNECT"},
 				{"type":"recv", "payload":"20 02 00 01", "comment": "CONNACK identifier rejected"}

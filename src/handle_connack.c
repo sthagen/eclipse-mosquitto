@@ -163,7 +163,7 @@ int handle__connack(struct mosquitto *context)
 					log__printf(NULL, MOSQ_LOG_ERR, "Connection Refused: broker unavailable");
 					return MOSQ_ERR_CONN_LOST;
 				case CONNACK_REFUSED_BAD_USERNAME_PASSWORD:
-					log__printf(NULL, MOSQ_LOG_ERR, "Connection Refused: broker unavailable");
+					log__printf(NULL, MOSQ_LOG_ERR, "Connection Refused: bad user name or password");
 					return MOSQ_ERR_CONN_LOST;
 				case CONNACK_REFUSED_NOT_AUTHORIZED:
 					log__printf(NULL, MOSQ_LOG_ERR, "Connection Refused: not authorised");

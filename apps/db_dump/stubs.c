@@ -139,3 +139,10 @@ void db__msg_add_to_queued_stats(struct mosquitto_msg_data *msg_data, struct mos
 	UNUSED(msg_data);
 	UNUSED(msg);
 }
+
+int session_expiry__add_from_persistence(struct mosquitto *context, time_t expiry_time)
+{
+	UNUSED(context);
+	UNUSED(expiry_time);
+	return 0;
+}

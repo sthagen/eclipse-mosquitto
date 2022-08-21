@@ -284,14 +284,17 @@ int mosquitto_string_option(struct mosquitto *mosq, enum mosq_opt_t option, cons
 	switch(option){
 		case MOSQ_OPT_TLS_ENGINE:
 #if defined(WITH_TLS) && !defined(OPENSSL_NO_ENGINE)
-			eng = ENGINE_by_id(value);
-			if(!eng){
-				return MOSQ_ERR_INVAL;
-			}
-			ENGINE_free(eng); /* release the structural reference from ENGINE_by_id() */
-			mosq->tls_engine = mosquitto__strdup(value);
-			if(!mosq->tls_engine){
-				return MOSQ_ERR_NOMEM;
+			mosquitto__free(mosq->tls_engine);
+			if(value){
+				eng = ENGINE_by_id(value);
+				if(!eng){
+					return MOSQ_ERR_INVAL;
+				}
+				ENGINE_free(eng); /* release the structural reference from ENGINE_by_id() */
+				mosq->tls_engine = mosquitto__strdup(value);
+				if(!mosq->tls_engine){
+					return MOSQ_ERR_NOMEM;
+				}
 			}
 			return MOSQ_ERR_SUCCESS;
 #else

@@ -48,6 +48,8 @@ tests = [
     (1, ['./08-ssl-bad-cacert.py', 'c/08-ssl-bad-cacert.test']),
     (1, ['./08-ssl-connect-cert-auth-enc.py', 'c/08-ssl-connect-cert-auth-enc.test']),
     (1, ['./08-ssl-connect-cert-auth.py', 'c/08-ssl-connect-cert-auth.test']),
+    (1, ['./08-ssl-connect-cert-auth.py', 'c/08-ssl-connect-cert-auth-custom-ssl-ctx.test']),
+    (1, ['./08-ssl-connect-cert-auth.py', 'c/08-ssl-connect-cert-auth-custom-ssl-ctx-default.test']),
     (1, ['./08-ssl-connect-no-auth.py', 'c/08-ssl-connect-no-auth.test']),
 
     (1, ['./09-util-topic-tokenise.py', 'c/09-util-topic-tokenise.test']),

@@ -24,6 +24,10 @@ Contributors:
 #include <uthash.h>
 #include <utlist.h>
 
+#ifndef WIN32
+#  include <strings.h>
+#endif
+
 #include "dynamic_security.h"
 #include "json_help.h"
 #include "mosquitto.h"

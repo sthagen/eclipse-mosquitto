@@ -71,6 +71,15 @@ create_role_apply_response = {'responses': [
     ]}
 
 
+delete_anon_group_command = { "commands": [
+    { "command": "deleteGroup", "groupname": "anon-clients", "correlationData": "40" }
+    ]
+}
+delete_anon_group_response = {'responses': [
+    {'command': 'deleteGroup', "error":'Deleting the anonymous group is forbidden', 'correlationData': '40'}
+    ]}
+
+
 
 rc = 1
 keepalive = 10
@@ -135,6 +144,9 @@ try:
     # Reconnect, subscribe should now succeed
     csock = mosq_test.do_client_connect(connect_packet, connack_packet, timeout=5, port=port)
     mosq_test.do_send_receive(csock, subscribe_packet, suback_packet_success, "suback 3")
+
+    # Try to delete anon group, this should fail
+    command_check(sock, delete_anon_group_command, delete_anon_group_response)
 
     rc = 0
 

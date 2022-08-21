@@ -28,6 +28,7 @@ msg_sequence_test:
 	./01-connect-disconnect-v5.py
 	./01-connect-max-connections.py
 	./01-connect-max-keepalive.py
+	./01-connect-take-over.py
 	./01-connect-uname-no-password-denied.py
 	./01-connect-uname-or-anon.py
 	./01-connect-uname-password-denied-no-will.py
@@ -183,6 +184,7 @@ endif
 	./09-plugin-auth-v2-unpwd-fail.py
 	./09-plugin-auth-v2-unpwd-success.py
 	./09-plugin-publish.py
+	./09-plugin-tick.py
 	./09-pwfile-parse-invalid.py
 
 10 :

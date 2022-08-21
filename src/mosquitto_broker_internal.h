@@ -670,6 +670,7 @@ int db__message_write_queued_out(struct mosquitto *context);
 int db__message_write_queued_in(struct mosquitto *context);
 void db__msg_add_to_inflight_stats(struct mosquitto_msg_data *msg_data, struct mosquitto_client_msg *msg);
 void db__msg_add_to_queued_stats(struct mosquitto_msg_data *msg_data, struct mosquitto_client_msg *msg);
+void db__expire_all_messages(struct mosquitto *context);
 
 /* ============================================================
  * Subscription functions
@@ -818,6 +819,7 @@ void unpwd__free_item(struct mosquitto__unpwd **unpwd, struct mosquitto__unpwd *
  * Session expiry
  * ============================================================ */
 int session_expiry__add(struct mosquitto *context);
+int session_expiry__add_from_persistence(struct mosquitto *context, time_t expiry_time);
 void session_expiry__remove(struct mosquitto *context);
 void session_expiry__remove_all(void);
 void session_expiry__check(void);

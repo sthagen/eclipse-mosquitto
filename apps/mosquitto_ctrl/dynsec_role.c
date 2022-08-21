@@ -22,6 +22,10 @@ Contributors:
 #include <stdlib.h>
 #include <string.h>
 
+#ifndef WIN32
+#  include <strings.h>
+#endif
+
 #include "mosquitto.h"
 #include "mosquitto_ctrl.h"
 #include "password_mosq.h"

@@ -389,9 +389,9 @@ admin username and any other options once and not have to add them to the
 command line every time.
 
 mosquitto_ctrl will try to load a configuration file from a default location.
-For Windows this is at `%USER_PROFILE%\mosquitto_ctrl.conf`. For other systems,
-it will try `$XDG_CONFIG_HOME/mosquitto_ctrl.conf` or
-`$HOME/.config/mosquitto_ctrl.conf`.
+For Windows this is at `%USER_PROFILE%\mosquitto_ctrl`. For other systems,
+it will try `$XDG_CONFIG_HOME/mosquitto_ctrl` or
+`$HOME/.config/mosquitto_ctrl`.
 
 You may override this behaviour by manually specifying an options file with
 `-o <path to options file>`.

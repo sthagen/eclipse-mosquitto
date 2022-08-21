@@ -842,15 +842,21 @@ log_timestamp_format %Y-%m-%dT%H:%M:%S
 			<varlistentry>
 				<term><option>persistent_client_expiration</option> <replaceable>duration</replaceable></term>
 				<listitem>
-					<para>This option allows persistent clients (those with
-						clean session set to false) to be removed if they do
-						not reconnect within a certain time frame. This is a
-						non-standard option. As far as the MQTT spec is
-						concerned, persistent clients persist forever.</para>
-					<para>Badly designed clients may set clean session to false
-						whilst using a randomly generated client id. This leads
-						to persistent clients that will never reconnect. This
-						option allows these clients to be removed.</para>
+					<para>
+						This option allows the session of persistent clients (those with clean
+						session set to false) <emphasis>that are not currently connected</emphasis> to be removed if they
+						do not reconnect within a certain time frame. This is a non-standard option
+						in MQTT v3.1. MQTT v3.1.1 and v5.0 allow brokers to remove client sessions.
+					</para>
+
+					<para>
+						Badly designed clients may set clean session to false whilst using a randomly
+						generated client id. This leads to persistent clients that connect once and
+						never reconnect. This option allows these clients to be removed.  This option
+						allows persistent clients (those with clean session set to false) to be
+						removed if they do not reconnect within a certain time frame.
+					</para>
+
 					<para>The expiration period should be an integer followed
 						by one of h d w m y for hour, day, week, month and year
 						respectively. For example:</para>
@@ -954,7 +960,9 @@ log_timestamp_format %Y-%m-%dT%H:%M:%S
 				<listitem>
 					<para>Set to <replaceable>true</replaceable> to queue
 						messages with QoS 0 when a persistent client is
-						disconnected. These messages are included in the limit
+						disconnected. When bridges topics are configured with QoS level 1 or 2 incoming
+						QoS 0 messages for these topics are also queued.
+						These messages are included in the limit
 						imposed by max_queued_messages.  Defaults to
 						<replaceable>false</replaceable>.</para>
 					<para>Note that the MQTT v3.1.1 spec states that only QoS 1
@@ -1255,6 +1263,7 @@ log_timestamp_format %Y-%m-%dT%H:%M:%S
 							disconnected as not authorised when this option is
 							set to true. Do not use in conjunction with
 							<option>clientid_prefixes</option>.</para>
+						<para>This does not apply globally, but on a per-listener basis.</para>
 						<para>See also
 							<option>use_identity_as_username</option>.</para>
 						<para>Not reloaded on reload signal.</para>

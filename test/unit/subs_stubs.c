@@ -219,3 +219,10 @@ void util__increment_send_quota(struct mosquitto *mosq)
 {
 	mosq->msgs_out.inflight_quota++;
 }
+
+int session_expiry__add_from_persistence(struct mosquitto *context, time_t expiry_time)
+{
+	UNUSED(context);
+	UNUSED(expiry_time);
+	return 0;
+}

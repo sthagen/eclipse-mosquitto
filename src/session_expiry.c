@@ -82,6 +82,31 @@ int session_expiry__add(struct mosquitto *context)
 }
 
 
+int session_expiry__add_from_persistence(struct mosquitto *context, time_t expiry_time)
+{
+	struct session_expiry_list *item;
+
+	if(db.config->persistent_client_expiration == 0){
+		if(context->session_expiry_interval == UINT32_MAX){
+			/* There isn't a global expiry set, and the client has asked to
+			 * never expire, so we don't add it to the list. */
+			return MOSQ_ERR_SUCCESS;
+		}
+	}
+
+	item = mosquitto__calloc(1, sizeof(struct session_expiry_list));
+	if(!item) return MOSQ_ERR_NOMEM;
+
+	item->context = context;
+	item->context->session_expiry_time = expiry_time;
+	context->expiry_list_item = item;
+
+	DL_INSERT_INORDER(expiry_list, item, session_expiry__cmp);
+
+	return MOSQ_ERR_SUCCESS;
+}
+
+
 void session_expiry__remove(struct mosquitto *context)
 {
 	if(context->expiry_list_item){

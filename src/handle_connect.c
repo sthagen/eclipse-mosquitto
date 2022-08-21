@@ -205,6 +205,10 @@ int connect__on_authorised(struct mosquitto *context, void *auth_data_out, uint1
 		found_context->clean_start = true;
 		found_context->session_expiry_interval = 0;
 		mosquitto__set_state(found_context, mosq_cs_duplicate);
+
+		if(found_context->protocol == mosq_p_mqtt5){
+			send__disconnect(found_context, MQTT_RC_SESSION_TAKEN_OVER, NULL);
+		}
 		do_disconnect(found_context, MOSQ_ERR_SUCCESS);
 	}
 
@@ -314,6 +318,7 @@ int connect__on_authorised(struct mosquitto *context, void *auth_data_out, uint1
 	rc = send__connack(context, connect_ack, CONNACK_ACCEPTED, connack_props);
 	mosquitto_property_free_all(&connack_props);
 	if(rc) return rc;
+	db__expire_all_messages(context);
 	rc = db__message_write_queued_out(context);
 	if(rc) return rc;
 	rc = db__message_write_inflight_out_all(context);
@@ -458,9 +463,6 @@ int handle__connect(struct mosquitto *context)
 		rc = MOSQ_ERR_PROTOCOL;
 		goto handle_connect_error;
 	}
-	if(context->in_packet.command != CMD_CONNECT){
-		return MOSQ_ERR_MALFORMED_PACKET;
-	}
 
 	/* Read protocol name as length then bytes rather than with read_string
 	 * because the length is fixed and we can check that. Removes the need
@@ -527,6 +529,9 @@ int handle__connect(struct mosquitto *context)
 		}
 		rc = MOSQ_ERR_PROTOCOL;
 		goto handle_connect_error;
+	}
+	if((protocol_version&0x7F) != PROTOCOL_VERSION_v31 && context->in_packet.command != CMD_CONNECT){
+		return MOSQ_ERR_MALFORMED_PACKET;
 	}
 
 	if(packet__read_byte(&context->in_packet, &connect_flags)){

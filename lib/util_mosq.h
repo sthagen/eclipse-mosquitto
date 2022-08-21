@@ -32,6 +32,10 @@ uint16_t mosquitto__mid_generate(struct mosquitto *mosq);
 
 int mosquitto__set_state(struct mosquitto *mosq, enum mosquitto_client_state state);
 enum mosquitto_client_state mosquitto__get_state(struct mosquitto *mosq);
+#ifndef WITH_BROKER
+void mosquitto__set_request_disconnect(struct mosquitto *mosq, bool request_disconnect);
+bool mosquitto__get_request_disconnect(struct mosquitto *mosq);
+#endif
 
 #ifdef WITH_TLS
 int mosquitto__hex2bin_sha1(const char *hex, unsigned char **bin);

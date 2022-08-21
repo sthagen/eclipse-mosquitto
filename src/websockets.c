@@ -133,6 +133,7 @@ static int callback_mqtt(
 	uint8_t *buf;
 	int rc;
 	uint8_t byte;
+	char ip_addr_buff[1024];
 
 	switch (reason) {
 		case LWS_CALLBACK_ESTABLISHED:
@@ -157,7 +158,12 @@ static int callback_mqtt(
 			}else{
 				return -1;
 			}
-			easy_address(lws_get_socket_fd(wsi), mosq);
+
+			if (lws_hdr_copy(wsi, ip_addr_buff, sizeof(ip_addr_buff), WSI_TOKEN_X_FORWARDED_FOR) > 0) {
+				mosq->address = mosquitto__strdup(ip_addr_buff);
+			} else {
+				easy_address(lws_get_socket_fd(wsi), mosq);
+			}
 			if(!mosq->address){
 				/* getpeername and inet_ntop failed and not a bridge */
 				mosquitto__free(mosq);
@@ -261,7 +267,7 @@ static int callback_mqtt(
 
 #ifdef WITH_SYS_TREE
 				g_msgs_sent++;
-				if(((packet->command)&0xF6) == CMD_PUBLISH){
+				if(((packet->command)&0xF0) == CMD_PUBLISH){
 					g_pub_msgs_sent++;
 				}
 #endif
@@ -356,7 +362,7 @@ static int callback_mqtt(
 
 #ifdef WITH_SYS_TREE
 				G_MSGS_RECEIVED_INC(1);
-				if(((mosq->in_packet.command)&0xF5) == CMD_PUBLISH){
+				if(((mosq->in_packet.command)&0xF0) == CMD_PUBLISH){
 					G_PUB_MSGS_RECEIVED_INC(1);
 				}
 #endif

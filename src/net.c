@@ -19,15 +19,16 @@ Contributors:
 #include "config.h"
 
 #ifndef WIN32
-#include <netdb.h>
-#include <unistd.h>
-#include <arpa/inet.h>
-#include <sys/socket.h>
-#include <netinet/tcp.h>
-#include <ifaddrs.h>
+#  include <arpa/inet.h>
+#  include <ifaddrs.h>
+#  include <netdb.h>
+#  include <netinet/tcp.h>
+#  include <strings.h>
+#  include <sys/socket.h>
+#  include <unistd.h>
 #else
-#include <winsock2.h>
-#include <ws2tcpip.h>
+#  include <winsock2.h>
+#  include <ws2tcpip.h>
 #endif
 
 #include <assert.h>
@@ -36,7 +37,7 @@ Contributors:
 #include <stdio.h>
 #include <string.h>
 #ifdef WITH_WRAP
-#include <tcpd.h>
+#  include <tcpd.h>
 #endif
 
 #ifdef HAVE_NETINET_IN_H
@@ -49,7 +50,7 @@ Contributors:
 #endif
 
 #ifdef __QNX__
-#include <net/netbyte.h>
+#  include <net/netbyte.h>
 #endif
 
 #include "mosquitto_broker_internal.h"
@@ -59,8 +60,8 @@ Contributors:
 #include "util_mosq.h"
 
 #ifdef WITH_TLS
-#include "tls_mosq.h"
-#include <openssl/err.h>
+#  include "tls_mosq.h"
+#  include <openssl/err.h>
 static int tls_ex_index_context = -1;
 static int tls_ex_index_listener = -1;
 #endif
@@ -569,7 +570,7 @@ int net__tls_load_verify(struct mosquitto__listener *listener)
 #ifdef WITH_TLS
 	int rc;
 
-#if OPENSSL_VERSION_NUMBER < 0x30000000L
+#  if OPENSSL_VERSION_NUMBER < 0x30000000L
 	if(listener->cafile || listener->capath){
 		rc = SSL_CTX_load_verify_locations(listener->ssl_ctx, listener->cafile, listener->capath);
 		if(rc == 0){
@@ -582,7 +583,7 @@ int net__tls_load_verify(struct mosquitto__listener *listener)
 			}
 		}
 	}
-#else
+#  else
 	if(listener->cafile){
 		rc = SSL_CTX_load_verify_file(listener->ssl_ctx, listener->cafile);
 		if(rc == 0){
@@ -599,11 +600,13 @@ int net__tls_load_verify(struct mosquitto__listener *listener)
 			return MOSQ_ERR_TLS;
 		}
 	}
-#endif
+#  endif
 
+#  if !defined(OPENSSL_NO_ENGINE)
 	if(net__load_engine(listener)){
 		return MOSQ_ERR_TLS;
 	}
+#  endif
 #endif
 	return net__load_certificates(listener);
 }

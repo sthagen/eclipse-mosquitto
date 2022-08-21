@@ -208,7 +208,7 @@ static int persist__client_chunk_restore(FILE *db_fptr)
 				}
 			}
 		}
-		/* FIXME - we should expire clients here if they have exceeded their time */
+		session_expiry__add_from_persistence(context, chunk.F.session_expiry_time);
 	}else{
 		rc = 1;
 	}

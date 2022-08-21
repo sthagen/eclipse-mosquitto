@@ -1897,6 +1897,8 @@ static int config__read_file_core(struct mosquitto__config *config, bool reload,
 						return MOSQ_ERR_INVAL;
 					}
 					cur_bridge->restart_timeout = atoi(token);
+					cur_bridge->backoff_base = 0;
+					cur_bridge->backoff_cap = 0;
 					if(cur_bridge->restart_timeout < 1){
 						log__printf(NULL, MOSQ_LOG_NOTICE, "restart_timeout interval too low, using 1 second.");
 						cur_bridge->restart_timeout = 1;

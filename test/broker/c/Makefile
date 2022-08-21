@@ -18,6 +18,7 @@ PLUGIN_SRC = \
 	auth_plugin_v4.c \
 	auth_plugin_v5.c \
 	auth_plugin_v5_handle_message.c \
+	auth_plugin_v5_handle_tick.c \
 	plugin_control.c
 
 PLUGINS = ${PLUGIN_SRC:.c=.so}
