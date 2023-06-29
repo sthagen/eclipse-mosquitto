@@ -421,6 +421,7 @@ int main(int argc, char *argv[])
 	bool batch_mode = false;
 	bool create_new = false;
 	bool delete_user = false;
+	bool use_stdout = false;
 	FILE *fptr, *ftmp;
 	char password[MAX_BUFFER_LEN];
 	int rc;
@@ -519,7 +520,11 @@ int main(int argc, char *argv[])
 				fprintf(stderr, "Error: -c argument given but password file or username missing.\n");
 				return 1;
 			}else{
-				password_file_tmp = argv[idx];
+				if (!strcmp(argv[idx], "-")){
+					use_stdout = true;
+				}else{
+					password_file_tmp = argv[idx];
+				}
 				username = argv[idx+1];
 			}
 		}
@@ -558,27 +563,29 @@ int main(int argc, char *argv[])
 		return 1;
 	}
 
+	if(!use_stdout){
 #ifdef WIN32
-	password_file = _fullpath(NULL, password_file_tmp, 0);
-	if(!password_file){
-		fprintf(stderr, "Error getting full path for password file.\n");
-		return 1;
-	}
-#else
-	password_file = realpath(password_file_tmp, NULL);
-	if(!password_file){
-		if(errno == ENOENT){
-			password_file = strdup(password_file_tmp);
-			if(!password_file){
-				fprintf(stderr, "Error: Out of memory.\n");
-				return 1;
-			}
-		}else{
-			fprintf(stderr, "Error reading password file: %s\n", strerror(errno));
+		password_file = _fullpath(NULL, password_file_tmp, 0);
+		if(!password_file){
+			fprintf(stderr, "Error getting full path for password file.\n");
 			return 1;
 		}
-	}
+#else
+		password_file = realpath(password_file_tmp, NULL);
+		if(!password_file){
+			if(errno == ENOENT){
+				password_file = strdup(password_file_tmp);
+				if(!password_file){
+					fprintf(stderr, "Error: Out of memory.\n");
+					return 1;
+				}
+			}else{
+				fprintf(stderr, "Error reading password file: %s\n", strerror(errno));
+				return 1;
+			}
+		}
 #endif
+	}
 
 	if(create_new){
 		if(batch_mode == false){
@@ -589,13 +596,17 @@ int main(int argc, char *argv[])
 			}
 			password_cmd = password;
 		}
-		fptr = mosquitto_fopen(password_file, "wt", true);
-		if(!fptr){
-			fprintf(stderr, "Error: Unable to open file %s for writing. %s.\n", password_file, strerror(errno));
+		if(use_stdout){
+			fptr = stdout;
+		}else{
+			fptr = mosquitto_fopen(password_file, "wt", true);
+			if(!fptr){
+				fprintf(stderr, "Error: Unable to open file %s for writing. %s.\n", password_file, strerror(errno));
+				free(password_file);
+				return 1;
+			}
 			free(password_file);
-			return 1;
 		}
-		free(password_file);
 		printf("Adding password for user %s\n", username);
 		rc = output_new_password(fptr, username, password_cmd, iterations);
 		fclose(fptr);
