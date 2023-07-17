@@ -1,3 +1,4 @@
+# .gitignore
 *.db
 *.gcda
 *.gcno
@@ -85,3 +86,20 @@ test/unit/out/
 
 www/cache/
 __pycache__
+
+# Debian generated files
+debian/.debhelper/
+debian/debhelper-build-stamp
+debian/files
+debian/*.log
+debian/*.substvars
+debian/*mosquitto*/
+debian/*.debhelper
+debian/tmp/
+obj-*/
+
+# Emacs generated files
+*~
+
+# Others
+tmp/
