@@ -61,8 +61,11 @@ int mosquitto_lib_init(void)
 		srand((unsigned int)GetTickCount64());
 #elif _POSIX_TIMERS>0 && defined(_POSIX_MONOTONIC_CLOCK)
 		struct timespec tp;
-
+#ifdef CLOCK_BOOTTIME
+		clock_gettime(CLOCK_BOOTTIME, &tp);
+#else
 		clock_gettime(CLOCK_MONOTONIC, &tp);
+#endif
 		srand((unsigned int)tp.tv_nsec);
 #elif defined(__APPLE__)
 		uint64_t ticks;
@@ -329,18 +332,7 @@ int mosquitto_socket(struct mosquitto *mosq)
 
 bool mosquitto_want_write(struct mosquitto *mosq)
 {
-	bool result = false;
-	if(mosq->out_packet || mosq->current_out_packet){
-		result = true;
-	}
-#ifdef WITH_TLS
-	if(mosq->ssl){
-		if (mosq->want_write) {
-			result = true;
-		}
-	}
-#endif
-	return result;
+	return mosq->out_packet || mosq->current_out_packet || mosq->want_write;
 }
 
 

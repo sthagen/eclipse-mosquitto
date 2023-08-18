@@ -640,6 +640,16 @@
 				</listitem>
 			</varlistentry>
 			<varlistentry>
+				<term><option>-W</option></term>
+				<listitem>
+					<para>Provide a timeout as an integer number of seconds.
+						mosquitto_sub will stop processing messages and
+						disconnect after this number of seconds has
+						passed. The timeout starts just after the client has
+						connected to the broker.</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
 				<term><option>--will-payload</option></term>
 				<listitem>
 					<para>Specify a message that will be stored by the broker

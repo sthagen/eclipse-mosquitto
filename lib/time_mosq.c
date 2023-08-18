@@ -43,7 +43,11 @@ time_t mosquitto_time(void)
 #elif _POSIX_TIMERS>0 && defined(_POSIX_MONOTONIC_CLOCK)
 	struct timespec tp;
 
+#ifdef CLOCK_BOOTTIME
+	clock_gettime(CLOCK_BOOTTIME, &tp);
+#else
 	clock_gettime(CLOCK_MONOTONIC, &tp);
+#endif
 	return tp.tv_sec;
 #elif defined(__APPLE__)
 	static mach_timebase_info_data_t tb;

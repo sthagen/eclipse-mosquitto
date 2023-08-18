@@ -179,19 +179,21 @@ int mosquitto_tls_set(struct mosquitto *mosq, const char *cafile, const char *ca
 	mosquitto__free(mosq->tls_keyfile);
 	mosq->tls_keyfile = NULL;
 	if(keyfile){
-		fptr = mosquitto__fopen(keyfile, "rt", false);
-		if(fptr){
-			fclose(fptr);
-		}else{
-			mosquitto__free(mosq->tls_cafile);
-			mosq->tls_cafile = NULL;
+		if(mosq->tls_keyform == mosq_k_pem){
+			fptr = mosquitto__fopen(keyfile, "rt", false);
+			if(fptr){
+				fclose(fptr);
+			}else{
+				mosquitto__free(mosq->tls_cafile);
+				mosq->tls_cafile = NULL;
 
-			mosquitto__free(mosq->tls_capath);
-			mosq->tls_capath = NULL;
+				mosquitto__free(mosq->tls_capath);
+				mosq->tls_capath = NULL;
 
-			mosquitto__free(mosq->tls_certfile);
-			mosq->tls_certfile = NULL;
-			return MOSQ_ERR_INVAL;
+				mosquitto__free(mosq->tls_certfile);
+				mosq->tls_certfile = NULL;
+				return MOSQ_ERR_INVAL;
+			}
 		}
 		mosq->tls_keyfile = mosquitto__strdup(keyfile);
 		if(!mosq->tls_keyfile){
@@ -228,19 +230,23 @@ int mosquitto_tls_opts_set(struct mosquitto *mosq, int cert_reqs, const char *tl
 				|| !strcasecmp(tls_version, "tlsv1.2")
 				|| !strcasecmp(tls_version, "tlsv1.1")){
 
+			mosquitto__free(mosq->tls_version);
 			mosq->tls_version = mosquitto__strdup(tls_version);
 			if(!mosq->tls_version) return MOSQ_ERR_NOMEM;
 		}else{
 			return MOSQ_ERR_INVAL;
 		}
 	}else{
+		mosquitto__free(mosq->tls_version);
 		mosq->tls_version = mosquitto__strdup("tlsv1.2");
 		if(!mosq->tls_version) return MOSQ_ERR_NOMEM;
 	}
 	if(ciphers){
+		mosquitto__free(mosq->tls_ciphers);
 		mosq->tls_ciphers = mosquitto__strdup(ciphers);
 		if(!mosq->tls_ciphers) return MOSQ_ERR_NOMEM;
 	}else{
+		mosquitto__free(mosq->tls_ciphers);
 		mosq->tls_ciphers = NULL;
 	}
 
@@ -286,6 +292,11 @@ int mosquitto_string_option(struct mosquitto *mosq, enum mosq_opt_t option, cons
 #if defined(WITH_TLS) && !defined(OPENSSL_NO_ENGINE)
 			mosquitto__free(mosq->tls_engine);
 			if(value){
+#if OPENSSL_VERSION_NUMBER >= 0x10100000L
+				/* The "Dynamic" OpenSSL engine is not initialized by default but
+				   is required by ENGINE_by_id() to find dynamically loadable engines */
+				OPENSSL_init_crypto(OPENSSL_INIT_ENGINE_DYNAMIC, NULL);
+#endif
 				eng = ENGINE_by_id(value);
 				if(!eng){
 					return MOSQ_ERR_INVAL;

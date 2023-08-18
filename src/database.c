@@ -555,7 +555,7 @@ int db__message_insert(struct mosquitto *context, uint16_t mid, enum mosquitto_m
 	}
 #endif
 
-	msg = mosquitto__malloc(sizeof(struct mosquitto_client_msg));
+	msg = mosquitto__calloc(1, sizeof(struct mosquitto_client_msg));
 	if(!msg) return MOSQ_ERR_NOMEM;
 	msg->prev = NULL;
 	msg->next = NULL;
@@ -613,6 +613,8 @@ int db__message_insert(struct mosquitto *context, uint16_t mid, enum mosquitto_m
 
 	if(dir == mosq_md_out && msg->qos > 0 && state != mosq_ms_queued){
 		util__decrement_send_quota(context);
+	}else if(dir == mosq_md_in && msg->qos > 0 && state != mosq_ms_queued){
+		util__decrement_receive_quota(context);
 	}
 
 	if(dir == mosq_md_out && update){
@@ -796,23 +798,24 @@ int db__message_store(const struct mosquitto *source, struct mosquitto_msg_store
 	return MOSQ_ERR_SUCCESS;
 }
 
-int db__message_store_find(struct mosquitto *context, uint16_t mid, struct mosquitto_msg_store **stored)
+int db__message_store_find(struct mosquitto *context, uint16_t mid, struct mosquitto_client_msg **client_msg)
 {
-	struct mosquitto_client_msg *tail;
+	struct mosquitto_client_msg *cmsg;
+
+	*client_msg = NULL;
 
 	if(!context) return MOSQ_ERR_INVAL;
 
-	*stored = NULL;
-	DL_FOREACH(context->msgs_in.inflight, tail){
-		if(tail->store->source_mid == mid){
-			*stored = tail->store;
+	DL_FOREACH(context->msgs_in.inflight, cmsg){
+		if(cmsg->store->source_mid == mid){
+			*client_msg = cmsg;
 			return MOSQ_ERR_SUCCESS;
 		}
 	}
 
-	DL_FOREACH(context->msgs_in.queued, tail){
-		if(tail->store->source_mid == mid){
-			*stored = tail->store;
+	DL_FOREACH(context->msgs_in.queued, cmsg){
+		if(cmsg->store->source_mid == mid){
+			*client_msg = cmsg;
 			return MOSQ_ERR_SUCCESS;
 		}
 	}
@@ -914,6 +917,7 @@ static int db__message_reconnect_reset_incoming(struct mosquitto *context)
 		}else{
 			/* Message state can be preserved here because it should match
 			 * whatever the client has got. */
+			msg->dup = 0;
 		}
 	}
 
@@ -924,6 +928,7 @@ static int db__message_reconnect_reset_incoming(struct mosquitto *context)
 	 * will be sent out of order.
 	 */
 	DL_FOREACH_SAFE(context->msgs_in.queued, msg, tmp){
+		msg->dup = 0;
 		db__msg_add_to_queued_stats(&context->msgs_in, msg);
 		if(db__ready_for_flight(context, mosq_md_in, msg->qos)){
 			switch(msg->qos){

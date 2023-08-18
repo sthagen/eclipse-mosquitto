@@ -394,7 +394,7 @@ struct mosquitto_client_msg{
 	bool retain;
 	enum mosquitto_msg_direction direction;
 	enum mosquitto_msg_state state;
-	bool dup;
+	uint8_t dup;
 };
 
 
@@ -651,7 +651,7 @@ void db__message_dequeue_first(struct mosquitto *context, struct mosquitto_msg_d
 int db__messages_delete(struct mosquitto *context, bool force_free);
 int db__messages_easy_queue(struct mosquitto *context, const char *topic, uint8_t qos, uint32_t payloadlen, const void *payload, int retain, uint32_t message_expiry_interval, mosquitto_property **properties);
 int db__message_store(const struct mosquitto *source, struct mosquitto_msg_store *stored, uint32_t message_expiry_interval, dbid_t store_id, enum mosquitto_msg_origin origin);
-int db__message_store_find(struct mosquitto *context, uint16_t mid, struct mosquitto_msg_store **stored);
+int db__message_store_find(struct mosquitto *context, uint16_t mid, struct mosquitto_client_msg **client_msg);
 void db__msg_store_add(struct mosquitto_msg_store *store);
 void db__msg_store_remove(struct mosquitto_msg_store *store);
 void db__msg_store_ref_inc(struct mosquitto_msg_store *store);

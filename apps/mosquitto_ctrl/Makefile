@@ -23,6 +23,7 @@ OBJS=	mosquitto_ctrl.o \
 		get_password.o \
 		memory_mosq.o \
 		memory_public.o \
+		misc_mosq.o \
 		options.o \
 		password_mosq.o
 

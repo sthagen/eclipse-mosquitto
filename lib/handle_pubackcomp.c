@@ -100,6 +100,7 @@ int handle__pubackcomp(struct mosquitto *mosq, const char *type)
 					&& reason_code != MQTT_RC_PAYLOAD_FORMAT_INVALID
 					){
 
+				mosquitto_property_free_all(&properties);
 				return MOSQ_ERR_PROTOCOL;
 			}
 		}else{
@@ -107,14 +108,13 @@ int handle__pubackcomp(struct mosquitto *mosq, const char *type)
 					&& reason_code != MQTT_RC_PACKET_ID_NOT_FOUND
 					){
 
+				mosquitto_property_free_all(&properties);
 				return MOSQ_ERR_PROTOCOL;
 			}
 		}
 	}
 	if(mosq->in_packet.pos < mosq->in_packet.remaining_length){
-#ifdef WITH_BROKER
 		mosquitto_property_free_all(&properties);
-#endif
 		return MOSQ_ERR_MALFORMED_PACKET;
 	}
 

@@ -47,7 +47,7 @@
 		<title>Server</title>
 		<para>Generate a server key.</para>
 		<itemizedlist mark="circle">
-			<listitem><para>openssl genrsa -des3 -out server.key 2048</para></listitem>
+			<listitem><para>openssl genrsa -aes256 -out server.key 2048</para></listitem>
 		</itemizedlist>
 
 		<para>Generate a server key without encryption.</para>
@@ -71,7 +71,7 @@
 		<title>Client</title>
 		<para>Generate a client key.</para>
 		<itemizedlist mark="circle">
-			<listitem><para>openssl genrsa -des3 -out client.key 2048</para></listitem>
+			<listitem><para>openssl genrsa -aes256 -out client.key 2048</para></listitem>
 		</itemizedlist>
 
 		<para>Generate a certificate signing request to send to the CA.</para>

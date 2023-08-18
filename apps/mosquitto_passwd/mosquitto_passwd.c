@@ -370,15 +370,27 @@ static int copy_contents(FILE *src, FILE *dest)
 	return 0;
 }
 
-static int create_backup(const char *backup_file, FILE *fptr)
+static int create_backup(char *backup_file, FILE *fptr)
 {
 	FILE *fbackup;
 
-	fbackup = fopen(backup_file, "wt");
+#ifdef WIN32
+	fbackup = mosquitto__fopen(backup_file, "wt", true);
+#else
+	int fd;
+	umask(077);
+	fd = mkstemp(backup_file);
+	if(fd < 0){
+		fprintf(stderr, "Error creating backup password file \"%s\", not continuing.\n", backup_file);
+		return 1;
+	}
+	fbackup = fdopen(fd, "wt");
+#endif
 	if(!fbackup){
 		fprintf(stderr, "Error creating backup password file \"%s\", not continuing.\n", backup_file);
 		return 1;
 	}
+
 	if(copy_contents(fptr, fbackup)){
 		fprintf(stderr, "Error copying data to backup password file \"%s\", not continuing.\n", backup_file);
 		fclose(fbackup);
@@ -599,7 +611,7 @@ int main(int argc, char *argv[])
 			}
 			password_cmd = password;
 		}
-		fptr = fopen(password_file, "wt");
+		fptr = mosquitto__fopen(password_file, "wt", true);
 		if(!fptr){
 			fprintf(stderr, "Error: Unable to open file %s for writing. %s.\n", password_file, strerror(errno));
 			free(password_file);
@@ -610,20 +622,20 @@ int main(int argc, char *argv[])
 		fclose(fptr);
 		return rc;
 	}else{
-		fptr = fopen(password_file, "r+t");
+		fptr = mosquitto__fopen(password_file, "r+t", true);
 		if(!fptr){
 			fprintf(stderr, "Error: Unable to open password file %s. %s.\n", password_file, strerror(errno));
 			free(password_file);
 			return 1;
 		}
 
-		backup_file = malloc((size_t)strlen(password_file)+5);
+		backup_file = malloc((size_t)strlen(password_file)+strlen(".backup.XXXXXX"));
 		if(!backup_file){
 			fprintf(stderr, "Error: Out of memory.\n");
 			free(password_file);
 			return 1;
 		}
-		snprintf(backup_file, strlen(password_file)+5, "%s.tmp", password_file);
+		snprintf(backup_file, strlen(password_file)+5, "%s.backup.XXXXXX", password_file);
 		free(password_file);
 		password_file = NULL;
 

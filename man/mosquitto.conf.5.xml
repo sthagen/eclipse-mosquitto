@@ -1391,9 +1391,12 @@ openssl dhparam -out dhparam.pem 2048</programlisting>
 					<term><option>keyfile</option> <replaceable>file path</replaceable></term>
 					<listitem>
 						<para>
-							Path to the PEM encoded server key. This
-							option and <option>certfile</option> must be present
-							to enable certificate based TLS encryption.
+							If <option>tls_keyform</option> equals "pem" this is the
+							path to the PEM encoded server key. This option
+							and <option>certfile</option> must be present
+							to enable certificate based TLS encryption. If
+							<option>tls_keyform</option> is "engine" this represents
+							the engine handle of the private key.
 						</para>
 						<para>
 							The private key pointed to by this option will be
@@ -1458,7 +1461,7 @@ openssl dhparam -out dhparam.pem 2048</programlisting>
 							<replaceable>tlsv1.3</replaceable>,
 							<replaceable>tlsv1.2</replaceable> and
 							<replaceable>tlsv1.1</replaceable>. If left unset,
-							the default of allowing TLS v1.3 and v1.2.</para>
+							the default allows TLS v1.3 and v1.2.</para>
 						<para>In Mosquitto version 1.6.x and earlier, this
 							option set the only TLS protocol version that
 							was allowed, rather than the minimum.</para>

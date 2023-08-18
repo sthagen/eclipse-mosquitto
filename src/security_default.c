@@ -530,7 +530,7 @@ static int aclfile__parse(struct mosquitto__security_options *security_opts)
 		return MOSQ_ERR_NOMEM;
 	}
 
-	aclfptr = mosquitto__fopen(security_opts->acl_file, "rt", false);
+	aclfptr = mosquitto__fopen(security_opts->acl_file, "rt", true);
 	if(!aclfptr){
 		mosquitto__free(buf);
 		log__printf(NULL, MOSQ_LOG_ERR, "Error: Unable to open acl_file \"%s\".", security_opts->acl_file);
@@ -755,7 +755,7 @@ static int pwfile__parse(const char *file, struct mosquitto__unpwd **root)
 		return MOSQ_ERR_NOMEM;
 	}
 
-	pwfile = mosquitto__fopen(file, "rt", false);
+	pwfile = mosquitto__fopen(file, "rt", true);
 	if(!pwfile){
 		log__printf(NULL, MOSQ_LOG_ERR, "Error: Unable to open pwfile \"%s\".", file);
 		mosquitto__free(buf);
@@ -980,9 +980,7 @@ static int mosquitto__memcmp_const(const void *a, const void *b, size_t len)
 	if(!a || !b) return 1;
 
 	for(i=0; i<len; i++){
-		if( ((char *)a)[i] != ((char *)b)[i] ){
-			rc = 1;
-		}
+		rc |= ((char *)a)[i] ^ ((char *)b)[i];
 	}
 	return rc;
 }

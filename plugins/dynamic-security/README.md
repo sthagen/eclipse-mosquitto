@@ -61,7 +61,7 @@ Command:
 {
 	"commands":[
 		{
-			"command": "getDefaultACLAccess",
+			"command": "getDefaultACLAccess"
 		}
 	]
 }
@@ -244,7 +244,7 @@ Command:
 
 mosquitto_ctrl example:
 ```
-mosquitto_ctrl dynsec setClientPassword username password
+mosquitto_ctrl dynsec setClientId username clientId
 ```
 
 ## Set Client Password
@@ -523,7 +523,7 @@ Command:
 {
 	"commands":[
 		{
-			"command": "getAnonymousGroup",
+			"command": "getAnonymousGroup"
 		}
 	]
 }

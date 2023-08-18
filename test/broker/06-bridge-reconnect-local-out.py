@@ -17,6 +17,7 @@ def write_config(filename, port1, port2, protocol_version):
         f.write("address 127.0.0.1:%d\n" % (port1))
         f.write("topic bridge/# out\n")
         f.write("bridge_protocol_version %s\n" % (protocol_version))
+        f.write("cleansession false\n")
 
 
 def do_test(proto_ver):

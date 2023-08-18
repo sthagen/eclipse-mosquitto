@@ -70,7 +70,7 @@ def start_broker(filename, cmd=None, port=0, use_conf=False, expect_fail=False, 
         print("FAIL: unable to start broker: %s" % errs)
         raise IOError
     else:
-        return None
+        return broker
 
 def start_client(filename, cmd, env, port=1888):
     if cmd is None:

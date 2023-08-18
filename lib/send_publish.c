@@ -177,7 +177,7 @@ int send__real_publish(struct mosquitto *mosq, uint16_t mid, const char *topic, 
 #ifdef WITH_BROKER
 		log__printf(NULL, MOSQ_LOG_NOTICE, "Dropping too large outgoing PUBLISH for %s (%d bytes)", SAFE_PRINT(mosq->id), packetlen);
 #else
-		log__printf(NULL, MOSQ_LOG_NOTICE, "Dropping too large outgoing PUBLISH (%d bytes)", packetlen);
+		log__printf(mosq, MOSQ_LOG_NOTICE, "Dropping too large outgoing PUBLISH (%d bytes)", packetlen);
 #endif
 		return MOSQ_ERR_OVERSIZE_PACKET;
 	}

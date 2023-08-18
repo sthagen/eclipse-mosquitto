@@ -17,6 +17,7 @@ if (WITH_TLS AND CJSON_FOUND)
 		dynsec_role.c
 		../mosquitto_passwd/get_password.c ../mosquitto_passwd/get_password.h
 		../../lib/memory_mosq.c ../../lib/memory_mosq.h
+		../../lib/misc_mosq.c ../../lib/misc_mosq.h
 		../../src/memory_public.c
 		options.c
 		../../src/password_mosq.c ../../src/password_mosq.h

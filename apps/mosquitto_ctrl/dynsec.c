@@ -23,6 +23,8 @@ Contributors:
 #include <string.h>
 
 #ifndef WIN32
+#  include <errno.h>
+#  include <fcntl.h>
 #  include <strings.h>
 #endif
 
@@ -30,6 +32,7 @@ Contributors:
 #include "mosquitto.h"
 #include "password_mosq.h"
 #include "get_password.h"
+#include "misc_mosq.h"
 
 void dynsec__print_usage(void)
 {
@@ -738,13 +741,6 @@ static int dynsec_init(int argc, char *argv[])
 		admin_password = password;
 	}
 
-	fptr = fopen(filename, "rb");
-	if(fptr){
-		fclose(fptr);
-		fprintf(stderr, "dynsec init: '%s' already exists. Remove the file or use a different location..\n", filename);
-		return -1;
-	}
-
 	tree = init_create(admin_user, admin_password, "admin");
 	if(tree == NULL){
 		fprintf(stderr, "dynsec init: Out of memory.\n");
@@ -753,7 +749,17 @@ static int dynsec_init(int argc, char *argv[])
 	json_str = cJSON_Print(tree);
 	cJSON_Delete(tree);
 
-	fptr = fopen(filename, "wb");
+#ifdef WIN32
+	fptr = mosquitto__fopen(filename, "wb", true);
+#else
+	int fd = open(filename, O_CREAT | O_EXCL | O_WRONLY, 0640);
+	if(fd < 0){
+		free(json_str);
+		fprintf(stderr, "dynsec init: Unable to open '%s' for writing (%s).\n", filename, strerror(errno));
+		return -1;
+	}
+	fptr = fdopen(fd, "wb");
+#endif
 	if(fptr){
 		fprintf(fptr, "%s", json_str);
 		free(json_str);

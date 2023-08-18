@@ -106,5 +106,5 @@ int mosquitto_plugin_cleanup(void *user_data, struct mosquitto_opt *opts, int op
 	UNUSED(opts);
 	UNUSED(opt_count);
 
-	return mosquitto_callback_unregister(mosq_pid, MOSQ_EVT_MESSAGE, basic_auth_callback, NULL);
+	return mosquitto_callback_unregister(mosq_pid, MOSQ_EVT_BASIC_AUTH, basic_auth_callback, NULL);
 }

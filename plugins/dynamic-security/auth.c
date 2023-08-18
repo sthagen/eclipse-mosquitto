@@ -163,9 +163,7 @@ static int memcmp_const(const void *a, const void *b, size_t len)
 	if(!a || !b) return 1;
 
 	for(i=0; i<len; i++){
-		if( ((char *)a)[i] != ((char *)b)[i] ){
-			rc = 1;
-		}
+		rc |= ((char *)a)[i] ^ ((char *)b)[i];
 	}
 	return rc;
 }

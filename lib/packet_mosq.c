@@ -152,6 +152,21 @@ int packet__queue(struct mosquitto *mosq, struct mosquitto__packet *packet)
 
 	packet->next = NULL;
 	pthread_mutex_lock(&mosq->out_packet_mutex);
+
+#ifdef WITH_BROKER
+	if(mosq->out_packet_count >= db.config->max_queued_messages){
+		mosquitto__free(packet);
+		if(mosq->is_dropping == false){
+			mosq->is_dropping = true;
+			log__printf(NULL, MOSQ_LOG_NOTICE,
+					"Outgoing messages are being dropped for client %s.",
+					mosq->id);
+		}
+		G_MSGS_DROPPED_INC();
+		return MOSQ_ERR_SUCCESS;
+	}
+#endif
+
 	if(mosq->out_packet){
 		mosq->out_packet_last->next = packet;
 	}else{
@@ -268,6 +283,8 @@ int packet__write(struct mosquitto *mosq)
 							return MOSQ_ERR_CONN_LOST;
 						case COMPAT_EINTR:
 							return MOSQ_ERR_SUCCESS;
+						case EPROTO:
+							return MOSQ_ERR_TLS;
 						default:
 							return MOSQ_ERR_ERRNO;
 					}
@@ -376,7 +393,7 @@ int packet__read(struct mosquitto *mosq)
 #ifdef WITH_BROKER
 			G_BYTES_RECEIVED_INC(1);
 			/* Clients must send CONNECT as their first command. */
-			if(!(mosq->bridge) && state == mosq_cs_connected && (byte&0xF0) != CMD_CONNECT){
+			if(!(mosq->bridge) && state == mosq_cs_new && (byte&0xF0) != CMD_CONNECT){
 				return MOSQ_ERR_PROTOCOL;
 			}
 #endif

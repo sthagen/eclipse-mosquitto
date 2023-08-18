@@ -17,13 +17,14 @@ Then use the following for your mosquitto.conf:
 
 ```
 listener 8883
-cafile /etc/ssl/certs/DST_Root_CA_X3.pem
+cafile /etc/ssl/certs/ISRG_Root_X1.pem
 certfile /etc/letsencrypt/live/example.com/fullchain.pem
 keyfile /etc/letsencrypt/live/example.com/privkey.pem
 ```
 
-You need to be aware that current versions of mosquitto never update listener
-settings when running, so when you regenerate the server certificates you will
-need to completely restart the broker.
+Since version 2.0 of Mosquitto, you can send a SIGHUP to the broker to cause it
+to reload certificates. Prior to this version, mosquitto would never update
+listener settings when running, so you will need to completely restart the
+broker.
 
 [Let's Encrypt]: https://letsencrypt.org/

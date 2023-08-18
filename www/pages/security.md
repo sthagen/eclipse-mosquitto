@@ -19,6 +19,9 @@ follow the steps on [Eclipse Security] page to report it.
 Listed with most recent first. Further information on security related issues
 can be found in the [security category].
 
+* June 2023: [CVE-2023-28366]: Clients sending unacknowledged QoS 2 messages
+  with duplicate message ids cause a memory leak. Affecting versions **1.3.2**
+  to **2.0.15** inclusive, fixed in **2.0.16**.
 * August 2022: Deleting the anonymous group in the dynamic security plugin
   could lead to a crash. Affecting versions **2.0.0** to **2.0.14** inclusive,
   fixed in **2.0.15**.
@@ -62,14 +65,14 @@ can be found in the [security category].
   inclusive, fixed in **1.4.12**. More details at
   [security-advisory-cve-2017-7650].
 
-[version-166-released]: /2019/09/version-1-6-6-released/
-[version-162-released]: /2019/04/version-1-6-2-released/
-[version-155-released]: /2018/11/version-155-released/
-[version-154-released]: /2018/11/version-154-released/
-[security-advisory-cve-2018-12543]: /2018/09/security-advisory-cve-2018-12543/
-[security-advisory-cve-2017-7651-cve-2017-7652]: /2018/02/security-advisory-cve-2017-7651-cve-2017-7652/
-[security-advisory-cve-2017-7650]: /2017/05/security-advisory-cve-2017-7650/
-[security-advisory-cve-2017-9868]: /2017/06/security-advisory-cve-2017-9868/
+[version-166-released]: /blog/2019/09/version-1-6-6-released/
+[version-162-released]: /blog/2019/04/version-1-6-2-released/
+[version-155-released]: /blog/2018/11/version-155-released/
+[version-154-released]: /blog/2018/11/version-154-released/
+[security-advisory-cve-2018-12543]: /blog/2018/09/security-advisory-cve-2018-12543/
+[security-advisory-cve-2017-7651-cve-2017-7652]: /blog/2018/02/security-advisory-cve-2017-7651-cve-2017-7652/
+[security-advisory-cve-2017-7650]: /blog/2017/05/security-advisory-cve-2017-7650/
+[security-advisory-cve-2017-9868]: /blog/2017/06/security-advisory-cve-2017-9868/
 
 [Eclipse Security]: https://www.eclipse.org/security/
 [security category]: /blog/categories/security/
@@ -81,9 +84,9 @@ can be found in the [security category].
 [CVE-2018-20145]: https://nvd.nist.gov/vuln/detail/CVE-2018-20145
 [CVE-2018-12543]: https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2018-12543
 [CVE-2017-9868]: https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2017-9868
-[CVE-2017-7655]: https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2017-7652
-[CVE-2017-7654]: https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2017-7652
-[CVE-2017-7653]: https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2017-7652
+[CVE-2017-7655]: https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2017-7655
+[CVE-2017-7654]: https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2017-7654
+[CVE-2017-7653]: https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2017-7653
 [CVE-2017-7652]: https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2017-7652
 [CVE-2017-7651]: https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2017-7651
 [CVE-2017-7650]: https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2017-7650

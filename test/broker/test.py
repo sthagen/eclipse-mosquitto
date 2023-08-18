@@ -5,6 +5,7 @@ import ptest
 
 tests = [
     #(ports required, 'path'),
+	(1, './01-bad-initial-packets.py'),
     (1, './01-connect-575314.py'),
     (1, './01-connect-allow-anonymous.py'),
     (1, './01-connect-disconnect-v5.py'),
@@ -63,11 +64,13 @@ tests = [
     (1, './03-publish-qos1-no-subscribers-v5.py'),
     (1, './03-publish-qos1-retain-disabled.py'),
     (1, './03-publish-qos1.py'),
+    (1, './03-publish-qos2-dup.py'),
     (1, './03-publish-qos2-max-inflight.py'),
     (1, './03-publish-qos2.py'),
 
     (1, './04-retain-check-source-persist.py'),
     (1, './04-retain-check-source.py'),
+	(1, './04-retain-clear-multiple.py'),
     (1, './04-retain-qos0-clear.py'),
     (1, './04-retain-qos0-fresh.py'),
     (1, './04-retain-qos0-repeated.py'),
@@ -100,6 +103,7 @@ tests = [
     (3, './06-bridge-per-listener-settings.py'),
     (2, './06-bridge-reconnect-local-out.py'),
 
+    (1, './07-will-control.py'),
     (1, './07-will-delay-invalid-573191.py'),
     (1, './07-will-delay-reconnect.py'),
     (1, './07-will-delay-recover.py'),

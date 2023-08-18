@@ -23,6 +23,7 @@ msg_sequence_test:
 	./msg_sequence_test.py
 
 01 :
+	./01-bad-initial-packets.py
 	./01-connect-575314.py
 	./01-connect-allow-anonymous.py
 	./01-connect-disconnect-v5.py
@@ -83,6 +84,7 @@ msg_sequence_test:
 	./03-publish-qos1-no-subscribers-v5.py
 	./03-publish-qos1-retain-disabled.py
 	./03-publish-qos1.py
+	./03-publish-qos2-dup.py
 	./03-publish-qos2-max-inflight.py
 	./03-publish-qos2.py
 
@@ -90,6 +92,7 @@ msg_sequence_test:
 	./04-retain-check-source-persist-diff-port.py
 	./04-retain-check-source-persist.py
 	./04-retain-check-source.py
+	./04-retain-clear-multiple.py
 	./04-retain-qos0-clear.py
 	./04-retain-qos0-fresh.py
 	./04-retain-qos0-repeated.py
@@ -124,6 +127,7 @@ msg_sequence_test:
 	./06-bridge-reconnect-local-out.py
 
 07 :
+	./07-will-control.py
 	./07-will-delay-invalid-573191.py
 	./07-will-delay-reconnect.py
 	./07-will-delay-recover.py

@@ -415,10 +415,10 @@ void TEST_utf8_control_characters(void)
 	buf[1] = '\0';
 	utf8_helper((char *)buf, MOSQ_ERR_MALFORMED_UTF8);
 
-	/* U+007F to U+009F are two byte control characters */
+	/* U+0080 to U+009F are two byte control characters */
 	for(i=0x80; i<0xA0; i++){
 		buf[0] = 0xC2;
-		buf[1] = (uint8_t)(i-0x80);
+		buf[1] = (uint8_t)i;
 		buf[2] = '\0';
 		utf8_helper((char *)buf, MOSQ_ERR_MALFORMED_UTF8);
 	}

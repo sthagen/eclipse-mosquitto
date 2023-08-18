@@ -105,6 +105,17 @@ static int mosquitto__cmp_hostname_wildcard(char *certname, const char *hostname
 				break;
 			}
 		}
+		len = strlen(hostname);
+		int dotcount = 0;
+		for(i=0; i<len-1; i++){
+			if(hostname[i] == '.'){
+				dotcount++;
+			}
+		}
+		if(dotcount < 1){
+			/* Exclude e.g. *.com, allow e.g. *.example.com */
+			return 1;
+		}
 		return strcasecmp(certname, hostname);
 	}else{
 		return strcasecmp(certname, hostname);

@@ -20,6 +20,7 @@ Contributors:
 #include <stdarg.h>
 #include <stdio.h>
 #include <string.h>
+#include <inttypes.h>
 #ifndef WIN32
 #include <syslog.h>
 #endif
@@ -129,11 +130,16 @@ int log__init(struct mosquitto__config *config)
 			log__printf(NULL, MOSQ_LOG_ERR, "Error: Unable to open log file %s for writing.", config->log_file);
 		}
 	}
+	if(log_destinations & MQTT3_LOG_STDOUT){
+		setvbuf(stdout, NULL, _IOLBF, 0);
+	}
 #ifdef WITH_DLT
-	dlt_fifo_check();
-	if(dlt_allowed){
-		DLT_REGISTER_APP("MQTT","mosquitto log");
-		dlt_register_context(&dltContext, "MQTT", "mosquitto DLT context");
+	if(log_destinations & MQTT3_LOG_DLT){
+		dlt_fifo_check();
+		if(dlt_allowed){
+			DLT_REGISTER_APP("MQTT","mosquitto log");
+			dlt_register_context(&dltContext, "MQTT", "mosquitto DLT context");
+		}
 	}
 #endif
 	return rc;
@@ -291,7 +297,7 @@ static int log__vprintf(unsigned int priority, const char *fmt, va_list va)
 					log_line_pos = (size_t)snprintf(log_line, sizeof(log_line), "Time error");
 				}
 			}else{
-				log_line_pos = (size_t)snprintf(log_line, sizeof(log_line), "%d", (int)db.now_real_s);
+				log_line_pos = (size_t)snprintf(log_line, sizeof(log_line), "%" PRIu64, (uint64_t)db.now_real_s);
 			}
 			if(log_line_pos < sizeof(log_line)-3){
 				log_line[log_line_pos] = ':';

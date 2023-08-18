@@ -210,7 +210,7 @@ static int json_print_properties(cJSON *root, const mosquitto_property *properti
 				break;
 
 			case MQTT_PROP_TOPIC_ALIAS:
-				mosquitto_property_read_int16(prop, MQTT_PROP_MESSAGE_EXPIRY_INTERVAL, &i16value, false);
+				mosquitto_property_read_int16(prop, MQTT_PROP_TOPIC_ALIAS, &i16value, false);
 				tmp = cJSON_CreateNumber(i16value);
 				break;
 

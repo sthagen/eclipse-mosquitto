@@ -72,6 +72,25 @@ int retain__init(void)
 }
 
 
+void retain__clean_empty_hierarchy(struct mosquitto__retainhier *retainhier)
+{
+	struct mosquitto__retainhier *parent;
+
+	while(retainhier){
+		if(retainhier->children || retainhier->retained || retainhier->parent == NULL){
+			/* Entry is being used */
+			return;
+		}else{
+			HASH_DELETE(hh, retainhier->parent->children, retainhier);
+			mosquitto__free(retainhier->topic);
+			parent = retainhier->parent;
+			mosquitto__free(retainhier);
+			retainhier = parent;
+		}
+	}
+}
+
+
 int retain__store(const char *topic, struct mosquitto_msg_store *stored, char **split_topics)
 {
 	struct mosquitto__retainhier *retainhier;
@@ -124,6 +143,7 @@ int retain__store(const char *topic, struct mosquitto_msg_store *stored, char **
 #endif
 	}else{
 		retainhier->retained = NULL;
+		retain__clean_empty_hierarchy(retainhier);
 	}
 
 	return MOSQ_ERR_SUCCESS;
