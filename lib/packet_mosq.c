@@ -154,7 +154,7 @@ int packet__queue(struct mosquitto *mosq, struct mosquitto__packet *packet)
 	pthread_mutex_lock(&mosq->out_packet_mutex);
 
 #ifdef WITH_BROKER
-	if(mosq->out_packet_count >= db.config->max_queued_messages){
+	if(db.config->max_queued_messages > 0 && mosq->out_packet_count >= db.config->max_queued_messages){
 		mosquitto__free(packet);
 		if(mosq->is_dropping == false){
 			mosq->is_dropping = true;
