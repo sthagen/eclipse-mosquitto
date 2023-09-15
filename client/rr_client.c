@@ -84,7 +84,11 @@ static void my_message_callback(struct mosquitto *mosq, void *obj, const struct 
 	UNUSED(obj);
 	UNUSED(properties);
 
+	if(process_messages == false) return;
+	if(message->retain && cfg.no_retain) return;
+
 	print_message(&cfg, message, properties);
+
 	switch(cfg.pub_mode){
 		case MSGMODE_CMD:
 		case MSGMODE_FILE:
@@ -96,33 +100,6 @@ static void my_message_callback(struct mosquitto *mosq, void *obj, const struct 
 			client_state = rr_s_ready_to_publish;
 			break;
 	}
-	/* FIXME - check all below
-	if(process_messages == false) return;
-
-	if(cfg.retained_only && !message->retain && process_messages){
-		process_messages = false;
-		mosquitto_disconnect_v5(mosq, 0, cfg.disconnect_props);
-		return;
-	}
-
-	if(message->retain && cfg.no_retain) return;
-	if(cfg.filter_outs){
-		for(i=0; i<cfg.filter_out_count; i++){
-			mosquitto_topic_matches_sub(cfg.filter_outs[i], message->topic, &res);
-			if(res) return;
-		}
-	}
-
-	//print_message(&cfg, message);
-
-	if(cfg.msg_count>0){
-		msg_count++;
-		if(cfg.msg_count == msg_count){
-			process_messages = false;
-			mosquitto_disconnect_v5(mosq, 0, cfg.disconnect_props);
-		}
-	}
-	*/
 }
 
 void my_connect_callback(struct mosquitto *mosq, void *obj, int result, int flags, const mosquitto_property *properties)

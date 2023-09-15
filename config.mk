@@ -120,6 +120,9 @@ WITH_JEMALLOC:=no
 # probably of no particular interest to end users.
 WITH_XTREPORT=no
 
+# Build using clang and with address sanitiser enabled
+WITH_ASAN=no
+
 # =============================================================================
 # End of user configuration
 # =============================================================================
@@ -150,6 +153,12 @@ ifeq ($(UNAME),SunOS)
 	endif
 else
 	CFLAGS?=-Wall -ggdb -O2 -Wconversion -Wextra
+endif
+
+ifeq ($(WITH_ASAN),yes)
+	CC:=clang
+	CFLAGS+=-fsanitize=address
+	LDFLAGS+=-fsanitize=address
 endif
 
 STATIC_LIB_DEPS:=

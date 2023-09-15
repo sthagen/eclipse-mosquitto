@@ -1,3 +1,14 @@
+2.0.18 - 2023-09-12
+===================
+
+Broker:
+- Fix crash on subscribe under certain unlikely conditions. Closes #2885.
+  Closes #2881.
+
+Clients:
+- Fix mosquitto_rr not honouring `-R`. Closes #2893.
+
+
 2.0.17 - 2023-08-22
 ===================
 

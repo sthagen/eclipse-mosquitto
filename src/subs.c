@@ -389,7 +389,6 @@ static int sub__remove_normal(struct mosquitto *context, struct mosquitto__subhi
 				if(context->subs[i] && context->subs[i]->hier == subhier){
 					mosquitto__free(context->subs[i]);
 					context->subs[i] = NULL;
-					context->sub_count--;
 					break;
 				}
 			}
@@ -430,7 +429,6 @@ static int sub__remove_shared(struct mosquitto *context, struct mosquitto__subhi
 
 						mosquitto__free(context->subs[i]);
 						context->subs[i] = NULL;
-						context->sub_count--;
 						break;
 					}
 				}
