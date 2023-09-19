@@ -1,6 +1,6 @@
 <!--
-.. title: Version 2.0.16 released.
-.. slug: version-2-0-16-released
+.. title: Version 2.0.17 released.
+.. slug: version-2-0-17-released
 .. date: 2023-08-16 12:57:38 UTC+1
 .. tags: Releases
 .. category:
@@ -9,7 +9,7 @@
 .. type: text
 -->
 
-Version 2.0.16 of Mosquitto has been released. This is a bugfix release.
+Version 2.0.17 of Mosquitto has been released. This is a bugfix release.
 
 Broker:
 - Fix `max_queued_messages 0` stopping clients from receiving messages.

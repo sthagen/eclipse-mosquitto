@@ -158,8 +158,9 @@ FILE *mosquitto__fopen(const char *path, const char *mode, bool restrict_read)
 #else
 			fprintf(stderr,
 #endif
-					"Warning: File %s has world readable permissions. Future versions will refuse to load this file.",
-					path);
+					"Warning: File %s has world readable permissions. Future versions will refuse to load this file.\n"
+					"To fix this, use `chmod 0700 %s`.",
+					path, path);
 #if 0
 			return NULL;
 #endif
@@ -175,8 +176,9 @@ FILE *mosquitto__fopen(const char *path, const char *mode, bool restrict_read)
 #else
 				fprintf(stderr,
 #endif
-						"Warning: File %s owner is not %s. Future versions will refuse to load this file.",
-						path, result->pw_name);
+						"Warning: File %s owner is not %s. Future versions will refuse to load this file."
+						"To fix this, use `chown %s %s`.",
+						path, result->pw_name, result->pw_name, path);
 			}
 #if 0
 			// Future version
