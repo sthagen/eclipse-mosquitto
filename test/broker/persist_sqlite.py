@@ -377,6 +377,23 @@ def check_base_msg(
 
     return row[0]
 
+def modify_base_msgs(
+    port : int,
+    sub_expiry_time : int
+):
+    num_modified_rows = 0
+    con = sqlite3.connect(f"{port}/mosquitto.sqlite3")
+    try:
+        cur = con.cursor()
+        cur.execute(
+            "UPDATE base_msgs"
+            +f" SET expiry_time = expiry_time - {sub_expiry_time}"
+        )
+        num_modified_rows = cur.rowcount
+        con.commit()
+    finally:
+        con.close()
+    return num_modified_rows
 
 def check_retain(port, topic, store_id):
     con = sqlite3.connect(f"{port}/mosquitto.sqlite3")

@@ -380,6 +380,10 @@ static void	db__fill_inflight_out_from_queue(struct mosquitto *context)
 				client_msg->data.state = mosq_ms_publish_qos2;
 				break;
 		}
+		if(client_msg->base_msg->data.expiry_time && db.now_real_s > client_msg->base_msg->data.expiry_time){
+			db__message_remove_queued(context, &context->msgs_out, client_msg);
+			continue;
+		}
 		plugin_persist__handle_client_msg_update(context, client_msg);
 		db__message_dequeue_first(context, &context->msgs_out);
 	}
@@ -942,9 +946,11 @@ int db__message_store(const struct mosquitto *source, struct mosquitto__base_msg
 	}
 	base_msg->origin = origin;
 	if(message_expiry_interval){
-		base_msg->data.expiry_time = db.now_real_s + (*message_expiry_interval);
-	}else{
-		base_msg->data.expiry_time = 0;
+		if(*message_expiry_interval > 0){
+			base_msg->data.expiry_time = db.now_real_s + *message_expiry_interval;
+		}else{
+			base_msg->data.expiry_time = 0;
+		}
 	}
 
 	base_msg->dest_ids = NULL;
@@ -1207,6 +1213,7 @@ void db__expire_all_messages(struct mosquitto *context)
 			db__message_remove_inflight(context, &context->msgs_out, client_msg);
 		}
 	}
+	db__fill_inflight_out_from_queue(context);
 	DL_FOREACH_SAFE(context->msgs_out.queued, client_msg, tmp){
 		if(client_msg->base_msg->data.expiry_time && db.now_real_s > client_msg->base_msg->data.expiry_time){
 			db__message_remove_queued(context, &context->msgs_out, client_msg);
@@ -1289,6 +1296,7 @@ static int db__message_write_inflight_out_single(struct mosquitto *context, stru
 				util__increment_send_quota(context);
 			}
 			db__message_remove_inflight(context, &context->msgs_out, client_msg);
+			db__fill_inflight_out_from_queue(context);
 			return MOSQ_ERR_SUCCESS;
 		}else{
 			expiry_interval = (uint32_t)(base_msg->data.expiry_time - db.now_real_s);
