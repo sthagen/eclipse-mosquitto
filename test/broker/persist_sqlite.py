@@ -28,7 +28,7 @@ def write_config(filename, port, additional_config_entries : dict = {}):
             f"plugin {mosq_test.get_build_root()}/plugins/persist-sqlite/mosquitto_persist_sqlite.so\n"
         )
         f.write("plugin_opt_db_file %d/mosquitto.sqlite3\n" % (port))
-        for entry, value in additional_config_entries.items():            
+        for entry, value in additional_config_entries.items():
             f.write(f"{entry} {value}\n")
 
 
@@ -236,6 +236,27 @@ def check_client(
         )
     con.close()
 
+def modify_client(
+    port : int,
+    client_id : str,
+    sub_expiry_time : int
+):
+    num_modified_rows = 0
+    con = sqlite3.connect(f"{port}/mosquitto.sqlite3")
+    try:
+        cur = con.cursor()
+        cur.execute(
+            "UPDATE clients"
+            +f" SET session_expiry_time = session_expiry_time - {sub_expiry_time}"
+            +f" WHERE client_id = ?",
+            (client_id,)
+        )
+        num_modified_rows = cur.rowcount
+        con.commit()
+    finally:
+        con.close()
+
+    return num_modified_rows
 
 def check_subscription(
     port, client_id, topic, subscription_options, subscription_identifier
@@ -337,7 +358,7 @@ def check_base_msg(
         )
         for i in range(0, idx + 1):
             row = cur.fetchone()
-        
+
         if row[0] == 0:
             raise ValueError("Invalid store_id %d / %d" % (row[0], store_id))
 

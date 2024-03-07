@@ -517,6 +517,7 @@ BROKER_EXPORT int mosquitto_persist_client_add(struct mosquitto_client *client)
 	}
 
 	context__add_to_by_id(context);
+	session_expiry__add_from_persistence(context,context->session_expiry_time);
 
 	return MOSQ_ERR_SUCCESS;
 error:
