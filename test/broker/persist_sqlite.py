@@ -360,10 +360,6 @@ def check_client_msg(
             raise ValueError(
                 "Invalid state %d / %d for message %s" % (row[8], state, msg_id)
             )
-    except ValueError as err:
-        raise ValueError(
-            str(err) + f" in client message client_id = {client_id} cmsg_id = {idx}"
-        ) from err
     finally:
         con.close()
 

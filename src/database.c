@@ -1201,6 +1201,12 @@ int db__message_release_incoming(struct mosquitto *context, uint16_t mid)
 }
 
 
+void db__retain_expiry_check()
+{
+	retain__expiry_check(&db.retains);
+}
+
+
 void db__expire_all_messages(struct mosquitto *context)
 {
 	struct mosquitto__client_msg *client_msg, *tmp;

@@ -47,6 +47,7 @@ def publish_messages(
     topic: str,
     start: int,
     end: int,
+    retain_end=0,
     message_expiry: int = 0,
     qos: int = 1,
 ):
@@ -65,6 +66,7 @@ def publish_messages(
             mid=mid,
             qos=qos,
             payload=payload.encode("UTF-8"),
+            retain = True if i < retain_end else False,
             proto_ver=proto_ver,
             properties=props,
         )
@@ -80,10 +82,11 @@ def check_db(
     client_msg_counts: dict[str, int],
     publisher_id: str,
     num_published_msgs: int,
+    retain_end: int,
     message_expiry: int = 0,
     qos: int = 1,
 ):
-    count_list = [v for v in client_msg_counts.values() if v] + [0]
+    count_list = [v for v in client_msg_counts.values() if v is not None] + [0]
     num_base_msgs = max(count_list)
     num_subscriptions = sum(1 for c in client_msg_counts.values() if c is not None)
     num_client_msgs_out = sum(count_list)
@@ -91,7 +94,8 @@ def check_db(
         port,
         clients=len(client_msg_counts),
         client_msgs_out=num_client_msgs_out,
-        base_msgs=num_base_msgs,
+        base_msgs=num_base_msgs if num_base_msgs > 0 or retain_end == 0 else 1,
+        retain_msgs=1 if retain_end > 0 else 0,
         subscriptions=num_subscriptions,
     )
 
@@ -131,7 +135,7 @@ def check_db(
             mid,
             port,
             qos,
-            retain=0,
+            retain=1 if i < retain_end else 0,
             idx=i,
         )
         # Check client msg

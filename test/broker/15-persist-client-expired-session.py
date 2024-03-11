@@ -26,9 +26,10 @@ def do_test(
     additional_config_entries: dict,
     resubscribe: bool,
     num_messages_two_subscribers: int = 0,
+    num_retain_messages : int = 0,
 ):
     print(
-        f"{test_case_name}, resubscribe = {resubscribe}, two_subscribers = {'True' if num_messages_two_subscribers > 0 else 'False'}"
+        f"{test_case_name}, resubscribe = {resubscribe}, two_subscribers = {'True' if num_messages_two_subscribers > 0 else 'False'}, num_retain_messages = {num_retain_messages} "
     )
 
     conf_file = os.path.basename(__file__).replace(".py", f"_{port}.conf")
@@ -69,6 +70,7 @@ def do_test(
             topic,
             0,
             num_messages - num_messages_two_subscribers,
+            retain_end=num_retain_messages,
         )
 
         if num_messages_two_subscribers > 0:
@@ -87,6 +89,7 @@ def do_test(
                 topic,
                 num_messages - num_messages_two_subscribers,
                 num_messages,
+                retain_end=num_retain_messages,
             )
         publisher_sock.close()
 
@@ -102,6 +105,7 @@ def do_test(
             client_msg_counts=msg_counts,
             publisher_id=publisher_id,
             num_published_msgs=num_messages,
+            retain_end = num_retain_messages,
         )
 
         # Put session expiry_time into the past
@@ -136,6 +140,7 @@ def do_test(
             client_msg_counts=msg_counts,
             publisher_id=publisher_id,
             num_published_msgs=num_messages,
+            retain_end=num_retain_messages,
         )
 
         if num_messages_two_subscribers > 0:
@@ -175,6 +180,7 @@ def do_test(
                 client_msg_counts=msg_counts,
                 publisher_id=publisher_id,
                 num_published_msgs=num_messages,
+                retain_end=num_retain_messages,
             )
 
         rc = broker_terminate_rc
@@ -221,3 +227,27 @@ do_test(
     resubscribe=True,
     num_messages_two_subscribers=20,
 )
+do_test(
+    "memory queue",
+    additional_config_entries=memory_queue_config,
+    resubscribe=False,
+    num_retain_messages=30,
+)
+# The following test case is open for discussion as adapting
+# the check routines will be hard and some observations
+# are unclear right now
+# do_test(
+#     "memory queue",
+#     additional_config_entries=memory_queue_config,
+#     resubscribe=False,
+#     num_messages_two_subscribers=40,
+#     num_retain_messages=30,
+# )
+# do_test(
+#     "memory queue",
+#     additional_config_entries=memory_queue_config,
+#     resubscribe=False,
+#     num_messages_two_subscribers=50,
+#     num_retain_messages=60,
+# )
+

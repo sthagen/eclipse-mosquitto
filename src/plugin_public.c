@@ -751,7 +751,6 @@ BROKER_EXPORT int mosquitto_persist_base_msg_add(struct mosquitto_base_msg *msg_
 {
 	struct mosquitto context;
 	struct mosquitto__base_msg *base_msg;
-	int i;
 	int rc;
 
 	memset(&context, 0, sizeof(context));
