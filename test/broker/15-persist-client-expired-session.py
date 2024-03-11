@@ -149,7 +149,6 @@ def do_test(
                 qos,
                 0,
                 persist_help.ms_queued,
-                idx=i,
             )
 
         # Put session expiry_time into the past

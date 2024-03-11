@@ -11,6 +11,7 @@ port = mosq_test.get_port()
 
 num_messages = 100
 
+
 def do_test(test_case_name: str, additional_config_entries: dict):
     conf_file = os.path.basename(__file__).replace(".py", f"_{port}.conf")
     persist_help.write_config(
@@ -29,7 +30,11 @@ def do_test(test_case_name: str, additional_config_entries: dict):
     proto_ver = 5
 
     connect_packet = mosq_test.gen_connect(
-        client_id, username=username, proto_ver=proto_ver, clean_session=False, session_expiry=60
+        client_id,
+        username=username,
+        proto_ver=proto_ver,
+        clean_session=False,
+        session_expiry=60,
     )
     connack_packet1 = mosq_test.gen_connack(rc=0, proto_ver=proto_ver)
     connack_packet2 = mosq_test.gen_connack(rc=0, flags=1, proto_ver=proto_ver)
@@ -39,15 +44,13 @@ def do_test(test_case_name: str, additional_config_entries: dict):
     suback_packet = mosq_test.gen_suback(mid, qos=qos, proto_ver=proto_ver)
 
     connect2_packet = mosq_test.gen_connect(
-        source_id, username=username,  proto_ver=proto_ver
+        source_id, username=username, proto_ver=proto_ver
     )
     connack2_packet = mosq_test.gen_connack(rc=0, proto_ver=proto_ver)
 
     rc = 1
 
-    broker = mosq_test.start_broker(
-        filename=conf_file, use_conf=True, port=port
-    )
+    broker = mosq_test.start_broker(filename=conf_file, use_conf=True, port=port)
 
     con = None
     try:
@@ -60,7 +63,9 @@ def do_test(test_case_name: str, additional_config_entries: dict):
         sock = mosq_test.do_client_connect(
             connect2_packet, connack2_packet, timeout=5, port=port
         )
-        props = mqtt5_props.gen_uint32_prop(mqtt5_props.PROP_MESSAGE_EXPIRY_INTERVAL, 60)
+        props = mqtt5_props.gen_uint32_prop(
+            mqtt5_props.PROP_MESSAGE_EXPIRY_INTERVAL, 60
+        )
         for i in range(num_messages):
             payload = f"queued message {i:3}"
             mid = 10 + i
@@ -140,20 +145,20 @@ def do_test(test_case_name: str, additional_config_entries: dict):
                 qos,
                 0,
                 persist_help.ms_queued,
-                idx=i,
             )
 
         # Modify message expiry timestamp in the database
         assert persist_help.modify_base_msgs(port, sub_expiry_time=120) == num_messages
 
         # Restart broker
-        broker = mosq_test.start_broker(
-            filename=conf_file, use_conf=True, port=port
-        )
+        broker = mosq_test.start_broker(filename=conf_file, use_conf=True, port=port)
 
         # Connect client again, it should have a session, but all queued messages should be dropped
         sock = mosq_test.do_client_connect(
-            connect_packet, connack_packet2, timeout=5, port=port,
+            connect_packet,
+            connack_packet2,
+            timeout=5,
+            port=port,
         )
 
         # Send ping and wait for the PINGRESP to make sure the broker will not send a queued message instead
