@@ -102,6 +102,7 @@ tests = [
     (2, './06-bridge-outgoing-retain.py'),
     (3, './06-bridge-per-listener-settings.py'),
     (2, './06-bridge-reconnect-local-out.py'),
+    (2, './06-bridge-remap-receive-wildcard.py'),
 
     (1, './07-will-control.py'),
     (1, './07-will-delay-invalid-573191.py'),

@@ -129,7 +129,7 @@ int handle__unsubscribe(struct mosquitto *context)
 
 		log__printf(NULL, MOSQ_LOG_DEBUG, "\t%s", sub);
 		if(allowed){
-			rc = sub__remove(context, sub, db.subs, &reason);
+			rc = sub__remove(context, sub, &reason);
 		}else{
 			rc = MOSQ_ERR_SUCCESS;
 		}

@@ -9,7 +9,7 @@
 !define env_hklm 'HKLM "SYSTEM\CurrentControlSet\Control\Session Manager\Environment"'
 
 Name "Eclipse Mosquitto"
-!define VERSION 2.0.18
+!define VERSION 2.0.19
 OutFile "mosquitto-${VERSION}-install-windows-x86.exe"
 
 InstallDir "$PROGRAMFILES\mosquitto"
@@ -40,7 +40,12 @@ InstallDir "$PROGRAMFILES\mosquitto"
 
 Section "Files" SecInstall
 	SectionIn RO
+
+	ExecWait 'sc stop mosquitto'
+	Sleep 1000
+
 	SetOutPath "$INSTDIR"
+	File "..\logo\mosquitto.ico"
 	File "..\build\src\Release\mosquitto.exe"
 	File "..\build\apps\mosquitto_passwd\Release\mosquitto_passwd.exe"
 	File "..\build\apps\mosquitto_ctrl\Release\mosquitto_ctrl.exe"
@@ -75,6 +80,7 @@ Section "Files" SecInstall
 
 	WriteUninstaller "$INSTDIR\Uninstall.exe"
 	WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Mosquitto" "DisplayName" "Eclipse Mosquitto MQTT broker"
+	WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Mosquitto" "DisplayIcon" "$INSTDIR\mosquitto.ico"
 	WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Mosquitto" "UninstallString" "$\"$INSTDIR\Uninstall.exe$\""
 	WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Mosquitto" "QuietUninstallString" "$\"$INSTDIR\Uninstall.exe$\" /S"
 	WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Mosquitto" "HelpLink" "https://mosquitto.org/"
@@ -89,10 +95,15 @@ SectionEnd
 
 Section "Service" SecService
 	ExecWait '"$INSTDIR\mosquitto.exe" install'
+	ExecWait 'sc start mosquitto'
 SectionEnd
 
 Section "Uninstall"
+	ExecWait 'sc stop mosquitto'
+	Sleep 1000
 	ExecWait '"$INSTDIR\mosquitto.exe" uninstall'
+	Sleep 1000
+
 	Delete "$INSTDIR\mosquitto.exe"
 	Delete "$INSTDIR\mosquitto_ctrl.exe"
 	Delete "$INSTDIR\mosquitto_passwd.exe"
@@ -114,6 +125,7 @@ Section "Uninstall"
 	Delete "$INSTDIR\libcrypto-1_1.dll"
 	Delete "$INSTDIR\edl-v10"
 	Delete "$INSTDIR\epl-v20"
+	Delete "$INSTDIR\mosquitto.ico"
 
 	Delete "$INSTDIR\devel\mosquitto.h"
 	Delete "$INSTDIR\devel\mosquitto.lib"

@@ -1,3 +1,29 @@
+2.0.19 - 2024-10-02
+===================
+
+Security:
+- Fix mismatched subscribe/unsubscribe with normal/shared topics.
+- Fix crash on bridge using remapped topic being sent a crafted packet.
+
+Broker:
+- Fix assert failure when loading a persistence file that contains
+  subscriptions with no client id.
+- Fix local bridges being incorrectly expired when
+  persistent_client_expiration is in use.
+- Fix use of CLOCK_BOOTTIME for getting time. Closes #3089.
+- Fix mismatched subscribe/unsubscribe with normal/shared topics.
+- Fix crash on bridge using remapped topic being sent a crafted packet.
+
+Client library:
+- Fix some error codes being converted to string as "unknown". Closes #2579.
+- Clear SSL error state to avoid spurious error reporting. Closes #3054.
+- Fix "payload format invalid" not being allowed as a PUBREC reason code.
+- Don't allow SUBACK with missing reason codes.
+
+Build:
+- Thread support is re-enabled on Windows.
+
+
 2.0.18 - 2023-09-18
 ===================
 
@@ -7,6 +33,11 @@ Broker:
 
 Clients:
 - Fix mosquitto_rr not honouring `-R`. Closes #2893.
+
+Windows:
+- Installer will start/stop the mosquitto service when installing and
+  uninstalling, to prevent problems with not being able to overwrite or remove
+  mosquitto.exe.
 
 
 2.0.17 - 2023-08-22

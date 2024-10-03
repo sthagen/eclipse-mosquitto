@@ -39,6 +39,20 @@ extern "C" {
 #include <stdint.h>
 #include <time.h>
 
+/*
+ * Topic: Threads
+ *	Unless otherwise noted, the functions provided for plugins to use should
+ *	only be called in the context of the main broker thread. This is the thread
+ *	which calls your callbacks.
+ *
+ *	If you have a separate thread running in your plugin which needs to
+ *	interact with the broker that isn't tied to a specific callback, the
+ *	easiest way to handle this is to use the `tick` event and pass your data
+ *	structure as the userdata argument when you register the callback. Note
+ *	that you still need to ensure appropriate synchronisation between your
+ *	thread and the broker thread using e.g. a mutex.
+ */
+
 struct mosquitto;
 typedef struct mqtt5__property mosquitto_property;
 

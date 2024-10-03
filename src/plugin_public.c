@@ -288,7 +288,7 @@ static void check_subscription_acls(struct mosquitto *context)
 				MOSQ_ACL_SUBSCRIBE);
 
 		if(rc != MOSQ_ERR_SUCCESS){
-			sub__remove(context, context->subs[i]->topic_filter, db.subs, &reason);
+			sub__remove(context, context->subs[i]->topic_filter, &reason);
 		}
 	}
 }

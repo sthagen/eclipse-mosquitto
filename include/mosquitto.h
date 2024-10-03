@@ -66,7 +66,7 @@ extern "C" {
 
 #define LIBMOSQUITTO_MAJOR 2
 #define LIBMOSQUITTO_MINOR 0
-#define LIBMOSQUITTO_REVISION 18
+#define LIBMOSQUITTO_REVISION 19
 /* LIBMOSQUITTO_VERSION_NUMBER looks like 1002001 for e.g. version 1.2.1. */
 #define LIBMOSQUITTO_VERSION_NUMBER (LIBMOSQUITTO_MAJOR*1000000+LIBMOSQUITTO_MINOR*1000+LIBMOSQUITTO_REVISION)
 
@@ -507,7 +507,7 @@ libmosq_EXPORT int mosquitto_username_pw_set(struct mosquitto *mosq, const char 
  * 	                   * mosq == NULL
  * 	                   * host == NULL
  * 	                   * port < 0
- * 	                   * keepalive < 5
+ * 	                   * keepalive < 5 (keepalive == 0 is allowed, for an infinite keepalive)
  * 	MOSQ_ERR_ERRNO -   if a system call returned an error. The variable errno
  *                     contains the error code, even on Windows.
  *                     Use strerror_r() where available or FormatMessage() on
@@ -587,7 +587,7 @@ libmosq_EXPORT int mosquitto_connect_bind(struct mosquitto *mosq, const char *ho
  * 	                   * mosq == NULL
  * 	                   * host == NULL
  * 	                   * port < 0
- * 	                   * keepalive < 5
+ * 	                   * keepalive < 5 (keepalive == 0 is allowed, for an infinite keepalive)
  * 	MOSQ_ERR_ERRNO -   if a system call returned an error. The variable errno
  *                     contains the error code, even on Windows.
  *                     Use strerror_r() where available or FormatMessage() on

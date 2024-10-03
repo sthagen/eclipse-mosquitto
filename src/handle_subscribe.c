@@ -188,7 +188,7 @@ int handle__subscribe(struct mosquitto *context)
 			}
 
 			if(allowed){
-				rc2 = sub__add(context, sub, qos, subscription_identifier, subscription_options, &db.subs);
+				rc2 = sub__add(context, sub, qos, subscription_identifier, subscription_options);
 				if(rc2 > 0){
 					mosquitto__free(sub);
 					return rc2;

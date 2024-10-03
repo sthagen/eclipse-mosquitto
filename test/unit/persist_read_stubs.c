@@ -149,11 +149,10 @@ int acl__find_acls(struct mosquitto *context)
 }
 
 
-int sub__add(struct mosquitto *context, const char *sub, uint8_t qos, uint32_t identifier, int options, struct mosquitto__subhier **root)
+int sub__add(struct mosquitto *context, const char *sub, uint8_t qos, uint32_t identifier, int options)
 {
 	UNUSED(context);
 	UNUSED(options);
-	UNUSED(root);
 
 	last_sub = strdup(sub);
 	last_qos = qos;

@@ -4,11 +4,11 @@
 # To configure the build options either use the CMake gui, or run the command
 # line utility including the "-i" option.
 
-cmake_minimum_required(VERSION 3.1)
+cmake_minimum_required(VERSION 3.5)
 cmake_policy(SET CMP0042 NEW)
 
 project(mosquitto)
-set (VERSION 2.0.18)
+set (VERSION 2.0.19)
 
 list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake/")
 
@@ -35,6 +35,12 @@ option(WITH_EC
 if (WITH_TLS)
 	find_package(OpenSSL REQUIRED)
 	add_definitions("-DWITH_TLS")
+
+	# mosquitto uses OpenSSL 1.1 API, so set OPENSSL_API_COMPAT accordingly:
+	# https://www.openssl.org/docs/manmaster/man7/OPENSSL_API_COMPAT.html
+	# TODO: migrate off ENGINE API (deprecated since OpenSSL 3.0), see:
+	#       https://www.openssl.org/docs/manmaster/man7/migration_guide.html#Engines-and-METHOD-APIs
+	add_definitions("-DOPENSSL_API_COMPAT=0x10100000L")
 
 	if (WITH_TLS_PSK)
 		add_definitions("-DWITH_TLS_PSK")
@@ -66,25 +72,9 @@ option(WITH_PIC "Build the static library with PIC (Position Independent Code) e
 option(WITH_THREADING "Include client library threading support?" ON)
 if (WITH_THREADING)
 	add_definitions("-DWITH_THREADING")
-	if (WIN32)
-		find_package(Threads REQUIRED)
-		set (PTHREAD_LIBRARIES Threads::Threads)
-		set (PTHREAD_INCLUDE_DIR "")
-	elseif (ANDROID)
-		set (PTHREAD_LIBRARIES "")
-		set (PTHREAD_INCLUDE_DIR "")
-	else (WIN32)
-		find_library(LIBPTHREAD pthread)
-		if (LIBPTHREAD)
-			set (PTHREAD_LIBRARIES pthread)
-		else (LIBPTHREAD)
-			set (PTHREAD_LIBRARIES "")
-		endif()
-		set (PTHREAD_INCLUDE_DIR "")
-	endif (WIN32)
-else (WITH_THREADING)
-	set (PTHREAD_LIBRARIES "")
-	set (PTHREAD_INCLUDE_DIR "")
+	if(WIN32)
+		find_package(Pthreads4W REQUIRED)
+	endif()
 endif (WITH_THREADING)
 
 option(WITH_DLT "Include DLT support?" OFF)

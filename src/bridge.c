@@ -128,6 +128,11 @@ int bridge__new(struct mosquitto__bridge *bridge)
 	new_context->protocol = bridge->protocol_version;
 	if(!bridge->clean_start_local){
 		new_context->session_expiry_interval = UINT32_MAX;
+		if(new_context->expiry_list_item){
+			/* We've restored from persistence and been added to the session
+			 * expiry list, even though we should never be expired */
+			session_expiry__remove(new_context);
+		}
 	}
 
 	bridges = mosquitto__realloc(db.bridges, (size_t)(db.bridge_count+1)*sizeof(struct mosquitto *));
@@ -192,8 +197,7 @@ int bridge__connect_step1(struct mosquitto *context)
 						context->bridge->topics[i].local_topic,
 						qos,
 						0,
-						MQTT_SUB_OPT_NO_LOCAL | MQTT_SUB_OPT_RETAIN_AS_PUBLISHED,
-						&db.subs) > 0){
+						MQTT_SUB_OPT_NO_LOCAL | MQTT_SUB_OPT_RETAIN_AS_PUBLISHED) > 0){
 				return 1;
 			}
 			retain__queue(context,
@@ -383,8 +387,7 @@ int bridge__connect(struct mosquitto *context)
 						context->bridge->topics[i].local_topic,
 						qos,
 						0,
-						MQTT_SUB_OPT_NO_LOCAL | MQTT_SUB_OPT_RETAIN_AS_PUBLISHED,
-						&db.subs) > 0){
+						MQTT_SUB_OPT_NO_LOCAL | MQTT_SUB_OPT_RETAIN_AS_PUBLISHED) > 0){
 
 				return 1;
 			}

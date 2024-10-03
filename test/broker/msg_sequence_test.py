@@ -218,6 +218,10 @@ finally:
     broker.terminate()
     broker.wait()
     (stdo, stde) = broker.communicate()
+    if broker.returncode != 0:
+        rc = broker.returncode
+        print(f"Broker exited with code {rc}. If there are no obvious errors this may be due to an ASAN build having leaks, which must be fixed.")
+        print("The easiest way to reproduce this is to run the broker with `mosquitto -p 1888`, rerun the test, then quit the broker.")
 if rc:
     #print(stde.decode('utf-8'))
     exit(rc)

@@ -85,8 +85,10 @@ void packet__write_bytes(struct mosquitto__packet *packet, const void *bytes, ui
 	assert(packet);
 	assert(packet->pos+count <= packet->packet_length);
 
-	memcpy(&(packet->payload[packet->pos]), bytes, count);
-	packet->pos += count;
+	if(count > 0){
+		memcpy(&(packet->payload[packet->pos]), bytes, count);
+		packet->pos += count;
+	}
 }
 
 

@@ -68,7 +68,8 @@ int handle__pubrec(struct mosquitto *mosq)
 				&& reason_code != MQTT_RC_NOT_AUTHORIZED
 				&& reason_code != MQTT_RC_TOPIC_NAME_INVALID
 				&& reason_code != MQTT_RC_PACKET_ID_IN_USE
-				&& reason_code != MQTT_RC_QUOTA_EXCEEDED){
+				&& reason_code != MQTT_RC_QUOTA_EXCEEDED
+				&& reason_code != MQTT_RC_PAYLOAD_FORMAT_INVALID){
 
 			return MOSQ_ERR_PROTOCOL;
 		}

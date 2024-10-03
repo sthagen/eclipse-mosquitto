@@ -199,12 +199,16 @@ int db__open(struct mosquitto__config *config)
 	/* Initialize the hashtable */
 	db.clientid_index_hash = NULL;
 
-	db.subs = NULL;
+	db.normal_subs = NULL;
+	db.shared_subs = NULL;
 
-	subhier = sub__add_hier_entry(NULL, &db.subs, "", 0);
+	subhier = sub__add_hier_entry(NULL, &db.shared_subs, "", 0);
 	if(!subhier) return MOSQ_ERR_NOMEM;
 
-	subhier = sub__add_hier_entry(NULL, &db.subs, "$SYS", (uint16_t)strlen("$SYS"));
+	subhier = sub__add_hier_entry(NULL, &db.normal_subs, "", 0);
+	if(!subhier) return MOSQ_ERR_NOMEM;
+
+	subhier = sub__add_hier_entry(NULL, &db.normal_subs, "$SYS", (uint16_t)strlen("$SYS"));
 	if(!subhier) return MOSQ_ERR_NOMEM;
 
 	retain__init();
@@ -240,7 +244,8 @@ static void subhier_clean(struct mosquitto__subhier **subhier)
 
 int db__close(void)
 {
-	subhier_clean(&db.subs);
+	subhier_clean(&db.normal_subs);
+	subhier_clean(&db.shared_subs);
 	retain__clean(&db.retains);
 	db__msg_store_clean();
 
@@ -719,14 +724,16 @@ int db__messages_easy_queue(struct mosquitto *context, const char *topic, uint8_
 	}
 
 	stored->payloadlen = payloadlen;
-	stored->payload = mosquitto__malloc(stored->payloadlen+1);
-	if(stored->payload == NULL){
-		db__msg_store_free(stored);
-		return MOSQ_ERR_NOMEM;
+	if(payloadlen > 0){
+		stored->payload = mosquitto__malloc(stored->payloadlen+1);
+		if(stored->payload == NULL){
+			db__msg_store_free(stored);
+			return MOSQ_ERR_NOMEM;
+		}
+		/* Ensure payload is always zero terminated, this is the reason for the extra byte above */
+		((uint8_t *)stored->payload)[stored->payloadlen] = 0;
+		memcpy(stored->payload, payload, stored->payloadlen);
 	}
-	/* Ensure payload is always zero terminated, this is the reason for the extra byte above */
-	((uint8_t *)stored->payload)[stored->payloadlen] = 0;
-	memcpy(stored->payload, payload, stored->payloadlen);
 
 	if(context && context->id){
 		source_id = context->id;
