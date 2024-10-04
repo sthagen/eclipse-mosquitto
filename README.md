@@ -30,7 +30,7 @@ various platforms.
 ## Quick start
 
 If you have installed a binary package the broker should have been started
-automatically. If not, it can be started with a basic configuration:
+automatically. If not, it can be started with a very basic configuration:
 
     mosquitto
 
@@ -41,6 +41,23 @@ Then use `mosquitto_sub` to subscribe to a topic:
 And to publish a message:
 
     mosquitto_pub -t 'test/topic' -m 'hello world'
+
+Note that starting the broker like this allows anonymous/unauthenticated access
+but only from the local computer, so it's only really useful for initial testing.
+
+If you want to have clients from another computer connect, you will need to
+provide a configuration file. If you have installed from a binary package, you
+will probably already have a configuration file at somewhere like
+`/etc/mosquitto/mosquitto.conf`. If you've compiled from source, you can write
+your config file then run as `mosquitto -c /path/to/mosquitto.conf`.
+
+To start your config file you define a listener and you will need to think
+about what authentication you require. It is not advised to run your broker
+with anonymous access when it is publically available.
+
+For details on how to do this, look at the
+[authentication methods](https://mosquitto.org/documentation/authentication-methods/)
+available and the [dynamic security plugin](https://mosquitto.org/documentation/dynamic-security/).
 
 ## Documentation
 
