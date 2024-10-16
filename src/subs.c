@@ -659,6 +659,7 @@ int sub__remove(struct mosquitto *context, const char *sub, uint8_t *reason)
 int sub__messages_queue(const char *source_id, const char *topic, uint8_t qos, int retain, struct mosquitto_msg_store **stored)
 {
 	int rc = MOSQ_ERR_SUCCESS, rc2;
+	int rc_normal = MOSQ_ERR_NO_SUBSCRIBERS, rc_shared = MOSQ_ERR_NO_SUBSCRIBERS;
 	struct mosquitto__subhier *subhier;
 	char **split_topics = NULL;
 	char *local_topic = NULL;
@@ -675,12 +676,24 @@ int sub__messages_queue(const char *source_id, const char *topic, uint8_t qos, i
 
 	HASH_FIND(hh, db.normal_subs, split_topics[0], strlen(split_topics[0]), subhier);
 	if(subhier){
-		rc = sub__search(subhier, split_topics, source_id, topic, qos, retain, *stored);
+		rc_normal = sub__search(subhier, split_topics, source_id, topic, qos, retain, *stored);
+		if(rc_normal > 0){
+			rc = rc_normal;
+			goto end;
+		}
 	}
 
 	HASH_FIND(hh, db.shared_subs, split_topics[0], strlen(split_topics[0]), subhier);
 	if(subhier){
-		rc = sub__search(subhier, split_topics, source_id, topic, qos, retain, *stored);
+		rc_shared = sub__search(subhier, split_topics, source_id, topic, qos, retain, *stored);
+		if(rc_shared > 0){
+			rc = rc_shared;
+			goto end;
+		}
+	}
+
+	if(rc_normal == MOSQ_ERR_NO_SUBSCRIBERS && rc_shared == MOSQ_ERR_NO_SUBSCRIBERS){
+		rc = MOSQ_ERR_NO_SUBSCRIBERS;
 	}
 
 	if(retain){
@@ -688,6 +701,7 @@ int sub__messages_queue(const char *source_id, const char *topic, uint8_t qos, i
 		if(rc2) rc = rc2;
 	}
 
+end:
 	mosquitto__free(split_topics);
 	mosquitto__free(local_topic);
 	/* Remove our reference and free if needed. */

@@ -8,7 +8,7 @@ cmake_minimum_required(VERSION 3.5)
 cmake_policy(SET CMP0042 NEW)
 
 project(mosquitto)
-set (VERSION 2.0.19)
+set (VERSION 2.0.20)
 
 list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake/")
 
@@ -20,7 +20,7 @@ if (WIN32)
 endif (WIN32)
 
 if(APPLE)
-	set(CMAKE_SHARED_LIBRARY_CREATE_C_FLAGS "${CMAKE_SHARED_LIBRARY_CREATE_C_FLAGS} -undefined dynamic_lookup")
+        set(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} -undefined dynamic_lookup")
 endif(APPLE)
 
 include(GNUInstallDirs)

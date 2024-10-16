@@ -132,6 +132,11 @@ int handle__subscribe(struct mosquitto *context)
 				qos = subscription_options & 0x03;
 				subscription_options &= 0xFC;
 
+				if((subscription_options & MQTT_SUB_OPT_NO_LOCAL) && !strncmp(sub, "$share/", 7)){
+					mosquitto__free(sub);
+					mosquitto__free(payload);
+					return MOSQ_ERR_PROTOCOL;
+				}
 				retain_handling = (subscription_options & 0x30);
 				if(retain_handling == 0x30 || (subscription_options & 0xC0) != 0){
 					mosquitto__free(sub);

@@ -1,3 +1,20 @@
+2.0.20 - 2024-10-16
+===================
+
+Broker:
+- Fix QoS 1 / QoS 2 publish incorrectly returning "no subscribers".
+  Closes #3128.
+- Open files with appropriate access on Windows. Closes #3119.
+- Don't allow invalid response topic values.
+- Fix some strict protocol compliance issues. Closes #3052.
+
+Client library:
+- Fix cmake build on OS X. Closes #3125.
+
+Build:
+- Fix build on NetBSD
+
+
 2.0.19 - 2024-10-02
 ===================
 

@@ -1,6 +1,6 @@
 <!--
 .. title: Version 2.0.19 released.
-.. slug: version-2-0-17-released
+.. slug: version-2-0-19-released
 .. date: 2024-10-02 10:46:38 UTC+1
 .. tags: Releases
 .. category:

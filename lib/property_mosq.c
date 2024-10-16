@@ -958,6 +958,10 @@ int mosquitto_property_check_all(int command, const mosquitto_property *properti
 			if(p->value.i16 == 0){
 				return MOSQ_ERR_PROTOCOL;
 			}
+		}else if(p->identifier == MQTT_PROP_RESPONSE_TOPIC){
+			if(mosquitto_pub_topic_check(p->value.s.v) != MOSQ_ERR_SUCCESS){
+				return MOSQ_ERR_PROTOCOL;
+			}
 		}
 
 		/* Check for properties on incorrect commands */

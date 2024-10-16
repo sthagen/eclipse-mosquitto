@@ -67,23 +67,30 @@ FILE *mosquitto__fopen(const char *path, const char *mode, bool restrict_read)
 			DWORD ulen = UNLEN;
 			SECURITY_DESCRIPTOR sd;
 			DWORD dwCreationDisposition;
+			DWORD dwShareMode;
 			int fd;
 			FILE *fptr;
 
 			switch(mode[0]){
 				case 'a':
 					dwCreationDisposition = OPEN_ALWAYS;
+					dwShareMode = GENERIC_WRITE;
 					flags = _O_APPEND;
 					break;
 				case 'r':
 					dwCreationDisposition = OPEN_EXISTING;
+					dwShareMode = GENERIC_READ;
 					flags = _O_RDONLY;
 					break;
 				case 'w':
 					dwCreationDisposition = CREATE_ALWAYS;
+					dwShareMode = GENERIC_WRITE;
 					break;
 				default:
 					return NULL;
+			}
+			if(mode[1] == '+'){
+				dwShareMode = GENERIC_READ | GENERIC_WRITE;
 			}
 
 			GetUserNameA(username, &ulen);
@@ -104,7 +111,7 @@ FILE *mosquitto__fopen(const char *path, const char *mode, bool restrict_read)
 			sec.bInheritHandle = FALSE;
 			sec.lpSecurityDescriptor = &sd;
 
-			hfile = CreateFileA(buf, GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ,
+			hfile = CreateFileA(buf, dwShareMode, FILE_SHARE_READ,
 				&sec,
 				dwCreationDisposition,
 				FILE_ATTRIBUTE_NORMAL,

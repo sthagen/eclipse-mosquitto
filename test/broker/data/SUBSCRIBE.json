@@ -87,6 +87,14 @@
 				{"type":"send", "payload":"8A 07 1234 00 0001 70 00"},
 				{"type":"recv", "payload":"E0 01 81"}
 			]},
+			{ "name": "82 QoS 3 [MQTT-3-8.3-2] (no qos)", "ver":5, "msgs": [
+				{"type":"send", "payload":"82 06 1234 00 0001 70"},
+				{"type":"recv", "payload":"E0 01 81"}
+			]},
+			{ "name": "82 QoS 3 [MQTT-3-8.3-2] (no topic or qos)", "ver":5, "msgs": [
+				{"type":"send", "payload":"82 03 1234 00"},
+				{"type":"recv", "payload":"E0 01 81"}
+			]},
 			{ "name": "82 QoS 3 [MQTT-3-8.3-4]", "ver":5, "msgs": [
 				{"type":"send", "payload":"82 07 1234 00 0001 70 03"},
 				{"type":"recv", "payload":"E0 01 81"}
@@ -210,6 +218,18 @@
 			{ "name": "82 multiple ok [MQTT-3.8.4-4]", "ver":5, "expect_disconnect":false, "msgs": [
 				{"type":"send", "payload":"82 0B 1234 00 0001 70 00 0001 71 00"},
 				{"type":"recv", "payload":"90 05 1234 00 00 00"}
+			]},
+			{ "name": "82 shared sub with no topic part 1", "ver":5, "msgs": [
+				{"type":"send", "payload":"82 0F 1234 00 0009 2473686172652F702F 00"},
+				{"type":"recv", "payload":"E0 01 82"}
+			]},
+			{ "name": "82 shared sub with no topic part 2", "ver":5, "msgs": [
+				{"type":"send", "payload":"82 0E 1234 00 0008 2473686172652F70 00"},
+				{"type":"recv", "payload":"E0 01 82"}
+			]},
+			{ "name": "82 shared sub with no local set", "ver":5, "msgs": [
+				{"type":"send", "payload":"82 10 1234 00 000A 2473686172652F702F70 04"},
+				{"type":"recv", "payload":"E0 01 82"}
 			]}
 		]
 	},

@@ -33,11 +33,7 @@ Contributors:
 #endif
 #include <stdlib.h>
 
-#if defined(WITH_THREADING) && !defined(WITH_BROKER)
-#  include <pthread.h>
-#else
-#  include <dummypthread.h>
-#endif
+#include <pthread_compat.h>
 
 #ifdef WITH_SRV
 #  include <ares.h>

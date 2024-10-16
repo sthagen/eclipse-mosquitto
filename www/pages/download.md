@@ -11,7 +11,7 @@
 
 # Source
 
-* [mosquitto-2.0.19.tar.gz](https://mosquitto.org/files/source/mosquitto-2.0.19.tar.gz) ([GPG signature](https://mosquitto.org/files/source/mosquitto-2.0.19.tar.gz.asc))
+* [mosquitto-2.0.20.tar.gz](https://mosquitto.org/files/source/mosquitto-2.0.20.tar.gz) ([GPG signature](https://mosquitto.org/files/source/mosquitto-2.0.20.tar.gz.asc))
 * [Git source code repository](https://github.com/eclipse/mosquitto) (github.com)
 
 Older downloads are available at [https://mosquitto.org/files/](../files/)
@@ -24,7 +24,7 @@ distributions.
 
 ## Windows
 
-* [mosquitto-2.0.19-install-windows-x64.exe](https://mosquitto.org/files/binary/win64/mosquitto-2.0.19-install-windows-x64.exe)
+* [mosquitto-2.0.20-install-windows-x64.exe](https://mosquitto.org/files/binary/win64/mosquitto-2.0.20-install-windows-x64.exe)
 
 Older installers can be found at [https://mosquitto.org/files/binary/](https://mosquitto.org/files/binary/).
 

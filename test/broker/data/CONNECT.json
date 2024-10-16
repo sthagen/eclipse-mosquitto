@@ -41,7 +41,7 @@
 				{"type":"recv", "payload":"20 02 00 00", "comment": "CONNACK"},
 				{"type":"send", "payload":"10 0D 0004 4D515454 04 02 000A 0001 70", "comment":"minimal valid CONNECT"}
 			]},
-			{ "name": "10 missing client ID", "connect":false, "msgs":[{"type":"send", "payload":"10 08 0004 4D515454 04 02 000A"}]},
+			{ "name": "10 missing client ID", "connect":false, "msgs":[{"type":"send", "payload":"10 0A 0004 4D515454 04 02 000A"}]},
 			{ "name": "10 empty client ID", "connect":false, "expect_disconnect":false, "msgs":[
 				{"type":"send", "payload":"10 0C 0004 4D515454 04 02 000A 0000", "comment":"CONNECT clean session true, no client id"},
 				{"type":"recv", "payload":"20 02 00 00", "comment": "CONNACK"}
@@ -128,7 +128,7 @@
 				{"type":"recv", "payload":"20 02 00 00", "comment": "CONNACK"}
 			]},
 			{ "name": "duplicate CONNECT", "msgs":[{"type":"send", "payload":"10 0D 0004 4D515454 04 02 000A 0001 70", "comment":"minimal valid duplicate CONNECT"}]},
-			{ "name": "NanoMQ CWE-119", "msgs":[{"type":"send", "payload":"10 07 0004 4D515454 04 C2 003C 000B 746573742D707974686F6E 0005 61646d696E 0008 70617373776F7264"}]}
+			{ "name": "NanoMQ CWE-119", "msgs":[{"type":"send", "payload":"10 28 0004 4D515454 04 C2 003C 000B 746573742D707974686F6E 0005 61646d696E 0008 70617373776F7264"}]}
 		]
 	},
 	{

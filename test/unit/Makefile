@@ -58,6 +58,7 @@ PERSIST_READ_OBJS = \
 		retain.o \
 		topic_tok.o \
 		utf8_mosq.o \
+		util_topic.o \
 		util_mosq.o
 
 PERSIST_WRITE_TEST_OBJS = \
@@ -80,6 +81,7 @@ PERSIST_WRITE_OBJS = \
 		subs.o \
 		topic_tok.o \
 		utf8_mosq.o \
+		util_topic.o \
 		util_mosq.o
 
 TLS_TEST_OBJS = \

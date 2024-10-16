@@ -178,7 +178,7 @@
 			]},
 
 			{ "name": "2*message-expiry-interval=1 (four byte integer)", "ver":5, "msgs": [
-				{"type":"send", "payload":"32 1A 0005 746F706963 1234 0A 0200000001 0200000001 7061796C6F6164"},
+				{"type":"send", "payload":"32 1B 0005 746F706963 1234 0A 0200000001 0200000001 7061796C6F6164"},
 				{"type":"recv", "payload":"E0 01 82"}
 			]},
 			{ "name": "message-expiry-interval (four byte integer) missing", "ver":5, "msgs": [
@@ -210,6 +210,10 @@
 			{ "name": "response-topic (UTF-8 string)", "ver":5, "expect_disconnect":false, "msgs": [
 				{"type":"send", "payload":"32 15 0005 746F706963 1234 04 08000170 7061796C6F6164"},
 				{"type":"recv", "payload":"40 03 1234 10"}
+			]},
+			{ "name": "response-topic (UTF-8 string, with wildcard)", "ver":5, "msgs": [
+				{"type":"send", "payload":"32 15 0005 746F706963 1234 04 08000123 7061796C6F6164"},
+				{"type":"recv", "payload":"E0 01 82"}
 			]},
 			{ "name": "2*response-topic (UTF-8 string)", "ver":5, "msgs": [
 				{"type":"send", "payload":"32 19 0005 746F706963 1234 08 08000170 08000170 7061796C6F6164"},
