@@ -353,8 +353,7 @@ static int read_header(struct mosquitto *mosq, ssize_t (*func_read)(struct mosqu
 {
 	ssize_t read_length;
 
-	mosq->in_packet.packet_buffer_pos = 0;
-	read_length = func_read(mosq, mosq->in_packet.packet_buffer, mosq->in_packet.packet_buffer_size);
+	read_length = func_read(mosq, &mosq->in_packet.packet_buffer[mosq->in_packet.packet_buffer_pos], mosq->in_packet.packet_buffer_size-mosq->in_packet.packet_buffer_pos);
 	if(read_length > 0){
 		mosq->in_packet.packet_buffer_to_process = (uint16_t)read_length;
 #ifdef WITH_BROKER
@@ -404,6 +403,8 @@ static int packet__read_single(struct mosquitto *mosq, enum mosquitto_client_sta
 			if(!(mosq->bridge) && state == mosq_cs_new && (mosq->in_packet.command&0xF0) != CMD_CONNECT){
 				return MOSQ_ERR_PROTOCOL;
 			}
+#else
+			UNUSED(state);
 #endif
 		}
 	}
