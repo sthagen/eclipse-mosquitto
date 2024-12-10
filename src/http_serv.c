@@ -52,6 +52,7 @@ int http__context_cleanup(struct mosquitto *context)
 int http__read(struct mosquitto *mosq)
 {
 	ssize_t read_length;
+	ssize_t header_length;
 	enum mosquitto_client_state state;
 	size_t hlen;
 	const char *http_method, *http_path;
@@ -105,19 +106,22 @@ int http__read(struct mosquitto *mosq)
 	}
 
 	mosq->in_packet.packet_buffer[mosq->in_packet.packet_buffer_size-1] = '\0'; /* Always 0 terminate */
-	read_length = phr_parse_request((char *)mosq->in_packet.packet_buffer, strlen((char *)mosq->in_packet.packet_buffer),
+	header_length = phr_parse_request((char *)mosq->in_packet.packet_buffer, strlen((char *)mosq->in_packet.packet_buffer),
 			&http_method, &http_method_len,
 			&http_path, &http_path_len,
 			&http_minor_version,
 			http_headers, &http_header_count,
 			0);
 	// FIXME - deal with partial read !
-	if(read_length == -2){
+	if(header_length == -2){
 		// Partial read
 		return MOSQ_ERR_SUCCESS;
-	}else if(read_length == -1){
+	}else if(header_length == -1){
 		// Error
 		return MOSQ_ERR_UNKNOWN;
+	}else if(header_length < read_length){
+		/* Excess data which can't be handled because the client doesn't have a key yet */
+		return MOSQ_ERR_MALFORMED_PACKET;
 	}
 
 	if(strncmp(http_method, "GET", http_method_len) && strncmp(http_method, "HEAD", http_method_len)){
