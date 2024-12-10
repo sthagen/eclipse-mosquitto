@@ -959,7 +959,6 @@ void mosq_websockets_init(struct mosquitto__listener *listener, const struct mos
 int http__context_init(struct mosquitto *context);
 int http__context_cleanup(struct mosquitto *context);
 int http__read(struct mosquitto *context);
-int http__write(struct mosquitto *context);
 #endif
 void do_disconnect(struct mosquitto *context, int reason);
 

@@ -49,12 +49,6 @@ int http__context_cleanup(struct mosquitto *context)
 }
 
 
-int http__write(struct mosquitto *mosq)
-{
-	return packet__write(mosq);
-}
-
-
 int http__read(struct mosquitto *mosq)
 {
 	ssize_t read_length;

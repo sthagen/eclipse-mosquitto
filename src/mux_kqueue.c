@@ -253,31 +253,7 @@ static void loop_handle_reads_writes(struct mosquitto *context, short event)
 				return;
 			}
 		}
-		switch(context->transport){
-			case mosq_t_tcp:
-				rc = packet__write(context);
-				break;
-#if defined(WITH_WEBSOCKETS) && WITH_WEBSOCKETS == WS_IS_BUILTIN
-			case mosq_t_ws:
-				rc = packet__write(context);
-				break;
-			case mosq_t_http:
-				rc = http__write(context);
-				break;
-#endif
-#if !defined(WITH_WEBSOCKETS) || WITH_WEBSOCKETS == WS_IS_BUILTIN
-			/* Not supported with LWS */
-			case mosq_t_proxy_v2:
-				rc = packet__write(context);
-				break;
-			case mosq_t_proxy_v1:
-				rc = packet__write(context);
-				break;
-#endif
-			default:
-				rc = MOSQ_ERR_INVAL;
-				break;
-		}
+		rc = packet__write(context);
 		if(rc){
 			do_disconnect(context, rc);
 			return;
