@@ -220,7 +220,7 @@ void sys_tree__update(bool force)
 
 		uptime = db.now_s - start_time;
 		len = (uint32_t)snprintf(buf, BUFLEN, "%" PRIu64 " seconds", (uint64_t)uptime);
-		db__messages_easy_queue(NULL, "$SYS/broker/uptime", SYS_TREE_QOS, len, buf, 1, 0, NULL);
+		db__messages_easy_queue(NULL, "$SYS/broker/uptime", SYS_TREE_QOS, len, buf, 1, MSG_EXPIRY_INFINITE, NULL);
 
 		/*  Update metrics values where not otherwise updated */
 		metrics[mosq_gauge_message_store_count].next = db.msg_store_count;
@@ -263,10 +263,10 @@ void sys_tree__update(bool force)
 				metrics[i].current = metrics[i].next;
 				len = (uint32_t)snprintf(buf, BUFLEN, "%lu", metrics[i].current);
 				if(metrics[i].topic){
-					db__messages_easy_queue(NULL, metrics[i].topic, SYS_TREE_QOS, len, buf, 1, 0, NULL);
+					db__messages_easy_queue(NULL, metrics[i].topic, SYS_TREE_QOS, len, buf, 1, MSG_EXPIRY_INFINITE, NULL);
 				}
 				if(metrics[i].topic_alias){
-					db__messages_easy_queue(NULL, metrics[i].topic_alias, SYS_TREE_QOS, len, buf, 1, 0, NULL);
+					db__messages_easy_queue(NULL, metrics[i].topic_alias, SYS_TREE_QOS, len, buf, 1, MSG_EXPIRY_INFINITE, NULL);
 				}
 			}
 		}
