@@ -504,8 +504,13 @@ static int packet__read_single(struct mosquitto *mosq, enum mosquitto_client_sta
 					len = mosq->in_packet.packet_buffer_to_process;
 				}
 				memcpy(mosq->in_packet.payload, &mosq->in_packet.packet_buffer[mosq->in_packet.packet_buffer_pos], len);
-				mosq->in_packet.packet_buffer_pos += (uint16_t)len;
-				mosq->in_packet.packet_buffer_to_process -= (uint16_t)len;
+				if(len < mosq->in_packet.packet_buffer_to_process){
+					mosq->in_packet.packet_buffer_pos += (uint16_t)len;
+					mosq->in_packet.packet_buffer_to_process -= (uint16_t)len;
+				}else{
+					mosq->in_packet.packet_buffer_pos = 0;
+					mosq->in_packet.packet_buffer_to_process = 0;
+				}
 				mosq->in_packet.pos += len;
 				mosq->in_packet.to_process -= len;
 			}
