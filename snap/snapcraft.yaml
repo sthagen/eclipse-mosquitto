@@ -1,16 +1,15 @@
 name: mosquitto
 version: 2.0.20
 summary: Eclipse Mosquitto MQTT broker
-description: This is a message broker that supports version 5.0, 3.1.1, and 3.1 of the MQTT
-    protocol.
+description: This is a message broker that supports version 5.0, 3.1.1, and 3.1 of the MQTT protocol.
     MQTT provides a method of carrying out messaging using a publish/subscribe
     model. It is lightweight, both in terms of bandwidth usage and ease of
     implementation. This makes it particularly useful at the edge of the network
-    where a sensor or other simple device may be implemented using an arduino for
+    where a sensor or other simple device may be implemented using a microcontroller for
     example.
 confinement: strict
 grade: stable
-base: core18
+base: core24
 
 apps:
   mosquitto:
@@ -55,22 +54,24 @@ parts:
 
 
   mosquitto:
-    after:
-      - lws
     plugin: make
-    make-parameters: ["prefix=/usr", "WITH_WEBSOCKETS=yes", "WITH_ADNS=yes", "CFLAGS=-Wall -ggdb -O2 -I$SNAPCRAFT_STAGE/include -D_GNU_SOURCE"]
-    source: https://github.com/eclipse/mosquitto
+    make-parameters: ["prefix=/usr", "WITH_WEBSOCKETS=yes", "WITH_ADNS=yes", 'CFLAGS="-Wall -ggdb -O2 -I$CRAFT_STAGE/include"']
+    source: https://github.com/eclipse-mosquitto/mosquitto
     source-type: git
 
     build-packages:
+      - libcjson-dev
       - libssl-dev
+      - libwebsockets-dev
       - xsltproc
       - docbook-xsl
       - gcc
       - g++
     stage-packages:
-      - libssl1.0.0
       - ca-certificates
+      - libcjson1
+      - libssl3t64
+      - libwebsockets19t64
     prime:
       - usr/sbin/mosquitto
       - usr/bin/mosquitto_ctrl
@@ -80,32 +81,11 @@ parts:
       - usr/bin/mosquitto_passwd
       - usr/lib/libmosquitto.so*
       - usr/lib/mosquitto_dynamic_security.so*
-      - lib/*-linux-gnu/libcrypto.so*
-      - lib/*-linux-gnu/libssl.so*
+      - usr/lib/*-linux-gnu/libcjson.so*
+      - usr/lib/*-linux-gnu/libcrypto.so*
+      - usr/lib/*-linux-gnu/libssl.so*
+      - usr/lib/*-linux-gnu/libwebsockets.so*
       - usr/include/mosquitto.h
       - usr/include/mosquitto_broker.h
       - usr/include/mosquitto_plugin.h
       - usr/include/mqtt_protocol.h
-
-  lws:
-    after:
-      - cjson
-    plugin: cmake
-    configflags: ["-DLWS_IPV6=ON", "-DLWS_WITHOUT_CLIENT=ON", "-DLWS_WITHOUT_EXTENSIONS=ON", "-DLWS_WITH_ZIP_FOPS=OFF", "-DLWS_WITH_ZLIB=OFF", "-DLWS_WITH_SHARED=OFF"]
-    source: https://github.com/warmcat/libwebsockets/archive/v2.4.2.tar.gz
-    source-type: tar
-    stage:
-      - include/libwebsockets.h
-      - include/lws_config.h
-      - lib/libwebsockets.a
-    prime: [-*]
-
-  cjson:
-    plugin: cmake
-    configflags: ["-DCMAKE_C_FLAGS=-fPIC", "-DBUILD_SHARED_AND_STATIC_LIBS=OFF", "-DBUILD_SHARED_LIBS=OFF", "-DCJSON_BUILD_SHARED_LIBS=OFF", "-DCJSON_OVERRIDE_BUILD_SHARED_LIBS=OFF"]
-    source: https://github.com/DaveGamble/cJSON/archive/v1.7.14.tar.gz
-    source-type: tar
-    stage:
-      - include/cjson/cJSON.h
-      - lib/libcjson.a
-    prime: [-*]
