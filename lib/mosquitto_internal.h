@@ -302,6 +302,7 @@ struct mosquitto {
 	char *id;
 	char *username;
 	char *password;
+	unsigned id_hashv;
 	uint16_t keepalive;
 	uint16_t last_mid;
 	enum mosquitto_client_state state;

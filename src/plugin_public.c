@@ -104,6 +104,16 @@ BROKER_EXPORT const char *mosquitto_client_id(const struct mosquitto *client)
 }
 
 
+BROKER_EXPORT unsigned mosquitto_client_id_hashv(const struct mosquitto *client)
+{
+	if(client){
+		return client->id_hashv;
+	}else{
+		return 0;
+	}
+}
+
+
 BROKER_EXPORT int mosquitto_client_keepalive(const struct mosquitto *client)
 {
 	if(client){

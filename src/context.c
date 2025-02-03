@@ -329,7 +329,8 @@ void context__add_to_by_id(struct mosquitto *context)
 {
 	if(context->in_by_id == false){
 		context->in_by_id = true;
-		HASH_ADD_KEYPTR(hh_id, db.contexts_by_id, context->id, strlen(context->id), context);
+		HASH_VALUE(context->id, strlen(context->id), context->id_hashv);
+		HASH_ADD_KEYPTR_BYHASHVALUE(hh_id, db.contexts_by_id, context->id, strlen(context->id), context->id_hashv, context);
 	}
 }
 
@@ -348,6 +349,7 @@ void context__remove_from_by_id(struct mosquitto *context)
 		if(context_found){
 			HASH_DELETE(hh_id, db.contexts_by_id, context_found);
 		}
+		context->id_hashv = 0;
 		context->in_by_id = false;
 	}
 }

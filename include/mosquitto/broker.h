@@ -617,6 +617,14 @@ mosq_EXPORT const char *mosquitto_client_id(const struct mosquitto *client);
 
 
 /*
+ * Function: mosquitto_client_id_hashv
+ *
+ * Retrieve the hash value associated with a client id.
+ */
+mosq_EXPORT unsigned mosquitto_client_id_hashv(const struct mosquitto *client);
+
+
+/*
  * Function: mosquitto_client_keepalive
  *
  * Retrieve the keepalive value for a client.

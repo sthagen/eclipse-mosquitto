@@ -11,6 +11,7 @@
 	mosquitto_client_certificate;
 	mosquitto_client_clean_session;
 	mosquitto_client_id;
+	mosquitto_client_id_hashv;
 	mosquitto_client_keepalive;
 	mosquitto_client_port;
 	mosquitto_client_protocol;
