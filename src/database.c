@@ -180,8 +180,6 @@ static void db__msg_remove_from_queued_stats(struct mosquitto_msg_data *msg_data
 
 int db__open(struct mosquitto__config *config)
 {
-	struct mosquitto__subhier *subhier;
-
 	if(!config) return MOSQ_ERR_INVAL;
 
 	db.contexts_by_id = NULL;
@@ -198,15 +196,7 @@ int db__open(struct mosquitto__config *config)
 	db.normal_subs = NULL;
 	db.shared_subs = NULL;
 
-	subhier = sub__add_hier_entry(NULL, &db.shared_subs, "", 0);
-	if(!subhier) return MOSQ_ERR_NOMEM;
-
-	subhier = sub__add_hier_entry(NULL, &db.normal_subs, "", 0);
-	if(!subhier) return MOSQ_ERR_NOMEM;
-
-	subhier = sub__add_hier_entry(NULL, &db.normal_subs, "$SYS", (uint16_t)strlen("$SYS"));
-	if(!subhier) return MOSQ_ERR_NOMEM;
-
+	sub__init();
 	retain__init();
 
 	db.config->security_options.unpwd = NULL;

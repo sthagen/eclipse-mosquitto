@@ -743,8 +743,8 @@ void db__check_acl_of_all_messages(struct mosquitto *context);
 /* ============================================================
  * Subscription functions
  * ============================================================ */
+int sub__init(void);
 int sub__add(struct mosquitto *context, const struct mosquitto_subscription *sub);
-struct mosquitto__subhier *sub__add_hier_entry(struct mosquitto__subhier *parent, struct mosquitto__subhier **sibling, const char *topic, uint16_t len);
 int sub__remove(struct mosquitto *context, const char *sub, uint8_t *reason);
 void sub__tree_print(struct mosquitto__subhier *root, int level);
 int sub__clean_session(struct mosquitto *context);

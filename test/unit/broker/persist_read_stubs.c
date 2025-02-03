@@ -251,3 +251,7 @@ int send__pubrel(struct mosquitto *mosq, uint16_t mid, const mosquitto_property 
 	return MOSQ_ERR_SUCCESS;
 }
 
+int sub__init(void)
+{
+	return MOSQ_ERR_SUCCESS;
+}

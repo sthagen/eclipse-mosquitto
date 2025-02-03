@@ -59,6 +59,8 @@ Contributors:
 
 #include "utlist.h"
 
+static struct mosquitto__subhier *sub__add_hier_entry(struct mosquitto__subhier *parent, struct mosquitto__subhier **sibling, const char *topic, uint16_t len);
+
 static int subs__send(struct mosquitto__subleaf *leaf, const char *topic, uint8_t qos, int retain, struct mosquitto__base_msg *stored)
 {
 	bool client_retain;
@@ -523,7 +525,7 @@ static int sub__search(struct mosquitto__subhier *subhier, char **split_topics, 
 }
 
 
-struct mosquitto__subhier *sub__add_hier_entry(struct mosquitto__subhier *parent, struct mosquitto__subhier **sibling, const char *topic, uint16_t len)
+static struct mosquitto__subhier *sub__add_hier_entry(struct mosquitto__subhier *parent, struct mosquitto__subhier **sibling, const char *topic, uint16_t len)
 {
 	struct mosquitto__subhier *child;
 
@@ -536,7 +538,9 @@ struct mosquitto__subhier *sub__add_hier_entry(struct mosquitto__subhier *parent
 	}
 	child->parent = parent;
 	child->topic_len = len;
-	strncpy(child->topic, topic, len);
+	if(len > 0){
+		strncpy(child->topic, topic, len);
+	}
 
 	HASH_ADD(hh, *sibling, topic, child->topic_len, child);
 
@@ -792,5 +796,18 @@ void sub__tree_print(struct mosquitto__subhier *root, int level)
 	}
 
 		sub__tree_print(branch->children, level+1);
+	}
+}
+
+int sub__init(void)
+{
+	if(sub__add_hier_entry(NULL, &db.shared_subs, "", 0) == NULL
+			|| sub__add_hier_entry(NULL, &db.normal_subs, "", 0) == NULL
+			|| sub__add_hier_entry(NULL, &db.normal_subs, "$SYS", (uint16_t)strlen("$SYS")) == NULL
+			){
+
+		return MOSQ_ERR_NOMEM;
+	}else{
+		return MOSQ_ERR_SUCCESS;
 	}
 }
