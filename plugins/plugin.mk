@@ -6,6 +6,10 @@ LOCAL_CPPFLAGS+=
 LOCAL_LIBADD+=
 LOCAL_LDFLAGS+=-fPIC -shared
 
+ifeq ($(UNAME),AIX)
+	LOCAL_LDFLAGS+=-Wl,-G
+endif
+
 binary : ${PLUGIN_NAME}.so ${PLUGIN_NAME}.a
 
 ${PLUGIN_NAME}.a : ${OBJS} ${OBJS_EXTERNAL}

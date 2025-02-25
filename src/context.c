@@ -19,7 +19,7 @@ Contributors:
 #include "config.h"
 
 #include <time.h>
-#ifdef __APPLE__
+#if defined(__APPLE__) || defined(_AIX)
 #include <sys/socket.h>
 #endif
 

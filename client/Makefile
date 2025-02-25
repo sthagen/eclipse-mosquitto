@@ -29,6 +29,10 @@ ifeq ($(WITH_TLS),yes)
 	STATIC_LDADD+= -lssl -lcrypto
 endif
 
+ifeq ($(UNAME),AIX)
+	LOCAL_LDFLAGS+=-Wl,-bnoipath
+endif
+
 ifeq ($(WITH_SHARED_LIBRARIES),yes)
 ALL_DEPS:= mosquitto_pub mosquitto_sub mosquitto_rr
 else
