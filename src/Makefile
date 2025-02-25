@@ -109,6 +109,7 @@ OBJS=	mosquitto.o \
 		subs.o \
 		sys_tree.o \
 		topic_tok.o \
+		watchdog.o \
 		websockets.o \
 		will_delay.o \
 		xtreport.o

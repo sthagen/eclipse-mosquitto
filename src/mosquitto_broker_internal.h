@@ -950,6 +950,12 @@ DWORD WINAPI SigThreadProc(void* data);
 #endif
 
 /* ============================================================
+ * Watchdog
+ * ============================================================ */
+void watchdog__init(void);
+void watchdog__check(void);
+
+/* ============================================================
  * Websockets related functions
  * ============================================================ */
 #ifdef WITH_WEBSOCKETS

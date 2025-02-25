@@ -73,6 +73,7 @@ add_executable(mosquitto
 	../lib/tls_mosq.c
 	topic_tok.c
 	../lib/util_mosq.c ../lib/util_mosq.h
+	watchdog.c
 	websockets.c
 	will_delay.c
 	../lib/will_mosq.c ../lib/will_mosq.h
