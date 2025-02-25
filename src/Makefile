@@ -11,10 +11,14 @@ LOCAL_LDADD+=-lcjson -lm ${LIBMOSQ_COMMON}
 # ------------------------------------------
 #  Platform specific
 # ------------------------------------------
-ifneq ($(or $(findstring $(UNAME),FreeBSD), $(findstring $(UNAME),OpenBSD), $(findstring $(UNAME),NetBSD)),)
+ifneq ($(or $(findstring $(UNAME),AIX), $(findstring $(UNAME),FreeBSD), $(findstring $(UNAME),OpenBSD), $(findstring $(UNAME),NetBSD)),)
 	LOCAL_LDFLAGS+=-Wl,--dynamic-list=linker.syms
 else
 	LOCAL_LDADD+=-ldl
+endif
+
+ifeq ($(UNAME),AIX)
+	LOCAL_LDFLAGS+=-Wl,-bE:linker-aix.syms
 endif
 
 ifeq ($(UNAME),Linux)
