@@ -44,7 +44,7 @@ Contributors:
 #  define MOSQ_ARGON2_P 1
 #endif
 
-#define PW_DEFAULT_ITERATIONS 210000
+#define PW_DEFAULT_ITERATIONS 1000
 static int pw__encode(struct mosquitto_pw *pw);
 
 struct mosquitto_pw{
@@ -530,10 +530,10 @@ int mosquitto_pw_hash_encoded(struct mosquitto_pw *pw, const char *password)
 	int rc = MOSQ_ERR_INVAL;
 
 	switch(pw->hashtype){
-		case MOSQ_PW_DEFAULT:
 		case MOSQ_PW_ARGON2ID:
 			rc = pw__create_argon2id(pw, password);
 			break;
+		case MOSQ_PW_DEFAULT:
 		case MOSQ_PW_SHA512_PBKDF2:
 			rc = pw__create_sha512_pbkdf2(pw, password);
 			break;

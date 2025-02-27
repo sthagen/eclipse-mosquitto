@@ -146,9 +146,6 @@ WITH_SQLITE=yes
 # currently only suitable for use with oss-fuzz.
 WITH_FUZZING=no
 
-# Build with argon2id support for password hashing.
-WITH_ARGON2=yes
-
 # Build using clang and with address sanitiser enabled
 WITH_ASAN=no
 
