@@ -24,26 +24,33 @@ conf_file = os.path.basename(__file__).replace('.py', '.conf')
 write_config(conf_file, port1, port2)
 
 rc = 1
-keepalive = 10
-connect_packet = mosq_test.gen_connect("connect-success-test", keepalive=keepalive)
+connect_packet = mosq_test.gen_connect("connect-success-test")
 
 broker = mosq_test.start_broker(filename=os.path.basename(__file__), port=port2, use_conf=True)
 
+ssl_eof = False
 try:
-    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     context = ssl.create_default_context(ssl.Purpose.SERVER_AUTH, cafile="../ssl/test-root-ca.crt")
     context.load_cert_chain(certfile="../ssl/client-expired.crt", keyfile="../ssl/client-expired.key")
-    ssock = context.wrap_socket(sock, server_hostname="localhost")
-    ssock.settimeout(20)
-    try:
-        ssock.connect(("localhost", port1))
-        mosq_test.do_send_receive(ssock, connect_packet, "", "connack")
-    except ssl.SSLError as err:
-        if err.errno == 1:
-            rc = 0
-        else:
-            broker.terminate()
-            raise ValueError(err.errno)
+    with socket.create_connection(("localhost", port1)) as sock:
+        ssock = context.wrap_socket(sock, server_hostname="localhost", suppress_ragged_eofs=True)
+        ssock.settimeout(None)
+        try:
+            mosq_test.do_send_receive(ssock, connect_packet, "", "connack")
+        except ssl.SSLEOFError:
+            # Under load, sometimes the broker closes the connection after the
+            # handshake has failed, but before we have chance to send our
+            # payload and so we get an EOF.
+            ssl_eof = True
+        except ssl.SSLError as err:
+            if err.reason == "SSLV3_ALERT_CERTIFICATE_EXPIRED":
+                rc = 0
+            elif err.errno == 8 and "EOF occurred" in err.strerror:
+                rc = 0
+            else:
+                broker.terminate()
+                print(err.strerror)
+                raise ValueError(err.errno) from err
 except mosq_test.TestError:
     pass
 finally:
@@ -52,8 +59,11 @@ finally:
     broker.terminate()
     broker.wait()
     (stdo, stde) = broker.communicate()
+
+    if ssl_eof:
+        if "certificate verify failed" in stde.decode('utf-8'):
+            rc = 0
     if rc:
         print(stde.decode('utf-8'))
 
 exit(rc)
-

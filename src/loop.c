@@ -187,6 +187,7 @@ int mosquitto_main_loop(struct mosquitto__listener_sock *listensock, int listens
 #endif
 
 	while(run){
+		retain__expire();
 		queue_plugin_msgs();
 		context__free_disused();
 #ifdef WITH_SYS_TREE
@@ -237,6 +238,8 @@ int mosquitto_main_loop(struct mosquitto__listener_sock *listensock, int listens
 			mosquitto_security_apply();
 			log__close(db.config);
 			log__init(db.config);
+			keepalive__cleanup();
+			keepalive__init();
 			flag_reload = false;
 		}
 		if(flag_tree_print){

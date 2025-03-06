@@ -120,6 +120,10 @@ WITH_JEMALLOC:=no
 # probably of no particular interest to end users.
 WITH_XTREPORT=no
 
+# Use the old O(n) keepalive check routine, instead of the new O(1) keepalive
+# check routine. See src/keepalive.c for notes on this.
+WITH_OLD_KEEPALIVE=no
+
 # Build using clang and with address sanitiser enabled
 WITH_ASAN=no
 
@@ -130,7 +134,7 @@ WITH_ASAN=no
 
 # Also bump lib/mosquitto.h, CMakeLists.txt,
 # installer/mosquitto.nsi, installer/mosquitto64.nsi
-VERSION=2.0.20
+VERSION=2.0.21
 
 # Client library SO version. Bump if incompatible API/ABI changes are made.
 SOVERSION=1
@@ -386,6 +390,10 @@ endif
 
 ifeq ($(WITH_XTREPORT),yes)
 	BROKER_CFLAGS:=$(BROKER_CFLAGS) -DWITH_XTREPORT
+endif
+
+ifeq ($(WITH_OLD_KEEPALIVE),yes)
+	BROKER_CPPFLAGS:=$(BROKER_CPPFLAGS) -DWITH_OLD_KEEPALIVE
 endif
 
 BROKER_LDADD:=${BROKER_LDADD} ${LDADD}

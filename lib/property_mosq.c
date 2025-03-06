@@ -241,7 +241,7 @@ void property__free(mosquitto_property **property)
 			break;
 	}
 
-	free(*property);
+	mosquitto__free(*property);
 	*property = NULL;
 }
 
@@ -1120,7 +1120,7 @@ const mosquitto_property *mosquitto_property_read_binary(const mosquitto_propert
 
 	if(value){
 		*len = p->value.bin.len;
-		*value = calloc(1, *len + 1U);
+		*value = mosquitto__calloc(1, *len + 1U);
 		if(!(*value)) return NULL;
 
 		memcpy(*value, p->value.bin.v, *len);
@@ -1149,7 +1149,7 @@ const mosquitto_property *mosquitto_property_read_string(const mosquitto_propert
 	}
 
 	if(value){
-		*value = calloc(1, (size_t)p->value.s.len+1);
+		*value = mosquitto__calloc(1, (size_t)p->value.s.len+1);
 		if(!(*value)) return NULL;
 
 		memcpy(*value, p->value.s.v, p->value.s.len);
@@ -1172,16 +1172,16 @@ const mosquitto_property *mosquitto_property_read_string_pair(const mosquitto_pr
 	if(p->identifier != MQTT_PROP_USER_PROPERTY) return NULL;
 
 	if(name){
-		*name = calloc(1, (size_t)p->name.len+1);
+		*name = mosquitto__calloc(1, (size_t)p->name.len+1);
 		if(!(*name)) return NULL;
 		memcpy(*name, p->name.v, p->name.len);
 	}
 
 	if(value){
-		*value = calloc(1, (size_t)p->value.s.len+1);
+		*value = mosquitto__calloc(1, (size_t)p->value.s.len+1);
 		if(!(*value)){
 			if(name){
-				free(*name);
+				mosquitto__free(*name);
 				*name = NULL;
 			}
 			return NULL;
@@ -1203,7 +1203,7 @@ int mosquitto_property_copy_all(mosquitto_property **dest, const mosquitto_prope
 	*dest = NULL;
 
 	while(src){
-		pnew = calloc(1, sizeof(mosquitto_property));
+		pnew = mosquitto__calloc(1, sizeof(mosquitto_property));
 		if(!pnew){
 			mosquitto_property_free_all(dest);
 			return MOSQ_ERR_NOMEM;
@@ -1255,7 +1255,7 @@ int mosquitto_property_copy_all(mosquitto_property **dest, const mosquitto_prope
 			case MQTT_PROP_SERVER_REFERENCE:
 			case MQTT_PROP_REASON_STRING:
 				pnew->value.s.len = src->value.s.len;
-				pnew->value.s.v = src->value.s.v ? strdup(src->value.s.v) : (char*)calloc(1,1);
+				pnew->value.s.v = src->value.s.v ? mosquitto__strdup(src->value.s.v) : (char*)mosquitto__calloc(1,1);
 				if(!pnew->value.s.v){
 					mosquitto_property_free_all(dest);
 					return MOSQ_ERR_NOMEM;
@@ -1265,7 +1265,7 @@ int mosquitto_property_copy_all(mosquitto_property **dest, const mosquitto_prope
 			case MQTT_PROP_AUTHENTICATION_DATA:
 			case MQTT_PROP_CORRELATION_DATA:
 				pnew->value.bin.len = src->value.bin.len;
-				pnew->value.bin.v = malloc(pnew->value.bin.len);
+				pnew->value.bin.v = mosquitto__malloc(pnew->value.bin.len);
 				if(!pnew->value.bin.v){
 					mosquitto_property_free_all(dest);
 					return MOSQ_ERR_NOMEM;
@@ -1275,14 +1275,14 @@ int mosquitto_property_copy_all(mosquitto_property **dest, const mosquitto_prope
 
 			case MQTT_PROP_USER_PROPERTY:
 				pnew->value.s.len = src->value.s.len;
-				pnew->value.s.v = src->value.s.v ? strdup(src->value.s.v) : (char*)calloc(1,1);
+				pnew->value.s.v = src->value.s.v ? mosquitto__strdup(src->value.s.v) : (char*)mosquitto__calloc(1,1);
 				if(!pnew->value.s.v){
 					mosquitto_property_free_all(dest);
 					return MOSQ_ERR_NOMEM;
 				}
 
 				pnew->name.len = src->name.len;
-				pnew->name.v = src->name.v ? strdup(src->name.v) : (char*)calloc(1,1);
+				pnew->name.v = src->name.v ? mosquitto__strdup(src->name.v) : (char*)mosquitto__calloc(1,1);
 				if(!pnew->name.v){
 					mosquitto_property_free_all(dest);
 					return MOSQ_ERR_NOMEM;

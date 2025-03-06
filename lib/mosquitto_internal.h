@@ -353,6 +353,10 @@ struct mosquitto {
 	struct mosquitto *for_free_next;
 	struct session_expiry_list *expiry_list_item;
 	uint16_t remote_port;
+#  ifndef WITH_OLD_KEEPALIVE
+	struct mosquitto *keepalive_next;
+	struct mosquitto *keepalive_prev;
+#  endif
 #endif
 	uint32_t events;
 };

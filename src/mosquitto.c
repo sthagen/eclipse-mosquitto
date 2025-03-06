@@ -279,10 +279,17 @@ void listeners__add_websockets(struct lws_context *ws_context, mosq_sock_t fd)
 static int listeners__add_local(const char *host, uint16_t port)
 {
 	struct mosquitto__listener *listeners;
+	bool allow_anonymous;
+
 	listeners = db.config->listeners;
+	if(db.config->security_options.allow_anonymous == -1){
+		allow_anonymous = true;
+	}else{
+		allow_anonymous = db.config->security_options.allow_anonymous;
+	}
 
 	listener__set_defaults(&listeners[db.config->listener_count]);
-	listeners[db.config->listener_count].security_options.allow_anonymous = true;
+	listeners[db.config->listener_count].security_options.allow_anonymous = allow_anonymous;
 	listeners[db.config->listener_count].port = port;
 	listeners[db.config->listener_count].host = mosquitto__strdup(host);
 	if(listeners[db.config->listener_count].host == NULL){
@@ -502,6 +509,11 @@ int main(int argc, char *argv[])
 	if(rc != MOSQ_ERR_SUCCESS) return rc;
 	db.config = &config;
 
+	rc = keepalive__init();
+	if(rc){
+		return rc;
+	}
+
 	/* Drop privileges permanently immediately after the config is loaded.
 	 * This requires the user to ensure that all certificates, log locations,
 	 * etc. are accessible my the `mosquitto` or other unprivileged user.
@@ -611,6 +623,7 @@ int main(int argc, char *argv[])
 	mosquitto__free(db.bridges);
 #endif
 	context__free_disused();
+	keepalive__cleanup();
 
 	db__close();
 

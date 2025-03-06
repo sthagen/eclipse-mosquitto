@@ -116,18 +116,22 @@ int handle__pubrel(struct mosquitto *mosq)
 	if(rc == MOSQ_ERR_SUCCESS){
 		/* Only pass the message on if we have removed it from the queue - this
 		 * prevents multiple callbacks for the same message. */
-		pthread_mutex_lock(&mosq->callback_mutex);
-		if(mosq->on_message){
+		void (*on_message)(struct mosquitto *, void *userdata, const struct mosquitto_message *message);
+		void (*on_message_v5)(struct mosquitto *, void *userdata, const struct mosquitto_message *message, const mosquitto_property *props);
+		COMPAT_pthread_mutex_lock(&mosq->callback_mutex);
+		on_message = mosq->on_message;
+		on_message_v5 = mosq->on_message_v5;
+		COMPAT_pthread_mutex_unlock(&mosq->callback_mutex);
+		if(on_message){
 			mosq->in_callback = true;
-			mosq->on_message(mosq, mosq->userdata, &message->msg);
+			on_message(mosq, mosq->userdata, &message->msg);
 			mosq->in_callback = false;
 		}
-		if(mosq->on_message_v5){
+		if(on_message_v5){
 			mosq->in_callback = true;
-			mosq->on_message_v5(mosq, mosq->userdata, &message->msg, message->properties);
+			on_message_v5(mosq, mosq->userdata, &message->msg, message->properties);
 			mosq->in_callback = false;
 		}
-		pthread_mutex_unlock(&mosq->callback_mutex);
 		mosquitto_property_free_all(&properties);
 		message__cleanup(&message);
 	}else if(rc == MOSQ_ERR_NOT_FOUND){

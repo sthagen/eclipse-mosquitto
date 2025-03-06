@@ -92,7 +92,8 @@ RUN set -x && \
     apk --no-cache add \
         ca-certificates \
         cjson \
-        libressl && \
+        libressl \
+        tzdata && \
     apk del build-deps && \
     rm -rf /build
 

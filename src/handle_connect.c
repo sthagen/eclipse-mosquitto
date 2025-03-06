@@ -269,7 +269,9 @@ int connect__on_authorised(struct mosquitto *context, void *auth_data_out, uint1
 	if(db.config->max_keepalive &&
 			(context->keepalive > db.config->max_keepalive || context->keepalive == 0)){
 
+		keepalive__remove(context);
 		context->keepalive = db.config->max_keepalive;
+		keepalive__add(context);
 		if(context->protocol == mosq_p_mqtt5){
 			if(mosquitto_property_add_int16(&connack_props, MQTT_PROP_SERVER_KEEP_ALIVE, context->keepalive)){
 				rc = MOSQ_ERR_NOMEM;
@@ -311,8 +313,6 @@ int connect__on_authorised(struct mosquitto *context, void *auth_data_out, uint1
 	}
 	free(auth_data_out);
 	auth_data_out = NULL;
-
-	keepalive__add(context);
 
 	mosquitto__set_state(context, mosq_cs_active);
 	rc = send__connack(context, connect_ack, CONNACK_ACCEPTED, connack_props);
@@ -577,10 +577,15 @@ int handle__connect(struct mosquitto *context)
 		goto handle_connect_error;
 	}
 
+	/* _remove here because net__socket_accept() uses _add and we must have the
+	 * correct keepalive value */
+	keepalive__remove(context);
+
 	if(packet__read_uint16(&context->in_packet, &(context->keepalive))){
 		rc = MOSQ_ERR_PROTOCOL;
 		goto handle_connect_error;
 	}
+	keepalive__add(context);
 
 	if(protocol_version == PROTOCOL_VERSION_v5){
 		rc = property__read_all(CMD_CONNECT, &context->in_packet, &properties);

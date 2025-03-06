@@ -1,6 +1,6 @@
 {
   "name": "mosquitto",
-  "version-string": "2.0.20",
+  "version-string": "2.0.21",
   "dependencies": [
     "cjson",
     "libwebsockets",

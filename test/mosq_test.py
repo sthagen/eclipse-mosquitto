@@ -30,6 +30,8 @@ def start_broker(filename, cmd=None, port=0, use_conf=False, expect_fail=False, 
 
         if port == 0:
             port = 1888
+        else:
+            cmd += ['-p', str(port)]
     else:
         if cmd is None and port != 0:
             cmd = ['../../src/mosquitto', '-v', '-p', str(port)]

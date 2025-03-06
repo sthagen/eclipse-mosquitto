@@ -97,18 +97,22 @@ int handle__suback(struct mosquitto *mosq)
 	/* Immediately free, we don't do anything with Reason String or User Property at the moment */
 	mosquitto_property_free_all(&properties);
 #else
-	pthread_mutex_lock(&mosq->callback_mutex);
-	if(mosq->on_subscribe){
+	void (*on_subscribe)(struct mosquitto *, void *userdata, int mid, int qos_count, const int *granted_qos);
+	void (*on_subscribe_v5)(struct mosquitto *, void *userdata, int mid, int qos_count, const int *granted_qos, const mosquitto_property *props);
+	COMPAT_pthread_mutex_lock(&mosq->callback_mutex);
+	on_subscribe = mosq->on_subscribe;
+	on_subscribe_v5 = mosq->on_subscribe_v5;
+	COMPAT_pthread_mutex_unlock(&mosq->callback_mutex);
+	if(on_subscribe){
 		mosq->in_callback = true;
-		mosq->on_subscribe(mosq, mosq->userdata, mid, qos_count, granted_qos);
+		on_subscribe(mosq, mosq->userdata, mid, qos_count, granted_qos);
 		mosq->in_callback = false;
 	}
-	if(mosq->on_subscribe_v5){
+	if(on_subscribe_v5){
 		mosq->in_callback = true;
-		mosq->on_subscribe_v5(mosq, mosq->userdata, mid, qos_count, granted_qos, properties);
+		on_subscribe_v5(mosq, mosq->userdata, mid, qos_count, granted_qos, properties);
 		mosq->in_callback = false;
 	}
-	pthread_mutex_unlock(&mosq->callback_mutex);
 	mosquitto_property_free_all(&properties);
 #endif
 	mosquitto__free(granted_qos);

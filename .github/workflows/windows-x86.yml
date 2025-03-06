@@ -1,4 +1,4 @@
-name: Windows build
+name: Windows x86 build
 
 on:
   workflow_dispatch:
@@ -25,26 +25,26 @@ jobs:
         id: vcpkg
         with:
           manifest-dir: ${{ github.workspace }}
-          triplet: x64-windows-release
+          triplet: x86-windows
           token: ${{ github.token }}
           github-binarycache: true
 
       - name: Configure CMake
-        run: cmake -B ${{github.workspace}}/build64 -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DWITH_WEBSOCKETS=ON -DWITH_TESTS=OFF -DCMAKE_GENERATOR_PLATFORM=x64 -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/vcpkg/scripts/buildsystems/vcpkg.cmake -DVCPKG_TARGET_TRIPLET=x64-windows-release -DVCPKG_MANIFEST_MODE=ON
+        run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DWITH_WEBSOCKETS=ON -DWITH_TESTS=OFF -DCMAKE_GENERATOR_PLATFORM=WIN32 -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/vcpkg/scripts/buildsystems/vcpkg.cmake -DVCPKG_TARGET_TRIPLET=x86-windows -DVCPKG_MANIFEST_MODE=ON
       - name: Build
-        run: cmake --build ${{github.workspace}}/build64 --config ${{env.BUILD_TYPE}}
+        run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
 
       - uses: suisei-cn/actions-download-file@v1.6.0
         id: vcredist
         name: Download VC redistributable
         with:
-          url: https://aka.ms/vs/17/release/vc_redist.x64.exe
+          url: https://aka.ms/vs/17/release/vc_redist.x86.exe
           target: ${{github.workspace}}/installer/
 
       - name: Installer
         uses: joncloud/makensis-action@v4
         with:
-          script-file: ${{github.workspace}}/installer/mosquitto64.nsi
+          script-file: ${{github.workspace}}/installer/mosquitto.nsi
 
       - name: Upload installer to artifacts
         uses: actions/upload-artifact@v4

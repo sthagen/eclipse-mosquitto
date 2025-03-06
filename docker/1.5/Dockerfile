@@ -82,7 +82,8 @@ RUN set -x && \
     apk --no-cache add \
         ca-certificates \
         libressl \
-        libuuid && \
+        libuuid \
+        tzdata && \
     apk del build-deps && \
     rm -rf /build
 

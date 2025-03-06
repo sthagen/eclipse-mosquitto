@@ -82,7 +82,9 @@ RUN set -x && \
     install -m644 /build/mosq/mosquitto.conf /mosquitto/config/mosquitto.conf && \
     chown -R mosquitto:mosquitto /mosquitto && \
     apk --no-cache add \
-        ca-certificates libuuid && \
+        ca-certificates \
+        libuuid \
+        tzdata && \
     apk del build-deps && \
     rm -rf /build
 
