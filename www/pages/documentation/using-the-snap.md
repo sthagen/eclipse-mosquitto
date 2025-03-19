@@ -91,4 +91,13 @@ systemctl stop snap.mosquitto.mosquitto
 All other aspects of running Mosquitto are the same as with any other
 installation methods.
 
+## Client configuration files
+
+If you use the mosquitto_pub, mosquitto_rr, or mosquitto_sub configuration
+files they should be placed in `$HOME/snap/mosquitto/current/.config`:
+
+* `$HOME/snap/mosquitto/current/.config/mosquitto_pub`
+* `$HOME/snap/mosquitto/current/.config/mosquitto_rr`
+* `$HOME/snap/mosquitto/current/.config/mosquitto_sub`
+
 [authentication method]:/documentation/authentication-methods
