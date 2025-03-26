@@ -148,4 +148,7 @@ class PTest():
                 out.write(json.dumps(failed_tests_output))
             sys.exit(1)
         else:
-            os.remove("failed-tests.json")
+            try:
+                os.remove("failed-tests.json")
+            except FileNotFoundError:
+                pass
