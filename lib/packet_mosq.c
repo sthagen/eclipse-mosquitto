@@ -406,6 +406,8 @@ static int packet__read_single(struct mosquitto *mosq, enum mosquitto_client_sta
 #else
 			UNUSED(state);
 #endif
+		}else{
+			return MOSQ_ERR_SUCCESS;
 		}
 	}
 	/* remaining_count is the number of bytes that the remaining_length
