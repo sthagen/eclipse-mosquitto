@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+import json
+import os
 from pathlib import Path
 import subprocess
 import time
@@ -72,6 +74,15 @@ class PTest():
         self.add_tests(test_list)
         self.run()
 
+    def load_failed_tests(self):
+        with open("failed-tests.json", "rt") as f:
+            return json.loads(f.read())
+
+    def run_failed_tests(self):
+        test_list = self.load_failed_tests()
+        self.add_tests(test_list)
+        self.run()
+
     def run(self):
         ports = list(range(self.minport, self.minport+self.max_running+1))
         start_time = time.time()
@@ -80,6 +91,7 @@ class PTest():
         failed = 0
 
         failed_tests = []
+        failed_tests_output = []
         running_tests = []
         retry_tests = []
         while len(self.tests) > 0 or len(running_tests) > 0 or len(retry_tests) > 0:
@@ -119,6 +131,7 @@ class PTest():
                         t.print_result(31)
                         failed = failed + 1
                         failed_tests.append(t.cmd)
+                        failed_tests_output.append([t.ports]+t.args)
                         print(f"{t.cmd}:")
                         (stdo, stde) = t.proc.communicate()
                     else:
@@ -131,4 +144,8 @@ class PTest():
             failed_tests.sort()
             for f in failed_tests:
                 print(f)
+            with open("failed-tests.json", "wt") as out:
+                out.write(json.dumps(failed_tests_output))
             sys.exit(1)
+        else:
+            os.remove("failed-tests.json")

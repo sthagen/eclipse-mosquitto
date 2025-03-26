@@ -67,4 +67,7 @@ tests = [
 
 if __name__ == "__main__":
     test = ptest.PTest()
-    test.run_tests(tests)
+    if len(sys.argv) == 2 and sys.argv[1] == "--rerun-failed":
+        test.run_failed_tests()
+    else:
+        test.run_tests(tests)
