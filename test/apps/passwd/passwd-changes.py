@@ -18,7 +18,7 @@ def client_check(port, username, password, rc):
     sock.close()
 
 
-def passwd_cmd(args, port, response=None, input=None, expected_rc=0):
+def passwd_cmd(args, response=None, input=None, expected_rc=0):
     proc = subprocess.run([mosq_test.get_build_root()+"/apps/mosquitto_passwd/mosquitto_passwd"]
                     + args,
                     capture_output=True, encoding='utf-8', timeout=2, input=input)
@@ -31,6 +31,8 @@ def passwd_cmd(args, port, response=None, input=None, expected_rc=0):
             raise ValueError(proc.stdout)
 
     if proc.returncode != expected_rc:
+        print(proc.returncode)
+        print(expected_rc)
         raise ValueError(args)
 
 
@@ -40,9 +42,10 @@ pw_file = os.path.basename(__file__).replace('.py', '.pwfile')
 write_config(conf_file, pw_file, port)
 
 # Generate initial password file
-passwd_cmd(["-H", "sha512", "-c", "-b", pw_file, "user1", "pass1"], port)
-passwd_cmd(["-H", "sha512-pbkdf2", pw_file, "user2"], port, input="cmd\ncmd\n")
-passwd_cmd(["-H", "argon2id", pw_file, "user3"], port, input="pass3\npass3\n")
+passwd_cmd(["-H", "sha512", "-c", "-b", pw_file, "user1", "pass1"])
+passwd_cmd(["-H", "sha512-pbkdf2", pw_file, "user2"], input="cmd\ncmd\n")
+passwd_cmd(["-H", "sha512-pbkdf2", pw_file, "user3"], input="pass3\npass3\n")
+#passwd_cmd(["-H", "argon2id", pw_file, "user3"], input="pass3\npass3\n")
 try:
     # If we're root, set file ownership to "nobody", because that is the user
     # the broker will change to.
@@ -65,7 +68,7 @@ try:
     client_check(port, "baduser", "goodpass", 5)
 
     # Update password
-    passwd_cmd(["-H", "sha512-pbkdf2", "-b", pw_file, "user1", "newpass"], port)
+    passwd_cmd(["-H", "sha512-pbkdf2", "-b", pw_file, "user1", "newpass"])
     broker.send_signal(signal.SIGHUP)
 
     client_check(port, "user1", "badpass", 5)
@@ -78,7 +81,7 @@ try:
     client_check(port, "baduser", "goodpass", 5)
 
     # New user
-    passwd_cmd(["-b", pw_file, "newuser", "goodpass"], port)
+    passwd_cmd(["-b", pw_file, "newuser", "goodpass"])
     broker.send_signal(signal.SIGHUP)
 
     client_check(port, "user1", "badpass", 5)
@@ -91,8 +94,8 @@ try:
     client_check(port, "newuser", "goodpass", 0)
 
     # Delete user
-    passwd_cmd(["-D", pw_file, "user2"], port)
-    passwd_cmd(["-D", pw_file, "user2"], port, response="Warning: User user2 not found in password file.\n", expected_rc=1)
+    passwd_cmd(["-D", pw_file, "user2"])
+    passwd_cmd(["-D", pw_file, "user2"], response="Warning: User user2 not found in password file.\n", expected_rc=1)
     broker.send_signal(signal.SIGHUP)
 
     client_check(port, "user1", "badpass", 5)

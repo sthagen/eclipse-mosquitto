@@ -62,7 +62,7 @@ struct cb_helper {
 	bool found;
 };
 
-static enum mosquitto_pwhash_type hashtype = MOSQ_PW_ARGON2ID;
+static enum mosquitto_pwhash_type hashtype = MOSQ_PW_SHA512_PBKDF2;
 
 #ifdef WIN32
 static FILE *mpw_tmpfile(void)
