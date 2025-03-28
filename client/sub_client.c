@@ -451,8 +451,12 @@ int main(int argc, char *argv[])
 			return rc;
 		}
 		while(run){
+#ifdef WIN32
+			Sleep(1000);
+#else
 			struct timespec ts = {1,0};
 			nanosleep(&ts, NULL);
+#endif
 			int message_count = message_rate_msg_count;
 			message_rate_msg_count = 0;
 			printf("%d msgs/s\n", message_count);
