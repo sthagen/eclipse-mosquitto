@@ -37,8 +37,10 @@ Contributors:
 #include "sub_client_output.h"
 
 struct mosq_config cfg;
+static bool run = true;
 bool process_messages = true;
 int msg_count = 0;
+int message_rate_msg_count = 0;
 struct mosquitto *g_mosq = NULL;
 int last_mid = 0;
 static bool timed_out = false;
@@ -76,6 +78,7 @@ static void my_signal_handler(int signum)
 		}else{
 			exit(-1);
 		}
+		run = false;
 	}
 	if(signum == SIGALRM){
 		timed_out = true;
@@ -91,6 +94,8 @@ static void my_message_callback(struct mosquitto *mosq, void *obj, const struct 
 
 	UNUSED(obj);
 	UNUSED(properties);
+
+	message_rate_msg_count++;
 
 	if(process_messages == false) return;
 
@@ -393,6 +398,10 @@ int main(int argc, char *argv[])
 	if(cfg.debug){
 		mosquitto_log_callback_set(g_mosq, my_log_callback);
 	}
+	if(cfg.message_rate){
+		process_messages = false;
+		cfg.watch = false;
+	}
 	mosquitto_subscribe_callback_set(g_mosq, my_subscribe_callback);
 	mosquitto_connect_v5_callback_set(g_mosq, my_connect_callback);
 	mosquitto_message_v5_callback_set(g_mosq, my_message_callback);
@@ -436,7 +445,21 @@ int main(int argc, char *argv[])
 	}
 #endif
 
-	rc = mosquitto_loop_forever(g_mosq, -1, 1);
+	if(cfg.message_rate){
+		rc = mosquitto_loop_start(g_mosq);
+		if(rc){
+			return rc;
+		}
+		while(run){
+			struct timespec ts = {1,0};
+			nanosleep(&ts, NULL);
+			int message_count = message_rate_msg_count;
+			message_rate_msg_count = 0;
+			printf("%d msgs/s\n", message_count);
+		}
+	}else{
+		rc = mosquitto_loop_forever(g_mosq, -1, 1);
+	}
 
 	mosquitto_destroy(g_mosq);
 	mosquitto_lib_cleanup();

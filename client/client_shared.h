@@ -142,6 +142,7 @@ struct mosq_config {
 	bool have_topic_alias; /* pub */
 	bool tcp_nodelay;
 	bool no_tls;
+	bool message_rate; /* sub */
 };
 
 extern const char hexseplist[32];

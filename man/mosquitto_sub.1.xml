@@ -43,6 +43,7 @@
 			<arg><option>-i</option> <replaceable>client-id</replaceable></arg>
 			<arg><option>-I</option> <replaceable>client-id-prefix</replaceable></arg>
 			<arg><option>-k</option> <replaceable>keepalive-time</replaceable></arg>
+			<arg><option>--message-rate</option></arg>
 			<arg><option>-N</option></arg>
 			<arg><option>--nodelay</option></arg>
 			<arg><option>--pretty</option></arg>
@@ -428,6 +429,17 @@
 						Depending on the scheme, the port will default to
 						different values. mqtt:// - 1883, mqtts:// - 8883,
 						ws:// - 80, wss:// - 443.
+					</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term><option>--message-rate</option></term>
+				<listitem>
+                    <para>
+                        Instead of printing the messages received, print a count
+                        of the messages received at one second intervals. Other
+                        options related to output formatting are not valid when
+                        this option is active.
 					</para>
 				</listitem>
 			</varlistentry>

@@ -869,6 +869,11 @@ int client_config_line_proc(struct mosq_config *cfg, int pub_or_sub, int argc, c
 				cfg->max_inflight = (unsigned int )tmpi;
 			}
 			i++;
+		}else if(!strcmp(argv[i], "--message-rate")){
+			if(pub_or_sub != CLIENT_SUB){
+				goto unknown_option;
+			}
+			cfg->message_rate = true;
 		}else if(!strcmp(argv[i], "--nodelay")){
 			cfg->tcp_nodelay = true;
 		}else if(!strcmp(argv[i], "--no-tls")){
