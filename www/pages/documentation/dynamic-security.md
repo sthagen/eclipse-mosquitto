@@ -554,8 +554,8 @@ they would be provided on the command line. For example:
   This excludes any error messages given in case of invalid user input (e.g.
   using `-p` without a port).
 * `--tls-version version` : Choose which TLS protocol version to use when
-  communicating with the broker. Valid options are tlsv1.3, tlsv1.2 and
-  tlsv1.1. The default value is tlsv1.2. Must match the protocol version used
+  communicating with the broker. Valid options are tlsv1.3 and tlsv1.2.
+  The default value is tlsv1.2. Must match the protocol version used
   by the broker.
 * `-u username` : Provide a username to be used for authenticating with the
   broker. See also the `-P` argument.

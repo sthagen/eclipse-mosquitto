@@ -214,8 +214,7 @@ int mosquitto_tls_opts_set(struct mosquitto *mosq, int cert_reqs, const char *tl
 	mosq->tls_cert_reqs = cert_reqs;
 	if(tls_version){
 		if(!strcasecmp(tls_version, "tlsv1.3")
-				|| !strcasecmp(tls_version, "tlsv1.2")
-				|| !strcasecmp(tls_version, "tlsv1.1")){
+				|| !strcasecmp(tls_version, "tlsv1.2")){
 
 			mosquitto_FREE(mosq->tls_version);
 			mosq->tls_version = mosquitto_strdup(tls_version);

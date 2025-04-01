@@ -326,7 +326,7 @@ static void print_usage(void)
 	printf(" --key : client private key for authentication, if required by server.\n");
 	printf(" --keyform : keyfile type, can be either \"pem\" or \"engine\".\n");
 	printf(" --ciphers : openssl compatible list of TLS ciphers to support.\n");
-	printf(" --tls-version : TLS protocol version, can be one of tlsv1.3 tlsv1.2 or tlsv1.1.\n");
+	printf(" --tls-version : TLS protocol version, can be one of tlsv1.3 or tlsv1.2.\n");
 	printf("                 Defaults to tlsv1.2 if available.\n");
 	printf(" --insecure : do not verify the the server certificate. Using this option means that\n");
 	printf("              you cannot be sure that the remote host is the server you wish to connect\n");

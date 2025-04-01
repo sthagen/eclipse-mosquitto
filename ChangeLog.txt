@@ -79,6 +79,7 @@ Broker:
 - Add `listener_allow_anonymous` option.
 - Add `listener_auto_id_prefix` option.
 - Add support for systemd watchdog.
+- Remove support for TLS v1.1.
 
 Plugins / plugin interface:
 - Add persist-sqlite plugin.
@@ -176,6 +177,7 @@ Client library:
 - Add `on_ext_auth()` callback to allow handling MQTT v5 extended authentication.
 - Add `mosquitto_ext_auth_continue()` function to continue an MQTT v5 extended
   authentication.
+- Remove support for TLS v1.1.
 
 Clients:
 - Add `-W` timeout support to Windows.
@@ -192,6 +194,7 @@ Clients:
 - mosquitto_sub payload hex output can now be split by fixed field length.
 - Add `--message-rate` option to mosquitto_sub, for printing the count of
   messages received each second.
+- Remove support for TLS v1.1.
 
 DB Dump:
 - Add `--json` output mode.

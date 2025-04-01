@@ -130,9 +130,8 @@ libmosq_EXPORT int mosquitto_tls_insecure_set(struct mosquitto *mosq, bool value
  *	tls_version - the version of the SSL/TLS protocol to use as a string. If NULL,
  *	              the default value is used. The default value and the
  *	              available values depend on the version of openssl that the
- *	              library was compiled against. For openssl >= 1.0.1, the
- *	              available options are tlsv1.2, tlsv1.1 and tlsv1, with tlv1.2
- *	              as the default. For openssl < 1.0.1, only tlsv1 is available.
+ *	              library was compiled against. The available options are
+ *	              tlsv1.3 and tlsv1.2, with tlsv1.2 as the default.
  *	ciphers -     a string describing the ciphers available for use. See the
  *	              "openssl ciphers" tool for more information. If NULL, the
  *	              default ciphers will be used.

@@ -1833,15 +1833,18 @@ openssl dhparam -out dhparam.pem 2048</programlisting>
 				<varlistentry>
 					<term><option>tls_version</option> <replaceable>version</replaceable></term>
 					<listitem>
-						<para>Configure the minimum version of the TLS protocol to be
+						<para>
+							Configure the minimum version of the TLS protocol to be
 							used for this listener. Possible values are
-							<replaceable>tlsv1.3</replaceable>,
-							<replaceable>tlsv1.2</replaceable> and
-							<replaceable>tlsv1.1</replaceable>. If left unset,
-							the default is to allow TLS v1.3 and v1.2.</para>
-						<para>In Mosquitto version 1.6.x and earlier, this
+							<replaceable>tlsv1.3</replaceable> and
+							<replaceable>tlsv1.2</replaceable>.
+							If left unset, the default is to allow TLS v1.3 and v1.2.
+						</para>
+						<para>
+							In Mosquitto version 1.6.x and earlier, this
 							option set the only TLS protocol version that
-							was allowed, rather than the minimum.</para>
+							was allowed, rather than the minimum.
+						</para>
 					</listitem>
 				</varlistentry>
 				<varlistentry>
@@ -1918,12 +1921,13 @@ openssl dhparam -out dhparam.pem 2048</programlisting>
 				<varlistentry>
 					<term><option>tls_version</option> <replaceable>version</replaceable></term>
 					<listitem>
-						<para>Configure the minimum version of the TLS protocol to be
+						<para>
+							Configure the minimum version of the TLS protocol to be
 							used for this listener. Possible values are
-							<replaceable>tlsv1.3</replaceable>,
-							<replaceable>tlsv1.2</replaceable> and
-							<replaceable>tlsv1.1</replaceable>. If left unset,
-							the default of allowing TLS v1.3 and v1.2.</para>
+							<replaceable>tlsv1.3</replaceable> and
+							<replaceable>tlsv1.2</replaceable>.
+							If left unset, the default is to allow TLS v1.3 and v1.2.
+						</para>
 						<para>In Mosquitto version 1.6.x and earlier, this
 							option set the only TLS protocol version that
 							was allowed, rather than the minimum.</para>
@@ -2619,14 +2623,15 @@ topic clients/total in 0 test/mosquitto/org/ $SYS/broker/
 				<varlistentry>
 					<term><option>bridge_tls_version</option> <replaceable>version</replaceable></term>
 					<listitem>
-						<para>Configure the version of the TLS protocol to be
+						<para>
+							Configure the version of the TLS protocol to be
 							used for this bridge. Possible values are
-							<replaceable>tlsv1.3</replaceable>,
-							<replaceable>tlsv1.2</replaceable> and
-							<replaceable>tlsv1.1</replaceable>. Defaults to
+							<replaceable>tlsv1.3</replaceable> and
+							<replaceable>tlsv1.2</replaceable>. Defaults to
 							<replaceable>tlsv1.2</replaceable>. The remote
 							broker must support the same version of TLS for the
-							connection to succeed.</para>
+							connection to succeed.
+						</para>
 					</listitem>
 				</varlistentry>
 				<varlistentry>
