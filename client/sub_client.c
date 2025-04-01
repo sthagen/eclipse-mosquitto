@@ -400,7 +400,9 @@ int main(int argc, char *argv[])
 	}
 	if(cfg.message_rate){
 		process_messages = false;
+#ifndef WIN32
 		cfg.watch = false;
+#endif
 	}
 	mosquitto_subscribe_callback_set(g_mosq, my_subscribe_callback);
 	mosquitto_connect_v5_callback_set(g_mosq, my_connect_callback);
