@@ -17,58 +17,89 @@
 	<refsynopsisdiv>
 		<cmdsynopsis>
 			<command>mosquitto_ctrl</command>
-			<arg choice='opt'>connection-options | -o config-file</arg>
+			<arg choice='opt'>options | <option>-o</option> <replaceable>config-file</replaceable></arg>
 			<arg choice='plain'>module-name</arg>
 			<arg choice='plain'>module-command</arg>
 			<arg choice='opt'>command-options</arg>
 		</cmdsynopsis>
 		<cmdsynopsis>
+			<command>options:</command>
+			<arg>auth-options</arg>
+			<arg>connection-options</arg>
+			<arg>mqtt-options</arg>
+			<arg>output-options</arg>
+			<group>
+				<arg choice='plain'>tls-certificate-options</arg>
+				<arg choice='plain'>tls-psk-options</arg>
+			</group>
+		</cmdsynopsis>
+		<cmdsynopsis>
+			<command>auth-options:</command>
+			<sbr/>
+			<arg><option>-u</option> <replaceable>username</replaceable></arg>
+			<arg><option>-P</option> <replaceable>password</replaceable></arg>
+		</cmdsynopsis>
+		<cmdsynopsis>
 			<command>connection-options:</command>
+			<sbr/>
 			<group choice='req'>
 				<arg choice='plain'>
 					<arg><option>-h</option> <replaceable>hostname</replaceable></arg>
 					<arg><option>--unix</option> <replaceable>socket path</replaceable></arg>
 					<arg><option>-p</option> <replaceable>port-number</replaceable></arg>
-					<arg><option>-u</option> <replaceable>username</replaceable></arg>
-					<arg><option>-P</option> <replaceable>password</replaceable></arg>
 				</arg>
 				<arg choice='plain'><option>-L</option> <replaceable>URL</replaceable></arg>
 			</group>
+			<sbr/>
 			<arg><option>-A</option> <replaceable>bind-address</replaceable></arg>
+			<sbr/>
+			<arg><option>--proxy</option> <replaceable>socks-url</replaceable></arg>
+		</cmdsynopsis>
+		<cmdsynopsis>
+			<command>mqtt-options:</command>
+			<sbr/>
 			<arg><option>-c</option></arg>
-			<arg><option>-d</option></arg>
 			<arg><option>-i</option> <replaceable>client-id</replaceable></arg>
 			<arg><option>-q</option> <replaceable>message-QoS</replaceable></arg>
-			<arg><option>--quiet</option></arg>
 			<arg><option>-V</option> <replaceable>protocol-version</replaceable></arg>
-			<group>
-				<arg>
-					<group choice='req'>
-						<arg choice='plain'><option>--cafile</option> <replaceable>file</replaceable></arg>
-						<arg choice='plain'><option>--capath</option> <replaceable>dir</replaceable></arg>
-					</group>
-					<arg><option>--cert</option> <replaceable>file</replaceable></arg>
-					<arg><option>--key</option> <replaceable>file</replaceable></arg>
-					<arg><option>--ciphers</option> <replaceable>ciphers</replaceable></arg>
-					<arg><option>--tls-version</option> <replaceable>version</replaceable></arg>
-					<arg><option>--tls-alpn</option> <replaceable>protocol</replaceable></arg>
-					<arg><option>--tls-engine</option> <replaceable>engine</replaceable></arg>
-					<arg><option>--keyform</option>
-					<group choice='req'>
-						<arg choice='plain'><replaceable>pem</replaceable></arg>
-						<arg choice='plain'><replaceable>engine</replaceable></arg>
-					</group></arg>
-					<arg><option>--tls-engine-kpass-sha1</option> <replaceable>kpass-sha1</replaceable></arg>
-					<arg><option>--insecure</option></arg>
-				</arg>
-				<arg>
-					<arg choice='plain'><option>--psk</option> <replaceable>hex-key</replaceable></arg>
-					<arg choice='plain'><option>--psk-identity</option> <replaceable>identity</replaceable></arg>
-					<arg><option>--ciphers</option> <replaceable>ciphers</replaceable></arg>
-					<arg><option>--tls-version</option> <replaceable>version</replaceable></arg>
-				</arg>
+		</cmdsynopsis>
+		<cmdsynopsis>
+			<command>output-options:</command>
+			<sbr/>
+			<arg><option>-d</option></arg>
+			<arg><option>--quiet</option></arg>
+		</cmdsynopsis>
+		<cmdsynopsis>
+			<command>tls-certificate-options:</command>
+			<sbr/>
+			<group choice='req'>
+				<arg choice='plain'><option>--cafile</option> <replaceable>file</replaceable></arg>
+				<arg choice='plain'><option>--capath</option> <replaceable>dir</replaceable></arg>
 			</group>
-			<arg><option>--proxy</option> <replaceable>socks-url</replaceable></arg>
+			<sbr/>
+			<arg><option>--cert</option> <replaceable>file</replaceable></arg>
+			<arg><option>--key</option> <replaceable>file</replaceable></arg>
+			<sbr/>
+			<arg><option>--ciphers</option> <replaceable>ciphers</replaceable></arg>
+			<arg><option>--insecure</option></arg>
+			<arg><option>--tls-version</option> <replaceable>version</replaceable></arg>
+			<arg><option>--tls-alpn</option> <replaceable>protocol</replaceable></arg>
+			<sbr/>
+			<arg><option>--tls-engine</option> <replaceable>engine</replaceable></arg>
+			<arg><option>--keyform</option>
+			<group choice='req'>
+				<arg choice='plain'><replaceable>pem</replaceable></arg>
+				<arg choice='plain'><replaceable>engine</replaceable></arg>
+			</group></arg>
+			<arg><option>--tls-engine-kpass-sha1</option> <replaceable>kpass-sha1</replaceable></arg>
+		</cmdsynopsis>
+		<cmdsynopsis>
+			<command>tls-psk-options:</command>
+			<sbr/>
+			<arg choice='plain'><option>--psk</option> <replaceable>hex-key</replaceable></arg>
+			<arg choice='plain'><option>--psk-identity</option> <replaceable>identity</replaceable></arg>
+			<arg><option>--ciphers</option> <replaceable>ciphers</replaceable></arg>
+			<arg><option>--tls-version</option> <replaceable>version</replaceable></arg>
 		</cmdsynopsis>
 		<cmdsynopsis>
 			<command>mosquitto_ctrl</command>
