@@ -19,6 +19,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: pin cmake to 3.x series
+        uses: jwlawson/actions-setup-cmake@09fd9b0fb3b239b4b68d9256cd65adf8d6b91da0
+        with:
+          cmake-version: '3.31.6'
 
       - name: vcpkg build
         uses: johnwason/vcpkg-action@v6
