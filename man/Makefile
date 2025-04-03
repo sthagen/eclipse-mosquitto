@@ -61,7 +61,7 @@ uninstall :
 	-rm -f "${DESTDIR}${mandir}/man3/libmosquitto.3"
 
 % : %.xml %.meta manpage.xsl
-	$(XSLTPROC) $<
+	$(XSLTPROC) --xinclude $<
 
 html : *.xml
 	set -e; for m in *.xml; \
