@@ -676,7 +676,7 @@ static void config__copy(struct mosquitto__config *src, struct mosquitto__config
 #endif
 
 #ifdef WITH_BRIDGE
-	for(int i=0;i<dest->bridge_count;i++){
+	for(int i=0; i<dest->bridge_count; i++){
 		if(dest->bridges[i]) config__bridge_cleanup(dest->bridges[i]);
 	}
 	mosquitto_FREE(dest->bridges);

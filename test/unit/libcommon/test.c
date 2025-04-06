@@ -18,12 +18,12 @@ int main(int argc, char *argv[])
 	UNUSED(argc);
 	UNUSED(argv);
 
-    if(CU_initialize_registry() != CUE_SUCCESS){
-        printf("Error initializing CUnit registry.\n");
-        return 1;
-    }
+	if(CU_initialize_registry() != CUE_SUCCESS){
+		printf("Error initializing CUnit registry.\n");
+		return 1;
+	}
 
-    if(0
+	if(0
 			|| init_property_add_tests()
 			|| init_property_value_tests()
 			|| init_strings_tests()
@@ -32,15 +32,15 @@ int main(int argc, char *argv[])
 			|| init_utf8_tests()
 			){
 
-        CU_cleanup_registry();
-        return 1;
-    }
+		CU_cleanup_registry();
+		return 1;
+	}
 
-    CU_basic_set_mode(CU_BRM_NORMAL);
-    CU_basic_run_tests();
+	CU_basic_set_mode(CU_BRM_NORMAL);
+	CU_basic_run_tests();
 	fails = CU_get_number_of_failures();
-    CU_cleanup_registry();
+	CU_cleanup_registry();
 
-    return (int)fails;
+	return (int)fails;
 }
 

@@ -194,8 +194,8 @@ static int mosquitto__reconnect(struct mosquitto *mosq, bool blocking)
 	message__reconnect_reset(mosq, false);
 
 	if(net__is_connected(mosq)){
-        net__socket_close(mosq);
-    }
+		net__socket_close(mosq);
+	}
 
 	callback__on_pre_connect(mosq);
 

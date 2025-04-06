@@ -27,8 +27,8 @@ Contributors:
 #  include <windows.h>
 #  include <process.h>
 #   define snprintf sprintf_s
-#	include <io.h>
-#	include <windows.h>
+#   include <io.h>
+#   include <windows.h>
 #else
 #  include <unistd.h>
 #  include <termios.h>

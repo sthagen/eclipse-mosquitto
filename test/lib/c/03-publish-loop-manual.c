@@ -18,8 +18,8 @@ static void do_loop(struct mosquitto *mosq)
 
 	if(sock < 0) exit(1);
 
-    FD_ZERO(&readfds);
-    FD_ZERO(&writefds);
+	FD_ZERO(&readfds);
+	FD_ZERO(&writefds);
 
 	FD_SET(sock, &readfds);
 

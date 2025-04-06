@@ -112,7 +112,7 @@ int mux_epoll__remove_out(struct mosquitto *context)
 		ev.events = EPOLLIN;
 		if(epoll_ctl(db.epollfd, EPOLL_CTL_MOD, context->sock, &ev) == -1) {
 			if((errno != ENOENT)||(epoll_ctl(db.epollfd, EPOLL_CTL_ADD, context->sock, &ev) == -1)) {
-					log__printf(NULL, MOSQ_LOG_DEBUG, "Error in epoll re-registering to EPOLLIN: %s", strerror(errno));
+				log__printf(NULL, MOSQ_LOG_DEBUG, "Error in epoll re-registering to EPOLLIN: %s", strerror(errno));
 			}
 		}
 		context->events = EPOLLIN;
@@ -275,7 +275,7 @@ static void loop_handle_reads_writes(struct mosquitto *context, uint32_t events)
 					break;
 #endif
 #if !defined(WITH_WEBSOCKETS) || WITH_WEBSOCKETS == WS_IS_BUILTIN
-			/* Not supported with LWS */
+				/* Not supported with LWS */
 				case mosq_t_proxy_v2:
 					rc = proxy_v2__read(context);
 					break;

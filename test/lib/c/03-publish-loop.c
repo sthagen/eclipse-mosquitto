@@ -35,7 +35,7 @@ static void on_subscribe_v5(struct mosquitto *mosq, void *obj, int mid, int qos_
 	(void)qos_count;
 	(void)granted_qos;
 	(void)props;
-	
+
 	mosquitto_publish_v5(mosq, NULL, "loop/test", strlen("message"), "message", 0, false, NULL);
 }
 

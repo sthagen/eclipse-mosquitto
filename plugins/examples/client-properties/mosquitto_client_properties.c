@@ -1,6 +1,6 @@
 /*
  * This is an *example* plugin which prints information of a message after it is
- * received by the broker and before it is sent on to other clients. 
+ * received by the broker and before it is sent on to other clients.
  *
  * Compile with:
  *   gcc -I<path to mosquitto-repo/include> -fPIC -shared printf_example.c -o printf_example.so

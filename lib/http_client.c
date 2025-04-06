@@ -68,13 +68,13 @@ int http_c__context_init(struct mosquitto *context)
 	path = context->wsd.http_path?context->wsd.http_path:"/mqtt";
 
 	packet->packet_length = (uint32_t )snprintf((char *)&packet->payload[WS_PACKET_OFFSET], 1024,
-        "GET %s HTTP/1.1\r\n"
-        "Host: %s\r\n"
-        "Upgrade: websocket\r\n"
-        "Connection: Upgrade\r\n"
-        "Sec-WebSocket-Key: %s\r\n"
-        "Sec-WebSocket-Protocol: mqtt\r\n"
-        "Sec-WebSocket-Version: 13\r\n"
+		"GET %s HTTP/1.1\r\n"
+		"Host: %s\r\n"
+		"Upgrade: websocket\r\n"
+		"Connection: Upgrade\r\n"
+		"Sec-WebSocket-Key: %s\r\n"
+		"Sec-WebSocket-Protocol: mqtt\r\n"
+		"Sec-WebSocket-Version: 13\r\n"
 		"\r\n", path, context->host, key);
 	mosquitto_FREE(key);
 	packet->packet_length += WS_PACKET_OFFSET;

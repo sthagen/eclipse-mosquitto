@@ -188,7 +188,7 @@ int dynsec__write_json_config(FILE* fptr, void* user_data)
 	if (fwrite(json_str, 1, json_str_len, fptr) != json_str_len){
 		mosquitto_log_printf(MOSQ_LOG_ERR, "Error saving Dynamic security plugin config: Cannot write whole config (%ld) bytes to file %s", json_str_len, data->config_file);
 		rc = MOSQ_ERR_UNKNOWN;
-  }
+	}
 
 	mosquitto_free(json_str);
 	return rc;

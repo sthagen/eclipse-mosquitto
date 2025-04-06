@@ -31,7 +31,7 @@ Contributors:
  *
  * For simplicity of this example, all clients with id starting with "jailed"
  * will be jailed. All other clients will work as normal.
- * 
+ *
  * Two jailed clients cannot interact with each other. Normal clients can interact
  * with any jailed client by publishing or subscribing to the mounted topic.
  *

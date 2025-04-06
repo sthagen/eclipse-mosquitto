@@ -354,7 +354,7 @@ static void db__message_remove_queued(struct mosquitto *context, struct mosquitt
 	mosquitto_FREE(item);
 }
 
-static void	db__fill_inflight_out_from_queue(struct mosquitto *context)
+static void db__fill_inflight_out_from_queue(struct mosquitto *context)
 {
 	struct mosquitto__client_msg *client_msg, *tmp;
 

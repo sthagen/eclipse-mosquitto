@@ -742,8 +742,8 @@ void bridge__reload(void)
 	int j;
 
 	// destroy old bridges that dissappeared
-	for(i=0;i<db.bridge_count;i++){
-		for(j=0;j<db.config->bridge_count;j++){
+	for(i=0; i<db.bridge_count; i++){
+		for(j=0; j<db.config->bridge_count; j++){
 			if(!strcmp(db.bridges[i]->bridge->name, db.config->bridges[j]->name)) break;
 		}
 
@@ -752,8 +752,8 @@ void bridge__reload(void)
 		}
 	}
 
-	for(i=0;i<db.config->bridge_count;i++){
-		for(j=0;j<db.bridge_count; j++){
+	for(i=0; i<db.config->bridge_count; i++){
+		for(j=0; j<db.bridge_count; j++){
 			if(!strcmp(db.config->bridges[i]->name, db.bridges[j]->bridge->name)) break;
 		}
 
@@ -766,7 +766,7 @@ void bridge__reload(void)
 
 		if(db.config->bridges[i]->reload_type == brt_immediate){
 			// in this case, an existing bridge should match
-			for(j=0;j<db.bridge_count;j++){
+			for(j=0; j<db.bridge_count; j++){
 				if(!strcmp(db.config->bridges[i]->name, db.bridges[j]->bridge->name)) break;
 			}
 
@@ -856,7 +856,7 @@ static void bridge__packet_cleanup(struct mosquitto *context)
 	struct mosquitto__packet *packet;
 	if(!context) return;
 
-    while(context->out_packet){
+	while(context->out_packet){
 		packet = context->out_packet;
 		context->out_packet = context->out_packet->next;
 		mosquitto_FREE(packet);
@@ -943,7 +943,7 @@ static bool reload_if_needed(struct mosquitto *context)
 {
 	int i;
 
-	for(i=0;i<db.config->bridge_count;i++){
+	for(i=0; i<db.config->bridge_count; i++){
 		if(db.config->bridges[i] && !strcmp(context->bridge->name, db.config->bridges[i]->name)){
 			bridge__destroy(context);
 			bridge__new(db.config->bridges[i]);

@@ -89,7 +89,7 @@ int main(int argc, char *argv[])
 				mosquitto_message_callback_set(mosq, message_callback);
 
 
-			    rc = mosquitto_connect(mosq, mqtt_host, mqtt_port, 60);
+				rc = mosquitto_connect(mosq, mqtt_host, mqtt_port, 60);
 
 				mosquitto_subscribe(mosq, NULL, "#", 0);
 

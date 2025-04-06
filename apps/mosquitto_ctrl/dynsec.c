@@ -119,7 +119,7 @@ static void print_list(cJSON *j_response, const char *arrayname, const char *key
 
 	cJSON_ArrayForEach(j_elem, j_array){
 		if(cJSON_IsObject(j_elem)){
-            const char *stmp;
+			const char *stmp;
 			if(json_get_string(j_elem, keyname, &stmp, false) == MOSQ_ERR_SUCCESS){
 				printf("%s\n", stmp);
 			}

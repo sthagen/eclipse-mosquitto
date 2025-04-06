@@ -334,11 +334,11 @@ BROKER_EXPORT int mosquitto_set_username(struct mosquitto *client, const char *u
 BROKER_EXPORT int mosquitto_set_clientid(struct mosquitto *client, const char *clientid)
 {
 	struct mosquitto *found_client;
-    char *id_dup;
+	char *id_dup;
 	bool in_by_id;
 	int clientid_len;
 
-    if(!client || !clientid) return MOSQ_ERR_INVAL;
+	if(!client || !clientid) return MOSQ_ERR_INVAL;
 
 	in_by_id = client->in_by_id;
 	/* If in_by_id is true, then this client has already authenticated and
@@ -357,13 +357,13 @@ BROKER_EXPORT int mosquitto_set_clientid(struct mosquitto *client, const char *c
 		}
 	}
 
-    clientid_len = (int)strlen(clientid);
-    if(mosquitto_validate_utf8(clientid, clientid_len)){
-        return MOSQ_ERR_INVAL;
-    }
+	clientid_len = (int)strlen(clientid);
+	if(mosquitto_validate_utf8(clientid, clientid_len)){
+		return MOSQ_ERR_INVAL;
+	}
 
-    id_dup = mosquitto_strdup(clientid);
-    if(!id_dup) return MOSQ_ERR_NOMEM;
+	id_dup = mosquitto_strdup(clientid);
+	if(!id_dup) return MOSQ_ERR_NOMEM;
 
 	if(in_by_id){
 		context__remove_from_by_id(client);
@@ -374,7 +374,7 @@ BROKER_EXPORT int mosquitto_set_clientid(struct mosquitto *client, const char *c
 		context__add_to_by_id(client);
 	}
 
-    return MOSQ_ERR_SUCCESS;
+	return MOSQ_ERR_SUCCESS;
 }
 
 /* Check to see whether durable clients still have rights to their subscriptions. */

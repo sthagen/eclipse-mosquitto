@@ -10,7 +10,7 @@ int cb(struct mosquitto *mosq, void *userdata, const struct mosquitto_message *m
 {
 	(void)mosq;
 	(void)userdata;
-	
+
 	assert(msg);
 	assert(!strcmp(msg->topic, "qos2/test"));
 	return 1;

@@ -174,7 +174,7 @@ static int create_tables(struct mosquitto_sqlite *ms)
 	rc = sqlite3_exec(ms->db,
 			"SELECT major,minor,patch"
 			"  FROM version_info "
-										"  WHERE component = 'database_schema';",
+			"  WHERE component = 'database_schema';",
 			&extract_version_numbers, db_schema_version, NULL);
 	if(rc) goto fail;
 
@@ -405,15 +405,15 @@ void persist_sqlite__cleanup(struct mosquitto_sqlite *ms)
 	if(ms->db){
 		int rc = sqlite3_exec(ms->db, "END;", NULL, NULL, NULL);
 		if (rc !=  SQLITE_OK){
-		  mosquitto_log_printf(MOSQ_LOG_ERR, "Error: Sqlite persistence: Closing final transaction %s", sqlite3_errstr(rc));
+			mosquitto_log_printf(MOSQ_LOG_ERR, "Error: Sqlite persistence: Closing final transaction %s", sqlite3_errstr(rc));
 		}
 		rc = sqlite3_wal_checkpoint_v2(ms->db,NULL,SQLITE_CHECKPOINT_TRUNCATE,NULL,NULL);
 		if (rc !=  SQLITE_OK){
-		  mosquitto_log_printf(MOSQ_LOG_WARNING, "Warning: Sqlite persistence: Final  wal_checkpoint  %s", sqlite3_errstr(rc));
+			mosquitto_log_printf(MOSQ_LOG_WARNING, "Warning: Sqlite persistence: Final  wal_checkpoint  %s", sqlite3_errstr(rc));
 		}
 		rc = sqlite3_close(ms->db);
 		if (rc !=  SQLITE_OK){
-		  mosquitto_log_printf(MOSQ_LOG_WARNING, "Warning: Sqlite persistence: Error closing database: %s", sqlite3_errstr(rc));
+			mosquitto_log_printf(MOSQ_LOG_WARNING, "Warning: Sqlite persistence: Error closing database: %s", sqlite3_errstr(rc));
 		}
 		ms->db = NULL;
 	}

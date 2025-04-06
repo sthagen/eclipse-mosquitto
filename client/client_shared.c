@@ -340,7 +340,7 @@ int client_config_load(struct mosq_config *cfg, int pub_or_sub, int argc, char *
 	}
 
 	if(cfg->options_file == NULL){
-	/* Default config file */
+		/* Default config file */
 #ifndef WIN32
 		env = getenv("XDG_CONFIG_HOME");
 		if(env){
@@ -394,7 +394,7 @@ int client_config_load(struct mosq_config *cfg, int pub_or_sub, int argc, char *
 			}else{
 				snprintf(loc, len, "%s\\mosquitto_rr.conf", env);
 			}
-		loc[len-1] = '\0';
+			loc[len-1] = '\0';
 		}
 #endif
 	}

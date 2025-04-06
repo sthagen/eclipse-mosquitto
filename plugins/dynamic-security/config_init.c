@@ -208,8 +208,8 @@ static int client_add_admin(struct dynsec__data *data, FILE *pwfile, cJSON *j_cl
 	}
 
 	if(client_role_add(j_roles, "super-admin")
-	        || client_role_add(j_roles, "sys-observe")
-	        || client_role_add(j_roles, "topic-observe")){
+			|| client_role_add(j_roles, "sys-observe")
+			|| client_role_add(j_roles, "topic-observe")){
 
 		free(password);
 		return MOSQ_ERR_NOMEM;

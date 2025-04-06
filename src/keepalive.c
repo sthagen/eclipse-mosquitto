@@ -36,7 +36,7 @@ Contributors:
  * will appear after this point at the position indexed by the time at which
  * they will expire if they do not send another message, assuming they do not
  * have keepalive==0 - in which case they are not part of this check. So a
- * client that connects with keepalive=60 will be added at `now + 60*1.5`. 
+ * client that connects with keepalive=60 will be added at `now + 60*1.5`.
  *
  * A client is added to an entry with a doubly linked list. When the client
  * sends a new message, it is removed from the old position and added to the

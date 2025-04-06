@@ -335,7 +335,7 @@ int mosquitto_write_file(const char* target_path, bool restrict_read, int (*writ
 
 #ifndef WIN32
 	/**
- 	*
+	*
 	* If a system lost power during the rename operation at the
 	* end of this file the filesystem could potentially be left
 	* with a directory that looks like this after powerup:

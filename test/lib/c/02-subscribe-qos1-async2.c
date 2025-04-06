@@ -45,16 +45,16 @@ static void on_subscribe(struct mosquitto *mosq, void *obj, int mid, int qos_cou
 
 static const char* loglevel_as_str(int level)
 {
-    switch (level){
-	    case MOSQ_LOG_INFO:
+	switch (level){
+		case MOSQ_LOG_INFO:
 			return "INFO";
-	    case MOSQ_LOG_NOTICE:
+		case MOSQ_LOG_NOTICE:
 			return "NOTICE";
-	    case MOSQ_LOG_WARNING:
+		case MOSQ_LOG_WARNING:
 			return "WARNING";
-	    case MOSQ_LOG_ERR:
+		case MOSQ_LOG_ERR:
 			return "ERROR";
-	    case MOSQ_LOG_DEBUG:
+		case MOSQ_LOG_DEBUG:
 			return "DEBUG";
 	}
 	return "UNKNOWN";
