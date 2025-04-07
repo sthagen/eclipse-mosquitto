@@ -92,15 +92,15 @@ int main(int argc, char *argv[])
 	UNUSED(argc);
 	UNUSED(argv);
 
-    if(CU_initialize_registry() != CUE_SUCCESS){
-        printf("Error initializing CUnit registry.\n");
-        return 1;
-    }
+	if(CU_initialize_registry() != CUE_SUCCESS){
+		printf("Error initializing CUnit registry.\n");
+		return 1;
+	}
 
 	test_suite = CU_add_suite("Subs", NULL, NULL);
 	if(!test_suite){
 		printf("Error adding CUnit Subs test suite.\n");
-        CU_cleanup_registry();
+		CU_cleanup_registry();
 		return 1;
 	}
 
@@ -110,13 +110,13 @@ int main(int argc, char *argv[])
 
 		printf("Error adding Subs CUnit tests.\n");
 		CU_cleanup_registry();
-        return 1;
-    }
+		return 1;
+	}
 
-    CU_basic_set_mode(CU_BRM_VERBOSE);
-    CU_basic_run_tests();
+	CU_basic_set_mode(CU_BRM_VERBOSE);
+	CU_basic_run_tests();
 	fails = CU_get_number_of_failures();
-    CU_cleanup_registry();
+	CU_cleanup_registry();
 
-    return (int)fails;
+	return (int)fails;
 }

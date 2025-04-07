@@ -742,7 +742,7 @@ static int config__read_file_core(struct mosquitto__config *config, bool reload,
 	size_t slen;
 #ifdef WITH_TLS
 	char *kpass_sha = NULL, *kpass_sha_bin = NULL;
-	char *keyform ;
+	char *keyform;
 #endif
 
 	*lineno = 0;
@@ -2315,23 +2315,23 @@ static int config__check(struct mosquitto__config *config)
 
 	/* Check for missing TLS cafile/capath/certfile/keyfile */
 	for(int i=0; i<config->listener_count; i++){
-		 bool cafile = !!config->listeners[i].cafile;
-		 bool capath = !!config->listeners[i].capath;
-		 bool certfile = !!config->listeners[i].certfile;
-		 bool keyfile = !!config->listeners[i].keyfile;
+		bool cafile = !!config->listeners[i].cafile;
+		bool capath = !!config->listeners[i].capath;
+		bool certfile = !!config->listeners[i].certfile;
+		bool keyfile = !!config->listeners[i].keyfile;
 
-		 if((certfile && !keyfile) || (!certfile && keyfile)){
-			 log__printf(NULL, MOSQ_LOG_ERR, "Error: Both certfile and keyfile must be provided to enable a TLS listener.");
-			 return MOSQ_ERR_INVAL;
-		 }
-		 if(cafile && !certfile){
-			 log__printf(NULL, MOSQ_LOG_ERR, "Error: cafile specified without certfile and keyfile.");
-			 return MOSQ_ERR_INVAL;
-		 }
-		 if(capath && !certfile){
-			 log__printf(NULL, MOSQ_LOG_ERR, "Error: capath specified without certfile and keyfile.");
-			 return MOSQ_ERR_INVAL;
-		 }
+		if((certfile && !keyfile) || (!certfile && keyfile)){
+			log__printf(NULL, MOSQ_LOG_ERR, "Error: Both certfile and keyfile must be provided to enable a TLS listener.");
+			return MOSQ_ERR_INVAL;
+		}
+		if(cafile && !certfile){
+			log__printf(NULL, MOSQ_LOG_ERR, "Error: cafile specified without certfile and keyfile.");
+			return MOSQ_ERR_INVAL;
+		}
+		if(capath && !certfile){
+			log__printf(NULL, MOSQ_LOG_ERR, "Error: capath specified without certfile and keyfile.");
+			return MOSQ_ERR_INVAL;
+		}
 	}
 	return MOSQ_ERR_SUCCESS;
 }

@@ -29,7 +29,7 @@ int db__message_store(const struct mosquitto *source, struct mosquitto_msg_store
 	UNUSED(message_expiry_interval);
 	UNUSED(store_id);
 	UNUSED(origin);
-    return 0;
+	return 0;
 }
 
 void db__msg_store_ref_inc(struct mosquitto_msg_store *store)

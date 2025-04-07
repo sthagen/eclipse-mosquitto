@@ -389,8 +389,8 @@ static int client_config_line_proc(struct mosq_config *cfg, int *argc, char **ar
 			}
 			argv++;
 			(*argc)--;
-                }else if(!strcmp(argv[0], "--tls-use-os-certs")){
-                        cfg->tls_use_os_certs = true;
+		}else if(!strcmp(argv[0], "--tls-use-os-certs")){
+			cfg->tls_use_os_certs = true;
 		}else if(!strcmp(argv[0], "--tls-version")){
 			if((*argc) == 1){
 				fprintf(stderr, "Error: --tls-version argument given but no version specified.\n\n");
@@ -620,12 +620,12 @@ int client_opts_set(struct mosquitto *mosq, struct mosq_config *cfg)
 			return 1;
 		}
 #  endif
-        }else if(cfg->port == 8883){
-                mosquitto_int_option(mosq, MOSQ_OPT_TLS_USE_OS_CERTS, 1);
-        }
-        if(cfg->tls_use_os_certs){
-                mosquitto_int_option(mosq, MOSQ_OPT_TLS_USE_OS_CERTS, 1);
-        }
+	}else if(cfg->port == 8883){
+		mosquitto_int_option(mosq, MOSQ_OPT_TLS_USE_OS_CERTS, 1);
+	}
+	if(cfg->tls_use_os_certs){
+		mosquitto_int_option(mosq, MOSQ_OPT_TLS_USE_OS_CERTS, 1);
+	}
 
 	if(cfg->insecure && mosquitto_tls_insecure_set(mosq, true)){
 		fprintf(stderr, "Error: Problem setting TLS insecure option.\n");

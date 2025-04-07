@@ -647,7 +647,7 @@ void bridge__packet_cleanup(struct mosquitto *context)
 		mosquitto__free(context->current_out_packet);
 		context->current_out_packet = NULL;
 	}
-    while(context->out_packet){
+	while(context->out_packet){
 		packet__cleanup(context->out_packet);
 		packet = context->out_packet;
 		context->out_packet = context->out_packet->next;

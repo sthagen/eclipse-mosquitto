@@ -809,22 +809,22 @@ void sub__tree_print(struct mosquitto__subhier *root, int level)
 	struct mosquitto__subleaf *leaf;
 
 	HASH_ITER(hh, root, branch, branch_tmp){
-	if(level > -1){
-		for(i=0; i<(level+2)*2; i++){
-			printf(" ");
-		}
-		printf("%s", branch->topic);
-		leaf = branch->subs;
-		while(leaf){
-			if(leaf->context){
-				printf(" (%s, %d)", leaf->context->id, leaf->qos);
-			}else{
-				printf(" (%s, %d)", "", leaf->qos);
+		if(level > -1){
+			for(i=0; i<(level+2)*2; i++){
+				printf(" ");
 			}
-			leaf = leaf->next;
+			printf("%s", branch->topic);
+			leaf = branch->subs;
+			while(leaf){
+				if(leaf->context){
+					printf(" (%s, %d)", leaf->context->id, leaf->qos);
+				}else{
+					printf(" (%s, %d)", "", leaf->qos);
+				}
+				leaf = leaf->next;
+			}
+			printf("\n");
 		}
-		printf("\n");
-	}
 
 		sub__tree_print(branch->children, level+1);
 	}

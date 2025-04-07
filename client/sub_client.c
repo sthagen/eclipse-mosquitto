@@ -318,7 +318,7 @@ int main(int argc, char *argv[])
 {
 	int rc;
 #ifndef WIN32
-		struct sigaction sigact;
+	struct sigaction sigact;
 #endif
 
 	mosquitto_lib_init();

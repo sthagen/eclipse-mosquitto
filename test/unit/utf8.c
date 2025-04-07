@@ -123,7 +123,7 @@ static void TEST_utf8_malformed_sequences(void)
 	/* 3.2  Lonely start characters */
 
 	/* 3.2.1  All 32 first bytes of 2-byte sequences (0xc0-0xdf),
-       each followed by a space character: */
+	   each followed by a space character: */
 	utf8_helper("À Á Â Ã Ä Å Æ Ç È É Ê Ë Ì Í Î Ï Ð Ñ Ò Ó Ô Õ Ö × Ø Ù Ú Û Ü Ý Þ ß ", MOSQ_ERR_MALFORMED_UTF8);
 	for(i=0xC0; i<0xE0; i++){
 		buf[0] = (uint8_t)i;
@@ -133,7 +133,7 @@ static void TEST_utf8_malformed_sequences(void)
 	}
 
 	/* 3.2.2  All 16 first bytes of 3-byte sequences (0xe0-0xef),
-       each followed by a space character: */
+	   each followed by a space character: */
 	utf8_helper("\"à á â ã ä å æ ç è é ê ë ì í î ï \"", MOSQ_ERR_MALFORMED_UTF8);
 	for(i=0xe0; i<0xf0; i++){
 		buf[0] = (uint8_t)i;
@@ -143,7 +143,7 @@ static void TEST_utf8_malformed_sequences(void)
 	}
 
 	/* 3.2.3  All 8 first bytes of 4-byte sequences (0xf0-0xf7),
-       each followed by a space character: */
+	   each followed by a space character: */
 	utf8_helper("\"ð ñ ò ó ô õ ö ÷ \"", MOSQ_ERR_MALFORMED_UTF8);
 	for(i=0xF0; i<0xF8; i++){
 		buf[0] = (uint8_t)i;
@@ -153,7 +153,7 @@ static void TEST_utf8_malformed_sequences(void)
 	}
 
 	/* 3.2.4  All 4 first bytes of 5-byte sequences (0xf8-0xfb),
-       each followed by a space character: */
+	   each followed by a space character: */
 	utf8_helper("\"ø ù ú û \"", MOSQ_ERR_MALFORMED_UTF8);
 	for(i=0xF8; i<0xFC; i++){
 		buf[0] = (uint8_t)i;
@@ -163,7 +163,7 @@ static void TEST_utf8_malformed_sequences(void)
 	}
 
 	/* 3.2.5  All 2 first bytes of 6-byte sequences (0xfc-0xfd),
-       each followed by a space character: */
+	   each followed by a space character: */
 	utf8_helper("\"ü ý \"", MOSQ_ERR_MALFORMED_UTF8);
 	utf8_helper("ü ", MOSQ_ERR_MALFORMED_UTF8);
 	utf8_helper("ý ", MOSQ_ERR_MALFORMED_UTF8);

@@ -543,7 +543,7 @@ static int callback_http(
 												"Server: mosquitto\r\n"
 												"Content-Length: %u\r\n\r\n",
 												(unsigned int)filestat.st_size);
-            if(lws_write(wsi, buf, buflen, LWS_WRITE_HTTP) < 0){
+			if(lws_write(wsi, buf, buflen, LWS_WRITE_HTTP) < 0){
 				fclose(u->fptr);
 				u->fptr = NULL;
 				return -1;
@@ -723,7 +723,7 @@ void mosq_websockets_init(struct mosquitto__listener *listener, const struct mos
 	if(listener->socket_domain == AF_INET){
 		info.options |= LWS_SERVER_OPTION_DISABLE_IPV6;
 	}
-    info.max_http_header_data = conf->websockets_headers_size;
+	info.max_http_header_data = conf->websockets_headers_size;
 
 	user = mosquitto__calloc(1, sizeof(struct libws_mqtt_hack));
 	if(!user){

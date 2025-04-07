@@ -247,7 +247,7 @@ int packet__write(struct mosquitto *mosq)
 
 #ifdef WITH_BROKER
 	if(mosq->current_out_packet){
-	   mux__add_out(mosq);
+		mux__add_out(mosq);
 	}
 #endif
 

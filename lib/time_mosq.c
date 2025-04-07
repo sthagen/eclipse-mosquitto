@@ -70,7 +70,7 @@ time_t mosquitto_time(void)
 	return (time_t) -1;
 #elif defined(__APPLE__)
 	static mach_timebase_info_data_t tb;
-    uint64_t ticks;
+	uint64_t ticks;
 	uint64_t sec;
 
 	ticks = mach_absolute_time();

@@ -275,12 +275,12 @@ void mosquitto__destroy(struct mosquitto *mosq)
 	if(mosq->user_ssl_ctx){
 		SSL_CTX_free(mosq->user_ssl_ctx);
 	}else if(mosq->ssl_ctx){
- 		SSL_CTX_free(mosq->ssl_ctx);
- 	}
+		SSL_CTX_free(mosq->ssl_ctx);
+	}
 #else
- 	if(mosq->ssl_ctx){
- 		SSL_CTX_free(mosq->ssl_ctx);
- 	}
+	if(mosq->ssl_ctx){
+		SSL_CTX_free(mosq->ssl_ctx);
+	}
 #endif
 	mosquitto__free(mosq->tls_cafile);
 	mosquitto__free(mosq->tls_capath);

@@ -722,8 +722,8 @@ static int net__init_ssl_ctx(struct mosquitto *mosq)
 		}
 
 #ifdef SSL_MODE_RELEASE_BUFFERS
-			/* Use even less memory per SSL connection. */
-			SSL_CTX_set_mode(mosq->ssl_ctx, SSL_MODE_RELEASE_BUFFERS);
+		/* Use even less memory per SSL connection. */
+		SSL_CTX_set_mode(mosq->ssl_ctx, SSL_MODE_RELEASE_BUFFERS);
 #endif
 
 #if !defined(OPENSSL_NO_ENGINE)
