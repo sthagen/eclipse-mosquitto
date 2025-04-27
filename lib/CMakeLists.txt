@@ -51,7 +51,7 @@ set(C_SRC
 	util_mosq.c util_mosq.h
 	will_mosq.c will_mosq.h)
 
-set(LIBRARIES common-options ${OPENSSL_LIBRARIES})
+set(LIBRARIES common-options)
 
 if(WITH_TLS)
 	set (LIBRARIES ${LIBRARIES} OpenSSL::SSL)
