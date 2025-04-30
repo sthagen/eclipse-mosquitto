@@ -124,20 +124,6 @@ int plugin__load_all(void)
 static int plugin__security_init_single(mosquitto_plugin_id_t *plugin, bool reload)
 {
 	int rc;
-	struct mosquitto_evt_reload event_data;
-	struct mosquitto__callback *cb_base, *cb_next;
-
-	if(reload){
-		for(int i=0; i<plugin->config.security_option_count; i++){
-			DL_FOREACH_SAFE(plugin->config.security_options[i]->plugin_callbacks.reload, cb_base, cb_next){
-				memset(&event_data, 0, sizeof(event_data));
-
-				event_data.options = NULL;
-				event_data.option_count = 0;
-				cb_base->cb(MOSQ_EVT_RELOAD, &event_data, cb_base->userdata);
-			}
-		}
-	}
 
 	if(plugin->lib.version == 5){
 		rc = MOSQ_ERR_SUCCESS;

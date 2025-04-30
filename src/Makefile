@@ -94,9 +94,10 @@ OBJS=	mosquitto.o \
 		plugin_persist.o \
 		plugin_psk_key.o \
 		plugin_public.o \
+		plugin_reload.o \
 		plugin_subscribe.o \
-		plugin_unsubscribe.o \
 		plugin_tick.o \
+		plugin_unsubscribe.o \
 		proxy_v1.o \
 		proxy_v2.o \
 		psk_file.o \

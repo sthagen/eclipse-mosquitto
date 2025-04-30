@@ -107,6 +107,7 @@ void signal__flag_check(void)
 		log__printf(NULL, MOSQ_LOG_INFO, "Reloading config.");
 		config__read(db.config, true);
 		listeners__reload_all_certificates();
+		plugin__handle_reload();
 		mosquitto_security_cleanup(true);
 		mosquitto_security_init(true);
 		mosquitto_security_apply_default();

@@ -847,6 +847,7 @@ int plugin__load_v3(mosquitto_plugin_id_t *plugin, void *lib);
 int plugin__load_v2(mosquitto_plugin_id_t *plugin, void *lib);
 int acl__pre_check(mosquitto_plugin_id_t *plugin, struct mosquitto *context, int access);
 
+void LIB_ERROR(void);
 void plugin__handle_connect(struct mosquitto *context);
 void plugin__handle_disconnect(struct mosquitto *context, int reason);
 void plugin__handle_client_offline(struct mosquitto *context, int reason);
@@ -854,7 +855,7 @@ int plugin__handle_message_in(struct mosquitto *context, struct mosquitto_base_m
 int plugin__handle_message_out(struct mosquitto *context, struct mosquitto_base_msg *base_msg);
 int plugin__handle_subscribe(struct mosquitto *context, struct mosquitto_subscription *sub);
 int plugin__handle_unsubscribe(struct mosquitto *context, struct mosquitto_subscription *sub);
-void LIB_ERROR(void);
+void plugin__handle_reload(void);
 void plugin__handle_tick(void);
 int plugin__callback_unregister_all(mosquitto_plugin_id_t *identifier);
 void plugin_persist__handle_restore(void);

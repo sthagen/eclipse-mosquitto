@@ -44,6 +44,7 @@ add_executable(mosquitto
 	plugin_acl_check.c plugin_basic_auth.c plugin_connect.c plugin_disconnect.c
 	plugin_client_offline.c
 	plugin_extended_auth.c plugin_message.c plugin_psk_key.c plugin_public.c
+	plugin_reload.c
 	plugin_subscribe.c
 	plugin_tick.c
 	plugin_unsubscribe.c

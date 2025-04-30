@@ -187,6 +187,7 @@ tests = [
     (1, './09-plugin-evt-message-in.py'),
     (1, './09-plugin-evt-message-out.py'),
     (1, './09-plugin-evt-psk-key.py'),
+    (1, './09-plugin-evt-reload.py'),
     (1, './09-plugin-evt-subscribe.py'),
     (1, './09-plugin-evt-tick.py'),
     (1, './09-plugin-evt-unsubscribe.py'),

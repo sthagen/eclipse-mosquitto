@@ -45,6 +45,7 @@ set(PLUGINS
     plugin_evt_message_out
     plugin_evt_persist_client_update
     plugin_evt_psk_key
+    plugin_evt_reload
     plugin_evt_subscribe
     plugin_evt_tick
     plugin_evt_unsubscribe

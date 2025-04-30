@@ -217,6 +217,7 @@ endif
 	./09-plugin-evt-message-in.py
 	./09-plugin-evt-message-out.py
 	./09-plugin-evt-psk-key.py
+	./09-plugin-evt-reload.py
 	./09-plugin-evt-subscribe.py
 	./09-plugin-evt-tick.py
 	./09-plugin-evt-unsubscribe.py
