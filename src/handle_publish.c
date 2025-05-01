@@ -295,16 +295,18 @@ int handle__publish(struct mosquitto *context)
 	switch(stored->data.qos){
 		case 0:
 			rc2 = sub__messages_queue(context->id, stored->data.topic, stored->data.qos, stored->data.retain, &stored);
-			if(rc2 > 0) rc = 1;
+			if(rc2 > 0) rc = rc2;
 			break;
 		case 1:
 			util__decrement_receive_quota(context);
 			rc2 = sub__messages_queue(context->id, stored->data.topic, stored->data.qos, stored->data.retain, &stored);
 			/* stored may now be free, so don't refer to it */
 			if(rc2 == MOSQ_ERR_SUCCESS || context->protocol != mosq_p_mqtt5){
-				if(send__puback(context, mid, 0, NULL)) rc = 1;
+				rc2 = send__puback(context, mid, 0, NULL);
+				if(rc2) rc = rc2;
 			}else if(rc2 == MOSQ_ERR_NO_SUBSCRIBERS){
-				if(send__puback(context, mid, MQTT_RC_NO_MATCHING_SUBSCRIBERS, NULL)) rc = 1;
+				rc2 = send__puback(context, mid, MQTT_RC_NO_MATCHING_SUBSCRIBERS, NULL);
+				if(rc2) rc = rc2;
 			}else{
 				rc = rc2;
 			}
@@ -326,8 +328,8 @@ int handle__publish(struct mosquitto *context)
 				}else{
 					return MOSQ_ERR_PROTOCOL;
 				}
-			}else if(res == 1){
-				rc = 1;
+			}else{
+				rc = res;
 			}
 			break;
 	}
@@ -335,7 +337,7 @@ int handle__publish(struct mosquitto *context)
 	db__message_write_queued_in(context);
 	return rc;
 process_bad_message:
-	rc = 1;
+	rc = MOSQ_ERR_UNKNOWN;
 	if(base_msg){
 		switch(base_msg->data.qos){
 			case 0:
