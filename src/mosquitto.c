@@ -385,6 +385,7 @@ int main(int argc, char *argv[])
 #endif
 	struct mosquitto *ctxt, *ctxt_tmp;
 
+	mosquitto_time_init();
 	cjson_init();
 
 #if defined(WIN32) || defined(__CYGWIN__)
