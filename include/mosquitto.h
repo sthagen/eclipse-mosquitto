@@ -18,6 +18,12 @@ Contributors:
 #ifndef MOSQUITTO_H
 #define MOSQUITTO_H
 
+#ifndef _MSC_VER
+#  define MOSQ_USED __attribute__((used))
+#else
+#  define MOSQ_USED
+#endif
+
 #include <mosquitto/mqtt_protocol.h>
 
 #include <mosquitto/libmosquitto.h>

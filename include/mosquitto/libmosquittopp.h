@@ -141,23 +141,23 @@ class mosqpp_EXPORT mosquittopp {
 		int socks5_set(const char *host, int port=1080, const char *username=NULL, const char *password=NULL);
 
 		// names in the functions commented to prevent unused parameter warning
-		virtual void on_pre_connect() {return;}
-		virtual void on_connect(int /*rc*/) {return;}
-		virtual void on_connect_with_flags(int /*rc*/, int /*flags*/) {return;}
-		virtual void on_connect_v5(int /*rc*/, int /*flags*/, const mosquitto_property * /*props*/) {return;}
-		virtual void on_disconnect(int /*rc*/) {return;}
-		virtual void on_disconnect_v5(int /*rc*/, const mosquitto_property * /*props*/) {return;}
-		virtual void on_publish(int /*mid*/) {return;}
-		virtual void on_publish_v5(int /*mid*/, int /*reason_code*/, const mosquitto_property * /*props*/) {return;}
-		virtual void on_message(const struct mosquitto_message * /*message*/) {return;}
-		virtual void on_message_v5(const struct mosquitto_message * /*message*/, const mosquitto_property * /*props*/) {return;}
-		virtual void on_subscribe(int /*mid*/, int /*qos_count*/, const int * /*granted_qos*/) {return;}
-		virtual void on_subscribe_v5(int /*mid*/, int /*qos_count*/, const int * /*granted_qos*/, const mosquitto_property * /*props*/) {return;}
-		virtual void on_unsubscribe(int /*mid*/) {return;}
-		virtual void on_unsubscribe_v5(int /*mid*/, const mosquitto_property * /*props*/) {return;}
-		virtual void on_log(int /*level*/, const char * /*str*/) {return;}
-		virtual void on_error() {return;}
-		virtual int on_ext_auth(const char * /*auth_method*/, uint16_t /*auth_data_len*/, const void * /*auth_data*/, const mosquitto_property * /*props*/) {return MOSQ_ERR_AUTH;}
+		virtual void MOSQ_USED on_pre_connect() {return;}
+		virtual void MOSQ_USED on_connect(int /*rc*/) {return;}
+		virtual void MOSQ_USED on_connect_with_flags(int /*rc*/, int /*flags*/) {return;}
+		virtual void MOSQ_USED on_connect_v5(int /*rc*/, int /*flags*/, const mosquitto_property * /*props*/) {return;}
+		virtual void MOSQ_USED on_disconnect(int /*rc*/) {return;}
+		virtual void MOSQ_USED on_disconnect_v5(int /*rc*/, const mosquitto_property * /*props*/) {return;}
+		virtual void MOSQ_USED on_publish(int /*mid*/) {return;}
+		virtual void MOSQ_USED on_publish_v5(int /*mid*/, int /*reason_code*/, const mosquitto_property * /*props*/) {return;}
+		virtual void MOSQ_USED on_message(const struct mosquitto_message * /*message*/) {return;}
+		virtual void MOSQ_USED on_message_v5(const struct mosquitto_message * /*message*/, const mosquitto_property * /*props*/) {return;}
+		virtual void MOSQ_USED on_subscribe(int /*mid*/, int /*qos_count*/, const int * /*granted_qos*/) {return;}
+		virtual void MOSQ_USED on_subscribe_v5(int /*mid*/, int /*qos_count*/, const int * /*granted_qos*/, const mosquitto_property * /*props*/) {return;}
+		virtual void MOSQ_USED on_unsubscribe(int /*mid*/) {return;}
+		virtual void MOSQ_USED on_unsubscribe_v5(int /*mid*/, const mosquitto_property * /*props*/) {return;}
+		virtual void MOSQ_USED on_log(int /*level*/, const char * /*str*/) {return;}
+		virtual void MOSQ_USED on_error() {return;}
+		virtual int MOSQ_USED on_ext_auth(const char * /*auth_method*/, uint16_t /*auth_data_len*/, const void * /*auth_data*/, const mosquitto_property * /*props*/) {return MOSQ_ERR_AUTH;}
 };
 
 }
