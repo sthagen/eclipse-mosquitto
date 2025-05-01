@@ -43,6 +43,11 @@ int control__process(struct mosquitto *context, struct mosquitto__base_msg *base
 
 	/* If not found, check for per-listener plugins. */
 	if(cb_found == NULL && db.config->per_listener_settings){
+		if(!context->listener){
+			log__printf(NULL, MOSQ_LOG_WARNING, "Warning: $CONTROL command received from client with no listener, when per_listener_settings is true.");
+			log__printf(NULL, MOSQ_LOG_WARNING, "         If this is a bridge, please be aware this does not work.");
+			return MOSQ_ERR_SUCCESS;
+		}
 		opts = context->listener->security_options;
 		HASH_FIND(hh, opts->plugin_callbacks.control, base_msg->data.topic, strlen(base_msg->data.topic), cb_found);
 	}
