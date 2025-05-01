@@ -81,10 +81,10 @@ parts:
       - usr/bin/mosquitto_passwd
       - usr/lib/libmosquitto.so*
       - usr/lib/mosquitto_dynamic_security.so*
-      - usr/lib/*-linux-gnu/libcjson.so*
-      - usr/lib/*-linux-gnu/libcrypto.so*
-      - usr/lib/*-linux-gnu/libssl.so*
-      - usr/lib/*-linux-gnu/libwebsockets.so*
+      - usr/lib/*/libcjson.so*
+      - usr/lib/*/libcrypto.so*
+      - usr/lib/*/libssl.so*
+      - usr/lib/*/libwebsockets.so*
       - usr/include/mosquitto.h
       - usr/include/mosquitto_broker.h
       - usr/include/mosquitto_plugin.h
