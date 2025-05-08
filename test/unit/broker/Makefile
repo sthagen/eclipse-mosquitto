@@ -10,6 +10,12 @@ LOCAL_CPPFLAGS+=-DWITH_BROKER -I${R}/src -I${R}/test -I${R}/lib -DTEST_SOURCE_DI
 LOCAL_LDFLAGS+=-coverage
 LOCAL_LDADD+=-lcunit ${LIBMOSQ_COMMON}
 
+ALL_TESTS:=keepalive_test persist_read_test persist_write_test subs_test
+
+ifeq ($(WITH_BRIDGE),yes)
+	ALL_TESTS+=bridge_topic_test
+endif
+
 ifeq ($(WITH_TLS),yes)
 	LOCAL_LDADD+=-lssl -lcrypto
 endif
@@ -152,8 +158,6 @@ ${R}/src/topic_tok.o : ${R}/src/topic_tok.c
 ${R}/src/util_mosq.o : ${R}/lib/util_mosq.c
 	$(MAKE) -C ${R}/src/ util_mosq.o
 
-ALL_TESTS:=bridge_topic_test keepalive_test persist_read_test persist_write_test subs_test
-
 build : ${ALL_TESTS}
 
 test : build
@@ -162,7 +166,7 @@ test : build
 test-compile: build
 
 clean :
-	-rm -rf mosq_test bridge_topic_test keepalive_test persist_read_test persist_write_test subs_test
+	-rm -rf ${ALL_TESTS}
 	-rm -rf *.o *.gcda *.gcno coverage.info *.vglog out/
 
 coverage :
