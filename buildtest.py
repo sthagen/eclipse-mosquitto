@@ -5,7 +5,6 @@ build_variants = [
     'WITH_ARGON2',
     'WITH_BRIDGE',
     'WITH_DOCS',
-    'WITH_EC',
     'WITH_EPOLL',
     'WITH_MEMORY_TRACKING',
     'WITH_PERSISTENCE',

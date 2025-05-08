@@ -11,10 +11,6 @@ ifeq ($(WITH_CONTROL),yes)
 	LOCAL_CPPFLAGS+=-DWITH_CONTROL
 endif
 
-ifeq ($(WITH_EC),yes)
-	LOCAL_CPPFLAGS+=-DWITH_EC
-endif
-
 ifeq ($(WITH_EPOLL),yes)
 	ifeq ($(UNAME),Linux)
 		LOCAL_CPPFLAGS+=-DWITH_EPOLL

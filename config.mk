@@ -83,9 +83,6 @@ WITH_SRV:=no
 # Set to no to disable
 WITH_WEBSOCKETS:=yes
 
-# Use elliptic keys in broker
-WITH_EC:=yes
-
 # Build man page documentation by default.
 WITH_DOCS:=yes
 
