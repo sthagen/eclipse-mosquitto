@@ -38,7 +38,7 @@ import subprocess
 def run_test(msg, opts):
     subprocess.run(["make", "clean"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     print("%s: %s" % (msg, str(opts)))
-    args = ["make", "test-compile" "-j%d" % (os.cpu_count())] + opts
+    args = ["make", "test-compile", "-j%d" % (os.cpu_count())] + opts
     proc = subprocess.run(args, stdout=subprocess.DEVNULL)
     if proc.returncode != 0:
         raise RuntimeError("BUILD FAILED: %s" % (' '.join(args)))
