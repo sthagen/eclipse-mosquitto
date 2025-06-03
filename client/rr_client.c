@@ -53,6 +53,8 @@ int msg_count = 0;
 struct mosquitto *g_mosq = NULL;
 static bool timed_out = false;
 static int connack_result = 0;
+static struct timespec publish_send_time;
+static struct timespec publish_recv_time;
 
 #ifndef WIN32
 static void my_signal_handler(int signum)
@@ -68,6 +70,8 @@ static void my_signal_handler(int signum)
 
 int my_publish(struct mosquitto *mosq, int *mid, const char *topic, int payloadlen, void *payload, int qos, bool retain)
 {
+	mosquitto_time_ns(&publish_send_time.tv_sec, &publish_send_time.tv_nsec);
+
 	if(cfg.protocol_version < MQTT_PROTOCOL_V5){
 		return mosquitto_publish_v5(mosq, mid, topic, payloadlen, payload, qos, retain, NULL);
 	}else{
@@ -84,6 +88,8 @@ static void my_message_callback(struct mosquitto *mosq, void *obj, const struct 
 
 	if(process_messages == false) return;
 	if(message->retain && cfg.no_retain) return;
+
+	mosquitto_time_ns(&publish_recv_time.tv_sec, &publish_recv_time.tv_nsec);
 
 	print_message(&cfg, message, properties);
 
@@ -267,6 +273,33 @@ static void print_usage(void)
 	printf("\nSee https://mosquitto.org/ for more information.\n\n");
 }
 
+static void report_latency(void)
+{
+	if(cfg.measure_latency){
+		time_t s = publish_recv_time.tv_sec - publish_send_time.tv_sec;
+		long ns = publish_recv_time.tv_nsec - publish_send_time.tv_nsec;
+
+		if(s < 0){
+			if(ns < 0){
+				s++;
+				ns -= 1000000000;
+			}
+		}
+
+		if(s > 0){
+			printf("Latency: %ld.%09ld\n", s, ns);
+		}else{
+			if(ns < 1000){
+				printf("Latency: %ldns\n", ns);
+			}else if(ns < 1000000){
+				printf("Latency: %fµs\n", ((double)ns)/1000.0);
+			}else{
+				printf("Latency: %fms\n", ((double)ns)/1000000.0);
+			}
+		}
+	}
+}
+
 int main(int argc, char *argv[])
 {
 	int rc;
@@ -384,6 +417,8 @@ int main(int argc, char *argv[])
 			}
 		}
 	}while(rc == MOSQ_ERR_SUCCESS && client_state != rr_s_disconnect);
+
+	report_latency();
 
 	mosquitto_destroy(g_mosq);
 	mosquitto_lib_cleanup();

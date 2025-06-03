@@ -143,6 +143,7 @@ struct mosq_config {
 	bool tcp_nodelay;
 	bool no_tls;
 	bool message_rate; /* sub */
+	bool measure_latency; /* rr */
 };
 
 extern const char hexseplist[32];

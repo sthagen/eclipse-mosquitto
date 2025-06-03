@@ -831,6 +831,12 @@ int client_config_line_proc(struct mosq_config *cfg, int pub_or_sub, int argc, c
 			}else{
 				cfg->pub_mode = MSGMODE_STDIN_LINE;
 			}
+		}else if(!strcmp(argv[i], "--latency")){
+			if(pub_or_sub != CLIENT_RR){
+				goto unknown_option;
+			}
+			cfg->measure_latency = true;
+			cfg->tcp_nodelay = true; /* Remove influence of nagle */
 		}else if(!strcmp(argv[i], "-m") || !strcmp(argv[i], "--message")){
 			if(pub_or_sub == CLIENT_SUB){
 				goto unknown_option;

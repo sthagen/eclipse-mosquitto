@@ -63,6 +63,7 @@
 		<cmdsynopsis>
 			<command>misc-options:</command>
 			<sbr/>
+			<arg><option>--latency</option></arg>
 			<arg><option>-W</option> <replaceable>message-processing-timeout</replaceable></arg>
 		</cmdsynopsis>
 		<cmdsynopsis>
@@ -421,6 +422,28 @@
 						Depending on the scheme, the port will default to
 						different values. mqtt:// - 1883, mqtts:// - 8883,
 						ws:// - 80, wss:// - 443.
+					</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term><option>--latency</option></term>
+				<listitem>
+					<para>
+						If this option is specified, mosquitto_rr will print out
+						the latency between it starting to publish a request and
+						the response arriving. This number includes both the
+						broker and client processing times, as well as any
+						inherent network latency.
+					</para>
+
+					<para>
+						This can be used to measure message delivery latency
+						very simply by specifying an identical request and
+						response topic.
+					</para>
+					<para>
+						The <option>--nodelay</option> option will be automatically
+						used when <option>--latency</option> is in use.
 					</para>
 				</listitem>
 			</varlistentry>

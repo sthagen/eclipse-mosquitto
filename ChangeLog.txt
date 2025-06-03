@@ -194,6 +194,8 @@ Clients:
 - mosquitto_sub payload hex output can now be split by fixed field length.
 - Add `--message-rate` option to mosquitto_sub, for printing the count of
   messages received each second.
+- Add `--latency` option to mosquitto_rr, for printing the request/response
+  latency.
 - Remove support for TLS v1.1.
 
 DB Dump:
