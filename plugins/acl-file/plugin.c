@@ -55,10 +55,10 @@ int mosquitto_plugin_init(mosquitto_plugin_id_t *identifier, void **user_data, s
 	rc = handle_options(data, options, option_count);
 	if(rc) return rc;
 
-	rc = acl__parse(data);
+	rc = acl_file__parse(data);
 	if(rc) return rc;
 
-	rc = mosquitto_callback_register(mosq_pid, MOSQ_EVT_ACL_CHECK, acl__check, NULL, data);
+	rc = mosquitto_callback_register(mosq_pid, MOSQ_EVT_ACL_CHECK, acl_file__check, NULL, data);
 	if(rc) return rc;
 
 	return MOSQ_ERR_SUCCESS;
@@ -72,7 +72,9 @@ int mosquitto_plugin_cleanup(void *user_data, struct mosquitto_opt *options, int
 	UNUSED(options);
 	UNUSED(option_count);
 
-	mosquitto_callback_unregister(mosq_pid, MOSQ_EVT_ACL_CHECK, acl__check, NULL);
+	mosquitto_callback_unregister(mosq_pid, MOSQ_EVT_ACL_CHECK, acl_file__check, NULL);
 
-	return acl__cleanup(data);
+	acl_file__cleanup(data);
+
+	return MOSQ_ERR_SUCCESS;
 }

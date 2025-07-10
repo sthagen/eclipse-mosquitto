@@ -90,7 +90,7 @@ int mosquitto_security_init_default(bool reload)
 		}
 	}
 
-	rc = acl_file__init();
+	rc = broker_acl_file__init();
 	if(rc) return rc;
 
 	rc = psk_file__init();
@@ -103,8 +103,7 @@ int mosquitto_security_cleanup_default(bool reload)
 {
 	int rc = 0;
 
-	rc = acl_file__cleanup();
-	if(rc != MOSQ_ERR_SUCCESS) return rc;
+	broker_acl_file__cleanup();
 
 	rc = unpwd__cleanup(&db.config->security_options.unpwd, reload);
 	if(rc != MOSQ_ERR_SUCCESS) return rc;

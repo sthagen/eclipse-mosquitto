@@ -159,7 +159,7 @@ static int add__acl_pattern(struct acl_file_data *data, const char *topic, int a
 }
 
 
-int acl__parse(struct acl_file_data *data)
+int acl_file__parse(struct acl_file_data *data)
 {
 	FILE *aclfptr = NULL;
 	char *token;
@@ -305,7 +305,7 @@ static void acl__free_entries(struct acl__entry *entry)
 	}
 }
 
-int acl__cleanup(struct acl_file_data *data)
+void acl_file__cleanup(struct acl_file_data *data)
 {
 	struct acl__user *user, *user_tmp;
 
@@ -321,6 +321,4 @@ int acl__cleanup(struct acl_file_data *data)
 
 	acl__free_entries(data->acl_patterns);
 	data->acl_patterns = NULL;
-
-	return MOSQ_ERR_SUCCESS;
 }

@@ -26,7 +26,7 @@ Contributors:
 #include "mosquitto.h"
 
 
-int acl__check(int event, void *event_data, void *userdata)
+int acl_file__check(int event, void *event_data, void *userdata)
 {
 	struct mosquitto_evt_acl_check *ed = event_data;
 	struct acl__user *acl_user;
