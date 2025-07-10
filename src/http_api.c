@@ -337,9 +337,11 @@ int http_api__start(struct mosquitto__listener *listener)
 	char *x509_cert = NULL;
 	char *x509_key = NULL;
 
-	listener->security_options = mosquitto_calloc(1, sizeof(struct mosquitto__security_options));
-	if(listener->security_options == NULL){
-		return MOSQ_ERR_NOMEM;
+	if(!listener->security_options){
+		listener->security_options = mosquitto_calloc(1, sizeof(struct mosquitto__security_options));
+		if(listener->security_options == NULL){
+			return MOSQ_ERR_NOMEM;
+		}
 	}
 	listener->security_options->allow_anonymous = true;
 
