@@ -256,7 +256,7 @@ static void config__init_reload(struct mosquitto__config *config)
 	config->allow_duplicate_messages = true;
 
 	mosquitto_FREE(config->security_options.acl_data.acl_file);
-	mosquitto_FREE(config->security_options.password_file);
+	mosquitto_FREE(config->security_options.password_data.password_file);
 	mosquitto_FREE(config->security_options.psk_file);
 
 	config->security_options.allow_anonymous = -1;
@@ -364,7 +364,7 @@ void config__cleanup(struct mosquitto__config *config)
 	mosquitto_FREE(config->persistence_filepath);
 	mosquitto_FREE(config->security_options.auto_id_prefix);
 	mosquitto_FREE(config->security_options.acl_data.acl_file);
-	mosquitto_FREE(config->security_options.password_file);
+	mosquitto_FREE(config->security_options.password_data.password_file);
 	mosquitto_FREE(config->security_options.psk_file);
 	mosquitto_FREE(config->security_options.plugins);
 	mosquitto_FREE(config->pid_file);
@@ -379,7 +379,7 @@ void config__cleanup(struct mosquitto__config *config)
 			if(config->listeners[i].security_options){
 				mosquitto_FREE(config->listeners[i].security_options->auto_id_prefix);
 				mosquitto_FREE(config->listeners[i].security_options->acl_data.acl_file);
-				mosquitto_FREE(config->listeners[i].security_options->password_file);
+				mosquitto_FREE(config->listeners[i].security_options->password_data.password_file);
 				mosquitto_FREE(config->listeners[i].security_options->psk_file);
 				mosquitto_FREE(config->listeners[i].security_options->plugins);
 				mosquitto_FREE(config->listeners[i].security_options);
@@ -611,6 +611,12 @@ static void config__copy(struct mosquitto__config *src, struct mosquitto__config
 	mosquitto_FREE(dest->security_options.acl_data.acl_file);
 	dest->security_options.acl_data.acl_file = src->security_options.acl_data.acl_file;
 
+	acl_file__cleanup(&dest->security_options.acl_data);
+	dest->security_options.acl_data.acl_users = src->security_options.acl_data.acl_users;
+	dest->security_options.acl_data.acl_patterns = src->security_options.acl_data.acl_patterns;
+	dest->security_options.acl_data.acl_anon.username = src->security_options.acl_data.acl_anon.username;
+	dest->security_options.acl_data.acl_anon.acl = src->security_options.acl_data.acl_anon.acl;
+
 	dest->security_options.allow_anonymous = src->security_options.allow_anonymous;
 	dest->security_options.allow_zero_length_clientid = src->security_options.allow_zero_length_clientid;
 
@@ -618,8 +624,11 @@ static void config__copy(struct mosquitto__config *src, struct mosquitto__config
 	dest->security_options.auto_id_prefix = src->security_options.auto_id_prefix;
 	dest->security_options.auto_id_prefix_len = src->security_options.auto_id_prefix_len;
 
-	mosquitto_FREE(dest->security_options.password_file);
-	dest->security_options.password_file = src->security_options.password_file;
+	mosquitto_FREE(dest->security_options.password_data.password_file);
+	dest->security_options.password_data.password_file = src->security_options.password_data.password_file;
+
+	password_file__cleanup(&dest->security_options.password_data);
+	dest->security_options.password_data.unpwd = src->security_options.password_data.unpwd;
 
 	mosquitto_FREE(dest->security_options.psk_file);
 	dest->security_options.psk_file = src->security_options.psk_file;
@@ -2064,8 +2073,8 @@ static int config__read_file_core(struct mosquitto__config *config, bool reload,
 				}else if(!strcmp(token, "password_file")){
 					REQUIRE_LISTENER_IF_PER_LISTENER(token);
 					conf__set_cur_security_options(config, &cur_listener, &cur_security_options, token);
-					mosquitto_FREE(cur_security_options->password_file);
-					if(conf__parse_string(&token, "password_file", &cur_security_options->password_file, &saveptr)) return MOSQ_ERR_INVAL;
+					mosquitto_FREE(cur_security_options->password_data.password_file);
+					if(conf__parse_string(&token, "password_file", &cur_security_options->password_data.password_file, &saveptr)) return MOSQ_ERR_INVAL;
 				}else if(!strcmp(token, "per_listener_settings")){
 					OPTION_DEPRECATED(token, "Please see the documentation for how to achieve the same effect.");
 					if(config->per_listener_settings){

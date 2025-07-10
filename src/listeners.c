@@ -35,8 +35,8 @@ void listener__set_defaults(struct mosquitto__listener *listener)
 	listener->protocol = mp_mqtt;
 	mosquitto_FREE(listener->mount_point);
 
-	mosquitto_FREE(listener->security_options->acl_file);
-	mosquitto_FREE(listener->security_options->password_file);
+	mosquitto_FREE(listener->security_options->acl_data.acl_file);
+	mosquitto_FREE(listener->security_options->password_data.password_file);
 	mosquitto_FREE(listener->security_options->psk_file);
 	listener->security_options->allow_anonymous = -1;
 	listener->security_options->allow_zero_length_clientid = true;

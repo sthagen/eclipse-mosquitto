@@ -73,6 +73,7 @@ OBJS=	mosquitto.o \
 		mux_kqueue.o \
 		mux_poll.o \
 		net.o \
+		password_file.o \
 		property_broker.o \
 		persist_read.o \
 		persist_read_v234.o \
@@ -137,6 +138,8 @@ OBJS_EXTERNAL= \
 		net_ws.o \
 		packet_datatypes.o \
 		packet_mosq.o \
+		password_check.o \
+		password_parse.o \
 		property_mosq.o \
 		send_connect.o \
 		send_disconnect.o \
@@ -204,6 +207,12 @@ packet_datatypes.o : ${R}/lib/packet_datatypes.c ${R}/lib/packet_mosq.h
 	${CROSS_COMPILE}${CC} $(LOCAL_CPPFLAGS) $(LOCAL_CFLAGS) -c $< -o $@
 
 packet_mosq.o : ${R}/lib/packet_mosq.c ${R}/lib/packet_mosq.h
+	${CROSS_COMPILE}${CC} $(LOCAL_CPPFLAGS) $(LOCAL_CFLAGS) -c $< -o $@
+
+password_check.o : ${R}/plugins/password-file/password_check.c password_file.h
+	${CROSS_COMPILE}${CC} $(LOCAL_CPPFLAGS) $(LOCAL_CFLAGS) -c $< -o $@
+
+password_parse.o : ${R}/plugins/password-file/password_parse.c password_file.h
 	${CROSS_COMPILE}${CC} $(LOCAL_CPPFLAGS) $(LOCAL_CFLAGS) -c $< -o $@
 
 ${R}/deps/picohttpparser/picohttpparser.o : ${R}/deps/picohttpparser/picohttpparser.c ${R}/deps/picohttpparser/picohttpparser.h

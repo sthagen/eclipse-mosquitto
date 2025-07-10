@@ -46,6 +46,7 @@ Contributors:
 #include "tls_mosq.h"
 #include "uthash.h"
 #include "acl_file.h"
+#include "password_file.h"
 
 #ifndef __GNUC__
 #define __attribute__(attrib)
@@ -202,8 +203,7 @@ struct mosquitto__security_options {
 	struct mosquitto__unpwd *unpwd;
 	struct mosquitto__psk *psk_id;
 	struct acl_file_data acl_data;
-	char *acl_file;
-	char *password_file;
+	struct password_file_data password_data;
 	char *psk_file;
 	mosquitto_plugin_id_t **plugins;
 	int plugin_count;
@@ -435,13 +435,6 @@ struct mosquitto__psk{
 	UT_hash_handle hh;
 	char *username;
 	char *password;
-};
-
-struct mosquitto__unpwd{
-	UT_hash_handle hh;
-	char *username;
-	char *clientid;
-	struct mosquitto_pw *pw;
 };
 
 struct mosquitto__message_v5{
@@ -908,12 +901,14 @@ int mosquitto_acl_check(struct mosquitto *context, const char *topic, uint32_t p
 int mosquitto_basic_auth(struct mosquitto *context);
 int mosquitto_psk_key_get(struct mosquitto *context, const char *hint, const char *identity, char *key, int max_key_len);
 
-int mosquitto_security_init_default(bool reload);
+int mosquitto_security_init_default(void);
 int mosquitto_security_apply_default(void);
-int mosquitto_security_cleanup_default(bool reload);
+int mosquitto_security_cleanup_default(void);
 int mosquitto_psk_key_get_default(struct mosquitto *context, const char *hint, const char *identity, char *key, int max_key_len);
 int broker_acl_file__init(void);
 void broker_acl_file__cleanup(void);
+int broker_password_file__init(void);
+void broker_password_file__cleanup(void);
 int psk_file__init(void);
 int psk_file__cleanup(void);
 

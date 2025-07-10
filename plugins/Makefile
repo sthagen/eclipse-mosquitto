@@ -2,6 +2,7 @@ DIRS= \
 		acl-file \
 		dynamic-security \
 		examples \
+		password-file \
 		persist-sqlite \
 		sparkplug-aware
 

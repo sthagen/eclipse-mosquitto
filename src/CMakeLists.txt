@@ -39,6 +39,9 @@ add_executable(mosquitto
 	../lib/net_ws.c
 	../lib/packet_datatypes.c
 	../lib/packet_mosq.c ../lib/packet_mosq.h
+	password_file.c password_file.h
+	../plugins/password-file/password_check.c
+	../plugins/password-file/password_parse.c
 	persist_read_v234.c persist_read_v5.c persist_read.c
 	persist_write_v5.c persist_write.c
 	persist.h

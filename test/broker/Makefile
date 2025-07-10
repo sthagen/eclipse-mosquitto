@@ -43,6 +43,7 @@ msg_sequence_test:
 	./01-connect-unix-socket.py
 	./01-connect-windows-line-endings.py
 	./01-connect-zero-length-id.py
+	./01-plugin-connect-uname-password-denied.py
 
 
 02 :

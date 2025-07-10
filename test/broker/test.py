@@ -26,6 +26,7 @@ tests = [
     (1, './01-connect-unix-socket.py'),
     (1, './01-connect-windows-line-endings.py'),
     (2, './01-connect-zero-length-id.py'),
+    (1, './01-plugin-connect-uname-password-denied.py'),
 
     (1, './02-shared-nolocal.py'),
     (1, './02-shared-qos0-v5.py'),

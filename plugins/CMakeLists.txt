@@ -41,6 +41,7 @@ option(WITH_PLUGIN_ACL_FILE "Build acl-file plugin?" ON)
 option(WITH_PLUGIN_DYNAMIC_SECURITY "Build dynamic-security plugin?" ON)
 option(WITH_PLUGIN_EXAMPLES "Build example plugins?" ON)
 option(WITH_PLUGIN_PERSIST_SQLITE "Build persist-sqlite plugin?" ON)
+option(WITH_PLUGIN_PASSWORD_FILE "Build password-file plugin?" ON)
 option(WITH_PLUGIN_SPARKPLUG_AWARE "Build sparkplug-aware plugin?" ON)
 
 if(WITH_PLUGIN_ACL_FILE)
@@ -53,6 +54,10 @@ endif()
 
 if (WITH_PLUGIN_EXAMPLES)
 	add_subdirectory(examples)
+endif()
+
+if(WITH_PLUGIN_PASSWORD_FILE)
+	add_subdirectory(password-file)
 endif()
 
 if (WITH_PLUGIN_PERSIST_SQLITE)
