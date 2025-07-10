@@ -1019,16 +1019,26 @@ log_timestamp_format %Y-%m-%dT%H:%M:%S
 						removed if they do not reconnect within a certain time frame.
 					</para>
 
-					<para>The expiration period should be an integer followed
-						by one of h d w m y for hour, day, week, month and year
-						respectively. For example:</para>
+					<para>
+						The expiration period should be an integer followed
+						by one of s h d w m y for second, hour, day, week, month and year
+						respectively. For example:
+					</para>
 					<itemizedlist mark="circle">
 						<listitem><para>persistent_client_expiration 2m</para></listitem>
 						<listitem><para>persistent_client_expiration 14d</para></listitem>
 						<listitem><para>persistent_client_expiration 1y</para></listitem>
 					</itemizedlist>
-					<para>As this is a non-standard option, the default if not
-						set is to never expire persistent clients.</para>
+					<para>
+						Although it is possible to specify the expiration time in seconds, this is not a
+						suggestion that you should use a short expiration interval. If you have a system
+						where you think the clients should be automatically expired in a short time you
+						should see about fixing the clients instead where possible.
+					</para>
+					<para>
+						As this is a non-standard option, the default if not
+						set is to never expire persistent clients.
+					</para>
 
 					<para>This option applies globally.</para>
 

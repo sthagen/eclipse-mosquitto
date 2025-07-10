@@ -80,6 +80,7 @@ Broker:
 - Add `listener_auto_id_prefix` option.
 - Add support for systemd watchdog.
 - Remove support for TLS v1.1.
+- Allow seconds when defining persistent_client_expiration.
 
 Plugins / plugin interface:
 - Add persist-sqlite plugin.

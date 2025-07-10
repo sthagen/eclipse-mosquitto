@@ -2090,6 +2090,9 @@ static int config__read_file_core(struct mosquitto__config *config, bool reload,
 					time_t expiration_mult;
 
 					switch(token[strlen(token)-1]){
+						case 's':
+							expiration_mult = 1;
+							break;
 						case 'h':
 							expiration_mult = 3600;
 							break;
