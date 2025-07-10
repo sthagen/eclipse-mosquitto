@@ -987,6 +987,7 @@ void will_delay__remove(struct mosquitto *mosq);
 /* ============================================================
  * HTTP Info
  * ============================================================ */
+int http_api__start_local(struct mosquitto__listener *listener);
 int http_api__start(struct mosquitto__listener *listener);
 void http_api__stop(struct mosquitto__listener *listener);
 

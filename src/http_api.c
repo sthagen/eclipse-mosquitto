@@ -31,6 +31,10 @@ Contributors:
 
 #ifdef WITH_HTTP_API
 
+#ifndef HTTP_API_DIR
+#  define HTTP_API_DIR ""
+#endif
+
 struct metric{
 	int64_t current;
 	int64_t next;
@@ -337,10 +341,35 @@ static enum MHD_Result http_api_handler(void *cls, struct MHD_Connection
 }
 
 
+int http_api__start_local(struct mosquitto__listener *listener)
+{
+	listener->host = mosquitto_strdup("127.0.0.1");
+	if(!listener->host){
+		return MOSQ_ERR_NOMEM;
+	}
+	listener->port = 9883;
+
+	if(listener->http_dir == NULL && strlen(HTTP_API_DIR) > 1){
+#ifdef WIN32
+		char *http_dir_canonical = _fullpath(NULL, HTTP_API_DIR, 0);
+#else
+		char *http_dir_canonical = realpath(HTTP_API_DIR, NULL);
+#endif
+		if(!http_dir_canonical){
+			return MOSQ_ERR_NOMEM;
+		}
+		mosquitto_FREE(listener->http_dir);
+		listener->http_dir = mosquitto_strdup(http_dir_canonical);
+		mosquitto_FREE(http_dir_canonical);
+	}
+
+	return http_api__start(listener);
+}
+
 int http_api__start(struct mosquitto__listener *listener)
 {
 	unsigned int flags = MHD_USE_AUTO_INTERNAL_THREAD;
-	const char *bind_address = "127.0.0.1";
+	const char *bind_address;
 	uint16_t port = 9883;
 	char *x509_cert = NULL;
 	char *x509_key = NULL;
@@ -352,11 +381,10 @@ int http_api__start(struct mosquitto__listener *listener)
 		}
 	}
 	listener->security_options->allow_anonymous = true;
+	listener->protocol = mp_http_api;
 
 	bind_address = listener->host;
-	if(listener->port){
-		port = listener->port;
-	}
+	port = listener->port;
 
 	if(listener->certfile && listener->keyfile){
 		if(mosquitto_read_file(listener->certfile, &x509_cert)){
@@ -426,6 +454,9 @@ int http_api__start(struct mosquitto__listener *listener)
 
 	if(listener->mhd){
 		log__printf(NULL, MOSQ_LOG_INFO, "Opening http api listen socket on port %d.", port);
+		if(listener->http_dir){
+			log__printf(NULL, MOSQ_LOG_INFO, "Using http_dir %s", listener->http_dir);
+		}
 		return MOSQ_ERR_SUCCESS;
 	}else{
 		return MOSQ_ERR_UNKNOWN;

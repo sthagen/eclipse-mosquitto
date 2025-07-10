@@ -44,6 +44,9 @@ OBJS= \
 all : libmosquitto_common.a libmosquitto_common.so.${SOVERSION}
 
 install :
+	$(INSTALL) -d "${DESTDIR}${libdir}/"
+	$(INSTALL) ${STRIP_OPTS} libmosquitto_common.so.${SOVERSION} "${DESTDIR}${libdir}/libmosquitto_common.so.${SOVERSION}"
+	ln -sf libmosquitto_common.so.${SOVERSION} "${DESTDIR}${libdir}/libmosquitto_common.so"
 
 uninstall :
 

@@ -224,7 +224,7 @@ static int listeners__start_local_only(void)
 	if(db.config->listener_count > 0){
 #ifdef WITH_HTTP_API
 		db.config->listener_count++;
-		http_api__start(&db.config->listeners[db.config->listener_count-1]);
+		http_api__start_local(&db.config->listeners[db.config->listener_count-1]);
 #endif
 		return MOSQ_ERR_SUCCESS;
 	}else{
