@@ -3,6 +3,7 @@
 from mosq_test_helper import *
 import http.client
 import json
+import re
 
 def write_config(filename, mqtt_port, ws_port, http_port):
     with open(filename, 'w') as f:
@@ -132,6 +133,16 @@ try:
     }
     if payload != expected_payload:
         raise ValueError(f"/api/v1/systree payload\n{payload}\n{expected_payload}")
+
+    # Version API
+    http_conn.request("GET", "/api/v1/version")
+    response = http_conn.getresponse()
+    if response.status != 200:
+        raise ValueError(f"/api/v1/version {response.status}")
+    payload = response.read().decode('utf-8')
+    if not re.match(r'^\d+\.\d+\.\d+$', payload):
+        raise ValueError(f"/api/v1/license\n{payload}")
+
 
     rc = 0
 except mosq_test.TestError:

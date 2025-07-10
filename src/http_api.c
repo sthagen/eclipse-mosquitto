@@ -126,6 +126,11 @@ static enum MHD_Result http_api__send_response_with_headers(struct MHD_Connectio
 	return ret;
 }
 
+static enum MHD_Result http_api__process_version(struct MHD_Connection *connection)
+{
+	return http_api__send_response_with_headers(connection, VERSION);
+}
+
 static enum MHD_Result http_api__process_listeners(struct MHD_Connection *connection)
 {
 	char *buf;
@@ -291,6 +296,8 @@ static enum MHD_Result http_api__process_api(struct MHD_Connection *connection, 
 		return http_api__process_systree(connection);
 	}else if(strcmp(url, "/api/v1/listeners") == 0){
 		return http_api__process_listeners(connection);
+	}else if(strcmp(url, "/api/v1/version") == 0){
+		return http_api__process_version(connection);
 	}else{
 		return http_api__send_error_response(connection, "Not found.\n", 404);
 	}
