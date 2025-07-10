@@ -244,7 +244,7 @@ static enum MHD_Result http_api__process_file(struct mosquitto__listener *listen
 	int error_code = MHD_HTTP_INTERNAL_SERVER_ERROR;
 	char *canonical_filename;
 
-	if(!listener){
+	if(!listener || !listener->http_dir){
 		http_api__send_error_response(connection, "Not found.\n", 404);
 		return MHD_YES;
 	}
@@ -255,7 +255,6 @@ static enum MHD_Result http_api__process_file(struct mosquitto__listener *listen
 		return MHD_YES;
 	}
 
-	printf("%p\n", canonical_filename);
 	FILE *fptr = fopen(canonical_filename, "rb");
 	if(!fptr){
 		http_api__send_error_response(connection, "Not found.\n", 404);
