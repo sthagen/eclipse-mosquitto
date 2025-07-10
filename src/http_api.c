@@ -40,7 +40,11 @@ struct metric{
 
 time_t broker_uptime(void);
 struct MHD_Daemon *mhd = NULL;
+
+#ifdef WITH_SYS_TREE
 extern struct metric metrics[mosq_metric_max];
+#endif
+
 #define HTTP_RESPONSE_BUFLEN 10000
 
 #ifdef WIN32
@@ -199,8 +203,9 @@ static enum MHD_Result http_api__process_listeners(struct MHD_Connection *connec
 
 static enum MHD_Result http_api__process_systree(struct MHD_Connection *connection)
 {
-	char *buf;
 	enum MHD_Result ret;
+#ifdef WITH_SYS_TREE
+	char *buf;
 
 	cJSON *j_tree = cJSON_CreateObject();
 	for(int i=0; i<mosq_metric_max; i++){
@@ -219,6 +224,9 @@ static enum MHD_Result http_api__process_systree(struct MHD_Connection *connecti
 	}else{
 		ret = http_api__send_error_response(connection, "Internal server error.\n", MHD_HTTP_INTERNAL_SERVER_ERROR);
 	}
+#else
+	ret = http_api__send_error_response(connection, "Not found.\n", 404);
+#endif
 
 	return ret;
 }
