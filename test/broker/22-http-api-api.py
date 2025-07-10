@@ -85,6 +85,8 @@ try:
     payload = json.loads(response.read().decode('utf-8'))
 
     for topic in [
+            '$SYS/broker/clients/connected',
+            '$SYS/broker/clients/disconnected',
             '$SYS/broker/clients/maximum',
             '$SYS/broker/connections/socket/count',
             '$SYS/broker/heap/current',
@@ -104,8 +106,8 @@ try:
     expected_payload = {
         '$SYS/broker/clients/total': 0,
         '$SYS/broker/clients/maximum': -1,
-        '$SYS/broker/clients/disconnected': 0,
-        '$SYS/broker/clients/connected': 0,
+        '$SYS/broker/clients/disconnected': -1,
+        '$SYS/broker/clients/connected': -1,
         '$SYS/broker/clients/expired': 0,
         '$SYS/broker/messages/stored': -1,
         '$SYS/broker/store/messages/bytes': -1,
