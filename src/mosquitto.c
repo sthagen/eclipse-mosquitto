@@ -383,7 +383,6 @@ int main(int argc, char *argv[])
 #else
 	struct timeval tv;
 #endif
-	struct mosquitto *ctxt, *ctxt_tmp;
 
 	mosquitto_time_init();
 	cjson_init();
