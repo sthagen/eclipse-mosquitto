@@ -1,3 +1,6 @@
+R=..
+include ${R}/config.mk
+
 DIRS= \
 		mosquitto_ctrl \
 		mosquitto_passwd \
