@@ -64,14 +64,13 @@ parts:
       '*': dashboard/
 
   mosquitto:
-    plugin: make
-    make-parameters:
-      - prefix=/usr
-      - WITH_ADNS=yes
-      - CFLAGS="-Wall -ggdb -O3 -I$SNAPCRAFT_STAGE/usr/include"
+    plugin: cmake
+    cmake-parameters:
+      - -DCMAKE_INSTALL_PREFIX=/usr
+      - -DHTTP_API_DIR=\\\"/snap/mosquitto/current/dashboard/\\\"
+      - -DWITH_TESTS=OFF
     source: https://github.com/eclipse-mosquitto/mosquitto
     source-type: git
-    source-branch: develop
 
     build-packages:
       - docbook-xsl
@@ -96,13 +95,13 @@ parts:
       - usr/bin/mosquitto_signal
       - usr/bin/mosquitto_sub
       - usr/bin/mosquitto_passwd
-      - usr/lib/libmosquitto.so*
-      - usr/lib/libmosquitto_common.so*
-      - usr/lib/mosquitto_acl_file.so*
-      - usr/lib/mosquitto_dynamic_security.so*
-      - usr/lib/mosquitto_password_file.so*
-      - usr/lib/mosquitto_persist_sqlite.so*
-      - usr/lib/mosquitto_sparkplug_aware.so*
+      - usr/lib/*-linux-gnu/libmosquitto.so*
+      - usr/lib/*-linux-gnu/libmosquitto_common.so*
+      - usr/lib/*-linux-gnu/mosquitto_acl_file.so*
+      - usr/lib/*-linux-gnu/mosquitto_dynamic_security.so*
+      - usr/lib/*-linux-gnu/mosquitto_password_file.so*
+      - usr/lib/*-linux-gnu/mosquitto_persist_sqlite.so*
+      - usr/lib/*-linux-gnu/mosquitto_sparkplug_aware.so*
       - usr/lib/*-linux-gnu/libcjson.so*
       - usr/lib/*-linux-gnu/libcrypto.so*
       - usr/lib/*-linux-gnu/libmicrohttpd.so*
