@@ -281,9 +281,7 @@ int socks5__read(struct mosquitto *mosq)
 				mosq->in_packet.pos += (uint32_t)len;
 				mosq->in_packet.to_process -= (uint32_t)len;
 			}else{
-#ifdef WIN32
-				errno = WSAGetLastError();
-#endif
+				WINDOWS_SET_ERRNO();
 				if(errno == EAGAIN || errno == COMPAT_EWOULDBLOCK){
 					return MOSQ_ERR_SUCCESS;
 				}else{
@@ -323,9 +321,7 @@ int socks5__read(struct mosquitto *mosq)
 				mosq->in_packet.pos += (uint32_t)len;
 				mosq->in_packet.to_process -= (uint32_t)len;
 			}else{
-#ifdef WIN32
-				errno = WSAGetLastError();
-#endif
+				WINDOWS_SET_ERRNO();
 				if(errno == EAGAIN || errno == COMPAT_EWOULDBLOCK){
 					return MOSQ_ERR_SUCCESS;
 				}else{
@@ -379,9 +375,7 @@ int socks5__read(struct mosquitto *mosq)
 				mosq->in_packet.pos += (uint32_t)len;
 				mosq->in_packet.to_process -= (uint32_t)len;
 			}else{
-#ifdef WIN32
-				errno = WSAGetLastError();
-#endif
+				WINDOWS_SET_ERRNO();
 				if(errno == EAGAIN || errno == COMPAT_EWOULDBLOCK){
 					return MOSQ_ERR_SUCCESS;
 				}else{

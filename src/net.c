@@ -126,7 +126,7 @@ struct mosquitto *net__socket_accept(struct mosquitto__listener_sock *listensock
 	new_sock = accept(listensock->sock, NULL, 0);
 	if(new_sock == INVALID_SOCKET){
 #ifdef WIN32
-		errno = WSAGetLastError();
+		WINDOWS_SET_ERRNO();
 		if(errno == WSAEMFILE){
 #else
 		if(errno == EMFILE || errno == ENFILE){

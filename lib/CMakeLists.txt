@@ -60,7 +60,7 @@ set(C_SRC
 	util_mosq.c util_topic.c util_mosq.h
 	will_mosq.c will_mosq.h)
 
-set (LIBRARIES ${OPENSSL_LIBRARIES})
+set (LIBRARIES OpenSSL::SSL)
 
 if (UNIX AND NOT APPLE AND NOT ANDROID)
 	find_library(LIBRT rt)
@@ -100,7 +100,7 @@ if (WITH_THREADING)
 	endif()
 endif()
 
-target_link_libraries(libmosquitto PRIVATE ${LIBRARIES})
+target_link_libraries(libmosquitto ${LIBRARIES})
 
 set_target_properties(libmosquitto PROPERTIES
 	OUTPUT_NAME mosquitto

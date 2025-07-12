@@ -61,12 +61,18 @@ extern "C" {
 #	endif
 #endif
 
+#ifndef _MSC_VER
+#  define MOSQ_USED __attribute__((used))
+#else
+#  define MOSQ_USED
+#endif
+
 #include <stddef.h>
 #include <stdint.h>
 
 #define LIBMOSQUITTO_MAJOR 2
 #define LIBMOSQUITTO_MINOR 0
-#define LIBMOSQUITTO_REVISION 21
+#define LIBMOSQUITTO_REVISION 22
 /* LIBMOSQUITTO_VERSION_NUMBER looks like 1002001 for e.g. version 1.2.1. */
 #define LIBMOSQUITTO_VERSION_NUMBER (LIBMOSQUITTO_MAJOR*1000000+LIBMOSQUITTO_MINOR*1000+LIBMOSQUITTO_REVISION)
 

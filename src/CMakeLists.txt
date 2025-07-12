@@ -113,6 +113,12 @@ if (WITH_PERSISTENCE)
 	add_definitions("-DWITH_PERSISTENCE")
 endif (WITH_PERSISTENCE)
 
+option(WITH_OLD_KEEPALIVE
+	"Use legacy keepalive check mechanism?" OFF)
+if (WITH_OLD_KEEPALIVE)
+	add_definitions("-DWITH_OLD_KEEPALIVE")
+endif (WITH_OLD_KEEPALIVE)
+
 option(WITH_SYS_TREE
 	"Include $SYS tree support?" ON)
 if (WITH_SYS_TREE)
@@ -157,7 +163,7 @@ if (WITH_DLT)
     set (MOSQ_LIBS ${MOSQ_LIBS} ${DLT_LIBRARIES})
 endif (WITH_DLT)
 
-set (MOSQ_LIBS ${MOSQ_LIBS} ${OPENSSL_LIBRARIES})
+set (MOSQ_LIBS ${MOSQ_LIBS} OpenSSL::SSL)
 # Check for getaddrinfo_a
 include(CheckLibraryExists)
 check_library_exists(anl getaddrinfo_a  "" HAVE_GETADDRINFO_A)

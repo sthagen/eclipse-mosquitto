@@ -80,7 +80,7 @@ int mosquitto__check_keepalive(struct mosquitto *mosq)
 	/* Check if a lazy bridge should be timed out due to idle. */
 	if(mosq->bridge && mosq->bridge->start_type == bst_lazy
 				&& mosq->sock != INVALID_SOCKET
-				&& now - mosq->next_msg_out - mosq->keepalive >= mosq->bridge->idle_timeout){
+				&& now - mosq->last_msg_in >= mosq->bridge->idle_timeout){
 
 		log__printf(NULL, MOSQ_LOG_NOTICE, "Bridge connection %s has exceeded idle timeout, disconnecting.", mosq->id);
 		net__socket_close(mosq);

@@ -361,9 +361,7 @@ int net__try_connect_step2(struct mosquitto *mosq, uint16_t port, mosq_sock_t *s
 		}
 
 		rc = connect(*sock, rp->ai_addr, rp->ai_addrlen);
-#ifdef WIN32
-		errno = WSAGetLastError();
-#endif
+		WINDOWS_SET_ERRNO();
 		if(rc == 0 || errno == EINPROGRESS || errno == COMPAT_EWOULDBLOCK){
 			if(rc < 0 && (errno == EINPROGRESS || errno == COMPAT_EWOULDBLOCK)){
 				rc = MOSQ_ERR_CONN_PENDING;
@@ -461,9 +459,7 @@ static int net__try_connect_tcp(const char *host, uint16_t port, mosq_sock_t *so
 		}
 
 		rc = connect(*sock, rp->ai_addr, rp->ai_addrlen);
-#ifdef WIN32
-		errno = WSAGetLastError();
-#endif
+		WINDOWS_SET_ERRNO();
 		if(rc == 0 || errno == EINPROGRESS || errno == COMPAT_EWOULDBLOCK){
 			if(rc < 0 && (errno == EINPROGRESS || errno == COMPAT_EWOULDBLOCK)){
 				rc = MOSQ_ERR_CONN_PENDING;
@@ -944,34 +940,30 @@ int net__socket_connect(struct mosquitto *mosq, const char *host, uint16_t port,
 
 
 #ifdef WITH_TLS
-static int net__handle_ssl(struct mosquitto* mosq, int ret)
+static void net__handle_ssl(struct mosquitto* mosq, int ret)
 {
 	int err;
 
 	err = SSL_get_error(mosq->ssl, ret);
 	if (err == SSL_ERROR_WANT_READ) {
-		ret = -1;
 		errno = EAGAIN;
 	}
 	else if (err == SSL_ERROR_WANT_WRITE) {
-		ret = -1;
 #ifdef WITH_BROKER
 		mux__add_out(mosq);
 #else
 		mosq->want_write = true;
 #endif
 		errno = EAGAIN;
-	}
-	else {
+	}else if(err == SSL_ERROR_SSL){
 		net__print_ssl_error(mosq);
 		errno = EPROTO;
+	/* else if SSL_ERROR_SYSCALL leave errno alone */
 	}
 	ERR_clear_error();
 #ifdef WIN32
 	WSASetLastError(errno);
 #endif
-
-	return ret;
 }
 #endif
 
@@ -987,7 +979,7 @@ ssize_t net__read(struct mosquitto *mosq, void *buf, size_t count)
 		ERR_clear_error();
 		ret = SSL_read(mosq->ssl, buf, (int)count);
 		if(ret <= 0){
-			ret = net__handle_ssl(mosq, ret);
+			net__handle_ssl(mosq, ret);
 		}
 		return (ssize_t )ret;
 	}else{
@@ -1020,7 +1012,7 @@ ssize_t net__write(struct mosquitto *mosq, const void *buf, size_t count)
 		mosq->want_write = false;
 		ret = SSL_write(mosq->ssl, buf, (int)count);
 		if(ret < 0){
-			ret = net__handle_ssl(mosq, ret);
+			net__handle_ssl(mosq, ret);
 		}
 		return (ssize_t )ret;
 	}else{
@@ -1138,9 +1130,7 @@ int net__socketpair(mosq_sock_t *pairR, mosq_sock_t *pairW)
 			continue;
 		}
 		if(connect(spR, (struct sockaddr *)&ss, ss_len) < 0){
-#ifdef WIN32
-			errno = WSAGetLastError();
-#endif
+			WINDOWS_SET_ERRNO();
 			if(errno != EINPROGRESS && errno != COMPAT_EWOULDBLOCK){
 				COMPAT_CLOSE(spR);
 				COMPAT_CLOSE(listensock);
@@ -1149,9 +1139,7 @@ int net__socketpair(mosq_sock_t *pairR, mosq_sock_t *pairW)
 		}
 		spW = accept(listensock, NULL, 0);
 		if(spW == -1){
-#ifdef WIN32
-			errno = WSAGetLastError();
-#endif
+			WINDOWS_SET_ERRNO();
 			if(errno != EINPROGRESS && errno != COMPAT_EWOULDBLOCK){
 				COMPAT_CLOSE(spR);
 				COMPAT_CLOSE(listensock);

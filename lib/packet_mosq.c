@@ -267,9 +267,8 @@ int packet__write(struct mosquitto *mosq)
 				packet->to_process -= (uint32_t)write_length;
 				packet->pos += (uint32_t)write_length;
 			}else{
-#ifdef WIN32
-				errno = WSAGetLastError();
-#endif
+				WINDOWS_SET_ERRNO();
+
 				if(errno == EAGAIN || errno == COMPAT_EWOULDBLOCK
 #ifdef WIN32
 						|| errno == WSAENOTCONN
@@ -411,9 +410,7 @@ int packet__read(struct mosquitto *mosq)
 			if(read_length == 0){
 				return MOSQ_ERR_CONN_LOST; /* EOF */
 			}
-#ifdef WIN32
-			errno = WSAGetLastError();
-#endif
+			WINDOWS_SET_ERRNO();
 			if(errno == EAGAIN || errno == COMPAT_EWOULDBLOCK){
 				return MOSQ_ERR_SUCCESS;
 			}else{
@@ -456,9 +453,7 @@ int packet__read(struct mosquitto *mosq)
 				if(read_length == 0){
 					return MOSQ_ERR_CONN_LOST; /* EOF */
 				}
-#ifdef WIN32
-				errno = WSAGetLastError();
-#endif
+				WINDOWS_SET_ERRNO();
 				if(errno == EAGAIN || errno == COMPAT_EWOULDBLOCK){
 					return MOSQ_ERR_SUCCESS;
 				}else{
@@ -533,9 +528,7 @@ int packet__read(struct mosquitto *mosq)
 			mosq->in_packet.to_process -= (uint32_t)read_length;
 			mosq->in_packet.pos += (uint32_t)read_length;
 		}else{
-#ifdef WIN32
-			errno = WSAGetLastError();
-#endif
+			WINDOWS_SET_ERRNO();
 			if(errno == EAGAIN || errno == COMPAT_EWOULDBLOCK){
 				if(mosq->in_packet.to_process > 1000){
 					/* Update last_msg_in time if more than 1000 bytes left to

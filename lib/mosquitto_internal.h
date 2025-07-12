@@ -68,6 +68,15 @@ typedef SOCKET mosq_sock_t;
 typedef int mosq_sock_t;
 #endif
 
+#ifdef WIN32
+#  define WINDOWS_SET_ERRNO() \
+	if(errno != EAGAIN){ \
+		errno = WSAGetLastError(); \
+	}
+#else
+#  define WINDOWS_SET_ERRNO()
+#endif
+
 #define SAFE_PRINT(A) (A)?(A):"null"
 
 enum mosquitto_msg_direction {
@@ -356,6 +365,7 @@ struct mosquitto {
 #  ifndef WITH_OLD_KEEPALIVE
 	struct mosquitto *keepalive_next;
 	struct mosquitto *keepalive_prev;
+	time_t keepalive_add_time;
 #  endif
 #endif
 	uint32_t events;

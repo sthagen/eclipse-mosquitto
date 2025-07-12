@@ -37,10 +37,16 @@ int control__process(struct mosquitto *context, struct mosquitto_msg_store *stor
 	int rc = MOSQ_ERR_SUCCESS;
 
 	if(db.config->per_listener_settings){
+		if(!context->listener){
+			log__printf(NULL, MOSQ_LOG_WARNING, "Warning: $CONTROL command received from client with no listener, when per_listener_settings is true.");
+			log__printf(NULL, MOSQ_LOG_WARNING, "         If this is a bridge, please be aware this does not work.");
+			return MOSQ_ERR_SUCCESS;
+		}
 		opts = &context->listener->security_options;
 	}else{
 		opts = &db.config->security_options;
 	}
+
 	HASH_FIND(hh, opts->plugin_callbacks.control, stored->topic, strlen(stored->topic), cb_found);
 	if(cb_found){
 		memset(&event_data, 0, sizeof(event_data));

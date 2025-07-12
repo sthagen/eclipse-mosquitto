@@ -24,8 +24,6 @@ conf_file = os.path.basename(__file__).replace('.py', '.conf')
 write_config(conf_file, port1, port2)
 
 rc = 1
-connect_packet = mosq_test.gen_connect("connect-success-test")
-
 broker = mosq_test.start_broker(filename=os.path.basename(__file__), port=port2, use_conf=True)
 
 ssl_eof = False
@@ -36,7 +34,7 @@ try:
         ssock = context.wrap_socket(sock, server_hostname="localhost", suppress_ragged_eofs=True)
         ssock.settimeout(None)
         try:
-            mosq_test.do_send_receive(ssock, connect_packet, "", "connack")
+            ssock.read(1)
         except ssl.SSLEOFError:
             # Under load, sometimes the broker closes the connection after the
             # handshake has failed, but before we have chance to send our

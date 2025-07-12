@@ -272,8 +272,6 @@ int mosquitto_main_loop(struct mosquitto__listener_sock *listensock, int listens
 		plugin__handle_tick();
 	}
 
-	mux__cleanup();
-
 	return MOSQ_ERR_SUCCESS;
 }
 

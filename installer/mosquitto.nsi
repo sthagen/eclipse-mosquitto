@@ -9,7 +9,7 @@
 !define env_hklm 'HKLM "SYSTEM\CurrentControlSet\Control\Session Manager\Environment"'
 
 Name "Eclipse Mosquitto"
-!define VERSION 2.0.21
+!define VERSION 2.0.22
 OutFile "mosquitto-${VERSION}-install-windows-x86.exe"
 
 InstallDir "$PROGRAMFILES\mosquitto"
@@ -73,8 +73,10 @@ Section "Files" SecInstall
 	File "..\build\vcpkg_installed\x86-windows\bin\pthreadVC3.dll"
 	File "..\build\vcpkg_installed\x86-windows\bin\uv.dll"
 	File "..\build\vcpkg_installed\x86-windows\bin\websockets.dll"
+	File "..\build\vcpkg_installed\x86-windows\bin\zlib1.dll"
 
 	SetOutPath "$INSTDIR\devel"
+	File /oname=mosquitto_broker.lib "..\build\src\Release\mosquitto.lib"
 	File "..\build\lib\Release\mosquitto.lib"
 	File "..\build\lib\cpp\Release\mosquittopp.lib"
 	File "..\include\mosquitto.h"
