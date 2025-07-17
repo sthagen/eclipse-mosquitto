@@ -27,6 +27,7 @@ extern "C" {
 /* "optional==false" can also be taken to mean "only return success if the key exists and is valid" */
 int json_get_bool(cJSON *json, const char *name, bool *value, bool optional, bool default_value);
 int json_get_int(cJSON *json, const char *name, int *value, bool optional, int default_value);
+int json_get_int64(cJSON *json, const char *name, int64_t *value, bool optional, int64_t default_value);
 int json_get_string(cJSON *json, const char *name, const char **value, bool optional);
 
 cJSON *cJSON_AddIntToObject(cJSON * const object, const char * const name, long long number);

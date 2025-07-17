@@ -150,6 +150,7 @@ struct dynsec__data{
 	struct dynsec__group *anonymous_group;
 	struct dynsec__kicklist *kicklist;
 	struct dynsec__acl_default_access default_access;
+	int64_t changeindex;
 	int init_mode;
 	bool need_save;
 };
@@ -307,5 +308,13 @@ int dynsec_kicklist__add(struct dynsec__data *data, const char *username);
 void dynsec_kicklist__kick(struct dynsec__data *data);
 int dynsec__tick_callback(int event, void *event_data, void *userdata);
 void dynsec_kicklist__cleanup(struct dynsec__data *data);
+
+/* ################################################################
+ * #
+ * # Change Index Functions
+ * #
+ * ################################################################ */
+
+int dynsec_details__process_get(struct dynsec__data *data, struct mosquitto_control_cmd *cmd);
 
 #endif

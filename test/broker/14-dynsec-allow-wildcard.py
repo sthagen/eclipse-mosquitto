@@ -3,6 +3,7 @@
 # Test for allowwildcardsubs behaviour
 
 from mosq_test_helper import *
+from dynsec_helper import *
 import json
 import shutil
 
@@ -12,16 +13,6 @@ def write_config(filename, port):
         f.write("allow_anonymous false\n")
         f.write(f"plugin {mosq_test.get_build_root()}/plugins/dynamic-security/mosquitto_dynamic_security.so\n")
         f.write("plugin_opt_config_file %d/dynamic-security.json\n" % (port))
-
-def command_check(sock, command_payload, expected_response):
-    command_packet = mosq_test.gen_publish(topic="$CONTROL/dynamic-security/v1", qos=0, payload=json.dumps(command_payload))
-    sock.send(command_packet)
-    response = json.loads(mosq_test.read_publish(sock))
-    if response != expected_response:
-        print(expected_response)
-        print(response)
-        raise ValueError(response)
-
 
 
 port = mosq_test.get_port()
@@ -116,6 +107,8 @@ try:
     mosq_test.do_send_receive(csock, subscribe_packet, suback_packet_fail, "suback # not allowed")
 
     csock.close()
+
+    check_details(sock, 2, 1, 2, 7)
 
     rc = 0
 

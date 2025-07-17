@@ -113,6 +113,8 @@ static void command_tree_create(void)
 
 	completion_tree_cmd_add(commands_dynsec, "getAnonymousGroup");
 
+	completion_tree_cmd_add(commands_dynsec, "getDetails");
+
 	cmd = completion_tree_cmd_add(commands_dynsec, "getClient");
 	completion_tree_cmd_append_arg_list(cmd, tree_clients);
 
@@ -259,6 +261,9 @@ static void print_help(char **saveptr)
 		}else if(!strcasecmp(command, "getAnonymousGroup")){
 			ctrl_shell_print_help_command("getAnonymousGroup");
 			ctrl_shell_printf("\nPrint the group configured as the anonymous group.\n");
+		}else if(!strcasecmp(command, "getDetails")){
+			ctrl_shell_print_help_command("getDetails");
+			ctrl_shell_printf("\nPrint details including the client, group, and role count, and the current change index.\n");
 		}else if(!strcasecmp(command, "getClient")){
 			ctrl_shell_print_help_command("getClient <username>");
 			ctrl_shell_printf("\nPrint details of a client and its groups and direct roles.\n");
@@ -653,6 +658,8 @@ static void line_callback(char *line)
 		ctrl_shell_command_generic_arg1("enableClient", "username", &saveptr);
 	}else if(!strcasecmp(command, "getAnonymousGroup")){
 		ctrl_shell_command_generic_arg0("getAnonymousGroup");
+	}else if(!strcasecmp(command, "getDetails")){
+		ctrl_shell_command_generic_arg0("getDetails");
 	}else if(!strcasecmp(command, "getClient")){
 		ctrl_shell_command_generic_arg1("getClient", "username", &saveptr);
 	}else if(!strcasecmp(command, "getDefaultACLAccess")){
@@ -744,6 +751,25 @@ static void print_json_array(cJSON *j_list, const char *label, const char *eleme
 			ctrl_shell_print_value(0, "\n");
 		}
 	}
+}
+
+
+static void print_details(cJSON *j_data)
+{
+	int64_t clientcount;
+	int64_t groupcount;
+	int64_t rolecount;
+	int64_t changeindex;
+	int align = strlen("Change index: ");
+	json_get_int64(j_data, "clientCount", &clientcount, true, 0);
+	json_get_int64(j_data, "groupCount", &groupcount, true, 0);
+	json_get_int64(j_data, "roleCount", &rolecount, true, 0);
+	json_get_int64(j_data, "changeIndex", &changeindex, true, 0);
+
+	ctrl_shell_print_label_value(0, "Client count:", align, "%ld\n", clientcount);
+	ctrl_shell_print_label_value(0, "Group count:", align, "%ld\n", groupcount);
+	ctrl_shell_print_label_value(0, "Role count:", align, "%ld\n", rolecount);
+	ctrl_shell_print_label_value(0, "Change index:", align, "%ld\n", changeindex);
 }
 
 
@@ -956,6 +982,8 @@ static void response_callback(const char *command, cJSON *j_data, const char *pa
 		group = cJSON_GetObjectItem(j_data, "group");
 		groupname = cJSON_GetObjectItem(group, "groupname");
 		ctrl_shell_print_value(0, "%s\n", groupname->valuestring);
+	}else if(!strcasecmp(command, "getDetails")){
+		print_details(j_data);
 	}else if(!strcasecmp(command, "getClient")){
 		print_client(j_data);
 	}else if(!strcasecmp(command, "getGroup")){

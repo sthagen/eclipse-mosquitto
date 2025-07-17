@@ -2763,3 +2763,54 @@ TEST_F(CtrlShellDynsecTest, ListRolesWithCountAndOffset)
 	ctrl_shell__main(&config);
 	EXPECT_EQ(pending_payloads, nullptr);
 }
+
+
+TEST_F(CtrlShellDynsecTest, GetDetails)
+{
+	mosq_config config{};
+	mosquitto mosq{};
+	const char host[] = "localhost";
+	int port = 1883;
+
+	expect_setup(&config);
+	expect_connect(&mosq, host, port);
+	expect_dynsec(host, port);
+
+	EXPECT_CALL(editline_mock_, readline(t::StrEq("mqtt://localhost:1883|dynsec> ")))
+		.WillOnce(t::Return(strdup("getDetails")))
+		.WillOnce(t::Return(strdup("exit")));
+
+	expect_connect_and_messages(&mosq);
+	expect_request_response_empty(&mosq, "listClients");
+	expect_request_response_empty(&mosq, "listGroups");
+	expect_request_response_empty(&mosq, "listRoles");
+
+	EXPECT_CALL(libmosquitto_mock_, mosquitto_publish(t::Eq(&mosq), nullptr, t::StrEq("$CONTROL/dynamic-security/v1"), t::_,
+				t::StrEq("{\"commands\":[{\"command\":\"getDetails\"}]}"), 1, false))
+		.WillOnce(t::Invoke([this](){
+			append_response("{\"responses\":[{\"command\":\"getDetails\",\"data\":{"
+				"\"clientCount\":1,"
+				"\"groupCount\":2,"
+				"\"roleCount\":3,"
+				"\"changeIndex\":4"
+				"}}]}");
+			return 0;
+			}));
+
+
+	const char *outputs[] = {
+		"Client count:",
+		"Group count:",
+		"Role count:",
+		"Change index:",
+		"   1\n",
+		"    2\n",
+		"     3\n",
+		"   4\n",
+		"\n",
+	};
+	expect_outputs(outputs, sizeof(outputs)/sizeof(char *));
+
+	ctrl_shell__main(&config);
+	EXPECT_EQ(pending_payloads, nullptr);
+}

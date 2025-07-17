@@ -32,6 +32,8 @@ static int dynsec__general_config_load(struct dynsec__data *data, cJSON *tree)
 {
 	cJSON *j_default_access;
 
+	json_get_int64(tree, "changeIndex", &data->changeindex, true, 0);
+
 	j_default_access = cJSON_GetObjectItem(tree, "defaultACLAccess");
 	if(j_default_access && cJSON_IsObject(j_default_access)){
 		json_get_bool(j_default_access, ACL_TYPE_PUB_C_SEND, &data->default_access.publish_c_send, true, false);
@@ -45,6 +47,8 @@ static int dynsec__general_config_load(struct dynsec__data *data, cJSON *tree)
 static int dynsec__general_config_save(struct dynsec__data *data, cJSON *tree)
 {
 	cJSON *j_default_access;
+
+	cJSON_AddIntToObject(tree, "changeIndex", data->changeindex);
 
 	j_default_access = cJSON_CreateObject();
 	if(j_default_access == NULL){
@@ -196,6 +200,7 @@ int dynsec__write_json_config(FILE* fptr, void* user_data)
 
 void dynsec__config_batch_save(struct dynsec__data *data)
 {
+	data->changeindex++;
 	data->need_save = true;
 }
 

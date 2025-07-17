@@ -40,6 +40,8 @@ static int dynsec__handle_command(struct mosquitto_control_cmd *cmd, void *userd
 		rc = dynsec__process_set_default_acl_access(data, cmd);
 	}else if(!strcasecmp(cmd->command_name, "getDefaultACLAccess")){
 		rc = dynsec__process_get_default_acl_access(data, cmd);
+	}else if(!strcasecmp(cmd->command_name, "getDetails")){
+		rc = dynsec_details__process_get(data, cmd);
 
 	/* Clients */
 	}else if(!strcasecmp(cmd->command_name, "createClient")){

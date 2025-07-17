@@ -10,6 +10,7 @@ if(WITH_TLS)
 		config_init.c
 		control.c
 		default_acl.c
+		details.c
 		dynamic_security.h
 		groups.c
 		grouplist.c

@@ -3,6 +3,7 @@
 # Check invalid inputs for plugin commands
 
 from mosq_test_helper import *
+from dynsec_helper import *
 import json
 import shutil
 
@@ -12,18 +13,6 @@ def write_config(filename, port):
         f.write("allow_anonymous true\n")
         f.write(f"plugin {mosq_test.get_build_root()}/plugins/dynamic-security/mosquitto_dynamic_security.so\n")
         f.write("plugin_opt_config_file %d/dynamic-security.json\n" % (port))
-
-def command_check(sock, command_payload, expected_response, msg=""):
-    command_packet = mosq_test.gen_publish(topic="$CONTROL/dynamic-security/v1", qos=0, payload=json.dumps(command_payload))
-    sock.send(command_packet)
-    response = json.loads(mosq_test.read_publish(sock))
-    if response != expected_response:
-        print(expected_response)
-        print(response)
-        if msg != "":
-            print(msg)
-        raise ValueError(response)
-
 
 def command_check_text(sock, command_payload, expected_response, msg=""):
     command_packet = mosq_test.gen_publish(topic="$CONTROL/dynamic-security/v1", qos=0, payload=command_payload)
@@ -126,6 +115,8 @@ try:
 
     command_check(sock, set_default1_command, set_default1_response, "1")
     command_check(sock, set_default2_command, set_default2_response, "2")
+
+    check_details(sock, 1, 0, 1, 0)
 
     rc = 0
 

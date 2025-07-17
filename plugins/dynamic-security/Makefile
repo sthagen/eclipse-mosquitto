@@ -22,6 +22,7 @@ OBJS = \
 	config_init.o \
 	control.o \
 	default_acl.o \
+	details.o \
 	groups.o \
 	grouplist.o \
 	kicklist.o \
