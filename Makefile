@@ -150,7 +150,7 @@ copy : sign
 
 coverage :
 	lcov --capture -d apps -d client -d lib -d plugins -d src --output-file coverage.info --no-external --ignore-errors empty
-	genhtml coverage.info --output-directory out
+	genhtml --ignore-errors inconsistent coverage.info --output-directory out
 
 localdocker : reallyclean
 	set -e; for d in ${DISTDIRS}; do $(MAKE) -C $${d} dist; done
