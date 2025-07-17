@@ -173,6 +173,31 @@ class CtrlShellBrokerTest : public ::t::Test
 };
 
 
+TEST_F(CtrlShellBrokerTest, LineEmpty)
+{
+	mosq_config config{};
+	mosquitto mosq{};
+	const char host[] = "localhost";
+	int port = 1883;
+
+	expect_setup(&config);
+	expect_connect(&mosq, host, port);
+	expect_broker(host, port);
+	expect_connect_and_messages(&mosq);
+
+	EXPECT_CALL(editline_mock_, readline(t::StrEq("mqtt://localhost:1883|broker> ")))
+		.WillOnce(t::Return(strdup("")))
+		.WillOnce(t::Return(strdup("exit")));
+
+	const char *outputs[] = {
+		"\n",
+	};
+	expect_outputs(outputs, sizeof(outputs)/sizeof(char *));
+
+	ctrl_shell__main(&config);
+}
+
+
 TEST_F(CtrlShellBrokerTest, SubscribeDenied)
 {
 	mosq_config config{};
@@ -321,6 +346,40 @@ TEST_F(CtrlShellBrokerTest, ListListeners)
 }
 
 
+TEST_F(CtrlShellBrokerTest, ListListenersInvalidResponse)
+{
+	mosq_config config{};
+	mosquitto mosq{};
+	const char host[] = "localhost";
+	int port = 1883;
+
+	expect_setup(&config);
+	expect_connect(&mosq, host, port);
+	expect_broker(host, port);
+
+	EXPECT_CALL(editline_mock_, readline(t::StrEq("mqtt://localhost:1883|broker> ")))
+		.WillOnce(t::Return(strdup("listListeners")))
+		.WillOnce(t::Return(strdup("exit")));
+
+	expect_connect_and_messages(&mosq);
+
+	const char request[] = "{\"commands\":[{\"command\":\"listListeners\"}]}";
+	const char response[] = "{\"responses\":[{\"command\":\"listListeners\",\"data\":{"
+		"\"listeners\":["
+		"{\"protocol\":\"mqtt\",\"tls\":false}"
+		"]}}]}";
+	expect_request_response(&mosq, request, response);
+
+	const char *outputs[] = {
+		"Invalid response from broker.\n",
+		"\n",
+	};
+	expect_outputs(outputs, sizeof(outputs)/sizeof(char *));
+
+	ctrl_shell__main(&config);
+}
+
+
 TEST_F(CtrlShellBrokerTest, ListPlugins)
 {
 	mosq_config config{};
@@ -350,6 +409,40 @@ TEST_F(CtrlShellBrokerTest, ListPlugins)
 		"  plugin1\n",
 		"Control endpoints:",
 		"  $CONTROL/plugin1\n",
+		"\n",
+	};
+	expect_outputs(outputs, sizeof(outputs)/sizeof(char *));
+
+	ctrl_shell__main(&config);
+}
+
+
+TEST_F(CtrlShellBrokerTest, ListPluginsInvalidResponse)
+{
+	mosq_config config{};
+	mosquitto mosq{};
+	const char host[] = "localhost";
+	int port = 1883;
+
+	expect_setup(&config);
+	expect_connect(&mosq, host, port);
+	expect_broker(host, port);
+
+	EXPECT_CALL(editline_mock_, readline(t::StrEq("mqtt://localhost:1883|broker> ")))
+		.WillOnce(t::Return(strdup("listPlugins")))
+		.WillOnce(t::Return(strdup("exit")));
+
+	expect_connect_and_messages(&mosq);
+
+	const char request[] = "{\"commands\":[{\"command\":\"listPlugins\"}]}";
+	const char response[] = "{\"responses\":[{\"command\":\"listPlugins\",\"data\":{"
+		"\"plugins\":["
+		"{\"control-endpoints\":[\"$CONTROL/plugin1\"]}"
+		"]}}]}";
+	expect_request_response(&mosq, request, response);
+
+	const char *outputs[] = {
+		"Invalid response from broker.\n",
 		"\n",
 	};
 	expect_outputs(outputs, sizeof(outputs)/sizeof(char *));

@@ -353,6 +353,7 @@ TEST_F(CtrlShellHelpTest, DynsecHelp)
 		.WillOnce(t::Return(strdup("help enableClient")))
 		.WillOnce(t::Return(strdup("help getAnonymousGroup")))
 		.WillOnce(t::Return(strdup("help getClient")))
+		.WillOnce(t::Return(strdup("help getDetails")))
 		.WillOnce(t::Return(strdup("help getDefaultACLAccess")))
 		.WillOnce(t::Return(strdup("help getGroup")))
 		.WillOnce(t::Return(strdup("help getRole")))
@@ -465,6 +466,8 @@ TEST_F(CtrlShellHelpTest, DynsecHelp)
 			"\nPrint details of a client and its groups and direct roles.\n",
 		"getDefaultACLAccess\n",
 			"\nPrint the default allow/deny values for the different classes of ACL.\n",
+		"getDetails\n",
+			"\nPrint details including the client, group, and role count, and the current change index.\n",
 		"getGroup <groupname>\n",
 			"\nPrint details of a group and its roles.\n",
 		"getRole <rolename>\n",

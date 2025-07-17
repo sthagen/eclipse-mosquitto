@@ -170,6 +170,49 @@ class CtrlShellOptionsTest : public ::t::Test
 };
 
 
+TEST_F(CtrlShellOptionsTest, Empty)
+{
+	mosq_config config{};
+
+	expect_setup(&config);
+
+	EXPECT_CALL(editline_mock_, readline(t::StrEq("> ")))
+		.WillOnce(t::Return(strdup("")))
+		.WillOnce(t::Return(strdup("exit")));
+
+	const char *outputs[] = {
+		"\n",
+	};
+	expect_outputs(outputs, sizeof(outputs)/sizeof(char *));
+
+	ctrl_shell__main(&config);
+}
+
+
+TEST_F(CtrlShellOptionsTest, ConnectUrlMissingHost)
+{
+	mosq_config config{};
+
+	expect_setup(&config);
+
+	char buf[200];
+	snprintf(buf, sizeof(buf), "connect mqtt://");
+	char *s_conn = strdup(buf);
+
+	EXPECT_CALL(editline_mock_, readline(t::StrEq("> ")))
+		.WillOnce(t::Return(s_conn))
+		.WillOnce(t::Return(strdup("exit")));
+
+	const char *outputs[] = {
+		"connect mqtt[s]://<hostname>:port\n",
+		"\n",
+	};
+	expect_outputs(outputs, sizeof(outputs)/sizeof(char *));
+
+	ctrl_shell__main(&config);
+}
+
+
 TEST_F(CtrlShellOptionsTest, ConnectTLS)
 {
 	mosq_config config{};
@@ -225,6 +268,71 @@ TEST_F(CtrlShellOptionsTest, ConnectWebsockets)
 	EXPECT_CALL(libmosquitto_mock_, mosquitto_int_option(t::_, MOSQ_OPT_TRANSPORT, MOSQ_T_WEBSOCKETS));
 
 	EXPECT_CALL(editline_mock_, readline(t::StrEq("ws://localhost:8080> ")))
+		.WillOnce(t::Return(strdup("exit")));
+
+	const char *outputs[] = {
+		"\n",
+	};
+	expect_outputs(outputs, sizeof(outputs)/sizeof(char *));
+
+	ctrl_shell__main(&config);
+}
+
+
+TEST_F(CtrlShellOptionsTest, ConnectWebsocketsTLS)
+{
+	mosq_config config{};
+	mosquitto mosq{};
+	const char host[] = "localhost";
+	int port = 8081;
+
+	expect_setup(&config);
+	expect_connect(&mosq, host, port);
+	expect_connect_and_messages(&mosq);
+
+
+	char buf[200];
+	snprintf(buf, sizeof(buf), "connect wss://%s:%d", host, port);
+	char *s_conn = strdup(buf);
+
+	EXPECT_CALL(editline_mock_, readline(t::StrEq("> ")))
+		.WillOnce(t::Return(s_conn));
+
+	EXPECT_CALL(libmosquitto_mock_, mosquitto_int_option(t::_, MOSQ_OPT_TLS_USE_OS_CERTS, 1));
+	EXPECT_CALL(libmosquitto_mock_, mosquitto_int_option(t::_, MOSQ_OPT_TRANSPORT, MOSQ_T_WEBSOCKETS));
+
+	EXPECT_CALL(editline_mock_, readline(t::StrEq("wss://localhost:8081> ")))
+		.WillOnce(t::Return(strdup("exit")));
+
+	const char *outputs[] = {
+		"\n",
+	};
+	expect_outputs(outputs, sizeof(outputs)/sizeof(char *));
+
+	ctrl_shell__main(&config);
+}
+
+
+TEST_F(CtrlShellOptionsTest, ConnectImplicitHostname)
+{
+	mosq_config config{};
+	mosquitto mosq{};
+	const char host[] = "localhost";
+	int port = 1883;
+
+	expect_setup(&config);
+	expect_connect(&mosq, host, port);
+	expect_connect_and_messages(&mosq);
+
+
+	char buf[200];
+	snprintf(buf, sizeof(buf), "connect");
+	char *s_conn = strdup(buf);
+
+	EXPECT_CALL(editline_mock_, readline(t::StrEq("> ")))
+		.WillOnce(t::Return(s_conn));
+
+	EXPECT_CALL(editline_mock_, readline(t::StrEq("mqtt://localhost:1883> ")))
 		.WillOnce(t::Return(strdup("exit")));
 
 	const char *outputs[] = {
