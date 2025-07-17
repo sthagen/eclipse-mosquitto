@@ -51,7 +51,7 @@ libmosqcommon_EXPORT int mosquitto_write_file(const char* target_path, bool rest
 /*
  * Function: mosquitto_read_file
  */
-libmosqcommon_EXPORT int mosquitto_read_file(const char *file, char **buf);
+libmosqcommon_EXPORT int mosquitto_read_file(const char *file, char **buf, size_t *buflen);
 
 
 /*

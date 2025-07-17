@@ -387,11 +387,11 @@ int http_api__start(struct mosquitto__listener *listener)
 	port = listener->port;
 
 	if(listener->certfile && listener->keyfile){
-		if(mosquitto_read_file(listener->certfile, &x509_cert)){
+		if(mosquitto_read_file(listener->certfile, &x509_cert, NULL)){
 			log__printf(NULL, MOSQ_LOG_ERR, "Error: Unable to load server certificate \"%s\". Check certfile.", listener->certfile);
 			return MOSQ_ERR_INVAL;
 		}
-		if(mosquitto_read_file(listener->keyfile, &x509_key)){
+		if(mosquitto_read_file(listener->keyfile, &x509_key, NULL)){
 			log__printf(NULL, MOSQ_LOG_ERR, "Error: Unable to load server key file \"%s\". Check keyfile.", listener->keyfile);
 			mosquitto_FREE(x509_cert);
 			return MOSQ_ERR_INVAL;
