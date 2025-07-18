@@ -236,7 +236,7 @@ void client_config_cleanup(struct mosq_config *cfg)
 	free(cfg->id_prefix);
 	free(cfg->host);
 	free(cfg->file_input);
-	free(cfg->message);
+	mosquitto_FREE(cfg->message);
 	free(cfg->topic);
 	free(cfg->bind_address);
 	free(cfg->username);
@@ -848,7 +848,7 @@ int client_config_line_proc(struct mosq_config *cfg, int pub_or_sub, int argc, c
 				fprintf(stderr, "Error: -m argument given but no message specified.\n\n");
 				return 1;
 			}else{
-				cfg->message = strdup(argv[i+1]);
+				cfg->message = mosquitto_strdup(argv[i+1]);
 				if(cfg->message == NULL){
 					fprintf(stderr, "Error: Out of memory.\n\n");
 					return 1;

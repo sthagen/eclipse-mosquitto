@@ -84,7 +84,7 @@ if __name__ == '__main__':
     do_test(['-l', '-s'], "Error: Only one type of message can be sent at once.\n\n" + helps, 1)
 
     # Invalid values
-    do_test(['-t', 'topic', '-f', 'missing'], "Error: Unable to open file \"missing\".\nError loading input file \"missing\".\n", 1)
+    do_test(['-t', 'topic', '-f', 'missing'], "Error: Unable to read file \"missing\": No such file or directory.\nError loading input file \"missing\".\n", 1)
     do_test(['-k', '-1'], "Error: Invalid keepalive given, it must be between 5 and 65535 inclusive.\n\n" + helps, 1)
     do_test(['-k', '65536'], "Error: Invalid keepalive given, it must be between 5 and 65535 inclusive.\n\n" + helps, 1)
     do_test(['-M', '0'], "Error: Maximum inflight messages must be greater than 0.\n\n" + helps, 1)

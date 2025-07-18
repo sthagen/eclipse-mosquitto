@@ -59,13 +59,12 @@ int load_stdin(void)
 
 	while(!feof(stdin)){
 		rlen = fread(buf, 1, 1024, stdin);
-		aux_message = realloc(cfg.message, pos+rlen);
+		aux_message = mosquitto_realloc(cfg.message, pos+rlen);
 		if(!aux_message){
 			err_printf(&cfg, "Error: Out of memory.\n");
-			free(cfg.message);
+			mosquitto_FREE(cfg.message);
 			return 1;
-		} else
-		{
+		}else{
 			cfg.message = aux_message;
 		}
 		memcpy(&(cfg.message[pos]), buf, rlen);
@@ -73,7 +72,7 @@ int load_stdin(void)
 	}
 	if(pos > MQTT_MAX_PAYLOAD){
 		err_printf(&cfg, "Error: Message length must be less than %u bytes.\n\n", MQTT_MAX_PAYLOAD);
-		free(cfg.message);
+		mosquitto_FREE(cfg.message);
 		return 1;
 	}
 	cfg.msglen = (int )pos;
@@ -88,48 +87,29 @@ int load_stdin(void)
 
 int load_file(const char *filename)
 {
-	size_t pos, rlen;
-	FILE *fptr = NULL;
-	long flen;
+	size_t buflen;
+	char *buf;
 
-	fptr = fopen(filename, "rb");
-	if(!fptr){
-		err_printf(&cfg, "Error: Unable to open file \"%s\".\n", filename);
+	cfg.pub_mode = MSGMODE_FILE;
+
+	int rc = mosquitto_read_file(filename, &buf, &buflen);
+	if(rc){
+		err_printf(&cfg, "Error: Unable to read file \"%s\": %s.\n", filename, mosquitto_strerror(rc));
 		return 1;
 	}
-	cfg.pub_mode = MSGMODE_FILE;
-	fseek(fptr, 0, SEEK_END);
-	flen = ftell(fptr);
-	if(flen > MQTT_MAX_PAYLOAD){
-		fclose(fptr);
+
+	if(buflen > MQTT_MAX_PAYLOAD){
 		err_printf(&cfg, "Error: File must be less than %u bytes.\n\n", MQTT_MAX_PAYLOAD);
-		free(cfg.message);
+		mosquitto_FREE(buf);
 		return 1;
-	}else if(flen == 0){
-		fclose(fptr);
+	}else if(buflen == 0){
 		cfg.message = NULL;
 		cfg.msglen = 0;
 		return 0;
-	}else if(flen < 0){
-		fclose(fptr);
-		err_printf(&cfg, "Error: Unable to determine size of file \"%s\".\n", filename);
-		return 1;
 	}
-	cfg.msglen = (int )flen;
-	fseek(fptr, 0, SEEK_SET);
-	cfg.message = malloc((size_t )cfg.msglen);
-	if(!cfg.message){
-		fclose(fptr);
-		err_printf(&cfg, "Error: Out of memory.\n");
-		return 1;
-	}
-	pos = 0;
-	while(pos < (size_t)cfg.msglen){
-		rlen = fread(&(cfg.message[pos]), sizeof(char), (size_t )cfg.msglen-pos, fptr);
-		pos += rlen;
-	}
-	fclose(fptr);
+
+	cfg.msglen = (int )buflen;
+	cfg.message = buf;
+
 	return 0;
 }
-
-

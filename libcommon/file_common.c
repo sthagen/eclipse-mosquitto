@@ -440,7 +440,9 @@ int mosquitto_read_file(const char *file, char **buf, size_t *buflen)
 
 	*buf = NULL;
 	fptr = fopen(file, "rt");
-	if(fptr == NULL) return MOSQ_ERR_INVAL;
+	if(fptr == NULL){
+		return MOSQ_ERR_ERRNO;
+	}
 
 	fseek(fptr, 0, SEEK_END);
 	l = ftell(fptr);
@@ -448,6 +450,12 @@ int mosquitto_read_file(const char *file, char **buf, size_t *buflen)
 	if(l < 0){
 		fclose(fptr);
 		return MOSQ_ERR_ERRNO;
+	}else if(l == 0){
+		*buf = NULL;
+		if(buflen){
+			*buflen = 0;
+		}
+		return MOSQ_ERR_SUCCESS;
 	}
 	buflen_i = (size_t)l;
 
@@ -462,7 +470,7 @@ int mosquitto_read_file(const char *file, char **buf, size_t *buflen)
 		return MOSQ_ERR_NOMEM;
 	}
 	if(fread(*buf, 1, buflen_i, fptr) != buflen_i){
-		free(*buf);
+		mosquitto_FREE(*buf);
 		fclose(fptr);
 		return MOSQ_ERR_INVAL;
 	}
