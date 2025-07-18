@@ -908,6 +908,9 @@ int net__socket_connect_step3(struct mosquitto *mosq, const char *host)
 			net__socket_close(mosq);
 			return MOSQ_ERR_TLS;
 		}
+		if(tls__set_verify_hostname(mosq, host)){
+			return MOSQ_ERR_TLS;
+		}
 
 		if(net__socket_connect_tls(mosq)){
 			net__socket_close(mosq);

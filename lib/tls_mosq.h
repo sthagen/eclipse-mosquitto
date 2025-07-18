@@ -29,9 +29,10 @@ Contributors:
 
 #include <openssl/ssl.h>
 #include <openssl/engine.h>
+#include "mosquitto.h"
 
 int mosquitto__server_certificate_verify(int preverify_ok, X509_STORE_CTX *ctx);
-int mosquitto__verify_certificate_hostname(X509 *cert, const char *hostname);
+int tls__set_verify_hostname(struct mosquitto *mosq, const char *hostname);
 
 #endif /* WITH_TLS */
 
