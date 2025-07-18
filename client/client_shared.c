@@ -406,7 +406,7 @@ int client_config_load(struct mosq_config *cfg, int pub_or_sub, int argc, char *
 		free(loc);
 		loc = NULL;
 	}else{
-		return 1;
+		fptr = NULL;
 	}
 	if(fptr){
 		while(fgets(line, 1024, fptr)){

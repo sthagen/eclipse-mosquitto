@@ -58,6 +58,8 @@ def do_test(per_listener_settings):
             (stdo, _) = sub_client.communicate()
             if stdo.decode('utf-8') != "plugin/psk/test psk-test":
                 raise ValueError(stdo.decode('utf-8'))
+        else:
+            raise ValueError(f"pub_client returned {pub_client.returncode}, sub_client returned {sub_client.returncode}")
 
         rc = 0
     except mosq_test.TestError:
