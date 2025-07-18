@@ -61,6 +61,53 @@ Contributors:
 #define SOCKS_REPLY_COMMAND_NOT_SUPPORTED 0x07U
 #define SOCKS_REPLY_ADDRESS_TYPE_NOT_SUPPORTED 0x08U
 
+static inline int socks5__network_error(struct mosquitto *mosq)
+{
+#ifdef WIN32
+	errno = WSAGetLastError();
+#endif
+	if(errno == EAGAIN || errno == COMPAT_EWOULDBLOCK){
+		return MOSQ_ERR_SUCCESS;
+	}else{
+		packet__cleanup(&mosq->in_packet);
+		switch(errno){
+			case 0:
+				return MOSQ_ERR_PROXY;
+			case COMPAT_ECONNRESET:
+				return MOSQ_ERR_CONN_LOST;
+			default:
+				return MOSQ_ERR_ERRNO;
+		}
+	}
+}
+
+
+static inline int socks5__connection_error(struct mosquitto *mosq)
+{
+	uint8_t v = mosq->in_packet.payload[1];
+	packet__cleanup(&mosq->in_packet);
+	switch(v){
+		case SOCKS_REPLY_CONNECTION_NOT_ALLOWED:
+			return MOSQ_ERR_AUTH;
+
+		case SOCKS_REPLY_NETWORK_UNREACHABLE:
+		case SOCKS_REPLY_HOST_UNREACHABLE:
+		case SOCKS_REPLY_CONNECTION_REFUSED:
+			return MOSQ_ERR_NO_CONN;
+
+		case SOCKS_REPLY_GENERAL_FAILURE:
+		case SOCKS_REPLY_TTL_EXPIRED:
+		case SOCKS_REPLY_COMMAND_NOT_SUPPORTED:
+		case SOCKS_REPLY_ADDRESS_TYPE_NOT_SUPPORTED:
+			return MOSQ_ERR_PROXY;
+
+		default:
+			return MOSQ_ERR_INVAL;
+	}
+	return MOSQ_ERR_PROXY;
+}
+
+
 int mosquitto_socks5_set(struct mosquitto *mosq, const char *host, int port, const char *username, const char *password)
 {
 #ifdef WITH_SOCKS
@@ -260,7 +307,6 @@ int socks5__read(struct mosquitto *mosq)
 {
 	ssize_t len;
 	uint8_t *payload;
-	uint8_t i;
 	enum mosquitto_client_state state;
 
 	state = mosquitto__get_state(mosq);
@@ -271,22 +317,7 @@ int socks5__read(struct mosquitto *mosq)
 				mosq->in_packet.pos += (uint32_t)len;
 				mosq->in_packet.to_process -= (uint32_t)len;
 			}else{
-#ifdef WIN32
-				errno = WSAGetLastError();
-#endif
-				if(errno == EAGAIN || errno == COMPAT_EWOULDBLOCK){
-					return MOSQ_ERR_SUCCESS;
-				}else{
-					packet__cleanup(&mosq->in_packet);
-					switch(errno){
-						case 0:
-							return MOSQ_ERR_PROXY;
-						case COMPAT_ECONNRESET:
-							return MOSQ_ERR_CONN_LOST;
-						default:
-							return MOSQ_ERR_ERRNO;
-					}
-				}
+				return socks5__network_error(mosq);
 			}
 		}
 		if(mosq->in_packet.payload[0] != 5){
@@ -313,22 +344,7 @@ int socks5__read(struct mosquitto *mosq)
 				mosq->in_packet.pos += (uint32_t)len;
 				mosq->in_packet.to_process -= (uint32_t)len;
 			}else{
-#ifdef WIN32
-				errno = WSAGetLastError();
-#endif
-				if(errno == EAGAIN || errno == COMPAT_EWOULDBLOCK){
-					return MOSQ_ERR_SUCCESS;
-				}else{
-					packet__cleanup(&mosq->in_packet);
-					switch(errno){
-						case 0:
-							return MOSQ_ERR_PROXY;
-						case COMPAT_ECONNRESET:
-							return MOSQ_ERR_CONN_LOST;
-						default:
-							return MOSQ_ERR_ERRNO;
-					}
-				}
+				return socks5__network_error(mosq);
 			}
 		}
 		if(mosq->in_packet.payload[0] != 1){
@@ -340,27 +356,7 @@ int socks5__read(struct mosquitto *mosq)
 			mosquitto__set_state(mosq, mosq_cs_socks5_auth_ok);
 			return socks5__send(mosq);
 		}else{
-			i = mosq->in_packet.payload[1];
-			packet__cleanup(&mosq->in_packet);
-			switch(i){
-				case SOCKS_REPLY_CONNECTION_NOT_ALLOWED:
-					return MOSQ_ERR_AUTH;
-
-				case SOCKS_REPLY_NETWORK_UNREACHABLE:
-				case SOCKS_REPLY_HOST_UNREACHABLE:
-				case SOCKS_REPLY_CONNECTION_REFUSED:
-					return MOSQ_ERR_NO_CONN;
-
-				case SOCKS_REPLY_GENERAL_FAILURE:
-				case SOCKS_REPLY_TTL_EXPIRED:
-				case SOCKS_REPLY_COMMAND_NOT_SUPPORTED:
-				case SOCKS_REPLY_ADDRESS_TYPE_NOT_SUPPORTED:
-					return MOSQ_ERR_PROXY;
-
-				default:
-					return MOSQ_ERR_INVAL;
-			}
-			return MOSQ_ERR_PROXY;
+			return socks5__connection_error(mosq);
 		}
 	}else if(state == mosq_cs_socks5_request){
 		while(mosq->in_packet.to_process > 0){
@@ -369,22 +365,7 @@ int socks5__read(struct mosquitto *mosq)
 				mosq->in_packet.pos += (uint32_t)len;
 				mosq->in_packet.to_process -= (uint32_t)len;
 			}else{
-#ifdef WIN32
-				errno = WSAGetLastError();
-#endif
-				if(errno == EAGAIN || errno == COMPAT_EWOULDBLOCK){
-					return MOSQ_ERR_SUCCESS;
-				}else{
-					packet__cleanup(&mosq->in_packet);
-					switch(errno){
-						case 0:
-							return MOSQ_ERR_PROXY;
-						case COMPAT_ECONNRESET:
-							return MOSQ_ERR_CONN_LOST;
-						default:
-							return MOSQ_ERR_ERRNO;
-					}
-				}
+				return socks5__network_error(mosq);
 			}
 		}
 
@@ -438,27 +419,8 @@ int socks5__read(struct mosquitto *mosq)
 			}
 			return send__connect(mosq, mosq->keepalive, mosq->clean_start, NULL);
 		}else{
-			i = mosq->in_packet.payload[1];
-			packet__cleanup(&mosq->in_packet);
 			mosquitto__set_state(mosq, mosq_cs_socks5_new);
-			switch(i){
-				case SOCKS_REPLY_CONNECTION_NOT_ALLOWED:
-					return MOSQ_ERR_AUTH;
-
-				case SOCKS_REPLY_NETWORK_UNREACHABLE:
-				case SOCKS_REPLY_HOST_UNREACHABLE:
-				case SOCKS_REPLY_CONNECTION_REFUSED:
-					return MOSQ_ERR_NO_CONN;
-
-				case SOCKS_REPLY_GENERAL_FAILURE:
-				case SOCKS_REPLY_TTL_EXPIRED:
-				case SOCKS_REPLY_COMMAND_NOT_SUPPORTED:
-				case SOCKS_REPLY_ADDRESS_TYPE_NOT_SUPPORTED:
-					return MOSQ_ERR_PROXY;
-
-				default:
-					return MOSQ_ERR_INVAL;
-			}
+			return socks5__connection_error(mosq);
 		}
 	}else{
 		return packet__read(mosq);
