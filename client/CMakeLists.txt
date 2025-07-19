@@ -52,8 +52,8 @@ if(QNX)
 	target_link_libraries(client-common INTERFACE socket)
 endif()
 
-target_link_libraries(mosquitto_pub PRIVATE client-common)
-target_link_libraries(mosquitto_sub PRIVATE client-common)
+target_link_libraries(mosquitto_pub PRIVATE client-common libmosquitto_common)
+target_link_libraries(mosquitto_sub PRIVATE client-common libmosquitto_common)
 target_link_libraries(mosquitto_rr PRIVATE client-common libmosquitto_common)
 
 install(TARGETS mosquitto_pub RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}")
