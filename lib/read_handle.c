@@ -34,37 +34,70 @@ Contributors:
 
 int handle__packet(struct mosquitto *mosq)
 {
+	int rc = MOSQ_ERR_INVAL;
 	assert(mosq);
 
 	switch((mosq->in_packet.command)&0xF0){
 		case CMD_PINGREQ:
-			return handle__pingreq(mosq);
+			rc = handle__pingreq(mosq);
+			break;
 		case CMD_PINGRESP:
-			return handle__pingresp(mosq);
+			rc = handle__pingresp(mosq);
+			break;
 		case CMD_PUBACK:
-			return handle__pubackcomp(mosq, "PUBACK");
+			rc = handle__pubackcomp(mosq, "PUBACK");
+			break;
 		case CMD_PUBCOMP:
-			return handle__pubackcomp(mosq, "PUBCOMP");
+			rc = handle__pubackcomp(mosq, "PUBCOMP");
+			break;
 		case CMD_PUBLISH:
-			return handle__publish(mosq);
+			rc = handle__publish(mosq);
+			break;
 		case CMD_PUBREC:
-			return handle__pubrec(mosq);
+			rc = handle__pubrec(mosq);
+			break;
 		case CMD_PUBREL:
-			return handle__pubrel(mosq);
+			rc = handle__pubrel(mosq);
+			break;
 		case CMD_CONNACK:
-			return handle__connack(mosq);
+			rc = handle__connack(mosq);
+			break;
 		case CMD_SUBACK:
-			return handle__suback(mosq);
+			rc = handle__suback(mosq);
+			break;
 		case CMD_UNSUBACK:
-			return handle__unsuback(mosq);
+			rc = handle__unsuback(mosq);
+			break;
 		case CMD_DISCONNECT:
-			return handle__disconnect(mosq);
+			rc = handle__disconnect(mosq);
+			break;
 		case CMD_AUTH:
-			return handle__auth(mosq);
+			rc = handle__auth(mosq);
+			break;
 		default:
 			/* If we don't recognise the command, return an error straight away. */
 			log__printf(mosq, MOSQ_LOG_ERR, "Error: Unrecognised command %d\n", (mosq->in_packet.command)&0xF0);
-			return MOSQ_ERR_PROTOCOL;
+			rc = MOSQ_ERR_PROTOCOL;
+			break;
 	}
-}
 
+	if(mosq->protocol == mosq_p_mqtt5){
+		if(rc == MOSQ_ERR_PROTOCOL || rc == MOSQ_ERR_DUPLICATE_PROPERTY){
+			send__disconnect(mosq, MQTT_RC_PROTOCOL_ERROR, NULL);
+		}else if(rc == MOSQ_ERR_MALFORMED_PACKET || rc == MOSQ_ERR_MALFORMED_UTF8){
+			send__disconnect(mosq, MQTT_RC_MALFORMED_PACKET, NULL);
+		}else if(rc == MOSQ_ERR_QOS_NOT_SUPPORTED){
+			send__disconnect(mosq, MQTT_RC_QOS_NOT_SUPPORTED, NULL);
+		}else if(rc == MOSQ_ERR_RETAIN_NOT_SUPPORTED){
+			send__disconnect(mosq, MQTT_RC_RETAIN_NOT_SUPPORTED, NULL);
+		}else if(rc == MOSQ_ERR_TOPIC_ALIAS_INVALID){
+			send__disconnect(mosq, MQTT_RC_TOPIC_ALIAS_INVALID, NULL);
+		}else if(rc == MOSQ_ERR_RECEIVE_MAXIMUM_EXCEEDED){
+			send__disconnect(mosq, MQTT_RC_RECEIVE_MAXIMUM_EXCEEDED, NULL);
+		}else if(rc == MOSQ_ERR_UNKNOWN || rc == MOSQ_ERR_NOMEM){
+			send__disconnect(mosq, MQTT_RC_UNSPECIFIED, NULL);
+		}
+	}
+	return rc;
+
+}

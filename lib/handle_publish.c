@@ -34,6 +34,50 @@ Contributors:
 #include "send_mosq.h"
 #include "util_mosq.h"
 
+static int property__process_publish(struct mosquitto *mosq, mosquitto_property *props, struct mosquitto_message_all *message, uint16_t *topic_alias)
+{
+	while(props){
+		switch(mosquitto_property_identifier(props)){
+			case MQTT_PROP_PAYLOAD_FORMAT_INDICATOR:
+			case MQTT_PROP_MESSAGE_EXPIRY_INTERVAL:
+			case MQTT_PROP_CONTENT_TYPE:
+			case MQTT_PROP_RESPONSE_TOPIC: //
+			case MQTT_PROP_CORRELATION_DATA:
+			case MQTT_PROP_SUBSCRIPTION_IDENTIFIER:
+			case MQTT_PROP_USER_PROPERTY:
+				/* Allowed */
+				break;
+
+			case MQTT_PROP_TOPIC_ALIAS:
+				{
+					*topic_alias = mosquitto_property_int16_value(props);
+					if(*topic_alias == 0 || *topic_alias > mosq->alias_max_l2r){
+						return MOSQ_ERR_TOPIC_ALIAS_INVALID;
+					}
+					if(message->msg.topic){
+						/* Set a new topic alias */
+						if(alias__add_r2l(mosq, message->msg.topic, *topic_alias)){
+							return MOSQ_ERR_NOMEM;
+						}
+					}else{
+						/* Retrieve an existing topic alias */
+						mosquitto_FREE(message->msg.topic);
+						if(alias__find_by_alias(mosq, ALIAS_DIR_R2L, *topic_alias, &message->msg.topic)){
+							return MOSQ_ERR_PROTOCOL;
+						}
+					}
+				}
+				break;
+
+			default:
+				return MOSQ_ERR_PROTOCOL;
+		}
+		props = mosquitto_property_next(props);
+	}
+
+	return MOSQ_ERR_SUCCESS;
+}
+
 
 int handle__publish(struct mosquitto *mosq)
 {
@@ -98,24 +142,11 @@ int handle__publish(struct mosquitto *mosq)
 			return rc;
 		}
 
-		mosquitto_property_read_int16(properties, MQTT_PROP_TOPIC_ALIAS, &topic_alias, false);
-		if(topic_alias != 0){
-			if(message->msg.topic){
-				/* Set a new topic alias */
-				if(alias__add_r2l(mosq, message->msg.topic, topic_alias)){
-					message__cleanup(&message);
-					mosquitto_property_free_all(&properties);
-					return MOSQ_ERR_NOMEM;
-				}
-			}else{
-				/* Retrieve an existing topic alias */
-				mosquitto_FREE(message->msg.topic);
-				if(alias__find_by_alias(mosq, ALIAS_DIR_R2L, topic_alias, &message->msg.topic)){
-					message__cleanup(&message);
-					mosquitto_property_free_all(&properties);
-					return MOSQ_ERR_PROTOCOL;
-				}
-			}
+		rc = property__process_publish(mosq, properties, message, &topic_alias);
+		if(rc){
+			message__cleanup(&message);
+			mosquitto_property_free_all(&properties);
+			return rc;
 		}
 	}
 	/* If we haven't got a topic at this point, it's a protocol error. */
@@ -124,6 +155,11 @@ int handle__publish(struct mosquitto *mosq)
 		mosquitto_property_free_all(&properties);
 		return MOSQ_ERR_PROTOCOL;
 	}
+	if(mosquitto_pub_topic_check(message->msg.topic) != MOSQ_ERR_SUCCESS){
+		message__cleanup(&message);
+		mosquitto_property_free_all(&properties);
+        return MOSQ_ERR_MALFORMED_PACKET;
+    }
 
 	message->msg.payloadlen = (int)(mosq->in_packet.remaining_length - mosq->in_packet.pos);
 	if(message->msg.payloadlen){
