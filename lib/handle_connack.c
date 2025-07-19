@@ -100,6 +100,7 @@ int handle__connack(struct mosquitto *mosq)
 	mosquitto_property_read_byte(properties, MQTT_PROP_MAXIMUM_QOS, &mosq->max_qos, false);
 	mosquitto_property_read_int16(properties, MQTT_PROP_RECEIVE_MAXIMUM, &mosq->msgs_out.inflight_maximum, false);
 	mosquitto_property_read_int16(properties, MQTT_PROP_SERVER_KEEP_ALIVE, &mosq->keepalive, false);
+	mosquitto_property_read_int16(properties, MQTT_PROP_TOPIC_ALIAS_MAXIMUM, &mosq->alias_max_l2r, false);
 	mosquitto_property_read_int32(properties, MQTT_PROP_MAXIMUM_PACKET_SIZE, &mosq->maximum_packet_size, false);
 
 	mosq->msgs_out.inflight_quota = mosq->msgs_out.inflight_maximum;
