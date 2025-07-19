@@ -37,6 +37,8 @@ tests = [
     (1, './03-publish-url.py'),
 
     (2, './03-publish-socks.py'),
+    (2, './03-publish-socks-auth-failed.py'),
+    (2, './03-publish-socks-no-auth.py'),
     (1, './03-publish-stdin-file.py'),
     (1, './03-publish-stdin-line.py'),
 

@@ -57,6 +57,8 @@ ifeq ($(WITH_WEBSOCKETS),yes)
 endif
 	./03-publish-repeat.py
 	./03-publish-socks.py
+	./03-publish-socks-auth-failed.py
+	./03-publish-socks-no-auth.py
 	./03-publish-stdin-file.py
 	./03-publish-stdin-line.py
 	./03-publish-url.py
