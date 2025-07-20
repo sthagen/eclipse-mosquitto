@@ -2005,7 +2005,7 @@ static int config__read_file_core(struct mosquitto__config *config, bool reload,
 				}else if(!strcmp(token, "max_packet_size")){
 					if(conf__parse_int(&token, "max_packet_size", &tmp_int, &saveptr)) return MOSQ_ERR_INVAL;
 					if(tmp_int < 20){
-						log__printf(NULL, MOSQ_LOG_ERR, "Error: Invalid 'max_packet_size' value (%d).", tmp_int);
+						log__printf(NULL, MOSQ_LOG_ERR, "Error: 'max_packet_size' must be >= 20.");
 						return MOSQ_ERR_INVAL;
 					}
 					config->max_packet_size = (uint32_t)tmp_int;
@@ -2696,7 +2696,17 @@ static int conf__parse_int(char **token, const char *name, int *value, char **sa
 {
 	*token = strtok_r(NULL, " ", saveptr);
 	if(*token){
-		*value = atoi(*token);
+		char *endptr = NULL;
+		long l = strtol(*token, &endptr, 0);
+		if(endptr == *token || endptr[0] != '\0'){
+			log__printf(NULL, MOSQ_LOG_ERR, "Error: '%s' value not a number.", name);
+			return MOSQ_ERR_INVAL;
+		}
+		if(l > INT_MAX || l < INT_MIN){
+			log__printf(NULL, MOSQ_LOG_ERR, "Error: '%s' value out of range.", name);
+			return MOSQ_ERR_INVAL;
+		}
+		*value = (int)l;
 	}else{
 		log__printf(NULL, MOSQ_LOG_ERR, "Error: Empty '%s' value in configuration.", name);
 		return MOSQ_ERR_INVAL;

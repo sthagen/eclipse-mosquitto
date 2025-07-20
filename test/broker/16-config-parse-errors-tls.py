@@ -19,14 +19,14 @@ do_test_broker_failure(conf_file, ["bridge_tls_version string"], port, 3) # Miss
 do_test_broker_failure(conf_file, [f"listener {port}","certfile"], port, 3) # empty certfile
 do_test_broker_failure(conf_file, [f"listener {port}","keyfile"], port, 3) # empty keyfile
 
-do_test_broker_failure(conf_file, [f"listener {port}","certfile ./16-config-parse-errors.py","keyfile ../ssl/server.key"], port, 1) # invalid certfile
-do_test_broker_failure(conf_file, [f"listener {port}","certfile ../ssl/server.crt","keyfile ./16-config-parse-errors.py"], port, 1) # invalid keyfile
-do_test_broker_failure(conf_file, [f"listener {port}","certfile ../ssl/server.crt","keyfile ../ssl/client.key"], port, 1) # mismatched certfile / keyfile
+do_test_broker_failure(conf_file, [f"listener {port}","certfile ./16-config-parse-errors.py","keyfile ../ssl/server.key"], port, 1, with_test_config=False) # invalid certfile
+do_test_broker_failure(conf_file, [f"listener {port}","certfile ../ssl/server.crt","keyfile ./16-config-parse-errors.py"], port, 1, with_test_config=False) # invalid keyfile
+do_test_broker_failure(conf_file, [f"listener {port}","certfile ../ssl/server.crt","keyfile ../ssl/client.key"], port, 1, with_test_config=False) # mismatched certfile / keyfile
 
-do_test_broker_failure(conf_file, [f"listener {port}","certfile ../ssl/server.crt","keyfile ../ssl/server.key","tls_version invalid"], port, 1) # invalid tls_version
+do_test_broker_failure(conf_file, [f"listener {port}","certfile ../ssl/server.crt","keyfile ../ssl/server.key","tls_version invalid"], port, 1, with_test_config=False) # invalid tls_version
 
-do_test_broker_failure(conf_file, [f"listener {port}","certfile ../ssl/server.crt","keyfile ../ssl/server.key","crlfile invalid"], port, 1) # missing crl file
-do_test_broker_failure(conf_file, [f"listener {port}","certfile ../ssl/server.crt","keyfile ../ssl/server.key","ciphers invalid"], port, 1) # invalid ciphers
-do_test_broker_failure(conf_file, [f"listener {port}","certfile ../ssl/server.crt","keyfile ../ssl/server.key","ciphers_tls1.3 invalid"], port, 1) # invalid ciphers_tls1.3
+do_test_broker_failure(conf_file, [f"listener {port}","certfile ../ssl/server.crt","keyfile ../ssl/server.key","crlfile invalid"], port, 1, with_test_config=False) # missing crl file
+do_test_broker_failure(conf_file, [f"listener {port}","certfile ../ssl/server.crt","keyfile ../ssl/server.key","ciphers invalid"], port, 1, with_test_config=False) # invalid ciphers
+do_test_broker_failure(conf_file, [f"listener {port}","certfile ../ssl/server.crt","keyfile ../ssl/server.key","ciphers_tls1.3 invalid"], port, 1, with_test_config=False) # invalid ciphers_tls1.3
 
 exit(0)

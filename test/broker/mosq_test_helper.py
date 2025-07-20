@@ -43,9 +43,14 @@ def do_test_broker_failure(
     rc_expected: int,
     error_log_entry: str = None,
     stdout_entry: str = None,
-    cmd_args: list = None,
+    cmd_args: list = [],
+    with_test_config: bool = True,
 ):
     rc = 1
+
+    cmd_args = cmd_args.copy()
+    if with_test_config:
+        cmd_args.insert(0, "--test-config")
 
     use_conf_file = len(conf_file)
     create_conf_file = use_conf_file and len(config)
@@ -100,7 +105,7 @@ def do_test_broker_failure(
                 pass
         if rc:
             print(
-                f"While testing 'config {chr(10).join(config) if len(config) else ''}'{', args'+ ' '.join(cmd_args) if cmd_args is not None else ''}"
+                f"While testing 'config {chr(10).join(config) if len(config) else ''}'{', args '+ ' '.join(cmd_args) if cmd_args is not None else ''}"
             )
             exit(rc)
 

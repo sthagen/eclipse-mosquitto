@@ -66,6 +66,7 @@ def do_failure_test(create_db_of_version: list[int]):
             port=port,
             rc_expected=3,
             error_log_entry=f"Unknown database_schema version {'.'.join([str(i) for i in create_db_of_version])}",
+            with_test_config=False,
         )
     except Exception as exc:
         print(f"Exception: {str(exc)}")
