@@ -43,9 +43,15 @@ static int property__process_publish(struct mosquitto *mosq, mosquitto_property 
 			case MQTT_PROP_CONTENT_TYPE:
 			case MQTT_PROP_RESPONSE_TOPIC: //
 			case MQTT_PROP_CORRELATION_DATA:
-			case MQTT_PROP_SUBSCRIPTION_IDENTIFIER:
 			case MQTT_PROP_USER_PROPERTY:
 				/* Allowed */
+				break;
+
+			case MQTT_PROP_SUBSCRIPTION_IDENTIFIER:
+				/* Allowed */
+				if(mosquitto_property_varint_value(props) == 0){
+					return MOSQ_ERR_PROTOCOL;
+				}
 				break;
 
 			case MQTT_PROP_TOPIC_ALIAS:

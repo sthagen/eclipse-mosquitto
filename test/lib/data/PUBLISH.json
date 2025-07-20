@@ -263,6 +263,56 @@
 				{"type":"recv", "payload":"40 02 1234"}
 			]},
 
+			{ "name": "subscription-identifier=0 (variable byte integer)", "msgs": [
+				{"type":"send", "payload":"32 13 0005 746F706963 1234 02 0B00 7061796C6F6164"},
+				{"type":"recv", "payload":"E0 01 82"}
+			]},
+			{ "name": "subscription-identifier=0x7F (variable byte integer)", "expect_disconnect":false, "msgs": [
+				{"type":"send", "payload":"32 13 0005 746F706963 1234 02 0B7F 7061796C6F6164"},
+				{"type":"recv", "payload":"40 02 1234"}
+			]},
+			{ "name": "subscription-identifier=0x8000 (variable byte integer)", "msgs": [
+				{"type":"send", "payload":"32 14 0005 746F706963 1234 03 0B8000 7061796C6F6164"},
+				{"type":"recv", "payload":"E0 01 81"}
+			]},
+			{ "name": "subscription-identifier=0x8001 (variable byte integer)", "expect_disconnect":false, "msgs": [
+				{"type":"send", "payload":"32 14 0005 746F706963 1234 03 0B8001 7061796C6F6164"},
+				{"type":"recv", "payload":"40 02 1234"}
+			]},
+			{ "name": "subscription-identifier=0xFF7F (variable byte integer)", "expect_disconnect":false, "msgs": [
+				{"type":"send", "payload":"32 14 0005 746F706963 1234 03 0BFF7F 7061796C6F6164"},
+				{"type":"recv", "payload":"40 02 1234"}
+			]},
+			{ "name": "subscription-identifier=0x808001 (variable byte integer)", "expect_disconnect":false, "msgs": [
+				{"type":"send", "payload":"32 15 0005 746F706963 1234 04 0B808001 7061796C6F6164"},
+				{"type":"recv", "payload":"40 02 1234"}
+			]},
+			{ "name": "subscription-identifier=0xFFFF7F (variable byte integer)", "expect_disconnect":false, "msgs": [
+				{"type":"send", "payload":"32 15 0005 746F706963 1234 04 0BFFFF7F 7061796C6F6164"},
+				{"type":"recv", "payload":"40 02 1234"}
+			]},
+			{ "name": "subscription-identifier=0x80808001 (variable byte integer)", "expect_disconnect":false, "msgs": [
+				{"type":"send", "payload":"32 16 0005 746F706963 1234 05 0B80808001 7061796C6F6164"},
+				{"type":"recv", "payload":"40 02 1234"}
+			]},
+			{ "name": "subscription-identifier=0xFFFFFF7F (variable byte integer)", "expect_disconnect":false, "msgs": [
+				{"type":"send", "payload":"32 16 0005 746F706963 1234 05 0BFFFFFF7F 7061796C6F6164"},
+				{"type":"recv", "payload":"40 02 1234"}
+			]},
+			{ "name": "subscription-identifier=0x8080808001 (variable byte integer)", "msgs": [
+				{"type":"send", "payload":"32 17 0005 746F706963 1234 06 0B8080808001 7061796C6F6164"},
+				{"type":"recv", "payload":"E0 01 81"}
+			]},
+			{ "name": "2*subscription-identifier=1 (variable byte integer)", "msgs": [
+				{"type":"send", "payload":"32 15 0005 746F706963 1234 04 0B01 0B01 7061796C6F6164"},
+				{"type":"recv", "payload":"E0 01 82"}
+			]},
+
+			{ "name": "subscription-identifier (variable byte integer) missing", "msgs": [
+				{"type":"send", "payload":"32 12 0005 746F706963 1234 01 0B 7061796C6F6164"},
+				{"type":"recv", "payload":"E0 01 81"}
+			]},
+
 			{ "name": "content-type (UTF-8 string)", "expect_disconnect":false, "msgs": [
 				{"type":"send", "payload":"32 15 0005 746F706963 1234 04 03000170 7061796C6F6164"},
 				{"type":"recv", "payload":"40 02 1234"}
@@ -285,56 +335,6 @@
 		"group": "v5.0   PUBLISH DISALLOWED PROPERTIES",
 		"ver":5,
 		"tests": [
-			{ "name": "subscription-identifier=0 (variable byte integer)", "msgs": [
-				{"type":"send", "payload":"32 13 0005 746F706963 1234 02 0B00 7061796C6F6164"},
-				{"type":"recv", "payload":"E0 01 82"}
-			]},
-			{ "name": "subscription-identifier=0x7F (variable byte integer)", "msgs": [
-				{"type":"send", "payload":"32 13 0005 746F706963 1234 02 0B7F 7061796C6F6164"},
-				{"type":"recv", "payload":"E0 01 82"}
-			]},
-			{ "name": "subscription-identifier=0x8000 (variable byte integer)", "msgs": [
-				{"type":"send", "payload":"32 14 0005 746F706963 1234 03 0B8000 7061796C6F6164"},
-				{"type":"recv", "payload":"E0 01 81"}
-			]},
-			{ "name": "subscription-identifier=0x8001 (variable byte integer)", "msgs": [
-				{"type":"send", "payload":"32 14 0005 746F706963 1234 03 0B8001 7061796C6F6164"},
-				{"type":"recv", "payload":"E0 01 82"}
-			]},
-			{ "name": "subscription-identifier=0xFF7F (variable byte integer)", "msgs": [
-				{"type":"send", "payload":"32 14 0005 746F706963 1234 03 0BFF7F 7061796C6F6164"},
-				{"type":"recv", "payload":"E0 01 82"}
-			]},
-			{ "name": "subscription-identifier=0x808001 (variable byte integer)", "msgs": [
-				{"type":"send", "payload":"32 15 0005 746F706963 1234 04 0B808001 7061796C6F6164"},
-				{"type":"recv", "payload":"E0 01 82"}
-			]},
-			{ "name": "subscription-identifier=0xFFFF7F (variable byte integer)", "msgs": [
-				{"type":"send", "payload":"32 15 0005 746F706963 1234 04 0BFFFF7F 7061796C6F6164"},
-				{"type":"recv", "payload":"E0 01 82"}
-			]},
-			{ "name": "subscription-identifier=0x80808001 (variable byte integer)", "msgs": [
-				{"type":"send", "payload":"32 16 0005 746F706963 1234 05 0B80808001 7061796C6F6164"},
-				{"type":"recv", "payload":"E0 01 82"}
-			]},
-			{ "name": "subscription-identifier=0xFFFFFF7F (variable byte integer)", "msgs": [
-				{"type":"send", "payload":"32 16 0005 746F706963 1234 05 0BFFFFFF7F 7061796C6F6164"},
-				{"type":"recv", "payload":"E0 01 82"}
-			]},
-			{ "name": "subscription-identifier=0x8080808001 (variable byte integer)", "msgs": [
-				{"type":"send", "payload":"32 17 0005 746F706963 1234 06 0B8080808001 7061796C6F6164"},
-				{"type":"recv", "payload":"E0 01 81"}
-			]},
-			{ "name": "2*subscription-identifier=1 (variable byte integer)", "msgs": [
-				{"type":"send", "payload":"32 15 0005 746F706963 1234 04 0B01 0B01 7061796C6F6164"},
-				{"type":"recv", "payload":"E0 01 82"}
-			]},
-
-			{ "name": "subscription-identifier (variable byte integer) missing", "msgs": [
-				{"type":"send", "payload":"32 12 0005 746F706963 1234 01 0B 7061796C6F6164"},
-				{"type":"recv", "payload":"E0 01 81"}
-			]},
-
 			{ "name": "reason-string property", "msgs": [
 				{"type":"send", "payload":"32 15 0005 746F706963 1234 04 1F000170 7061796C6F6164"},
 				{"type":"recv", "payload":"E0 01 82"}
