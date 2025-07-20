@@ -31,6 +31,14 @@ static int psk__cleanup(struct mosquitto__psk **psk);
 static int psk__file_parse(struct mosquitto__psk **psk_id, const char *psk_file);
 
 
+static void psk__free_item(struct mosquitto__psk *psk)
+{
+	mosquitto_FREE(psk->username);
+	mosquitto_FREE(psk->password);
+	mosquitto_FREE(psk);
+}
+
+
 int psk_file__init(void)
 {
 	int rc;
@@ -134,7 +142,7 @@ static int pwfile__parse(const char *file, struct mosquitto__psk **root)
 
 				psk->username = mosquitto_strdup(username);
 				if(!psk->username){
-					mosquitto_FREE(psk);
+					psk__free_item(psk);
 					mosquitto_FREE(buf);
 					fclose(pwfile);
 					return MOSQ_ERR_NOMEM;
@@ -145,25 +153,21 @@ static int pwfile__parse(const char *file, struct mosquitto__psk **root)
 
 					if(strlen(password) > 65535){
 						log__printf(NULL, MOSQ_LOG_NOTICE, "Warning: Invalid line in password file '%s', password too long.", file);
-						mosquitto_FREE(psk->username);
-						mosquitto_FREE(psk);
+						psk__free_item(psk);
 						continue;
 					}
 
 					psk->password = mosquitto_strdup(password);
 					if(!psk->password){
 						log__printf(NULL, MOSQ_LOG_NOTICE, "Warning: Unable to decode line in password file '%s'.", file);
-						mosquitto_FREE(psk->username);
-						mosquitto_FREE(psk);
+						psk__free_item(psk);
 						continue;
 					}
 
 					HASH_ADD_KEYPTR(hh, *root, psk->username, strlen(psk->username), psk);
 				}else{
 					log__printf(NULL, MOSQ_LOG_NOTICE, "Warning: Invalid line in psk file '%s': %s", file, buf);
-					mosquitto_FREE(psk->username);
-					mosquitto_FREE(psk->password);
-					mosquitto_FREE(psk);
+					psk__free_item(psk);
 				}
 			}
 		}
@@ -172,15 +176,6 @@ static int pwfile__parse(const char *file, struct mosquitto__psk **root)
 	mosquitto_FREE(buf);
 
 	return MOSQ_ERR_SUCCESS;
-}
-
-
-void psk__free_item(struct mosquitto__psk **psk, struct mosquitto__psk *item)
-{
-	mosquitto_FREE(item->username);
-	mosquitto_FREE(item->password);
-	HASH_DEL(*psk, item);
-	mosquitto_FREE(item);
 }
 
 
@@ -220,9 +215,7 @@ static int psk__cleanup(struct mosquitto__psk **root)
 
 	HASH_ITER(hh, *root, psk, tmp){
 		HASH_DEL(*root, psk);
-		mosquitto_FREE(psk->username);
-		mosquitto_FREE(psk->password);
-		mosquitto_FREE(psk);
+		psk__free_item(psk);
 	}
 
 	*root = NULL;
