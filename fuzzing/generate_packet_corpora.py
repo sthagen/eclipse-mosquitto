@@ -42,7 +42,7 @@ def gen_packet_corpus(packet_type, input_path):
                 fuzzi = 1
                 for m in t["msgs"]:
                     if m["type"] == "send" or m["type"] == "recv":
-                        fname = re.sub(r'[ \[\]\(\)]+', '-', tname) + str(fuzzi) + ".raw"
+                        fname = re.sub(r'[\/ \[\]\(\)]+', '-', tname) + str(fuzzi) + ".raw"
                         payload = m["payload"].replace(" ", "")
 
                         # No duplicates please

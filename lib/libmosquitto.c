@@ -299,6 +299,7 @@ void mosquitto__destroy(struct mosquitto *mosq)
 	if(mosq->ssl_ctx){
 		SSL_CTX_free(mosq->ssl_ctx);
 	}
+#endif
 	mosquitto_FREE(mosq->tls_cafile);
 	mosquitto_FREE(mosq->tls_capath);
 	mosquitto_FREE(mosq->tls_certfile);
@@ -309,7 +310,6 @@ void mosquitto__destroy(struct mosquitto *mosq)
 	mosquitto_FREE(mosq->tls_psk);
 	mosquitto_FREE(mosq->tls_psk_identity);
 	mosquitto_FREE(mosq->tls_alpn);
-#endif
 #ifndef OPENSSL_NO_ENGINE
 	mosquitto_FREE(mosq->tls_engine);
 #endif

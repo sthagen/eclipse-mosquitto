@@ -521,7 +521,7 @@ int main(int argc, char *argv[])
 
 	plugin_persist__handle_restore();
 	session_expiry__check();
-	db__retain_expiry_check();
+	retain__expire(&db.retains);
 	db__msg_store_compact();
 
 #ifdef WITH_SYS_TREE

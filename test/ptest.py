@@ -50,6 +50,11 @@ class PTestCase():
             ansi_reset = ""
         print(f"{self.runtime:0.3f}s : {stat} : {ansi_col}{self.path}/{cmd}{ansi_reset}")
 
+    def print_log(self):
+        (stdo, stde) = self.proc.communicate()
+        print(stdo.decode('utf-8'))
+        print(stde.decode('utf-8'))
+
 
 class PTest():
     def __init__(self, minport=1888, max_running=20):
@@ -149,7 +154,7 @@ class PTest():
                         failed_tests.append(t.cmd)
                         failed_tests_output.append([t.ports]+t.args)
                         print(f"{t.cmd}:")
-                        (stdo, stde) = t.proc.communicate()
+                        t.print_log()
                     else:
                         passed = passed + 1
                         t.print_result(0, COLOUR_PASS)

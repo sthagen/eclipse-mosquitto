@@ -45,8 +45,11 @@ Contributors:
 #  include <netinet/in.h>
 #endif
 
-#ifdef WITH_UNIX_SOCKETS
+#if defined(WITH_UNIX_SOCKETS) || defined(WITH_TLS)
 #  include "sys/stat.h"
+#endif
+
+#ifdef WITH_UNIX_SOCKETS
 #  include "sys/un.h"
 #endif
 

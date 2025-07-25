@@ -52,8 +52,8 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
 	config.security_options.psk_file = strdup(filename);
 
 	log__init(&config);
-	mosquitto_security_init_default(false);
-	mosquitto_security_cleanup_default(false);
+	mosquitto_security_init_default();
+	mosquitto_security_cleanup_default();
 	config__cleanup(&config);
 
 	unlink(filename);

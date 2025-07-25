@@ -184,7 +184,7 @@ int mosquitto_main_loop(struct mosquitto__listener_sock *listensock, int listens
 #endif
 
 	while(g_run){
-		retain__expire();
+		retain__expiry_check();
 		queue_plugin_msgs();
 		context__free_disused();
 

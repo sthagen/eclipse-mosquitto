@@ -47,7 +47,7 @@ endif
 mosquitto_db_dump : ${OBJS} ${BROKER_OBJS} ${OBJS_EXTERNAL}
 	${CROSS_COMPILE}${CC} $^ -o $@ ${LOCAL_LDFLAGS} ${LOCAL_LDADD}
 
-mosquitto_db_dump.a : ${OBJS} ${BROKER_OBJS}
+mosquitto_db_dump.a : ${OBJS} ${BROKER_OBJS} ${OBJS_EXTERNAL}
 	${CROSS_COMPILE}$(AR) cr $@ $^
 
 ${OBJS} : %.o:%.c db_dump.h
