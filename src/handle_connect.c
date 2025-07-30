@@ -553,7 +553,7 @@ static int read_and_verify_connect_flags(struct mosquitto *context, uint8_t *con
 
 static void set_session_expiry_interval(struct mosquitto *context, uint8_t clean_start, uint8_t protocol_version)
 {
-	/* session_expiry_interval will be overriden if the properties are read later */
+	/* session_expiry_interval will be overridden if the properties are read later */
 	if(clean_start == false && protocol_version != PROTOCOL_VERSION_v5){
 		/* v3* has clean_start == false mean the session never expires */
 		context->session_expiry_interval = UINT32_MAX;
