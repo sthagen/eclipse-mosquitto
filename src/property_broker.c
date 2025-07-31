@@ -137,7 +137,7 @@ int property__process_will(struct mosquitto *context, struct mosquitto_message_a
 }
 
 
-int property__process_publish(struct mosquitto__base_msg *base_msg, mosquitto_property **props, int *topic_alias, uint32_t *message_expiry_interval)
+int property__process_publish(struct mosquitto__base_msg *base_msg, mosquitto_property **props, int *topic_alias, uint32_t *message_expiry_interval, bool is_bridge)
 {
 	mosquitto_property *p, *p_prev;
 	mosquitto_property *msg_properties_last;
@@ -183,7 +183,7 @@ int property__process_publish(struct mosquitto__base_msg *base_msg, mosquitto_pr
 				break;
 
 			case MQTT_PROP_SUBSCRIPTION_IDENTIFIER:
-				if(mosquitto_property_varint_value(p) == 0){
+				if(!is_bridge || mosquitto_property_varint_value(p) == 0){
 					return MOSQ_ERR_PROTOCOL;
 				}
 				p_prev = p;

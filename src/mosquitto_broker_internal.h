@@ -883,7 +883,7 @@ int keepalive__update(struct mosquitto *context);
  * ============================================================ */
 int property__process_connect(struct mosquitto *context, mosquitto_property **props);
 int property__process_will(struct mosquitto *context, struct mosquitto_message_all *msg, mosquitto_property **props);
-int property__process_publish(struct mosquitto__base_msg *base_msg, mosquitto_property **props, int *topic_alias, uint32_t *message_expiry_interval);
+int property__process_publish(struct mosquitto__base_msg *base_msg, mosquitto_property **props, int *topic_alias, uint32_t *message_expiry_interval, bool is_bridge);
 int property__process_disconnect(struct mosquitto *context, mosquitto_property **props);
 
 /* ============================================================

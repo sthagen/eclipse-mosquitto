@@ -120,7 +120,7 @@ int handle__publish(struct mosquitto *context)
 			return rc;
 		}
 
-		rc = property__process_publish(base_msg, &properties, &topic_alias, &message_expiry_interval);
+		rc = property__process_publish(base_msg, &properties, &topic_alias, &message_expiry_interval, context->bridge);
 		if(rc){
 			mosquitto_property_free_all(&properties);
 			db__msg_store_free(base_msg);
