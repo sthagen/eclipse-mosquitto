@@ -180,6 +180,14 @@
 			<varlistentry>
 				<term><option>acl_file</option> <replaceable>file path</replaceable></term>
 				<listitem>
+					<para>
+						<emphasis>Note:</emphasis> It is suggested that you use the
+						<option>mosquitto_acl_file</option> plugin instead of this
+						option. Using plugins for authentication and authorisation
+						allows greater control of what listeners they are applied to,
+						without the need for the deprecated
+						<option>per_listener_settings</option> option.
+					</para>
 					<para>Set the path to an access control list file. If
 						defined, the contents of the file are used to control
 						client access to topics on the broker.</para>
@@ -216,7 +224,7 @@
 						keyword.</para>
 					<para><code>pattern [read|write|readwrite|deny] &lt;topic&gt;</code></para>
 
-					<para>The patterns available for substition are:</para>
+					<para>The patterns available for substitution are:</para>
 					<itemizedlist mark="circle">
 						<listitem><para>%c to match the client id of the client</para></listitem>
 						<listitem><para>%u to match the username of the client</para></listitem>
@@ -241,6 +249,11 @@
 						<replaceable>false</replaceable>, this option applies
 						to all listeners.</para>
 
+					<para>
+						Note: In general it is not possible to grant write
+						access to topics in the $SYS topic tree. The exception
+						is <replaceable>$SYS/broker/connection/+/state</replaceable>.
+					</para>
 					<para>Reloaded on reload signal. The currently loaded ACLs
 						will be freed and reloaded. Existing subscriptions will
 						be affected after the reload.</para>
@@ -890,6 +903,15 @@ log_timestamp_format %Y-%m-%dT%H:%M:%S
 			<varlistentry>
 				<term><option>password_file</option> <replaceable>file path</replaceable></term>
 				<listitem>
+					<para>
+						<emphasis>Note:</emphasis> It is suggested that you use the
+						<option>mosquitto_password_file</option> plugin instead of this
+						option. Using plugins for authentication and authorisation
+						allows greater control of what listeners they are applied to,
+						without the need for the deprecated
+						<option>per_listener_settings</option> option.
+					</para>
+
 					<para>Set the path to a password file. If defined, the
 						contents of the file are used to control client access
 						to the broker. The file can be created using the
@@ -1670,20 +1692,20 @@ accept_protocol_versions 3, 4</programlisting>
 					<term><option>websockets_headers_size</option> <replaceable>size</replaceable></term>
 					<listitem>
 						<para>
-                            Change the size of the buffer used when reading from
-                            the network before the size of the MQTT packet is
-                            known. Defaults to 4096. Packets received that are
-                            smaller than this value in principle only need a
-                            single read() call, making reading packets more
-                            efficient.
+							Change the size of the buffer used when reading from
+							the network before the size of the MQTT packet is
+							known. Defaults to 4096. Packets received that are
+							smaller than this value in principle only need a
+							single read() call, making reading packets more
+							efficient.
 						</para>
 
 						<para>
-                            This also operates as the option that sets the size
-                            of the buffer used by websockets when reading the
-                            initial header. If you are passing large header data
-                            such as cookies then you may need to increase this
-                            value.
+							This also operates as the option that sets the size
+							of the buffer used by websockets when reading the
+							initial header. If you are passing large header data
+							such as cookies then you may need to increase this
+							value.
 						</para>
 					</listitem>
 				</varlistentry>
@@ -2728,7 +2750,7 @@ topic clients/total in 0 test/mosquitto/org/ $SYS/broker/
 	<refsect1>
 		<title>Bugs</title>
 		<para><command>mosquitto</command> bug information can be found at
-			<ulink url="https://github.com/eclipse/mosquitto/issues"/></para>
+			<ulink url="https://github.com/eclipse-mosquitto/mosquitto/issues"/></para>
 	</refsect1>
 
 	<refsect1>

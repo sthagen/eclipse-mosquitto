@@ -6,4 +6,6 @@ user roger
 topic foo/bar
 
 # This affects all clients.
+# Note that this is the only topic it is possible to grant access to writing to
+# the $SYS tree. All other topics are always denied.
 pattern write $SYS/broker/connection/%c/state

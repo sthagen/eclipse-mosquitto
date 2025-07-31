@@ -372,7 +372,7 @@ OK</programlisting>
 		<title>Bugs</title>
 		<para>
 			<command>mosquitto</command> bug information can be found at
-			<ulink url="https://github.com/eclipse/mosquitto/issues"/>
+			<ulink url="https://github.com/eclipse-mosquitto/mosquitto/issues"/>
 		</para>
 	</refsect1>
 
