@@ -230,6 +230,14 @@
 				{"type":"send", "payload":"82 07 0000 00 0001 70 00"},
 				{"type":"recv", "payload":"E0 01 81"}
 			]},
+			{ "name": "82 shared sub with + in sharename", "ver":5, "msgs": [
+				{"type":"send", "payload":"82 10 1234 00 000A 2473686172652F2B2F7000"},
+				{"type":"recv", "payload":"E0 01 82"}
+			]},
+			{ "name": "82 shared sub with # in sharename", "ver":5, "msgs": [
+				{"type":"send", "payload":"82 10 1234 00 000A 2473686172652F232F7000"},
+				{"type":"recv", "payload":"E0 01 81"}
+			]},
 			{ "name": "82 shared sub with no topic part 1", "ver":5, "msgs": [
 				{"type":"send", "payload":"82 0F 1234 00 0009 2473686172652F702F 00"},
 				{"type":"recv", "payload":"E0 01 82"}

@@ -102,6 +102,11 @@ int sub__topic_tokenise(const char *subtopic, char **local_sub, char ***topics, 
 		}
 
 		if(sharename){
+			if(strpbrk((*topics)[1], "+#")){
+				mosquitto_FREE(*local_sub);
+				mosquitto_FREE(*topics);
+				return MOSQ_ERR_PROTOCOL;
+			}
 			(*sharename) = (*topics)[1];
 		}
 
