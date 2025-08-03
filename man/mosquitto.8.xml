@@ -520,13 +520,6 @@
 				</listitem>
 			</varlistentry>
 			<varlistentry>
-				<term><option>$SYS/broker/messages/inflight</option></term>
-				<listitem>
-					<para>The number of messages with QoS>0 that are awaiting
-					acknowledgments.</para>
-				</listitem>
-			</varlistentry>
-			<varlistentry>
 				<term><option>$SYS/broker/messages/received</option></term>
 				<listitem>
 					<para>The total number of messages of any type received since the broker started.</para>
