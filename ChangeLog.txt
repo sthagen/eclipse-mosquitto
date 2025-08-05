@@ -181,9 +181,6 @@
 - `mosquitto_property_read_binary/string/string_pair` will now set the
   name/value parameter to NULL if the binary/string is empty. This aligns the
   behaviour with other property functions. Closes #2648.
-- TLS v1.1 now not enabled by default. It is still possible to explicitly
-  choose TLS v1.1, but this is not recommended and will be removed in a future
-  version.
 - Add `mosquitto_unsubscribe2_v5_callback_set`, which provides a callback that
   gives access to reason codes for each of the unsubscription requests.
 - Add `mosquitto_property_remove`, for removing properties from property
@@ -196,35 +193,47 @@
   rather than own function.
 
 # Clients
+
+## General
 - Add `-W` timeout support to Windows.
 - The `--insecure` option now disables all server certificate verification.
-- Fix incorrect output formatting in mosquitto_sub when using field widths
-  with `%x` and `%X` for printing the payload in hex.
-- Add float printing option to mosquitto_sub.
-- Fix `-f` and `-s` options in mosquitto_rr.
 - Add websockets support.
 - Using `-x` now sets the clients to use MQTT v5.0.
 - Fix parsing of IPv6 addresses in socks proxy urls.
 - Add `--tls-keylog` option which can be used to generate a file that can be
   used by wireshark to decrypt TLS traffic for debugging purposes.
+- Remove support for TLS v1.1.
+
+## mosquitto_rr
+- Fix `-f` and `-s` options in mosquitto_rr.
+- Add `--latency` option to mosquitto_rr, for printing the request/response
+  latency.
+
+## mosquitto_sub
+- Fix incorrect output formatting in mosquitto_sub when using field widths
+  with `%x` and `%X` for printing the payload in hex.
+- Add float printing option to mosquitto_sub.
 - mosquitto_sub payload hex output can now be split by fixed field length.
 - Add `--message-rate` option to mosquitto_sub, for printing the count of
   messages received each second.
-- Add `--latency` option to mosquitto_rr, for printing the request/response
-  latency.
-- Remove support for TLS v1.1.
-
-# DB Dump
-- Add `--json` output mode.
 
 # Apps
+
+## mosquitto_signal
 - Add `mosquitto_signal` for helping send signals to mosquitto on Windows.
+
+## mosquitto_ctrl
 - Add interactive shell mode to mosquitto_ctrl.
-- Print messages in mosquitto_passwd when adding/updating passwords.
-  Closes #2544.
+- Add support for `listPlugins` to mosquitto_ctrl.
 - Allow mosquitto_ctrl dynsec module to update passwords in files rather than
   having to connect to a broker.
-- Add support for `listPlugins` to mosquitto_ctrl.
+
+## mosquitto_passwd
+- Print messages in mosquitto_passwd when adding/updating passwords.
+  Closes #2544.
+
+## mosquitto_db_dump
+- Add `--json` output mode do mosquitto_db_dump.
 
 # Build
 - Increased CMake minimal required version to 3.14, which is required for the
