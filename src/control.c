@@ -134,6 +134,10 @@ int control__register_callback(mosquitto_plugin_id_t *pid, MOSQ_FUNC_generic_cal
 	}
 	return MOSQ_ERR_SUCCESS;
 #else
+	UNUSED(pid);
+	UNUSED(cb_func);
+	UNUSED(topic);
+	UNUSED(userdata);
 	return MOSQ_ERR_NOT_SUPPORTED;
 #endif
 }
@@ -171,6 +175,9 @@ int control__unregister_callback(mosquitto_plugin_id_t *identifier, MOSQ_FUNC_ge
 	}
 	return MOSQ_ERR_NOT_FOUND;
 #else
+	UNUSED(identifier);
+	UNUSED(cb_func);
+	UNUSED(topic);
 	return MOSQ_ERR_NOT_SUPPORTED;
 #endif
 }

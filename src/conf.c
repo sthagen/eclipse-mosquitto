@@ -428,7 +428,9 @@ void config__cleanup(struct mosquitto__config *config)
 				config->listeners[i].ssl_ctx = NULL;
 			}
 #endif
+#if defined(WITH_WEBSOCKETS) || defined(WITH_HTTP_API)
 			mosquitto_FREE(config->listeners[i].http_dir);
+#endif
 #ifdef WITH_WEBSOCKETS
 			for(int j=0; j<config->listeners[i].ws_origin_count; j++){
 				mosquitto_FREE(config->listeners[i].ws_origins[j]);
