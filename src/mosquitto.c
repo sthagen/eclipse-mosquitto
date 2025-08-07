@@ -119,14 +119,16 @@ static int check_uid(const char *s, const char *name)
 /* Prints the name of the process user from its user id if not found 
  * it simply prints out the user id
  */
-static void print_pwname()
+static void print_pwname(void)
 {
+#ifndef WIN32
 	struct passwd *pwd = getpwuid(geteuid());
 	if(!pwd){
 		log__printf(NULL, MOSQ_LOG_INFO, "Info: running mosquitto as user id: %i.", geteuid());
 	}else{
 		log__printf(NULL, MOSQ_LOG_INFO, "Info: running mosquitto as user: %s.", pwd->pw_name);
 	}
+#endif
 }
 
 /* mosquitto shouldn't run as root.
