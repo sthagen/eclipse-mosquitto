@@ -50,6 +50,7 @@ do_test_broker_failure(conf_file, ["connection"], port, 3, "Error: Empty 'connec
 do_test_broker_failure(conf_file, ["connection just-name"], port, 3, "Error: Invalid bridge configuration: no remote addresses defined.") # Missing bridge topic and address
 do_test_broker_failure(conf_file, ["connection no-topic", "address localhost"], port, 3, "Error: Invalid bridge configuration: no topics defined.") # Missing bridge topic
 do_test_broker_failure(conf_file, ["connection no-address", "topic dummy-topic"], port, 3, "Error: Invalid bridge configuration: no remote addresses defined.") # Missing bridge address
+do_test_broker_failure(conf_file, ["connection no-address", "topic \"missing quote"], port, 3, "Error: Missing closing quote in topic value (quote).") # Missing topic quote
 
 do_test_broker_failure(conf_file, ["local_clientid str"], port, 3, "Error: The 'local_clientid' option requires a bridge to be defined first.") # Missing bridge config
 do_test_broker_failure(conf_file, ["local_password str"], port, 3, "Error: The 'local_password' option requires a bridge to be defined first.") # Missing bridge config

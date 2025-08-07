@@ -2452,9 +2452,12 @@ restart_timeout 10 60 30</programlisting>
 			<varlistentry>
 				<term><option>topic</option> <replaceable>pattern</replaceable> [[[ out | in | both ] qos-level] local-prefix remote-prefix]</term>
 				<listitem>
-					<para>Define a topic pattern to be shared between the two
+					<para>
+						Define a topic pattern to be shared between the two
 						brokers. Any topics matching the pattern (which may
-						include wildcards) are shared. The second parameter
+						include wildcards) are shared. The pattern may be
+						enclosed in double quotes in case it contains a space.
+						The second parameter
 						defines the direction that the messages will be shared
 						in, so it is possible to import messages from a remote
 						broker using <replaceable>in</replaceable>, export
@@ -2463,7 +2466,8 @@ restart_timeout 10 60 30</programlisting>
 						both directions. If this parameter is not defined, the
 						default of <replaceable>out</replaceable> is used. The
 						QoS level defines the publish/subscribe QoS level used
-						for this topic and defaults to 0.</para>
+						for this topic and defaults to 0.
+					</para>
 					<para>The <replaceable>local-prefix</replaceable> and
 						<replaceable>remote-prefix</replaceable> options allow
 						topics to be remapped when publishing to and receiving

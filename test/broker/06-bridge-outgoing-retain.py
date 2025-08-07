@@ -12,7 +12,7 @@ def write_config(filename, port1, port2, protocol_version, outgoing_retain):
         f.write("\n")
         f.write("connection bridge_sample\n")
         f.write("address 127.0.0.1:%d\n" % (port1))
-        f.write("topic bridge/# both 1\n")
+        f.write("topic \"bridge with space/#\" both 1\n")
         f.write("notifications false\n")
         f.write("restart_timeout 5\n")
         f.write("bridge_protocol_version %s\n" %(protocol_version))
@@ -42,18 +42,18 @@ def do_test(proto_ver, outgoing_retain):
     else:
         opts = 0
 
-    subscribe_packet = mosq_test.gen_subscribe(mid, "bridge/#", 1 | opts, proto_ver=proto_ver)
+    subscribe_packet = mosq_test.gen_subscribe(mid, "bridge with space/#", 1 | opts, proto_ver=proto_ver)
     suback_packet = mosq_test.gen_suback(mid, 1, proto_ver=proto_ver)
 
     if outgoing_retain == "true":
-        publish_packet = mosq_test.gen_publish("bridge/retain/test", qos=0, retain=True, payload="message", proto_ver=proto_ver)
+        publish_packet = mosq_test.gen_publish("bridge with space/retain/test", qos=0, retain=True, payload="message", proto_ver=proto_ver)
     else:
-        publish_packet = mosq_test.gen_publish("bridge/retain/test", qos=0, retain=False, payload="message", proto_ver=proto_ver)
+        publish_packet = mosq_test.gen_publish("bridge with space/retain/test", qos=0, retain=False, payload="message", proto_ver=proto_ver)
 
 
     helper_connect_packet = mosq_test.gen_connect("helper", clean_session=True, proto_ver=proto_ver)
     helper_connack_packet = mosq_test.gen_connack(rc=0, proto_ver=proto_ver)
-    helper_publish_packet = mosq_test.gen_publish("bridge/retain/test", qos=0, retain=True, payload="message", proto_ver=proto_ver)
+    helper_publish_packet = mosq_test.gen_publish("bridge with space/retain/test", qos=0, retain=True, payload="message", proto_ver=proto_ver)
 
 
     ssock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
