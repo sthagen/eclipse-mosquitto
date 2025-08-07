@@ -131,6 +131,29 @@ extern SERVICE_STATUS_HANDLE service_handle;
 		log__printf(NULL, MOSQ_LOG_NOTICE, "You are using the '%s' option with 'per_listener_settings true'. Please replace this with '%s'.", A, B); \
 	} \
 
+
+#ifdef FINAL_WITH_TLS_PSK
+#  define REQUIRE_BRIDGE_NO_TLS_PSK(A) \
+	do{ \
+		if(cur_bridge->tls_psk_identity || cur_bridge->tls_psk){ \
+			log__printf(NULL, MOSQ_LOG_ERR, "Error: '%s': Cannot use both certificate and psk encryption in a single bridge.", (A)); \
+			return MOSQ_ERR_INVAL; \
+		} \
+	}while(0)
+
+#  define REQUIRE_BRIDGE_NO_X509(A) \
+	do{ \
+		if(cur_bridge->tls_cafile || cur_bridge->tls_capath || cur_bridge->tls_certfile || cur_bridge->tls_keyfile){ \
+			log__printf(NULL, MOSQ_LOG_ERR, "Error: '%s': Cannot use both certificate and identity encryption in a single bridge.", (A)); \
+			return MOSQ_ERR_INVAL; \
+		} \
+	}while(0)
+
+#else
+#  define REQUIRE_BRIDGE_NO_TLS_PSK(A)
+#  define REQUIRE_BRIDGE_NO_X509(A)
+#endif
+
 static struct mosquitto__security_options *cur_security_options = NULL;
 
 static int conf__parse_bool(char **token, const char *name, bool *value, char **saveptr);
@@ -1195,12 +1218,7 @@ static int config__read_file_core(struct mosquitto__config *config, bool reload,
 				}else if(!strcmp(token, "bridge_cafile")){
 #if defined(WITH_BRIDGE) && defined(WITH_TLS)
 					REQUIRE_BRIDGE(token);
-#ifdef FINAL_WITH_TLS_PSK
-					if(cur_bridge->tls_psk_identity || cur_bridge->tls_psk){
-						log__printf(NULL, MOSQ_LOG_ERR, "Error: Cannot use both certificate and psk encryption in a single bridge.");
-						return MOSQ_ERR_INVAL;
-					}
-#endif
+					REQUIRE_BRIDGE_NO_TLS_PSK(token);
 					if(conf__parse_string(&token, "bridge_cafile", &cur_bridge->tls_cafile, &saveptr)) return MOSQ_ERR_INVAL;
 #else
 					log__printf(NULL, MOSQ_LOG_WARNING, "Warning: Bridge and/or TLS support not available.");
@@ -1236,12 +1254,7 @@ static int config__read_file_core(struct mosquitto__config *config, bool reload,
 				}else if(!strcmp(token, "bridge_capath")){
 #if defined(WITH_BRIDGE) && defined(WITH_TLS)
 					REQUIRE_BRIDGE(token);
-#ifdef FINAL_WITH_TLS_PSK
-					if(cur_bridge->tls_psk_identity || cur_bridge->tls_psk){
-						log__printf(NULL, MOSQ_LOG_ERR, "Error: Cannot use both certificate and psk encryption in a single bridge.");
-						return MOSQ_ERR_INVAL;
-					}
-#endif
+					REQUIRE_BRIDGE_NO_TLS_PSK(token);
 					if(conf__parse_string(&token, "bridge_capath", &cur_bridge->tls_capath, &saveptr)) return MOSQ_ERR_INVAL;
 #else
 					log__printf(NULL, MOSQ_LOG_WARNING, "Warning: Bridge and/or TLS support not available.");
@@ -1249,12 +1262,7 @@ static int config__read_file_core(struct mosquitto__config *config, bool reload,
 				}else if(!strcmp(token, "bridge_certfile")){
 #if defined(WITH_BRIDGE) && defined(WITH_TLS)
 					REQUIRE_BRIDGE(token);
-#ifdef FINAL_WITH_TLS_PSK
-					if(cur_bridge->tls_psk_identity || cur_bridge->tls_psk){
-						log__printf(NULL, MOSQ_LOG_ERR, "Error: Cannot use both certificate and psk encryption in a single bridge.");
-						return MOSQ_ERR_INVAL;
-					}
-#endif
+					REQUIRE_BRIDGE_NO_TLS_PSK(token);
 					if(conf__parse_string(&token, "bridge_certfile", &cur_bridge->tls_certfile, &saveptr)) return MOSQ_ERR_INVAL;
 #else
 					log__printf(NULL, MOSQ_LOG_WARNING, "Warning: Bridge and/or TLS support not available.");
@@ -1262,10 +1270,7 @@ static int config__read_file_core(struct mosquitto__config *config, bool reload,
 				}else if(!strcmp(token, "bridge_identity")){
 #if defined(WITH_BRIDGE) && defined(FINAL_WITH_TLS_PSK)
 					REQUIRE_BRIDGE(token);
-					if(cur_bridge->tls_cafile || cur_bridge->tls_capath || cur_bridge->tls_certfile || cur_bridge->tls_keyfile){
-						log__printf(NULL, MOSQ_LOG_ERR, "Error: Cannot use both certificate and identity encryption in a single bridge.");
-						return MOSQ_ERR_INVAL;
-					}
+					REQUIRE_BRIDGE_NO_X509(token);
 					if(conf__parse_string(&token, "bridge_identity", &cur_bridge->tls_psk_identity, &saveptr)) return MOSQ_ERR_INVAL;
 #else
 					log__printf(NULL, MOSQ_LOG_WARNING, "Warning: Bridge and/or TLS-PSK support not available.");
@@ -1319,12 +1324,7 @@ static int config__read_file_core(struct mosquitto__config *config, bool reload,
 				}else if(!strcmp(token, "bridge_keyfile")){
 #if defined(WITH_BRIDGE) && defined(WITH_TLS)
 					REQUIRE_BRIDGE(token);
-#ifdef FINAL_WITH_TLS_PSK
-					if(cur_bridge->tls_psk_identity || cur_bridge->tls_psk){
-						log__printf(NULL, MOSQ_LOG_ERR, "Error: Cannot use both certificate and psk encryption in a single bridge.");
-						return MOSQ_ERR_INVAL;
-					}
-#endif
+					REQUIRE_BRIDGE_NO_TLS_PSK(token);
 					mosquitto_FREE(cur_bridge->tls_keyfile);
 					if(conf__parse_string(&token, "bridge_keyfile", &cur_bridge->tls_keyfile, &saveptr)) return MOSQ_ERR_INVAL;
 #else
@@ -1352,10 +1352,7 @@ static int config__read_file_core(struct mosquitto__config *config, bool reload,
 				}else if(!strcmp(token, "bridge_psk")){
 #if defined(WITH_BRIDGE) && defined(FINAL_WITH_TLS_PSK)
 					REQUIRE_BRIDGE(token);
-					if(cur_bridge->tls_cafile || cur_bridge->tls_capath || cur_bridge->tls_certfile || cur_bridge->tls_keyfile){
-						log__printf(NULL, MOSQ_LOG_ERR, "Error: Cannot use both certificate and psk encryption in a single bridge.");
-						return MOSQ_ERR_INVAL;
-					}
+					REQUIRE_BRIDGE_NO_X509(token);
 					if(conf__parse_string(&token, "bridge_psk", &cur_bridge->tls_psk, &saveptr)) return MOSQ_ERR_INVAL;
 #else
 					log__printf(NULL, MOSQ_LOG_WARNING, "Warning: Bridge and/or TLS-PSK support not available.");
