@@ -511,7 +511,11 @@ int main(int argc, char *argv[])
 				fprintf(stderr, "Error: -c argument given but password file, username, or password missing.\n");
 				return 1;
 			}else{
-				password_file_tmp = argv[idx];
+				if(!strcmp(argv[idx], "-")){
+					use_stdout = true;
+				}else{
+					password_file_tmp = argv[idx];
+				}
 				username = argv[idx+1];
 				password_cmd = argv[idx+2];
 			}
@@ -520,7 +524,7 @@ int main(int argc, char *argv[])
 				fprintf(stderr, "Error: -c argument given but password file or username missing.\n");
 				return 1;
 			}else{
-				if (!strcmp(argv[idx], "-")){
+				if(!strcmp(argv[idx], "-")){
 					use_stdout = true;
 				}else{
 					password_file_tmp = argv[idx];
@@ -607,7 +611,9 @@ int main(int argc, char *argv[])
 			}
 			free(password_file);
 		}
-		printf("Adding password for user %s\n", username);
+		if(!use_stdout){
+			printf("Adding password for user %s\n", username);
+		}
 		rc = output_new_password(fptr, username, password_cmd, iterations);
 		fclose(fptr);
 		return rc;

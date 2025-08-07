@@ -8,9 +8,10 @@ all :
 
 check : test
 
-test : 
+test :
 	./passwd-args.py
 	./passwd-changes.py
+	./passwd-stdout.py
 
 ptest :
 	./test.py

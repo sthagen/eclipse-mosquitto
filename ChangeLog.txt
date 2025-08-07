@@ -231,6 +231,8 @@
 ## mosquitto_passwd
 - Print messages in mosquitto_passwd when adding/updating passwords.
   Closes #2544.
+- When creating a new file with `-c`, setting the output filename to a dash `-`
+  will output the result to stdout.
 
 ## mosquitto_db_dump
 - Add `--json` output mode do mosquitto_db_dump.
