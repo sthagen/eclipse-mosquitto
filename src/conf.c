@@ -2408,7 +2408,11 @@ static int config__read_file_core(struct mosquitto__config *config, bool reload,
 						strcat(topic, " ");
 						strcat(topic, topic_in_quotes);
 					}else{
-						topic = token;
+						topic = mosquitto_strdup(token);
+						if (!topic) {
+							log__printf(NULL, MOSQ_LOG_ERR, "Error: Out of memory.");
+							return MOSQ_ERR_NOMEM;
+						}
 					}
 
 					token = strtok_r(NULL, " ", &saveptr);
@@ -2421,6 +2425,7 @@ static int config__read_file_core(struct mosquitto__config *config, bool reload,
 							direction = bd_both;
 						}else{
 							log__printf(NULL, MOSQ_LOG_ERR, "Error: Invalid bridge topic direction '%s'.", token);
+							mosquitto_FREE(topic);
 							return MOSQ_ERR_INVAL;
 						}
 						token = strtok_r(NULL, " ", &saveptr);
@@ -2431,6 +2436,7 @@ static int config__read_file_core(struct mosquitto__config *config, bool reload,
 							qos = (uint8_t)atoi(token);
 							if(qos > 2){
 								log__printf(NULL, MOSQ_LOG_ERR, "Error: Invalid bridge QoS level '%s'.", token);
+								mosquitto_FREE(topic);
 								return MOSQ_ERR_INVAL;
 							}
 
@@ -2458,8 +2464,10 @@ static int config__read_file_core(struct mosquitto__config *config, bool reload,
 					}
 
 					if(bridge__add_topic(cur_bridge, topic, direction, qos, local_prefix, remote_prefix)){
+						mosquitto_FREE(topic);
 						return MOSQ_ERR_INVAL;
 					}
+					mosquitto_FREE(topic);
 #else
 					log__printf(NULL, MOSQ_LOG_WARNING, "Warning: Bridge support not available.");
 #endif
