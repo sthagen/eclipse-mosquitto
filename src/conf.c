@@ -2397,8 +2397,12 @@ static int config__read_file_core(struct mosquitto__config *config, bool reload,
 						}
 
 						char *topic_in_quotes = strtok_r(NULL, "\"", &saveptr);
+						size_t slen = 1;
+						if(topic_in_quotes){
+							slen = strlen(topic_in_quotes);
+						}
 
-						topic = mosquitto_malloc(strlen(token) + strlen(topic_in_quotes) + 1);
+						topic = mosquitto_malloc(strlen(token) + slen + 1);
 						if (!topic) {
 							log__printf(NULL, MOSQ_LOG_ERR, "Error: Out of memory.");
 							return MOSQ_ERR_NOMEM;
@@ -2406,7 +2410,9 @@ static int config__read_file_core(struct mosquitto__config *config, bool reload,
 
 						strcpy(topic, token + 1);
 						strcat(topic, " ");
-						strcat(topic, topic_in_quotes);
+						if(topic_in_quotes){
+							strcat(topic, topic_in_quotes);
+						}
 					}else{
 						topic = mosquitto_strdup(token);
 						if (!topic) {
