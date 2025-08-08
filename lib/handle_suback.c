@@ -73,7 +73,10 @@ int handle__suback(struct mosquitto *mosq)
 	}
 
 	qos_count = (int)(mosq->in_packet.remaining_length - mosq->in_packet.pos);
-	if(qos_count == 0) return MOSQ_ERR_PROTOCOL;
+	if(qos_count == 0){
+		mosquitto_property_free_all(&properties);
+		return MOSQ_ERR_PROTOCOL;
+	}
 	granted_qos = mosquitto_malloc((size_t)qos_count*sizeof(int));
 	if(!granted_qos){
 		mosquitto_property_free_all(&properties);
