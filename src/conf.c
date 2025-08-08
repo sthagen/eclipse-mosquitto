@@ -2388,8 +2388,9 @@ static int config__read_file_core(struct mosquitto__config *config, bool reload,
 					token = strtok_r(NULL, " ", &saveptr);
 					REQUIRE_NON_EMPTY_OPTION(token, "topic");
 
-					// Check if the topic is quoted (e.g. for spaces within topic names)
-					if(token[0] == '"') {
+					// Check if the topic is quoted (e.g. for spaces within topic names), but not the
+					// special case of ""
+					if(token[0] == '"' && token [1] != '"'){
 						if (strchr(saveptr, '"') == NULL) {
 							log__printf(NULL, MOSQ_LOG_ERR, "Error: Missing closing quote in topic value (%s).", saveptr);
 							return MOSQ_ERR_INVAL;
