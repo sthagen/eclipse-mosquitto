@@ -72,7 +72,7 @@ option(WITH_THREADING "Include client library threading support?" ON)
 if (WITH_THREADING)
 	add_definitions("-DWITH_THREADING")
 	if(WIN32)
-		find_package(Pthreads4W REQUIRED)
+		find_package(PThreads4W REQUIRED)
 	endif()
 endif (WITH_THREADING)
 
