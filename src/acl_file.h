@@ -21,7 +21,7 @@ Contributors:
 #include <uthash.h>
 
 struct acl__entry{
-	struct acl__entry *next;
+	struct acl__entry *next, *prev;
 	char *topic;
 	int access;
 	int ucount;

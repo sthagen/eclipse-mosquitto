@@ -78,9 +78,9 @@ static int add__acl(struct acl_file_data *data, const char *user, const char *to
 	/* Add acl to user acl list */
 	if(access == MOSQ_ACL_NONE){
 		/* Put "deny" acls at front of the list */
-		LL_PREPEND(acl_user->acl, acl);
+		DL_PREPEND(acl_user->acl, acl);
 	}else{
-		LL_APPEND(acl_user->acl, acl);
+		DL_APPEND(acl_user->acl, acl);
 	}
 
 	if(new_user){
