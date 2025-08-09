@@ -149,12 +149,13 @@ int net__init(void)
 void net__cleanup(void)
 {
 #ifdef WITH_TLS
-#  if !defined(OPENSSL_NO_ENGINE) && OPENSSL_API_LEVEL < 30000
-	ENGINE_cleanup();
-#  endif
-	is_tls_initialized = false;
-
 	cleanup_ui_method();
+	if(is_tls_initialized){
+#  if !defined(OPENSSL_NO_ENGINE) && OPENSSL_API_LEVEL < 30000
+		ENGINE_cleanup();
+#  endif
+		is_tls_initialized = false;
+	}
 #endif
 
 #ifdef WITH_SRV
