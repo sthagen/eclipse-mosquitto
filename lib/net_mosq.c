@@ -147,20 +147,22 @@ int net__init(void)
 void net__cleanup(void)
 {
 #ifdef WITH_TLS
+	cleanup_ui_method();
+	if(is_tls_initialized){
 #  if OPENSSL_VERSION_NUMBER < 0x10100000L
-	CRYPTO_cleanup_all_ex_data();
-	ERR_free_strings();
-	ERR_remove_thread_state(NULL);
-	EVP_cleanup();
+		CRYPTO_cleanup_all_ex_data();
+		ERR_free_strings();
+		ERR_remove_thread_state(NULL);
+		EVP_cleanup();
 
 #    if !defined(OPENSSL_NO_ENGINE)
-	ENGINE_cleanup();
+		ENGINE_cleanup();
 #    endif
-	is_tls_initialized = false;
+		is_tls_initialized = false;
 #  endif
 
-	CONF_modules_unload(1);
-	cleanup_ui_method();
+		CONF_modules_unload(1);
+	}
 #endif
 
 #ifdef WITH_SRV
