@@ -57,7 +57,7 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
 
 	umask(0077);
 
-	snprintf(filename, sizeof(filename), "/tmp/mosquitto_passwd_%d", getpid());
+	snprintf(filename, sizeof(filename), "mosquitto_passwd_%d", getpid());
 	fptr = fopen(filename, "wb");
 	if(!fptr) return 1;
 	fwrite(data, 1, size, fptr);
