@@ -286,7 +286,7 @@ BROKER_EXPORT char *mosquitto_strndup(const char *s, size_t n)
 	str = mosquitto_malloc(size + 1);
 	if(str){
 		memcpy(str, s, size);
+		str[size] = 0;
 	}
-	str[size] = 0;
 	return str;
 }
