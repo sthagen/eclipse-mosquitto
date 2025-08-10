@@ -53,7 +53,7 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
 
 	umask(0077);
 
-	snprintf(filename, sizeof(filename), "/tmp/db_dump_stats_%d.db", getpid());
+	snprintf(filename, sizeof(filename), "db_dump_stats_%d.db", getpid());
 	fptr = fopen(filename, "wb");
 	if(!fptr) return 1;
 	fwrite(data, 1, size, fptr);
