@@ -459,11 +459,6 @@ int mosquitto_read_file(const char *file, char **buf, size_t *buflen)
 	}
 	buflen_i = (size_t)l;
 
-	if(buflen_i == 0){
-		fclose(fptr);
-		return MOSQ_ERR_SUCCESS;
-	}
-
 	*buf = mosquitto_calloc(buflen_i+1, sizeof(char));
 	if((*buf) == NULL){
 		fclose(fptr);
