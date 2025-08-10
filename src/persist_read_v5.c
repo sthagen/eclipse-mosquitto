@@ -110,7 +110,7 @@ int persist__chunk_client_msg_read_v56(FILE *db_fptr, struct P_client_msg *chunk
 	struct mosquitto__packet_in prop_packet;
 	int rc;
 
-	memset(&prop_packet, 0, sizeof(struct mosquitto__packet));
+	memset(&prop_packet, 0, sizeof(struct mosquitto__packet_in));
 
 	read_e(db_fptr, &chunk->F, sizeof(struct PF_client_msg));
 	chunk->F.mid = ntohs(chunk->F.mid);
