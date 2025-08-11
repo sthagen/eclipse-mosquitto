@@ -69,7 +69,8 @@
 			mosquitto_ctrl on the command line - this also allows custom CA
 			certificates to be used.
 		</para>
-		<para>Client certificates may be used for additional security. To
+		<para>
+			Client certificates may be used for additional security. To
 			enable this, use the <option>--cert</option> and
 			<option>--key</option> options.
 		</para>
@@ -255,126 +256,27 @@ OK</programlisting>
 		<title>Connection Options</title>
 		<para>The options below may be given on the command line</para>
 		<variablelist>
-			<varlistentry>
-				<term><option>--cafile</option></term>
-				<listitem>
-					<para>Define the path to a file containing PEM encoded CA
-						certificates that are trusted. Used to enable SSL
-						communication.</para>
-					<para>See also <option>--capath</option></para>
-				</listitem>
-			</varlistentry>
-			<varlistentry>
-				<term><option>--capath</option></term>
-				<listitem>
-					<para>Define the path to a directory containing PEM encoded CA
-						certificates that are trusted. Used to enable SSL
-						communication.</para>
-					<para>For <option>--capath</option> to work correctly, the
-						certificate files must have ".crt" as the file ending
-						and you must run "openssl rehash &lt;path to capath&gt;" each
-						time you add/remove a certificate.</para>
-					<para>See also <option>--cafile</option></para>
-				</listitem>
-			</varlistentry>
-			<varlistentry>
-				<term><option>--cert</option></term>
-				<listitem>
-					<para>Define the path to a file containing a PEM encoded
-						certificate for this client, if required by the
-						server.</para>
-					<para>See also <option>--key</option>.</para>
-				</listitem>
-			</varlistentry>
-			<varlistentry>
-				<term><option>--help</option></term>
-				<listitem>
-					<para>Display usage information.</para>
-				</listitem>
-			</varlistentry>
-			<varlistentry>
-				<term><option>-h</option></term>
-				<term><option>--host</option></term>
-				<listitem>
-					<para>Specify the host to connect to. Defaults to localhost.</para>
-				</listitem>
-			</varlistentry>
-			<varlistentry>
-				<term><option>-i</option></term>
-				<term><option>--id</option></term>
-				<listitem>
-					<para>
-						The id to use for this client. If not given, a client id will be
-						generated depending on the MQTT version being used. For v3.1.1/v3.1,
-                        the client generates a client id in the format
-						<option>mosq-XXXXXXXXXXXXXXXXXX</option>, where the <option>X</option>
-						are replaced with random alphanumeric characters. For v5.0, the
-						client sends a zero length client id, and the server will generate a
-						client id for the client.
-					</para>
-				</listitem>
-			</varlistentry>
-			<varlistentry>
-				<term><option>--key</option></term>
-				<listitem>
-					<para>
-						Define the path to a file containing a PEM encoded
-						private key for this client, if required by the
-						server.
-					</para>
-					<para>See also <option>--cert</option>.</para>
-				</listitem>
-			</varlistentry>
-			<varlistentry>
-				<term><option>-p</option></term>
-				<term><option>--port</option></term>
-				<listitem>
-					<para>
-						Connect to the port specified. If not given, the
-						default of 1883 for plain MQTT or 8883 for MQTT over
-						TLS will be used.
-					</para>
-				</listitem>
-			</varlistentry>
-			<varlistentry>
-				<term><option>-P</option></term>
-				<term><option>--pw</option></term>
-				<listitem>
-					<para>
-						Provide a password to be used for authenticating with
-						the broker. Using this argument without also specifying
-						a username is invalid when using MQTT v3.1 or v3.1.1.
-						See also the <option>--username</option> option.
-					</para>
-				</listitem>
-			</varlistentry>
-			<varlistentry>
-				<term><option>-u</option></term>
-				<term><option>--username</option></term>
-				<listitem>
-					<para>
-						Provide a username to be used for authenticating with
-						the broker.  See also the <option>--pw</option> argument.
-					</para>
-				</listitem>
-			</varlistentry>
+			<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="common/option-tls-cafile.xml" />
+			<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="common/option-tls-capath.xml" />
+			<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="common/option-tls-cert.xml" />
+			<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="common/option-tls-ciphers.xml" />
+			<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="common/option-help.xml" />
+			<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="common/option-host.xml" />
+			<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="common/option-clientid.xml" />
+			<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="common/option-tls-key.xml" />
+			<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="common/option-port.xml" />
+			<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="common/option-username.xml" />
 		</variablelist>
 	</refsect1>
 
 	<refsect1>
 		<title>Exit Status</title>
 		<para>
-			mosquitto_sub returns zero on success, or non-zero on error.
+			mosquitto_ctrl returns zero on success, or non-zero on error.
 		</para>
 	</refsect1>
 
-	<refsect1>
-		<title>Bugs</title>
-		<para>
-			<command>mosquitto</command> bug information can be found at
-			<ulink url="https://github.com/eclipse-mosquitto/mosquitto/issues"/>
-		</para>
-	</refsect1>
+	<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="common/section-bugs.xml" />
 
 	<refsect1>
 		<title>See Also</title>

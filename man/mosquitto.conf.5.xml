@@ -22,17 +22,20 @@
 
 	<refsect1>
 		<title>Description</title>
-		<para><command>mosquitto.conf</command> is the configuration file for
-		mosquitto. This file can reside anywhere as long as mosquitto can read
-		it. By default, mosquitto does not need a configuration file and will
-		use the default values listed below. See
-		<citerefentry><refentrytitle><link xlink:href="mosquitto-8.html">mosquitto</link></refentrytitle><manvolnum>8</manvolnum></citerefentry>
-		for information on how to load a configuration file.</para>
 		<para>
-			Mosquitto can be instructed to reload the configuration file by sending
-			a SIGHUP signal as described in the Signals section of
+			<command>mosquitto.conf</command> is the configuration file for
+			mosquitto. This file can reside anywhere as long as mosquitto can read
+			it. By default, mosquitto does not need a configuration file and will
+			use the default values listed below. See
+			<citerefentry><refentrytitle><link xlink:href="mosquitto-8.html">mosquitto</link></refentrytitle><manvolnum>8</manvolnum></citerefentry>
+			for information on how to load a configuration file.
+		</para>
+		<para>
+			Mosquitto can be instructed to reload the configuration file by
+			sending a SIGHUP signal as described in the Signals section of
 			<citerefentry><refentrytitle><link xlink:href="mosquitto-8.html">mosquitto</link></refentrytitle><manvolnum>8</manvolnum></citerefentry>.
-			Not all configuration options can be reloaded, as detailed in the options below.
+			Not all configuration options can be reloaded, as detailed in
+			the options below.
 		</para>
 	</refsect1>
 
@@ -106,35 +109,48 @@
 
 	<refsect1>
 		<title>File Format</title>
-		<para>All lines with a # as the very first character are treated as a
-		comment.</para>
-		<para>Configuration lines start with a variable name. The variable
-		value is separated from the name by a single space.</para>
+		<para>
+            All lines with a # as the very first character are treated as a
+            comment.
+		</para>
+		<para>
+            Configuration lines start with a variable name. The variable value
+            is separated from the name by a single space.
+        </para>
 	</refsect1>
 
 	<refsect1>
 		<title>Authentication</title>
-		<para>The authentication options described below allow a wide range of
+        <para>
+			The authentication options described below allow a wide range of
 			possibilities in conjunction with the listener options. This
-			section aims to clarify the possibilities. An overview is also available at
-			<ulink url="https://mosquitto.org/documentation/authentication-methods/"/></para>
-		<para>The simplest option is to have no authentication at all. This is
+			section aims to clarify the possibilities. An overview is also
+			available at
+			<ulink url="https://mosquitto.org/documentation/authentication-methods/"/>
+        </para>
+		<para>
+			The simplest option is to have no authentication at all. This is
 			the default if no other options are given. Unauthenticated
 			encrypted support is provided by using the certificate based
-			SSL/TLS based options certfile and keyfile.</para>
-		<para>MQTT provides username/password authentication as part of the
+			SSL/TLS based options certfile and keyfile.
+		</para>
+		<para>
+			MQTT provides username/password authentication as part of the
 			protocol. Use the password_file option to define the valid
 			usernames and passwords. Be sure to use network encryption if you
 			are using this option otherwise the username and password will be
 			vulnerable to interception. Use the
 			<option>per_listener_settings</option> to control whether passwords
-			are required globally or on a per-listener basis.</para>
-		<para>Mosquitto provides the Dynamic Security plugin which handles
+			are required globally or on a per-listener basis.
+		</para>
+		<para>
+			Mosquitto provides the Dynamic Security plugin which handles
 			username/password authentication and access control in a much
 			more flexible way than a password file. See
 			<ulink url="https://mosquitto.org/documentation/dynamic-security/"/>
-			</para>
-		<para>When using certificate based encryption there are three options
+		</para>
+		<para>
+			When using certificate based encryption there are three options
 			that affect authentication. The first is require_certificate, which
 			may be set to true or false. If false, the SSL/TLS component of the
 			client will verify the server but there is no requirement for the
@@ -154,24 +170,33 @@
 			the client must authenticate as normal (if required by
 			password_file) through the MQTT options. The same principle applies
 			for the use_subject_as_username option, but the entire certificate
-			subject is used as the username instead of just the CN.</para>
-		<para>When using pre-shared-key based encryption through the psk_hint
+			subject is used as the username instead of just the CN.
+		</para>
+		<para>
+			When using pre-shared-key based encryption through the psk_hint
 			and psk_file options, the client must provide a valid identity and
 			key in order to connect to the broker before any MQTT communication
 			takes place. If use_identity_as_username is true, the PSK identity
 			is used instead of the MQTT username for access control purposes.
 			If use_identity_as_username is false, the client may still
 			authenticate using the MQTT username/password if using the
-			password_file option.</para>
-		<para>Both certificate and PSK based encryption are configured on a
-			per-listener basis.</para>
-		<para>Authentication plugins can be created to augment the
+			password_file option.
+		</para>
+		<para>
+			Both certificate and PSK based encryption are configured on a
+			per-listener basis.
+		</para>
+		<para>
+			Authentication plugins can be created to augment the
 			password_file, acl_file and psk_file options with e.g. SQL based
-			lookups.</para>
-		<para>It is possible to support multiple authentication schemes at
+			lookups.
+		</para>
+		<para>
+			It is possible to support multiple authentication schemes at
 			once. A config could be created that had a listener for all of the
 			different encryption options described above and hence a large
-			number of ways of authenticating.</para>
+			number of ways of authenticating.
+		</para>
 	</refsect1>
 
 	<refsect1>
@@ -188,76 +213,105 @@
 						without the need for the deprecated
 						<option>per_listener_settings</option> option.
 					</para>
-					<para>Set the path to an access control list file. If
+					<para>
+						Set the path to an access control list file. If
 						defined, the contents of the file are used to control
-						client access to topics on the broker.</para>
-					<para>If this parameter is defined then only the topics
+						client access to topics on the broker.
+					</para>
+					<para>
+						If this parameter is defined then only the topics
 						listed will have access. Topic access is added with
-						lines of the format:</para>
+						lines of the format:
+					</para>
 
-					<para><code>topic [read|write|readwrite|deny] &lt;topic&gt;</code></para>
+					<para>
+						<code>topic [read|write|readwrite|deny] &lt;topic&gt;</code>
+					</para>
 
-					<para>The access type is controlled using "read", "write",
+					<para>
+						The access type is controlled using "read", "write",
 						"readwrite" or "deny". This parameter is optional (unless
 						&lt;topic&gt; includes a space character) - if not
-						given then the access is read/write.  &lt;topic&gt; can
+						given then the access is read/write. &lt;topic&gt; can
 						contain the + or # wildcards as in
 						subscriptions. The "deny" option can used to explicitly
 						deny access to a topic that would otherwise be granted
 						by a broader read/write/readwrite statement. Any "deny"
-						topics are handled before topics that grant read/write access.</para>
+						topics are handled before topics that grant read/write access.
+					</para>
 
-					<para>The first set of topics are applied to anonymous
+					<para>
+						The first set of topics are applied to anonymous
 						clients, assuming <option>allow_anonymous</option> is
 						true. User specific topic ACLs are added after a user
-						line as follows:</para>
+						line as follows:
+					</para>
 
-					<para><code>user &lt;username&gt;</code></para>
+					<para>
+						<code>user &lt;username&gt;</code>
+					</para>
 
-					<para>The username referred to here is the same as in
+					<para>
+						The username referred to here is the same as in
 						<option>password_file</option>. It is not the
-						clientid.</para>
+						clientid.
+					</para>
 
-					<para>It is also possible to define ACLs based on pattern
+					<para>
+						It is also possible to define ACLs based on pattern
 						substitution within the topic. The form is the same as
 						for the topic keyword, but using pattern as the
-						keyword.</para>
-					<para><code>pattern [read|write|readwrite|deny] &lt;topic&gt;</code></para>
+						keyword.
+					</para>
+					<para>
+						<code>pattern [read|write|readwrite|deny] &lt;topic&gt;</code>
+					</para>
 
-					<para>The patterns available for substitution are:</para>
+					<para>
+						The patterns available for substitution are:
+					</para>
 					<itemizedlist mark="circle">
 						<listitem><para>%c to match the client id of the client</para></listitem>
 						<listitem><para>%u to match the username of the client</para></listitem>
 					</itemizedlist>
-					<para>The substitution pattern must be the only text for
+					<para>
+						The substitution pattern must be the only text for
 						that level of hierarchy. Pattern ACLs apply to all
 						users even if the "user" keyword has previously been
-						given.</para>
+						given.
+					</para>
 
 					<para>Example:</para>
 					<para><code>pattern write sensor/%u/data</code></para>
 					<para>Allow access for bridge connection messages:</para>
 					<para><code>pattern write $SYS/broker/connection/%c/state</code></para>
 
-					<para>If the first character of a line of the ACL file is a
-						# it is treated as a comment.</para>
+					<para>
+						If the first character of a line of the ACL file is a
+						# it is treated as a comment.
+					</para>
 
-					<para>If <option>per_listener_settings</option> is
+					<para>
+						If <option>per_listener_settings</option> is
 						<replaceable>true</replaceable>, this option applies to
 						the current listener being configured only. If
 						<option>per_listener_settings</option> is
 						<replaceable>false</replaceable>, this option applies
-						to all listeners.</para>
+						to all listeners.
+					</para>
 
 					<para>
 						Note: In general it is not possible to grant write
 						access to topics in the $SYS topic tree. The exception
 						is <replaceable>$SYS/broker/connection/+/state</replaceable>.
 					</para>
-					<para>Reloaded on reload signal. The currently loaded ACLs
+					<para>
+						Reloaded on reload signal. The currently loaded ACLs
 						will be freed and reloaded. Existing subscriptions will
-						be affected after the reload.</para>
-					<para>See also
+						be affected after the reload.
+					</para>
+					<para>
+						See also
 						<ulink url="https://mosquitto.org/documentation/dynamic-security/"/>
 					</para>
 				</listitem>
@@ -401,7 +455,7 @@
 						disk. If set to 0, the in-memory database will only be
 						saved when mosquitto exits or when receiving the
 						SIGUSR1 signal. Note that this setting only has an
-						effect if persistence is enabled.  Defaults to 1800
+						effect if persistence is enabled. Defaults to 1800
 						seconds (30 minutes).</para>
 
 					<para>This option applies globally.</para>
@@ -719,7 +773,7 @@ log_timestamp_format %Y-%m-%dT%H:%M:%S
 					<para>Defaults to <replaceable>error</replaceable>,
 						<replaceable>warning</replaceable>, <replaceable>notice
 						</replaceable>and
-						<replaceable>information</replaceable>.  This option
+						<replaceable>information</replaceable>. This option
 						may be specified multiple times. Note that the
 						<replaceable>debug </replaceable>type (used for
 						decoding incoming/outgoing network packets) is never
@@ -734,7 +788,7 @@ log_timestamp_format %Y-%m-%dT%H:%M:%S
 						limit is reached. This allows control of outgoing message rate based on
 						message size rather than message count. If the limit is set to 100,
 						messages of over 100 bytes are still allowed, but only a single message
-						can be in flight at once.  Defaults to 0. (No limit).</para>
+						can be in flight at once. Defaults to 0. (No limit).</para>
 					<para>See also the <option>max_inflight_messages</option> option.</para>
 
 					<para>This option applies globally.</para>
@@ -763,7 +817,7 @@ log_timestamp_format %Y-%m-%dT%H:%M:%S
 				<listitem>
 					<para>For MQTT v5 clients, it is possible to have the
 						server send a "server keepalive" value that will
-						override the keepalive value set by the client.  This
+						override the keepalive value set by the client. This
 						is intended to be used as a mechanism to say that the
 						server will disconnect the client earlier than it
 						anticipated, and that the client should use the new
@@ -835,11 +889,11 @@ log_timestamp_format %Y-%m-%dT%H:%M:%S
 						queued (per client) by the broker. Once this limit has been reached, subsequent
 						messages will be silently dropped. This is an important option if you are sending
 						messages at a high rate and/or have clients who are slow to respond or may be offline
-						for extended periods of time.  Defaults to 0. (No maximum).</para>
+						for extended periods of time. Defaults to 0. (No maximum).</para>
 					<para>See also the
 						<option>max_queued_messages</option> option.
 						If both max_queued_messages and max_queued_bytes are specified,
-						packets will  be queued until the first limit is reached.
+						packets will be queued until the first limit is reached.
 					</para>
 
 					<para>This option applies globally.</para>
@@ -1036,7 +1090,7 @@ log_timestamp_format %Y-%m-%dT%H:%M:%S
 					<para>
 						Badly designed clients may set clean session to false whilst using a randomly
 						generated client id. This leads to persistent clients that connect once and
-						never reconnect. This option allows these clients to be removed.  This option
+						never reconnect. This option allows these clients to be removed. This option
 						allows persistent clients (those with clean session set to false) to be
 						removed if they do not reconnect within a certain time frame.
 					</para>
@@ -1119,7 +1173,7 @@ log_timestamp_format %Y-%m-%dT%H:%M:%S
 						<replaceable>true</replaceable>, this plugin will be
 						loaded for the current listener only.
 					</para>
-					<para>See also 
+					<para>See also
 						<ulink url="https://mosquitto.org/documentation/dynamic-security/"/>
 						and the <option>global_plugin</option> option.
 					</para>
@@ -1163,7 +1217,7 @@ log_timestamp_format %Y-%m-%dT%H:%M:%S
 						disconnected. When bridges topics are configured with QoS level 1 or 2 incoming
 						QoS 0 messages for these topics are also queued.
 						These messages are included in the limit
-						imposed by max_queued_messages.  Defaults to
+						imposed by max_queued_messages. Defaults to
 						<replaceable>false</replaceable>.</para>
 					<para>Note that the MQTT v3.1.1 spec states that only QoS 1
 						and 2 messages should be saved in this situation so
@@ -1357,7 +1411,7 @@ accept_protocol_versions 3, 4</programlisting>
 					</listitem>
 				</varlistentry>
 				<varlistentry>
-					<term><option>enable_proxy_protocol</option>  [ 2 | 1 ]</term>
+					<term><option>enable_proxy_protocol</option> [ 2 | 1 ]</term>
 					<listitem>
 						<para>
 							Enable PROXY protocol support for this listener.
@@ -1503,7 +1557,7 @@ accept_protocol_versions 3, 4</programlisting>
 							the current listener. Set to <literal>-1</literal>
 							to have "unlimited" connections. Note that other
 							limits may be imposed that are outside the control
-							of mosquitto.  See e.g.
+							of mosquitto. See e.g.
 							<citerefentry><refentrytitle><link xlink:href="http://linux.die.net/man/5/limits.conf">limits.conf</link></refentrytitle></citerefentry>.</para>
 						<para>Not reloaded on reload signal.</para>
 					</listitem>
@@ -1571,7 +1625,7 @@ accept_protocol_versions 3, 4</programlisting>
 							to a listener which uses this option, the string
 							argument is attached to the start of all topics for
 							this client. This prefix is removed when any
-							messages are sent to the client.  This means a
+							messages are sent to the client. This means a
 							client connected to a listener with mount point
 							<replaceable>example</replaceable> can only see
 							messages that are published in the topic hierarchy
@@ -1874,8 +1928,8 @@ openssl dhparam -out dhparam.pem 2048</programlisting>
 							operate in a similar fashion to a https enabled web
 							server, in that the server has a certificate signed
 							by a CA and the client will verify that it is a
-							trusted certificate.  The overall aim is encryption
-							of the network traffic.  By setting
+							trusted certificate. The overall aim is encryption
+							of the network traffic. By setting
 							<option>require_certificate</option> to
 							<replaceable>true</replaceable>, a client connecting
 							to this listener must provide a valid certificate in
@@ -1895,9 +1949,9 @@ openssl dhparam -out dhparam.pem 2048</programlisting>
 					<term><option>tls_engine_kpass_sha1</option> <replaceable>engine_kpass_sha1</replaceable></term>
 					<listitem>
 						<para>SHA1 of the private key password when using an
-							TLS engine.  Some TLS engines such as the TPM
+							TLS engine. Some TLS engines such as the TPM
 							engine may require the use of a password in order
-							to be accessed.  This option allows a hex encoded
+							to be accessed. This option allows a hex encoded
 							SHA1 hash of the password to the engine directly,
 							instead of the user being prompted for the
 							password.</para>
@@ -1980,7 +2034,7 @@ openssl dhparam -out dhparam.pem 2048</programlisting>
 						<para>When using PSK, the encryption ciphers used will
 							be chosen from the list of available PSK ciphers.
 							If you want to control which ciphers are available,
-							use this option.  The list of available ciphers can
+							use this option. The list of available ciphers can
 							be obtained using the "openssl ciphers" command and
 							should be provided in the same format as the output
 							of that command.</para>
@@ -2022,7 +2076,7 @@ openssl dhparam -out dhparam.pem 2048</programlisting>
 					<listitem>
 						<para>Set <option>use_identity_as_username</option> to
 							have the psk identity sent by the client used as
-							its username.  The username will be checked as
+							its username. The username will be checked as
 							normal, so <option>password_file</option> or
 							another means of authentication checking must be
 							used. No password will be used.</para>
@@ -2216,7 +2270,7 @@ openssl dhparam -out dhparam.pem 2048</programlisting>
 						you may get unexpected behaviour from incoming topics
 						if you change what topics you are subscribing to. This
 						is because the remote broker keeps the subscription for
-						the old topic.  If you have this problem, connect your
+						the old topic. If you have this problem, connect your
 						bridge with <option>cleansession</option> set to
 						<replaceable>true</replaceable>, then reconnect with
 						cleansession set to <replaceable>false</replaceable> as
@@ -2295,7 +2349,7 @@ openssl dhparam -out dhparam.pem 2048</programlisting>
 						connection. Retained messages are published to the
 						topic $SYS/broker/connection/&lt;remote_clientid&gt;/state
 						unless otherwise set with
-						<option>notification_topic</option>s.  If the message
+						<option>notification_topic</option>s. If the message
 						is 1 then the connection is active, or 0 if the
 						connection has failed. Defaults to
 						<replaceable>true</replaceable>.</para>
@@ -2597,7 +2651,7 @@ topic clients/total in 0 test/mosquitto/org/ $SYS/broker/
 					<term><option>bridge_alpn</option> <replaceable>alpn</replaceable></term>
 					<listitem>
 						<para>Configure the application layer protocol negotiation
-							option for the TLS session.  Useful for brokers that support
+							option for the TLS session. Useful for brokers that support
 							both websockets and MQTT on the same port.</para>
 					</listitem>
 				</varlistentry>
@@ -2644,7 +2698,7 @@ topic clients/total in 0 test/mosquitto/org/ $SYS/broker/
 							to certificate based encryption. A bridge can be
 							configured to use PSK with the
 							<option>bridge_identity</option> and
-							<option>bridge_psk</option> options.  This is the
+							<option>bridge_psk</option> options. This is the
 							client identity used with PSK encryption. Only one
 							of certificate and PSK based encryption can be used
 							on one bridge at once.</para>
@@ -2682,7 +2736,7 @@ topic clients/total in 0 test/mosquitto/org/ $SYS/broker/
 							to certificate based encryption. A bridge can be
 							configured to use PSK with the
 							<option>bridge_identity</option> and
-							<option>bridge_psk</option> options.  This is the
+							<option>bridge_psk</option> options. This is the
 							pre-shared-key in hexadecimal format with no "0x".
 							Only one of certificate and PSK based encryption
 							can be used on one bridge at once.</para>
@@ -2751,11 +2805,7 @@ topic clients/total in 0 test/mosquitto/org/ $SYS/broker/
 		<para>mosquitto.conf</para>
 	</refsect1>
 
-	<refsect1>
-		<title>Bugs</title>
-		<para><command>mosquitto</command> bug information can be found at
-			<ulink url="https://github.com/eclipse-mosquitto/mosquitto/issues"/></para>
-	</refsect1>
+	<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="common/section-bugs.xml" />
 
 	<refsect1>
 		<title>See Also</title>

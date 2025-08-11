@@ -162,12 +162,7 @@
 		</variablelist>
 	</refsect1>
 
-
-	<refsect1>
-		<title>Bugs</title>
-		<para><command>mosquitto</command> bug information can be found at
-			<ulink url="https://github.com/eclipse-mosquitto/mosquitto/issues"/></para>
-	</refsect1>
+	<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="common/section-bugs.xml" />
 
 	<refsect1>
 		<title>See Also</title>
