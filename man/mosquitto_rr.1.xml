@@ -76,6 +76,7 @@
 			<arg><option>-k</option> <replaceable>keepalive-time</replaceable></arg>
 			<arg><option>-q</option> <replaceable>message-QoS</replaceable></arg>
 			<arg><option>-V</option> <replaceable>protocol-version</replaceable></arg>
+			<arg><option>--retain-handling</option> always | new | never</arg>
 			<arg><option>-x</option> <replaceable>session-expiry-interval</replaceable></arg>
 			<sbr/>
 			<arg>
@@ -607,6 +608,7 @@
 						their display.</para>
 				</listitem>
 			</varlistentry>
+			<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="common/option-retain-handling.xml" />
 			<varlistentry>
 				<term><option>-S</option></term>
 				<listitem>

@@ -208,6 +208,7 @@
 - Fix `-f` and `-s` options in mosquitto_rr.
 - Add `--latency` option to mosquitto_rr, for printing the request/response
   latency.
+- Add `--retain-handling` option.
 
 ## mosquitto_sub
 - Fix incorrect output formatting in mosquitto_sub when using field widths
@@ -216,6 +217,7 @@
 - mosquitto_sub payload hex output can now be split by fixed field length.
 - Add `--message-rate` option to mosquitto_sub, for printing the count of
   messages received each second.
+- Add `--retain-handling` option.
 
 # Apps
 

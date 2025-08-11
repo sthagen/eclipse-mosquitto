@@ -144,7 +144,7 @@ int handle__subscribe(struct mosquitto *context)
 					mosquitto_FREE(payload);
 					return MOSQ_ERR_PROTOCOL;
 				}
-				retain_handling = MQTT_SUB_OPT_GET_SEND_RETAIN(sub.options);
+				retain_handling = MQTT_SUB_OPT_GET_RETAIN_HANDLING(sub.options);
 				if(retain_handling == 0x30 || (sub.options & 0xC0) != 0){
 					mosquitto_FREE(sub.topic_filter);
 					mosquitto_FREE(payload);

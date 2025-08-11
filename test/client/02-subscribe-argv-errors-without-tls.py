@@ -120,6 +120,7 @@ if __name__ == '__main__':
     do_test(['-x', 'A'], "Error: session-expiry-interval not a number.\n\n" + helps, 1)
     do_test(['-x', '-2'], "Error: session-expiry-interval out of range.\n\n" + helps, 1)
     do_test(['-x', '4294967296'], "Error: session-expiry-interval out of range.\n\n" + helps, 1)
+    do_test(['--retain-handling', 'invalid'], "Error: Unknown value 'invalid' for --retain-handling.\n\n" + helps, 1)
 
     # Unknown options
     do_test(['--unknown'], "Error: Unknown option '--unknown'.\n" + helps, 1)

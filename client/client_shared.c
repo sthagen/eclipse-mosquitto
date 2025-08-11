@@ -1040,6 +1040,26 @@ int client_config_line_proc(struct mosq_config *cfg, int pub_or_sub, int argc, c
 				goto unknown_option;
 			}
 			cfg->sub_opts |= MQTT_SUB_OPT_RETAIN_AS_PUBLISHED;
+		}else if(!strcmp(argv[i], "--retain-handling")){
+			if(pub_or_sub == CLIENT_PUB){
+				goto unknown_option;
+			}
+			if(i==argc-1){
+				fprintf(stderr, "Error: --retain-handling argument given but no option specified.\n\n");
+				return 1;
+			}else{
+				if(!strcmp(argv[i+1],"always")){
+					MQTT_SUB_OPT_SET_RETAIN_HANDLING(cfg->sub_opts, MQTT_SUB_OPT_SEND_RETAIN_ALWAYS);
+				}else if(!strcmp(argv[i+1],"new")){
+					MQTT_SUB_OPT_SET_RETAIN_HANDLING(cfg->sub_opts, MQTT_SUB_OPT_SEND_RETAIN_NEW);
+				}else if(!strcmp(argv[i+1],"never")){
+					MQTT_SUB_OPT_SET_RETAIN_HANDLING(cfg->sub_opts, MQTT_SUB_OPT_SEND_RETAIN_NEVER);
+				}else{
+					fprintf(stderr, "Error: Unknown value '%s' for --retain-handling.\n\n", argv[i+1]);
+					return 1;
+				}
+			}
+			i++;
 		}else if(!strcmp(argv[i], "--retained-only")){
 			if(pub_or_sub != CLIENT_SUB){
 				goto unknown_option;

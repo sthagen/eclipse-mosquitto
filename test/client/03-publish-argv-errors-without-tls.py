@@ -116,6 +116,7 @@ if __name__ == '__main__':
     do_test(['--random-filter'], "Error: Unknown option '--random-filter'.\n" + helps, 1)
     do_test(['--remove-retained'], "Error: Unknown option '--remove-retained'.\n" + helps, 1)
     do_test(['--retain-as-published'], "Error: Unknown option '--retain-as-published'.\n" + helps, 1)
+    do_test(['--retain-handling', 'invalid'], "Error: Unknown option '--retain-handling'.\n" + helps, 1)
     do_test(['--retained-only'], "Error: Unknown option '--retained-only'.\n" + helps, 1)
     do_test(['-T'], "Error: Unknown option '-T'.\n" + helps, 1)
     do_test(['-U'], "Error: Unknown option '-U'.\n" + helps, 1)

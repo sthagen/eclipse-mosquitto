@@ -105,6 +105,7 @@ if __name__ == '__main__':
     do_test(['-x', 'A'], "Error: session-expiry-interval not a number.\n\n" + helps, 1)
     do_test(['-x', '-2'], "Error: session-expiry-interval out of range.\n\n" + helps, 1)
     do_test(['-x', '4294967296'], "Error: session-expiry-interval out of range.\n\n" + helps, 1)
+    do_test(['--retain-handling', 'invalid'], "Error: Unknown value 'invalid' for --retain-handling.\n\n" + helps, 1)
 
     # Mixed message types
     do_test(['-m', 'message', '-f', 'file'], "Error: Only one type of message can be sent at once.\n\n" + helps, 1)

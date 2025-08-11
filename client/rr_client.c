@@ -115,7 +115,7 @@ void my_connect_callback(struct mosquitto *mosq, void *obj, int result, int flag
 	connack_result = result;
 	if(!result){
 		client_state = rr_s_connected;
-		mosquitto_subscribe_v5(mosq, NULL, cfg.response_topic, cfg.qos, 0, cfg.subscribe_props);
+		mosquitto_subscribe_v5(mosq, NULL, cfg.response_topic, cfg.qos, cfg.sub_opts, cfg.subscribe_props);
 	}else{
 		client_state = rr_s_disconnect;
 		if(result){
