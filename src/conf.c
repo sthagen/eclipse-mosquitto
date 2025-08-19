@@ -2270,7 +2270,10 @@ static int config__read_file_core(struct mosquitto__config *config, bool reload,
 					if(conf__parse_bool(&token, token, &config->retain_available, &saveptr)) return MOSQ_ERR_INVAL;
 				}else if(!strcmp(token, "retain_expiry_interval")){
 					if(conf__parse_int(&token, token, &config->retain_expiry_interval, &saveptr)) return MOSQ_ERR_INVAL;
-					if(config->retain_expiry_interval > 10000000){
+					if(config->retain_expiry_interval < 1){
+						log__printf(NULL, MOSQ_LOG_WARNING, "Error: retain_expiry_interval must be >= 1.");
+						return MOSQ_ERR_INVAL;
+					}else if(config->retain_expiry_interval > 10000000){
 						log__printf(NULL, MOSQ_LOG_WARNING, "Warning: retain_expiry_interval being capped at 19 years.");
 						config->retain_expiry_interval = 10000000;
 					}
