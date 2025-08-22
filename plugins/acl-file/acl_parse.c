@@ -34,16 +34,12 @@ static int acl__add_to_user(struct acl__user *acl_user, const char *topic, int a
 
 	acl = mosquitto_calloc(1, sizeof(struct acl__entry));
 	if(!acl){
-		mosquitto_FREE(acl_user->username);
-		mosquitto_FREE(acl_user);
 		return MOSQ_ERR_NOMEM;
 	}
 	acl->access = access;
 
 	acl->topic = mosquitto_strdup(topic);
 	if(!acl->topic){
-		mosquitto_FREE(acl_user->username);
-		mosquitto_FREE(acl_user);
 		return MOSQ_ERR_NOMEM;
 	}
 
@@ -59,31 +55,44 @@ static int acl__add_to_user(struct acl__user *acl_user, const char *topic, int a
 }
 
 
+static struct acl__user *acl__find_or_create_user(struct acl_file_data *data, const char *user, unsigned user_hashv)
+{
+	if(user == NULL){
+		return &data->acl_anon;
+	}else{
+		struct acl__user *acl_user=NULL;
+
+		HASH_FIND_BYHASHVALUE(hh, data->acl_users, user, strlen(user), user_hashv, acl_user);
+
+		if(!acl_user){
+			acl_user = mosquitto_calloc(1, sizeof(struct acl__user));
+			if(!acl_user){
+				return NULL;
+			}
+			if(user){
+				acl_user->username = mosquitto_strdup(user);
+				if(!acl_user->username){
+					mosquitto_FREE(acl_user);
+					return NULL;
+				}
+			}
+			HASH_ADD_KEYPTR(hh, data->acl_users, acl_user->username, strlen(acl_user->username), acl_user);
+		}
+
+		return acl_user;
+	}
+}
+
+
 static int acl__add(struct acl_file_data *data, const char *user, unsigned user_hashv, const char *topic, int access)
 {
 	struct acl__user *acl_user=NULL;
 
 	if(!data || !topic) return MOSQ_ERR_INVAL;
 
-	if(user == NULL){
-		acl_user = &data->acl_anon;
-	}else{
-		HASH_FIND_BYHASHVALUE(hh, data->acl_users, user, strlen(user), user_hashv, acl_user);
-
-		if(!acl_user){
-			acl_user = mosquitto_calloc(1, sizeof(struct acl__user));
-			if(!acl_user){
-				return MOSQ_ERR_NOMEM;
-			}
-			if(user){
-				acl_user->username = mosquitto_strdup(user);
-				if(!acl_user->username){
-					mosquitto_FREE(acl_user);
-					return MOSQ_ERR_NOMEM;
-				}
-			}
-			HASH_ADD_KEYPTR(hh, data->acl_users, acl_user->username, strlen(acl_user->username), acl_user);
-		}
+	acl_user = acl__find_or_create_user(data, user, user_hashv);
+	if(!acl_user){
+		return MOSQ_ERR_NOMEM;
 	}
 
 	return acl__add_to_user(acl_user, topic, access);
