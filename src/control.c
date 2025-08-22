@@ -66,7 +66,8 @@ int control__process(struct mosquitto *context, struct mosquitto__base_msg *base
 		rc = cb_found->cb(MOSQ_EVT_CONTROL, &event_data, cb_found->userdata);
 		if(rc){
 			if(context->protocol == mosq_p_mqtt5 && event_data.reason_string){
-				mosquitto_property_add_string(&properties, MQTT_PROP_REASON_STRING, event_data.reason_string);
+				/* Not a critical error if this fails */
+				(void)mosquitto_property_add_string(&properties, MQTT_PROP_REASON_STRING, event_data.reason_string);
 			}
 		}
 		SAFE_FREE(event_data.reason_string);
