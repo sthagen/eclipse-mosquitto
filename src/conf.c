@@ -1888,7 +1888,8 @@ static int config__read_file_core(struct mosquitto__config *config, bool reload,
 								token++;
 							}
 						}
-						if(token[0]){
+						/* Duplicate "token" check here saves a log__printf() */
+						if(token && token[0]){
 							config->log_file = mosquitto_strdup(token);
 							if(!config->log_file){
 								log__printf(NULL, MOSQ_LOG_ERR, "Error: Out of memory.");
