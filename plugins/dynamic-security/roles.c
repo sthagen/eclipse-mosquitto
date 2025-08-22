@@ -323,6 +323,8 @@ int dynsec_roles__config_load(struct dynsec__data *data, cJSON *tree)
 						|| dynsec_roles__acl_load(j_acls, ACL_TYPE_UNSUB_PATTERN, &role->acls.unsubscribe_pattern) != 0
 						){
 
+					mosquitto_free(role->text_name);
+					mosquitto_free(role->text_description);
 					mosquitto_free(role);
 					continue;
 				}
