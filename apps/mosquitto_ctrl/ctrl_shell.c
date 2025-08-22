@@ -634,7 +634,10 @@ static int get_bg(void)
 	do{
 		rl = read(STDIN_FILENO, buf, sizeof(buf));
 	}while(rl == 0);
-	fcntl(STDIN_FILENO, F_SETFL, opt);
+	if(fcntl(STDIN_FILENO, F_SETFL, opt) < 0){
+		fprintf(stderr, "Error: Unable to reset terminal flags.");
+		return 1;
+	}
 	term_set_echo(true);
 	term_set_canon(true);
 
