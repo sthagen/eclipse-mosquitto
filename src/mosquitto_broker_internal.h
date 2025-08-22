@@ -482,7 +482,7 @@ struct mosquitto_db{
 	time_t now_s; /* Monotonic clock, where possible */
 	time_t now_real_s; /* Read clock, for measuring session/message expiry */
 	uint64_t node_id; /* for unique db ids */
-	int next_event_ms; /* for mux timeout */
+	time_t next_event_ms; /* for mux timeout */
 	int msg_store_count;
 	unsigned long msg_store_bytes;
 	char *config_file;

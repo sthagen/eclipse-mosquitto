@@ -157,7 +157,7 @@ static void queue_plugin_msgs(void)
 void loop__update_next_event(time_t new_ms)
 {
 	if(new_ms > 0 && new_ms < db.next_event_ms){
-		db.next_event_ms = (int)new_ms;
+		db.next_event_ms = new_ms;
 	}
 }
 
