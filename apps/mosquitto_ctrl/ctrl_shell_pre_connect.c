@@ -104,6 +104,10 @@ static void line_callback(char *line)
 	}
 
 	command = strtok_r(line, " ", &saveptr);
+	if(!command){
+		free(line);
+		return;
+	}
 
 	if(!strcasecmp(command, "auth")){
 		free(data.username);

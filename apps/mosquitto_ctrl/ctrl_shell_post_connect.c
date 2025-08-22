@@ -97,8 +97,13 @@ static void line_callback(char *line)
 	}
 
 	char *saveptr = NULL;
-	char *command = strtok_r(line, " ", &saveptr);
 	bool found = false;
+	char *command = strtok_r(line, " ", &saveptr);
+
+	if(!command){
+		free(line);
+		return;
+	}
 
 	for(size_t i=0; i<sizeof(mod_data)/sizeof(struct module_data); i++){
 		if(!strcasecmp(command, mod_data[i].name)){

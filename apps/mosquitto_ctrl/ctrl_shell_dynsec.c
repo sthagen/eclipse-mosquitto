@@ -620,6 +620,11 @@ static void line_callback(char *line)
 	char *saveptr = NULL;
 	char *command = strtok_r(line, " ", &saveptr);
 
+	if(!command){
+		free(line);
+		return;
+	}
+
 	if(!strcasecmp(command, "addClientRole")){
 		ctrl_shell_command_generic_arg2("addClientRole", "username", "rolename", &saveptr);
 	}else if(!strcasecmp(command, "addGroupClient")){
