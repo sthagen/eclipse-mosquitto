@@ -446,6 +446,12 @@ int my_get_address(int sock, char *buf, size_t len, uint16_t *remote_port)
 	struct sockaddr_storage addr;
 	socklen_t addrlen;
 
+	if(sock < 0){
+		memset(buf, 0, len);
+		*remote_port = 0;
+		return 1;
+	}
+
 	memset(&addr, 0, sizeof(struct sockaddr_storage));
 	addrlen = sizeof(addr);
 	if(!getpeername(sock, (struct sockaddr *)&addr, &addrlen)){
