@@ -455,6 +455,7 @@ int mosquitto_read_file(const char *file, char **buf, size_t *buflen)
 		if(buflen){
 			*buflen = 0;
 		}
+		fclose(fptr);
 		return MOSQ_ERR_SUCCESS;
 	}
 	buflen_i = (size_t)l;
