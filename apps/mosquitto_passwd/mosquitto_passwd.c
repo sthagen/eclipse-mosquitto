@@ -354,6 +354,10 @@ static int create_backup(char *backup_file, FILE *fptr)
 	int fd;
 	umask(077);
 	fd = mkstemp(backup_file);
+	if(fd < 0){
+		fprintf(stderr, "Error creating backup password file \"%s\", not continuing.\n", backup_file);
+		return 1;
+	}
 	fbackup = fdopen(fd, "wt");
 #endif
 	if(!fbackup){
