@@ -85,6 +85,11 @@ static void line_callback(char *line)
 	char *saveptr = NULL;
 	char *command = strtok_r(line, " ", &saveptr);
 
+	if(!command){
+		free(line);
+		return;
+	}
+
 	if(!strcasecmp(command, "listPlugins")){
 		ctrl_shell_command_generic_arg0("listPlugins");
 	}else if(!strcasecmp(command, "listListeners")){
