@@ -645,6 +645,7 @@ do {                                                                            
 } while (0)
 
 #define HASH_JEN(key,keylen,hashv)                                               \
+/* coverity[integer_overflow] - intentional wrapping in Jenkins hash */          \
 do {                                                                             \
   unsigned _hj_i,_hj_j,_hj_k;                                                    \
   unsigned const char *_hj_key=(unsigned const char*)(key);                      \
