@@ -513,7 +513,10 @@ int persist__restore(void)
 
 				default:
 					log__printf(NULL, MOSQ_LOG_WARNING, "Warning: Unsupported chunk \"%d\" in persistent database file. Ignoring.", chunk);
-					fseek(fptr, length, SEEK_CUR);
+					if(fseek(fptr, length, SEEK_CUR) < 0){
+						fclose(fptr);
+						return 1;
+					}
 					break;
 			}
 		}
