@@ -193,7 +193,9 @@ int ctrl_shell_publish_blocking(cJSON *j_command)
 	}
 
 	/* Check for message callback */
-	return response_wait(true);
+	rc = response_wait(true);
+
+	return rc;
 }
 
 void ctrl_shell__connect_blocking(const char *hostname, int port)
