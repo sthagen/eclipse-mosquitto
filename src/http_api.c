@@ -242,7 +242,9 @@ static enum MHD_Result http_api__process_systree(struct MHD_Connection *connecti
 static ssize_t http_file_read_cb(void *cls, uint64_t pos, char *buf, size_t max)
 {
 	FILE *fptr = cls;
-	fseek(fptr, (long )pos, SEEK_SET);
+	if(fseek(fptr, (long )pos, SEEK_SET) < 0){
+		return -1;
+	}
 	return (ssize_t )fread(buf, 1, max, fptr);
 }
 
