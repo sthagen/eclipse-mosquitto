@@ -61,6 +61,9 @@ Contributors:
 
 static struct mosquitto__subhier *sub__add_hier_entry(struct mosquitto__subhier *parent, struct mosquitto__subhier **sibling, const char *topic, uint16_t len);
 
+static unsigned int hashv_plus = 0;
+static unsigned int hashv_hash = 0;
+
 static int subs__send(struct mosquitto__subleaf *leaf, const char *topic, uint8_t qos, int retain, struct mosquitto__base_msg *stored)
 {
 	bool client_retain;
@@ -200,10 +203,13 @@ static int sub__add_shared(struct mosquitto *context, const struct mosquitto_sub
 	struct mosquitto__subleaf **subs;
 	size_t slen;
 	int rc;
+	unsigned hashv;
 
 	slen = strlen(sharename);
 
-	HASH_FIND(hh, subhier->shared, sharename, slen, shared);
+	HASH_VALUE(sharename, slen, hashv);
+
+	HASH_FIND_BYHASHVALUE(hh, subhier->shared, sharename, slen, hashv, shared);
 	if(shared == NULL){
 		shared = mosquitto_calloc(1, sizeof(struct mosquitto__subshared) + slen + 1);
 		if(!shared){
@@ -211,7 +217,7 @@ static int sub__add_shared(struct mosquitto *context, const struct mosquitto_sub
 		}
 		strncpy(shared->name, sharename, slen+1);
 
-		HASH_ADD(hh, subhier->shared, name, slen, shared);
+		HASH_ADD_BYHASHVALUE(hh, subhier->shared, name, slen, hashv, shared);
 	}
 
 	rc = sub__add_leaf(context, sub, &shared->subs, &newleaf);
@@ -482,7 +488,7 @@ static int sub__search(struct mosquitto__subhier *subhier, char **split_topics, 
 		}
 
 		/* Check for + match */
-		HASH_FIND(hh, subhier->children, "+", 1, branch);
+		HASH_FIND_BYHASHVALUE(hh, subhier->children, "+", 1, hashv_plus, branch);
 
 		if(branch){
 			rc = sub__search(branch, &(split_topics[1]), source_id, topic, qos, retain, stored);
@@ -503,7 +509,7 @@ static int sub__search(struct mosquitto__subhier *subhier, char **split_topics, 
 	}
 
 	/* Check for # match */
-	HASH_FIND(hh, subhier->children, "#", 1, branch);
+	HASH_FIND_BYHASHVALUE(hh, subhier->children, "#", 1, hashv_hash, branch);
 	if(branch && !branch->children){
 		/* The topic matches due to a # wildcard - process the
 		 * subscriptions but *don't* return. Although this branch has ended
@@ -637,6 +643,8 @@ int sub__messages_queue(const char *source_id, const char *topic, uint8_t qos, i
 	struct mosquitto__subhier *subhier;
 	char **split_topics = NULL;
 	char *local_topic = NULL;
+	unsigned hashv;
+	size_t topiclen;
 
 	assert(topic);
 
@@ -648,7 +656,9 @@ int sub__messages_queue(const char *source_id, const char *topic, uint8_t qos, i
 	*/
 	db__msg_store_ref_inc(*stored);
 
-	HASH_FIND(hh, db.normal_subs, split_topics[0], strlen(split_topics[0]), subhier);
+	topiclen = strlen(split_topics[0]);
+	HASH_VALUE(split_topics[0], topiclen, hashv);
+	HASH_FIND_BYHASHVALUE(hh, db.normal_subs, split_topics[0], topiclen, hashv, subhier);
 	if(subhier){
 		rc_normal = sub__search(subhier, split_topics, source_id, topic, qos, retain, *stored);
 		if(rc_normal > 0){
@@ -657,7 +667,7 @@ int sub__messages_queue(const char *source_id, const char *topic, uint8_t qos, i
 		}
 	}
 
-	HASH_FIND(hh, db.shared_subs, split_topics[0], strlen(split_topics[0]), subhier);
+	HASH_FIND_BYHASHVALUE(hh, db.shared_subs, split_topics[0], topiclen, hashv, subhier);
 	if(subhier){
 		rc_shared = sub__search(subhier, split_topics, source_id, topic, qos, retain, *stored);
 		if(rc_shared > 0){
@@ -801,6 +811,9 @@ void sub__tree_print(struct mosquitto__subhier *root, int level)
 
 int sub__init(void)
 {
+	HASH_VALUE("+", 1, hashv_plus);
+	HASH_VALUE("#", 1, hashv_hash);
+
 	if(sub__add_hier_entry(NULL, &db.shared_subs, "", 0) == NULL
 			|| sub__add_hier_entry(NULL, &db.normal_subs, "", 0) == NULL
 			|| sub__add_hier_entry(NULL, &db.normal_subs, "$SYS", (uint16_t)strlen("$SYS")) == NULL
