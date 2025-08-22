@@ -28,52 +28,24 @@ Contributors:
 #include "acl_file.h"
 
 
-static int add__acl(struct acl_file_data *data, const char *user, const char *topic, int access)
+static int acl__add_to_user(struct acl__user *acl_user, const char *topic, int access)
 {
-	struct acl__user *acl_user=NULL;
 	struct acl__entry *acl;
-	char *local_topic;
-	bool new_user = false;
-
-	if(!data || !topic) return MOSQ_ERR_INVAL;
-
-	local_topic = mosquitto_strdup(topic);
-	if(!local_topic){
-		return MOSQ_ERR_NOMEM;
-	}
-
-	if(user == NULL){
-		acl_user = &data->acl_anon;
-	}else{
-		HASH_FIND(hh, data->acl_users, user, strlen(user), acl_user);
-
-		if(!acl_user){
-			acl_user = mosquitto_calloc(1, sizeof(struct acl__user));
-			if(!acl_user){
-				mosquitto_FREE(local_topic);
-				return MOSQ_ERR_NOMEM;
-			}
-			new_user = true;
-			if(user){
-				acl_user->username = mosquitto_strdup(user);
-				if(!acl_user->username){
-					mosquitto_FREE(local_topic);
-					mosquitto_FREE(acl_user);
-					return MOSQ_ERR_NOMEM;
-				}
-			}
-		}
-	}
 
 	acl = mosquitto_calloc(1, sizeof(struct acl__entry));
 	if(!acl){
-		mosquitto_FREE(local_topic);
 		mosquitto_FREE(acl_user->username);
 		mosquitto_FREE(acl_user);
 		return MOSQ_ERR_NOMEM;
 	}
 	acl->access = access;
-	acl->topic = local_topic;
+
+	acl->topic = mosquitto_strdup(topic);
+	if(!acl->topic){
+		mosquitto_FREE(acl_user->username);
+		mosquitto_FREE(acl_user);
+		return MOSQ_ERR_NOMEM;
+	}
 
 	/* Add acl to user acl list */
 	if(access == MOSQ_ACL_NONE){
@@ -83,15 +55,42 @@ static int add__acl(struct acl_file_data *data, const char *user, const char *to
 		DL_APPEND(acl_user->acl, acl);
 	}
 
-	if(new_user){
-		HASH_ADD_KEYPTR(hh, data->acl_users, acl_user->username, strlen(acl_user->username), acl_user);
-	}
-
 	return MOSQ_ERR_SUCCESS;
 }
 
 
-static int add__acl_pattern(struct acl_file_data *data, const char *topic, int access)
+static int acl__add(struct acl_file_data *data, const char *user, unsigned user_hashv, const char *topic, int access)
+{
+	struct acl__user *acl_user=NULL;
+
+	if(!data || !topic) return MOSQ_ERR_INVAL;
+
+	if(user == NULL){
+		acl_user = &data->acl_anon;
+	}else{
+		HASH_FIND_BYHASHVALUE(hh, data->acl_users, user, strlen(user), user_hashv, acl_user);
+
+		if(!acl_user){
+			acl_user = mosquitto_calloc(1, sizeof(struct acl__user));
+			if(!acl_user){
+				return MOSQ_ERR_NOMEM;
+			}
+			if(user){
+				acl_user->username = mosquitto_strdup(user);
+				if(!acl_user->username){
+					mosquitto_FREE(acl_user);
+					return MOSQ_ERR_NOMEM;
+				}
+			}
+			HASH_ADD_KEYPTR(hh, data->acl_users, acl_user->username, strlen(acl_user->username), acl_user);
+		}
+	}
+
+	return acl__add_to_user(acl_user, topic, access);
+}
+
+
+static int acl__add_pattern(struct acl_file_data *data, const char *topic, int access)
 {
 	struct acl__entry *acl, *acl_tail;
 	char *local_topic;
@@ -173,6 +172,7 @@ int acl_file__parse(struct acl_file_data *data)
 	char *saveptr = NULL;
 	char *buf = NULL;
 	int buflen = 256;
+	unsigned user_hashv = 0;
 
 	if(!data) return MOSQ_ERR_INVAL;
 	if(!data->acl_file) return MOSQ_ERR_SUCCESS;
@@ -250,9 +250,9 @@ int acl_file__parse(struct acl_file_data *data)
 				}
 
 				if(topic_pattern == 0){
-					rc = add__acl(data, user, topic, access);
+					rc = acl__add(data, user, user_hashv, topic, access);
 				}else{
-					rc = add__acl_pattern(data, topic, access);
+					rc = acl__add_pattern(data, topic, access);
 				}
 				if(rc){
 					break;
@@ -272,6 +272,7 @@ int acl_file__parse(struct acl_file_data *data)
 						rc = MOSQ_ERR_NOMEM;
 						break;
 					}
+					HASH_VALUE(user, strlen(user), user_hashv);
 				}else{
 					mosquitto_log_printf(MOSQ_LOG_ERR, "Error: Missing username in acl_file \"%s\".", data->acl_file);
 					rc = MOSQ_ERR_INVAL;
