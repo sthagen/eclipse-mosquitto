@@ -156,7 +156,10 @@ class CtrlShellBrokerTest : public ::t::Test
 			*/
 			EXPECT_CALL(pthread_mock_, pthread_cond_timedwait(t::_, t::_, t::_))
 				.WillOnce(t::Invoke([this, mosq](pthread_cond_t *, pthread_mutex_t *, const struct timespec *){
-					this->on_connect(mosq, nullptr, 0); return 0; }))
+					this->on_connect(mosq, nullptr, 0);
+					data.response_received = true;
+					return 0;
+				}))
 				.WillRepeatedly(t::Invoke([this, mosq](pthread_cond_t *, pthread_mutex_t *, const struct timespec *){
 					mosquitto_message msg{};
 					struct pending_payload *pp = pending_payloads;
@@ -167,6 +170,7 @@ class CtrlShellBrokerTest : public ::t::Test
 						this->on_message(mosq, nullptr, &msg);
 						free(pp);
 					}
+					data.response_received = true;
 					return 0;
 					}));
 		}
@@ -225,10 +229,14 @@ TEST_F(CtrlShellBrokerTest, SubscribeDenied)
 
 	EXPECT_CALL(pthread_mock_, pthread_cond_timedwait(t::_, t::_, t::_))
 		.WillOnce(t::Invoke([this, &mosq](pthread_cond_t *, pthread_mutex_t *, const struct timespec *){
-			this->on_connect(&mosq, nullptr, 0); return 0; }))
+			this->on_connect(&mosq, nullptr, 0);
+			data.response_received = true;
+			return 0;
+		}))
 		.WillOnce(t::Invoke([this, &mosq](){
 			int granted_qos[1] = {128};
 			this->on_subscribe(&mosq, nullptr, 1, 1, granted_qos);
+			data.response_received = true;
 			return 0;
 		}))
 		.WillRepeatedly(t::Invoke([this, &mosq](pthread_cond_t *, pthread_mutex_t *, const struct timespec *){
@@ -241,6 +249,7 @@ TEST_F(CtrlShellBrokerTest, SubscribeDenied)
 				this->on_message(&mosq, nullptr, &msg);
 				free(pp);
 			}
+			data.response_received = true;
 			return 0;
 			}));
 
@@ -282,14 +291,19 @@ TEST_F(CtrlShellBrokerTest, PublishDenied)
 
 	EXPECT_CALL(pthread_mock_, pthread_cond_timedwait(t::_, t::_, t::_))
 		.WillOnce(t::Invoke([this, &mosq](pthread_cond_t *, pthread_mutex_t *, const struct timespec *){
-			this->on_connect(&mosq, nullptr, 0); return 0; }))
+			this->on_connect(&mosq, nullptr, 0);
+			data.response_received = true;
+			return 0;
+		}))
 		.WillOnce(t::Invoke([this, &mosq](){
 			int granted_qos[1] = {1};
 			this->on_subscribe(&mosq, nullptr, 1, 1, granted_qos);
+			data.response_received = true;
 			return 0;
 		}))
 		.WillOnce(t::Invoke([this, &mosq](){
 			this->on_publish(&mosq, nullptr, 1, 128, nullptr);
+			data.response_received = true;
 			return 0;
 		}));
 

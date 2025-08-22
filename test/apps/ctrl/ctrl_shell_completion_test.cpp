@@ -36,7 +36,10 @@ class CtrlShellCompletionTest : public ::t::Test
 		void expect_setup()
 		{
 			EXPECT_CALL(pthread_mock_, pthread_cond_timedwait(t::_, t::_, t::_))
-				.WillRepeatedly(t::Return(0));
+				.WillRepeatedly(t::Invoke([](pthread_cond_t *, pthread_mutex_t *, const struct timespec *){
+					data.response_received = true;
+					return 0;
+				}));
 
 			EXPECT_CALL(libmosquitto_mock_, mosquitto_subscribe(t::_, t::_, t::_, 1))
 				.WillRepeatedly(t::Return(0));

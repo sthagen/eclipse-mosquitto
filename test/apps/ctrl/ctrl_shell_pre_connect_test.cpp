@@ -77,10 +77,16 @@ class CtrlShellPreConnectTest : public ::t::Test
 			*/
 			EXPECT_CALL(pthread_mock_, pthread_cond_timedwait(t::_, t::_, t::_))
 				.WillOnce(t::Invoke([this, mosq](pthread_cond_t *, pthread_mutex_t *, const struct timespec *){
-					this->on_connect(mosq, nullptr, 0); return 0; }))
+					this->on_connect(mosq, nullptr, 0);
+					data.response_received = true;
+					return 0;
+				}))
 				.WillRepeatedly(t::Invoke([this, mosq](pthread_cond_t *, pthread_mutex_t *, const struct timespec *){
 					mosquitto_message msg{};
-					this->on_message(mosq, nullptr, &msg); return 0; }));
+					this->on_message(mosq, nullptr, &msg);
+					data.response_received = true;
+					return 0;
+				}));
 		}
 };
 

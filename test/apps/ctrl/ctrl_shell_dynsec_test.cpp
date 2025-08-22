@@ -159,7 +159,10 @@ class CtrlShellDynsecTest : public ::t::Test
 			*/
 			EXPECT_CALL(pthread_mock_, pthread_cond_timedwait(t::_, t::_, t::_))
 				.WillOnce(t::Invoke([this, mosq](pthread_cond_t *, pthread_mutex_t *, const struct timespec *){
-					this->on_connect(mosq, nullptr, 0); return 0; }))
+					this->on_connect(mosq, nullptr, 0);
+					data.response_received = true;
+					return 0;
+				}))
 				.WillRepeatedly(t::Invoke([this, mosq](pthread_cond_t *, pthread_mutex_t *, const struct timespec *){
 					mosquitto_message msg{};
 					struct pending_payload *pp = this->pending_payloads;
@@ -170,6 +173,7 @@ class CtrlShellDynsecTest : public ::t::Test
 						this->on_message(mosq, nullptr, &msg);
 						free(pp);
 					}
+					data.response_received = true;
 					return 0;
 					}));
 		}
@@ -368,8 +372,15 @@ TEST_F(CtrlShellDynsecTest, NoDynsec)
 
 	EXPECT_CALL(pthread_mock_, pthread_cond_timedwait(t::_, t::_, t::_))
 		.WillOnce(t::Invoke([this, &mosq](pthread_cond_t *, pthread_mutex_t *, const struct timespec *){
-			this->on_connect(&mosq, nullptr, 0); return 0; }))
-		.WillOnce(t::Return(0)) // Subscribe
+			this->on_connect(&mosq, nullptr, 0);
+			data.response_received = true;
+			return 0;
+		}))
+		.WillOnce(t::Invoke([this, &mosq](pthread_cond_t *, pthread_mutex_t *, const struct timespec *){
+			// Subscribe
+			data.response_received = true;
+			return 0;
+		}))
 		.WillOnce(t::Return(ETIMEDOUT)); // First message to dynsec fails
 
 	EXPECT_CALL(libmosquitto_mock_, mosquitto_publish(t::Eq(&mosq), nullptr, t::StrEq("$CONTROL/dynamic-security/v1"), t::_,

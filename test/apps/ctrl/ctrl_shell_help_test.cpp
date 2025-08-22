@@ -161,7 +161,10 @@ TEST_F(CtrlShellHelpTest, Connect)
 	/* This is a hacky way of working around the async mqtt CONNECT/CONNACK which we don't directly control. */
 	EXPECT_CALL(pthread_mock_, pthread_cond_timedwait(t::_, t::_, t::_))
 		.WillOnce(t::Invoke([this, &mosq](pthread_cond_t *, pthread_mutex_t *, const struct timespec *){
-			this->on_connect(&mosq, nullptr, 0); return 0; }));
+			this->on_connect(&mosq, nullptr, 0);
+			data.response_received = true;
+			return 0;
+		}));
 	EXPECT_CALL(ctrl_shell_mock_, ctrl_shell__output(t::StrEq("\n")));
 
 	ctrl_shell__main(&config);
@@ -202,7 +205,10 @@ TEST_F(CtrlShellHelpTest, PostConnectHelp)
 	 */
 	EXPECT_CALL(pthread_mock_, pthread_cond_timedwait(t::_, t::_, t::_))
 		.WillOnce(t::Invoke([this, &mosq](pthread_cond_t *, pthread_mutex_t *, const struct timespec *){
-			this->on_connect(&mosq, nullptr, 0); return 0; }));
+			this->on_connect(&mosq, nullptr, 0);
+			data.response_received = true;
+			return 0;
+		}));
 
 	const char *outputs[] = {
 		"This is the mosquitto_ctrl interactive shell, for controlling aspects of a mosquitto broker.\n",
@@ -280,10 +286,16 @@ TEST_F(CtrlShellHelpTest, BrokerHelp)
 	 */
 	EXPECT_CALL(pthread_mock_, pthread_cond_timedwait(t::_, t::_, t::_))
 		.WillOnce(t::Invoke([this, &mosq](pthread_cond_t *, pthread_mutex_t *, const struct timespec *){
-			this->on_connect(&mosq, nullptr, 0); return 0; }))
+			this->on_connect(&mosq, nullptr, 0);
+			data.response_received = true;
+			return 0;
+		}))
 		.WillOnce(t::Invoke([this, &mosq](pthread_cond_t *, pthread_mutex_t *, const struct timespec *){
 			mosquitto_message msg{};
-			this->on_message(&mosq, nullptr, &msg); return 0; }));
+			this->on_message(&mosq, nullptr, &msg);
+			data.response_received = true;
+			return 0;
+		}));
 
 	const char *outputs[] = {
 		"This is the mosquitto_ctrl interactive shell, for controlling aspects of a mosquitto broker.\n",
@@ -387,28 +399,28 @@ TEST_F(CtrlShellHelpTest, DynsecHelp)
 	 */
 	EXPECT_CALL(pthread_mock_, pthread_cond_timedwait(t::_, t::_, t::_))
 		.WillOnce(t::Invoke([this, &mosq](pthread_cond_t *, pthread_mutex_t *, const struct timespec *){
-			this->on_connect(&mosq, nullptr, 0); return 0; }))
+			this->on_connect(&mosq, nullptr, 0); data.response_received = true; return 0; }))
 		.WillOnce(t::Invoke([this, &mosq](pthread_cond_t *, pthread_mutex_t *, const struct timespec *){
 			mosquitto_message msg{};
-			this->on_message(&mosq, nullptr, &msg); return 0; }))
+			this->on_message(&mosq, nullptr, &msg); data.response_received = true; return 0; }))
 		.WillOnce(t::Invoke([this, &mosq](pthread_cond_t *, pthread_mutex_t *, const struct timespec *){
 			mosquitto_message msg{};
-			this->on_message(&mosq, nullptr, &msg); return 0; }))
+			this->on_message(&mosq, nullptr, &msg); data.response_received = true; return 0; }))
 		.WillOnce(t::Invoke([this, &mosq](pthread_cond_t *, pthread_mutex_t *, const struct timespec *){
 			mosquitto_message msg{};
-			this->on_message(&mosq, nullptr, &msg); return 0; }))
+			this->on_message(&mosq, nullptr, &msg); data.response_received = true; return 0; }))
 		.WillOnce(t::Invoke([this, &mosq](pthread_cond_t *, pthread_mutex_t *, const struct timespec *){
 			mosquitto_message msg{};
-			this->on_message(&mosq, nullptr, &msg); return 0; }))
+			this->on_message(&mosq, nullptr, &msg); data.response_received = true; return 0; }))
 		.WillOnce(t::Invoke([this, &mosq](pthread_cond_t *, pthread_mutex_t *, const struct timespec *){
 			mosquitto_message msg{};
-			this->on_message(&mosq, nullptr, &msg); return 0; }))
+			this->on_message(&mosq, nullptr, &msg); data.response_received = true; return 0; }))
 		.WillOnce(t::Invoke([this, &mosq](pthread_cond_t *, pthread_mutex_t *, const struct timespec *){
 			mosquitto_message msg{};
-			this->on_message(&mosq, nullptr, &msg); return 0; }))
+			this->on_message(&mosq, nullptr, &msg); data.response_received = true; return 0; }))
 		.WillOnce(t::Invoke([this, &mosq](pthread_cond_t *, pthread_mutex_t *, const struct timespec *){
 			mosquitto_message msg{};
-			this->on_message(&mosq, nullptr, &msg); return 0; }));
+			this->on_message(&mosq, nullptr, &msg); data.response_received = true; return 0; }));
 
 	EXPECT_CALL(libmosquitto_mock_, mosquitto_publish(t::Eq(&mosq), nullptr, t::StrEq("$CONTROL/dynamic-security/v1"), t::_,
 				t::StrEq("{\"commands\":[{\"command\":\"listClients\"}]}"), 1, false))
