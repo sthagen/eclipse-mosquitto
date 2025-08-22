@@ -18,12 +18,15 @@ jobs:
         sudo apt-get update
         sudo apt-get install -y \
             docbook-xsl \
+            google-mock \
+            googletest \
             lcov \
             libc-ares-dev \
             libcjson-dev \
             libcjson1 \
             libcunit1-dev \
             libedit-dev \
+            libgmock-dev \
             libmicrohttpd-dev \
             libssl-dev \
             libwrap0-dev \
@@ -31,7 +34,6 @@ jobs:
             python3-all \
             python3-paho-mqtt \
             python3-psutil \
-            uthash-dev \
             xsltproc
 
     - uses: vapier/coverity-scan-action@v1
