@@ -130,9 +130,15 @@ static enum MHD_Result http_api__send_error_response(struct MHD_Connection *conn
 
 static enum MHD_Result http_api__send_response_with_headers(struct MHD_Connection *connection, const char *buf)
 {
+	enum MHD_Result ret;
 	struct MHD_Response *response = MHD_create_response_from_buffer(strlen(buf), (void *)buf, MHD_RESPMEM_MUST_COPY);
-	MHD_add_response_header(response, "Access-Control-Allow-Origin", "*");
-	enum MHD_Result ret = MHD_queue_response(connection, MHD_HTTP_OK, response);
+
+	ret = MHD_add_response_header(response, "Access-Control-Allow-Origin", "*");
+	if(ret != MHD_YES){
+		MHD_destroy_response(response);
+		return ret;
+	}
+	ret = MHD_queue_response(connection, MHD_HTTP_OK, response);
 	MHD_destroy_response(response);
 	return ret;
 }
