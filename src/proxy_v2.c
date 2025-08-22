@@ -217,7 +217,9 @@ int proxy_v2__read(struct mosquitto *context)
 				return MOSQ_ERR_NOMEM;
 			}
 		}else{
-			context->proxy.buf = NULL;
+			if(context->proxy.cmd != PROXY_CMD_LOCAL || context->proxy.fam != 0x00){
+				return MOSQ_ERR_PROTOCOL;
+			}
 		}
 
 	}
