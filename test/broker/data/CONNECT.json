@@ -149,25 +149,32 @@
 				{"type":"recv", "payload":"20 09 00 00 06 22000A 210014", "comment": "CONNACK"}
 			]},
 			{ "name": "10 Client ID with 0x0000", "msgs": [
-				{"type":"send", "payload":"10 12 0004 4D515454 05 02 000A 00 0005 746F700000"}
+				{"type":"send", "payload":"10 12 0004 4D515454 05 02 000A 00 0005 746F700000"},
+				{"type":"recv", "payload":"20 03 00 85 00"}
 			]},
 			{ "name": "10 Client ID with U+D800", "msgs": [
-				{"type":"send", "payload":"10 12 0004 4D515454 05 02 000A 00 0005 746FEDA080"}
+				{"type":"send", "payload":"10 12 0004 4D515454 05 02 000A 00 0005 746FEDA080"},
+				{"type":"recv", "payload":"20 03 00 85 00"}
 			]},
 			{ "name": "10 Client ID with U+0001", "msgs": [
-				{"type":"send", "payload":"10 12 0004 4D515454 05 02 000A 00 0005 746F700170"}
+				{"type":"send", "payload":"10 12 0004 4D515454 05 02 000A 00 0005 746F700170"},
+				{"type":"recv", "payload":"20 03 00 85 00"}
 			]},
 			{ "name": "10 Client ID with U+001F", "msgs": [
-				{"type":"send", "payload":"10 12 0004 4D515454 05 02 000A 00 0005 746F701F70"}
+				{"type":"send", "payload":"10 12 0004 4D515454 05 02 000A 00 0005 746F701F70"},
+				{"type":"recv", "payload":"20 03 00 85 00"}
 			]},
 			{ "name": "10 Client ID with U+007F", "msgs": [
-				{"type":"send", "payload":"10 12 0004 4D515454 05 02 000A 00 0005 746F707F70"}
+				{"type":"send", "payload":"10 12 0004 4D515454 05 02 000A 00 0005 746F707F70"},
+				{"type":"recv", "payload":"20 03 00 85 00"}
 			]},
 			{ "name": "10 Client ID with U+009F", "msgs": [
-				{"type":"send", "payload":"10 12 0004 4D515454 05 02 000A 00 0005 746FC29F70"}
+				{"type":"send", "payload":"10 12 0004 4D515454 05 02 000A 00 0005 746FC29F70"},
+				{"type":"recv", "payload":"20 03 00 85 00"}
 			]},
 			{ "name": "10 Client ID with U+FFFF", "msgs": [
-				{"type":"send", "payload":"10 12 0004 4D515454 05 02 000A 00 0005 746FEDBFBF"}
+				{"type":"send", "payload":"10 12 0004 4D515454 05 02 000A 00 0005 746FEDBFBF"},
+				{"type":"recv", "payload":"20 03 00 85 00"}
 			]},
 			{ "name": "10 [MQTT-3.1.2-16]", "msgs":[
 				{"type":"send", "payload":"10 11 0004 4D515454 05 02 000A 00 0001 71 0001 71"},

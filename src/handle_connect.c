@@ -673,7 +673,13 @@ static int read_and_verify_clientid_from_packet(struct mosquitto *context, char*
 	int rc;
 	uint16_t slen;
 
-	if(packet__read_string(&context->in_packet, clientid, &slen)){
+	rc = packet__read_string(&context->in_packet, clientid, &slen);
+	if(rc == MOSQ_ERR_MALFORMED_UTF8){
+		if(context->protocol == mosq_p_mqtt5){
+			send__connack(context, 0, MQTT_RC_CLIENTID_NOT_VALID, NULL);
+		}
+		return MOSQ_ERR_CLIENT_IDENTIFIER_NOT_VALID;
+	}else if(rc > 0){
 		return MOSQ_ERR_PROTOCOL;
 	}
 

@@ -364,6 +364,9 @@ void do_disconnect(struct mosquitto *context, int reason)
 					case MOSQ_ERR_SESSION_TAKEN_OVER:
 						log__printf(NULL, MOSQ_LOG_NOTICE, "Client %s disconnected, session taken over.", id);
 						break;
+					case MOSQ_ERR_TOPIC_ALIAS_INVALID:
+						log__printf(NULL, MOSQ_LOG_NOTICE, "Client %s disconnected, topic alias invalid.", id);
+						break;
 					case MOSQ_ERR_HTTP_BAD_ORIGIN:
 						log__printf(NULL, MOSQ_LOG_NOTICE, "Client %s disconnected, non-matching http origin.", id);
 						break;
