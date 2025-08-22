@@ -165,7 +165,7 @@ int persist__chunk_base_msg_read_v56(FILE *db_fptr, struct P_base_msg *chunk, ui
 	mosquitto_property *properties = NULL;
 	struct mosquitto__packet_in prop_packet;
 
-	memset(&prop_packet, 0, sizeof(struct mosquitto__packet));
+	memset(&prop_packet, 0, sizeof(struct mosquitto__packet_in));
 
 	read_e(db_fptr, &chunk->F, sizeof(struct PF_base_msg));
 	chunk->F.payloadlen = ntohl(chunk->F.payloadlen);
