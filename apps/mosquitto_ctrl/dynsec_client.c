@@ -232,9 +232,17 @@ int dynsec_client__file_set_password(int argc, char *argv[], const char *file)
 			if(json_get_string(j_client, "username", &username_json, false) == MOSQ_ERR_SUCCESS){
 				if(!strcmp(username_json, username)){
 					if(iterations == -1){
-						mosquitto_pw_new(&client.pw, MOSQ_PW_DEFAULT);
+						if(mosquitto_pw_new(&client.pw, MOSQ_PW_DEFAULT)){
+							cJSON_Delete(j_tree);
+							fprintf(stderr, "Error: Problem generating password hash.\n");
+							return MOSQ_ERR_NOMEM;
+						}
 					}else{
-						mosquitto_pw_new(&client.pw, MOSQ_PW_SHA512_PBKDF2);
+						if(mosquitto_pw_new(&client.pw, MOSQ_PW_SHA512_PBKDF2)){
+							cJSON_Delete(j_tree);
+							fprintf(stderr, "Error: Problem generating password hash.\n");
+							return MOSQ_ERR_NOMEM;
+						}
 						mosquitto_pw_set_param(client.pw, MOSQ_PW_PARAM_ITERATIONS, iterations);
 					}
 					if(!client.pw || mosquitto_pw_hash_encoded(client.pw, password)){
