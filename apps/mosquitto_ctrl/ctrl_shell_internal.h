@@ -38,6 +38,7 @@ struct ctrl_shell{
 	rl_vcpfunc_t *line_callback;
 	pthread_cond_t response_cond;
 	pthread_mutex_t response_mutex;
+	bool response_received;
 	const char *request_topic;
 	struct completion_tree_root *commands;
 	void (*response_callback)(const char *command, cJSON *data, const char *payload);

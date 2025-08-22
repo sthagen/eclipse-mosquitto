@@ -139,16 +139,22 @@ bool ctrl_shell_get_password(char *buf, size_t len)
 	return true;
 }
 
+
 static int response_wait(bool unlock)
 {
 	struct timespec timeout;
 	int rc = 0;
 
+	data.response_received = false;
+
 	clock_gettime(CLOCK_REALTIME, &timeout);
 	timeout.tv_sec += 2;
-	if(pthread_cond_timedwait(&data.response_cond, &data.response_mutex, &timeout) == ETIMEDOUT){
-		ctrl_shell_printf("Timed out with no response.\n");
-		rc = 1;
+	while(data.response_received == false){
+		if(pthread_cond_timedwait(&data.response_cond, &data.response_mutex, &timeout) == ETIMEDOUT){
+			ctrl_shell_printf("Timed out with no response.\n");
+			rc = 1;
+			break;
+		}
 	}
 	if(unlock){
 		pthread_mutex_unlock(&data.response_mutex);
@@ -291,14 +297,7 @@ static int ctrl_shell__subscribe_blocking(const char *topic, void (*module_on_su
 
 	mosquitto_subscribe(data.mosq, NULL, topic, 1);
 
-	struct timespec timeout;
-	clock_gettime(CLOCK_REALTIME, &timeout);
-	timeout.tv_sec += 2;
-	if(pthread_cond_timedwait(&data.response_cond, &data.response_mutex, &timeout) == ETIMEDOUT){
-		ctrl_shell_printf("Subscribe timed out with no response.\n");
-		rc = 1;
-	}
-	pthread_mutex_unlock(&data.response_mutex);
+	response_wait(true);
 
 	if(data.subscribe_rc >= 128){
 		rc = 1;
@@ -493,6 +492,7 @@ void ctrl_shell__on_connect(struct mosquitto *mosq, void *userdata, int rc)
 
 	data.connect_rc = rc;
 
+	data.response_received = true;
 	pthread_mutex_unlock(&data.response_mutex);
 	pthread_cond_signal(&data.response_cond);
 }
@@ -519,6 +519,7 @@ void ctrl_shell__on_message(struct mosquitto *mosq, void *userdata, const struct
 	}
 	cJSON_Delete(j_tree);
 
+	data.response_received = true;
 	pthread_mutex_unlock(&data.response_mutex);
 	pthread_cond_signal(&data.response_cond);
 }
@@ -535,6 +536,7 @@ void ctrl_shell__on_publish(struct mosquitto *mosq, void *userdata, int mid, int
 		data.publish_rc = reason_code;
 	}
 
+	data.response_received = true;
 	pthread_mutex_unlock(&data.response_mutex);
 	pthread_cond_signal(&data.response_cond);
 }
@@ -550,6 +552,7 @@ void ctrl_shell__on_subscribe(struct mosquitto *mosq, void *userdata, int mid, i
 		data.subscribe_rc = granted_qos[0];
 	}
 
+	data.response_received = true;
 	pthread_mutex_unlock(&data.response_mutex);
 	pthread_cond_signal(&data.response_cond);
 }
