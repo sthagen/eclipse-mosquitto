@@ -599,15 +599,18 @@ static void set_bg_dark(void)
 }
 
 
-static void get_bg(void)
+static int get_bg(void)
 {
 	int opt;
 
-	set_bg_dark();
-
 	/* Set non-blocking */
 	opt = fcntl(STDIN_FILENO, F_GETFL, 0);
-	fcntl(STDIN_FILENO, F_SETFL, opt | O_NONBLOCK);
+	if(fcntl(STDIN_FILENO, F_SETFL, opt | O_NONBLOCK) < 0){
+		fprintf(stderr, "Error: Unable to set terminal flags required.");
+		return 1;
+	}
+
+	set_bg_dark();
 
 	term_set_echo(false);
 	term_set_canon(false);
@@ -633,7 +636,7 @@ static void get_bg(void)
 	int r_bg = 0, g_bg = 0, b_bg = 0;
 	int s = sscanf(buf+2, "10;rgb:%x/%x/%x   11;rgb:%x/%x/%x", &r_fg, &g_fg, &b_fg, &r_bg, &g_bg, &b_bg);
 	if(s != 6){
-		return;
+		return 1;
 	}
 	int fg, bg;
 
@@ -645,6 +648,7 @@ static void get_bg(void)
 	}else{
 		set_bg_light();
 	}
+	return 0;
 }
 
 
@@ -681,7 +685,9 @@ void ctrl_shell__main(struct mosq_config *config)
 	if(config && config->no_colour){
 		set_no_colour();
 	}else{
-		get_bg();
+		if(get_bg()){
+			return;
+		}
 	}
 
 	if(config){
