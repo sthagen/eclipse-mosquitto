@@ -285,7 +285,7 @@ static int update_pwuser_cb(FILE *fptr, FILE *ftmp, const char *username, const 
 	UNUSED(fptr);
 	UNUSED(password);
 
-	if(strcmp(username, helper->username)){
+	if(helper->found || strcmp(username, helper->username)){
 		/* If this isn't the matching user, then writing out the exiting line */
 		fprintf(ftmp, "%s", line);
 	}else{
