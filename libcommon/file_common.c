@@ -216,8 +216,7 @@ FILE *mosquitto_fopen(const char *path, const char *mode, bool restrict_read)
 			char buf[4096];
 			struct group grp, *result;
 
-			getgrgid_r(getgid(), &grp, buf, sizeof(buf), &result);
-			if(result){
+			if(getgrgid_r(getgid(), &grp, buf, sizeof(buf), &result) == 0){
 #ifdef WITH_BROKER
 				log__printf(NULL, MOSQ_LOG_WARNING,
 #else
