@@ -251,7 +251,7 @@ int handle__publish(struct mosquitto *context)
 		db__message_store_find(context, base_msg->data.source_mid, &cmsg_stored);
 	}
 
-	if(cmsg_stored && cmsg_stored->base_msg && base_msg->data.source_mid != 0 &&
+	if(cmsg_stored && base_msg->data.source_mid != 0 &&
 			(cmsg_stored->base_msg->data.qos != base_msg->data.qos
 			 || cmsg_stored->base_msg->data.payloadlen != base_msg->data.payloadlen
 			 || strcmp(cmsg_stored->base_msg->data.topic, base_msg->data.topic)
