@@ -24,33 +24,33 @@ def do_test(suffix):
     write_config(conf_file, port)
     rc = 1
     # Single, error in plugin
-    props = mqtt5_props.gen_string_prop(mqtt5_props.PROP_AUTHENTICATION_METHOD, "error%s" % (suffix))
+    props = mqtt5_props.gen_string_prop(mqtt5_props.AUTHENTICATION_METHOD, "error%s" % (suffix))
     connect1_packet = mosq_test.gen_connect("client-params-test1", proto_ver=5, properties=props)
 
     # Single, no matching authentication method
-    props = mqtt5_props.gen_string_prop(mqtt5_props.PROP_AUTHENTICATION_METHOD, "non-matching%s" % (suffix))
+    props = mqtt5_props.gen_string_prop(mqtt5_props.AUTHENTICATION_METHOD, "non-matching%s" % (suffix))
     connect2_packet = mosq_test.gen_connect("client-params-test2", proto_ver=5, properties=props)
-    connack2_packet = mosq_test.gen_connack(rc=mqtt5_rc.MQTT_RC_BAD_AUTHENTICATION_METHOD, proto_ver=5, properties=None)
+    connack2_packet = mosq_test.gen_connack(rc=mqtt5_rc.BAD_AUTHENTICATION_METHOD, proto_ver=5, properties=None)
 
     # Single step, matching method, failure
-    props = mqtt5_props.gen_string_prop(mqtt5_props.PROP_AUTHENTICATION_METHOD, "single%s" % (suffix))
-    props += mqtt5_props.gen_string_prop(mqtt5_props.PROP_AUTHENTICATION_DATA, "baddata")
+    props = mqtt5_props.gen_string_prop(mqtt5_props.AUTHENTICATION_METHOD, "single%s" % (suffix))
+    props += mqtt5_props.gen_string_prop(mqtt5_props.AUTHENTICATION_DATA, "baddata")
     connect3_packet = mosq_test.gen_connect("client-params-test3", proto_ver=5, properties=props)
-    connack3_packet = mosq_test.gen_connack(rc=mqtt5_rc.MQTT_RC_NOT_AUTHORIZED, proto_ver=5, properties=None)
+    connack3_packet = mosq_test.gen_connack(rc=mqtt5_rc.NOT_AUTHORIZED, proto_ver=5, properties=None)
 
     # Single step, matching method, success
-    props = mqtt5_props.gen_string_prop(mqtt5_props.PROP_AUTHENTICATION_METHOD, "single%s" % (suffix))
-    props += mqtt5_props.gen_string_prop(mqtt5_props.PROP_AUTHENTICATION_DATA, "data")
+    props = mqtt5_props.gen_string_prop(mqtt5_props.AUTHENTICATION_METHOD, "single%s" % (suffix))
+    props += mqtt5_props.gen_string_prop(mqtt5_props.AUTHENTICATION_DATA, "data")
     connect4_packet = mosq_test.gen_connect("client-params-test5", proto_ver=5, properties=props)
-    props = mqtt5_props.gen_string_prop(mqtt5_props.PROP_AUTHENTICATION_METHOD, "single%s" % (suffix))
+    props = mqtt5_props.gen_string_prop(mqtt5_props.AUTHENTICATION_METHOD, "single%s" % (suffix))
     connack4_packet = mosq_test.gen_connack(rc=0, proto_ver=5, properties=props)
 
     # Single step, matching method, success, auth data back to client
-    props = mqtt5_props.gen_string_prop(mqtt5_props.PROP_AUTHENTICATION_METHOD, "mirror%s" % (suffix))
-    props += mqtt5_props.gen_string_prop(mqtt5_props.PROP_AUTHENTICATION_DATA, "somedata")
+    props = mqtt5_props.gen_string_prop(mqtt5_props.AUTHENTICATION_METHOD, "mirror%s" % (suffix))
+    props += mqtt5_props.gen_string_prop(mqtt5_props.AUTHENTICATION_DATA, "somedata")
     connect5_packet = mosq_test.gen_connect("client-params-test6", proto_ver=5, properties=props)
-    props = mqtt5_props.gen_string_prop(mqtt5_props.PROP_AUTHENTICATION_METHOD, "mirror%s" % (suffix))
-    props += mqtt5_props.gen_string_prop(mqtt5_props.PROP_AUTHENTICATION_DATA, "atademos")
+    props = mqtt5_props.gen_string_prop(mqtt5_props.AUTHENTICATION_METHOD, "mirror%s" % (suffix))
+    props += mqtt5_props.gen_string_prop(mqtt5_props.AUTHENTICATION_DATA, "atademos")
     connack5_packet = mosq_test.gen_connack(rc=0, proto_ver=5, properties=props)
 
 

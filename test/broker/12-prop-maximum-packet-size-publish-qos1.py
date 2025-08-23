@@ -8,7 +8,7 @@ from mosq_test_helper import *
 def do_test(start_broker):
     rc = 1
 
-    props = mqtt5_props.gen_uint32_prop(mqtt5_props.PROP_MAXIMUM_PACKET_SIZE, 40)
+    props = mqtt5_props.gen_uint32_prop(mqtt5_props.MAXIMUM_PACKET_SIZE, 40)
     connect_packet = mosq_test.gen_connect("12-max-publish-qos1", proto_ver=5, properties=props)
     connack_packet = mosq_test.gen_connack(rc=0, proto_ver=5)
 

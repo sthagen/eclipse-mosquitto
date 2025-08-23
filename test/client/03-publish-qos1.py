@@ -31,7 +31,7 @@ def do_test(proto_ver):
     mid = 1
     publish_packet = mosq_test.gen_publish("03/pub/qos1/test", qos=1, mid=mid, payload="message", proto_ver=proto_ver)
     if proto_ver == 5:
-        puback_packet = mosq_test.gen_puback(mid, proto_ver=proto_ver, reason_code=mqtt5_rc.MQTT_RC_NO_MATCHING_SUBSCRIBERS)
+        puback_packet = mosq_test.gen_puback(mid, proto_ver=proto_ver, reason_code=mqtt5_rc.NO_MATCHING_SUBSCRIBERS)
     else:
         puback_packet = mosq_test.gen_puback(mid, proto_ver=proto_ver)
 

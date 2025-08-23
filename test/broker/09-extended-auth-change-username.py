@@ -36,12 +36,12 @@ def do_test(per_listener):
 
     mid = 2
     publish1_packet = mosq_test.gen_publish("topic/one", qos=1, mid=mid, payload="message", proto_ver=5)
-    puback1_packet = mosq_test.gen_puback(mid, proto_ver=5, reason_code=mqtt5_rc.MQTT_RC_NOT_AUTHORIZED)
+    puback1_packet = mosq_test.gen_puback(mid, proto_ver=5, reason_code=mqtt5_rc.NOT_AUTHORIZED)
 
     # Connect without a username, but have the plugin change it
-    props = mqtt5_props.gen_string_prop(mqtt5_props.PROP_AUTHENTICATION_METHOD, "change")
+    props = mqtt5_props.gen_string_prop(mqtt5_props.AUTHENTICATION_METHOD, "change")
     connect2_packet = mosq_test.gen_connect("client-params-test2", proto_ver=5, properties=props)
-    props = mqtt5_props.gen_string_prop(mqtt5_props.PROP_AUTHENTICATION_METHOD, "change")
+    props = mqtt5_props.gen_string_prop(mqtt5_props.AUTHENTICATION_METHOD, "change")
     connack2_packet = mosq_test.gen_connack(rc=0, proto_ver=5, properties=props)
 
     mid = 2

@@ -615,10 +615,10 @@ def gen_connect(client_id, clean_session=True, keepalive=60, username=None, pass
 
     if proto_ver == 5:
         if properties == b"":
-            properties += mqtt5_props.gen_uint16_prop(mqtt5_props.PROP_RECEIVE_MAXIMUM, 20)
+            properties += mqtt5_props.gen_uint16_prop(mqtt5_props.RECEIVE_MAXIMUM, 20)
 
         if session_expiry != -1:
-            properties += mqtt5_props.gen_uint32_prop(mqtt5_props.PROP_SESSION_EXPIRY_INTERVAL, session_expiry)
+            properties += mqtt5_props.gen_uint32_prop(mqtt5_props.SESSION_EXPIRY_INTERVAL, session_expiry)
 
         properties = mqtt5_props.prop_finalise(properties)
         remaining_length += len(properties)
@@ -675,8 +675,8 @@ def gen_connack(flags=0, rc=0, proto_ver=4, properties=b"", property_helper=True
     if proto_ver == 5:
         if property_helper == True:
             if properties is not None:
-                properties = mqtt5_props.gen_uint16_prop(mqtt5_props.PROP_TOPIC_ALIAS_MAXIMUM, 10) \
-                    + properties + mqtt5_props.gen_uint16_prop(mqtt5_props.PROP_RECEIVE_MAXIMUM, 20)
+                properties = mqtt5_props.gen_uint16_prop(mqtt5_props.TOPIC_ALIAS_MAXIMUM, 10) \
+                    + properties + mqtt5_props.gen_uint16_prop(mqtt5_props.RECEIVE_MAXIMUM, 20)
             else:
                 properties = b""
         properties = mqtt5_props.prop_finalise(properties)

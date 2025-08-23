@@ -32,15 +32,15 @@ def do_test(format_str, expected_output, proto_ver=4, payload="message"):
     if proto_ver == 5:
         cmd += ['-D', 'subscribe', 'subscription-identifier', '56']
 
-    props = mqtt5_props.gen_byte_prop(mqtt5_props.PROP_PAYLOAD_FORMAT_INDICATOR, 1)
-    props += mqtt5_props.gen_uint32_prop(mqtt5_props.PROP_MESSAGE_EXPIRY_INTERVAL, 3600)
-    props += mqtt5_props.gen_string_prop(mqtt5_props.PROP_CONTENT_TYPE, "plain/text")
-    props += mqtt5_props.gen_string_prop(mqtt5_props.PROP_RESPONSE_TOPIC, "/dev/null")
-    #props += mqtt5_props.gen_string_prop(mqtt5_props.PROP_CORRELATION_DATA, "2357289375902345")
-    props += mqtt5_props.gen_string_pair_prop(mqtt5_props.PROP_USER_PROPERTY, "name1", "value1")
-    props += mqtt5_props.gen_string_pair_prop(mqtt5_props.PROP_USER_PROPERTY, "name2", "value2")
-    props += mqtt5_props.gen_string_pair_prop(mqtt5_props.PROP_USER_PROPERTY, "name3", "value3")
-    props += mqtt5_props.gen_string_pair_prop(mqtt5_props.PROP_USER_PROPERTY, "name4", "value4")
+    props = mqtt5_props.gen_byte_prop(mqtt5_props.PAYLOAD_FORMAT_INDICATOR, 1)
+    props += mqtt5_props.gen_uint32_prop(mqtt5_props.MESSAGE_EXPIRY_INTERVAL, 3600)
+    props += mqtt5_props.gen_string_prop(mqtt5_props.CONTENT_TYPE, "plain/text")
+    props += mqtt5_props.gen_string_prop(mqtt5_props.RESPONSE_TOPIC, "/dev/null")
+    #props += mqtt5_props.gen_string_prop(mqtt5_props.CORRELATION_DATA, "2357289375902345")
+    props += mqtt5_props.gen_string_pair_prop(mqtt5_props.USER_PROPERTY, "name1", "value1")
+    props += mqtt5_props.gen_string_pair_prop(mqtt5_props.USER_PROPERTY, "name2", "value2")
+    props += mqtt5_props.gen_string_pair_prop(mqtt5_props.USER_PROPERTY, "name3", "value3")
+    props += mqtt5_props.gen_string_pair_prop(mqtt5_props.USER_PROPERTY, "name4", "value4")
     if proto_ver == 5:
         publish_packet = mosq_test.gen_publish("02/sub/format/test", qos=0, payload=payload, properties=props, proto_ver=proto_ver)
     else:

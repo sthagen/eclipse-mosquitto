@@ -36,14 +36,14 @@ def do_test(proto_ver):
             ]
 
     mid = 1
-    props = mqtt5_props.gen_string_prop(mqtt5_props.PROP_CONTENT_TYPE, "application/json")
-    props += mqtt5_props.gen_string_prop(mqtt5_props.PROP_CORRELATION_DATA, "some-data")
-    props += mqtt5_props.gen_byte_prop(mqtt5_props.PROP_PAYLOAD_FORMAT_INDICATOR, 1)
-    props += mqtt5_props.gen_string_prop(mqtt5_props.PROP_RESPONSE_TOPIC, "/dev/null")
-    props += mqtt5_props.gen_string_pair_prop(mqtt5_props.PROP_USER_PROPERTY, "publish", "up")
-    props += mqtt5_props.gen_uint32_prop(mqtt5_props.PROP_MESSAGE_EXPIRY_INTERVAL, 59)
+    props = mqtt5_props.gen_string_prop(mqtt5_props.CONTENT_TYPE, "application/json")
+    props += mqtt5_props.gen_string_prop(mqtt5_props.CORRELATION_DATA, "some-data")
+    props += mqtt5_props.gen_byte_prop(mqtt5_props.PAYLOAD_FORMAT_INDICATOR, 1)
+    props += mqtt5_props.gen_string_prop(mqtt5_props.RESPONSE_TOPIC, "/dev/null")
+    props += mqtt5_props.gen_string_pair_prop(mqtt5_props.USER_PROPERTY, "publish", "up")
+    props += mqtt5_props.gen_uint32_prop(mqtt5_props.MESSAGE_EXPIRY_INTERVAL, 59)
     publish_packet = mosq_test.gen_publish("03/pub/qos1/test/properties", qos=1, mid=mid, payload="message", proto_ver=proto_ver, properties=props)
-    puback_packet = mosq_test.gen_puback(mid, proto_ver=proto_ver, reason_code=mqtt5_rc.MQTT_RC_NO_MATCHING_SUBSCRIBERS)
+    puback_packet = mosq_test.gen_puback(mid, proto_ver=proto_ver, reason_code=mqtt5_rc.NO_MATCHING_SUBSCRIBERS)
 
     broker = mosq_test.start_broker(filename=os.path.basename(__file__), port=port)
 

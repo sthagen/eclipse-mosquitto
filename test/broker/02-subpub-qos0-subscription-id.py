@@ -11,12 +11,12 @@ def do_test(start_broker, proto_ver):
     connack_packet = mosq_test.gen_connack(rc=0, proto_ver=5)
 
     mid = 1
-    props = mqtt5_props.gen_varint_prop(mqtt5_props.PROP_SUBSCRIPTION_IDENTIFIER, 1)
+    props = mqtt5_props.gen_varint_prop(mqtt5_props.SUBSCRIPTION_IDENTIFIER, 1)
     subscribe1_packet = mosq_test.gen_subscribe(mid, "02/subpub/subid/id1", 0, proto_ver=5, properties=props)
     suback1_packet = mosq_test.gen_suback(mid, 0, proto_ver=5)
 
     mid = 2
-    props = mqtt5_props.gen_varint_prop(mqtt5_props.PROP_SUBSCRIPTION_IDENTIFIER, 14)
+    props = mqtt5_props.gen_varint_prop(mqtt5_props.SUBSCRIPTION_IDENTIFIER, 14)
     subscribe2_packet = mosq_test.gen_subscribe(mid, "02/subpub/subid/+/id2", 0, proto_ver=5, properties=props)
     suback2_packet = mosq_test.gen_suback(mid, 0, proto_ver=5)
 
@@ -31,24 +31,24 @@ def do_test(start_broker, proto_ver):
 
     # Updated version of subscribe2, with a new subscription identifier
     mid = 5
-    props = mqtt5_props.gen_varint_prop(mqtt5_props.PROP_SUBSCRIPTION_IDENTIFIER, 19)
+    props = mqtt5_props.gen_varint_prop(mqtt5_props.SUBSCRIPTION_IDENTIFIER, 19)
     subscribe2u_packet = mosq_test.gen_subscribe(mid, "02/subpub/subid/+/id2", 0, proto_ver=5, properties=props)
     suback2u_packet = mosq_test.gen_suback(mid, 0, proto_ver=5)
 
     # Updated version of subscribe3, now with a subscription identifier
     mid = 6
-    props = mqtt5_props.gen_varint_prop(mqtt5_props.PROP_SUBSCRIPTION_IDENTIFIER, 21)
+    props = mqtt5_props.gen_varint_prop(mqtt5_props.SUBSCRIPTION_IDENTIFIER, 21)
     subscribe3u_packet = mosq_test.gen_subscribe(mid, "02/subpub/subid/noid", 0, proto_ver=5, properties=props)
     suback3u_packet = mosq_test.gen_suback(mid, 0, proto_ver=5)
 
 
     publish1_packet = mosq_test.gen_publish("02/subpub/subid/id1", qos=0, payload="message1", proto_ver=5)
 
-    props = mqtt5_props.gen_varint_prop(mqtt5_props.PROP_SUBSCRIPTION_IDENTIFIER, 1)
+    props = mqtt5_props.gen_varint_prop(mqtt5_props.SUBSCRIPTION_IDENTIFIER, 1)
     publish1r_packet = mosq_test.gen_publish("02/subpub/subid/id1", qos=0, payload="message1", proto_ver=5, properties=props)
 
     publish2_packet = mosq_test.gen_publish("02/subpub/subid/test/id2", qos=0, payload="message2", proto_ver=5)
-    props = mqtt5_props.gen_varint_prop(mqtt5_props.PROP_SUBSCRIPTION_IDENTIFIER, 14)
+    props = mqtt5_props.gen_varint_prop(mqtt5_props.SUBSCRIPTION_IDENTIFIER, 14)
     publish2r_packet = mosq_test.gen_publish("02/subpub/subid/test/id2", qos=0, payload="message2", proto_ver=5, properties=props)
 
     publish3_packet = mosq_test.gen_publish("02/subpub/subid/noid", qos=0, payload="message3", proto_ver=5)
@@ -58,11 +58,11 @@ def do_test(start_broker, proto_ver):
     publish1ru_packet = mosq_test.gen_publish("02/subpub/subid/id1", qos=0, payload="message1", proto_ver=5)
 
     # Updated verison of publish2r, with updated id
-    props = mqtt5_props.gen_varint_prop(mqtt5_props.PROP_SUBSCRIPTION_IDENTIFIER, 19)
+    props = mqtt5_props.gen_varint_prop(mqtt5_props.SUBSCRIPTION_IDENTIFIER, 19)
     publish2ru_packet = mosq_test.gen_publish("02/subpub/subid/test/id2", qos=0, payload="message2", proto_ver=5, properties=props)
 
     # Updated version of publish3r, now with an id
-    props = mqtt5_props.gen_varint_prop(mqtt5_props.PROP_SUBSCRIPTION_IDENTIFIER, 21)
+    props = mqtt5_props.gen_varint_prop(mqtt5_props.SUBSCRIPTION_IDENTIFIER, 21)
     publish3ru_packet = mosq_test.gen_publish("02/subpub/subid/noid", qos=0, payload="message3", proto_ver=5, properties=props)
 
 

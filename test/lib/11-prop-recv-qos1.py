@@ -9,8 +9,8 @@ def do_test(conn, data):
     connack_packet = mosq_test.gen_connack(rc=0, proto_ver=5)
 
     mid = 1
-    props = mqtt5_props.gen_string_prop(mqtt5_props.PROP_CONTENT_TYPE, "plain/text")
-    props += mqtt5_props.gen_string_prop(mqtt5_props.PROP_RESPONSE_TOPIC, "msg/123")
+    props = mqtt5_props.gen_string_prop(mqtt5_props.CONTENT_TYPE, "plain/text")
+    props += mqtt5_props.gen_string_prop(mqtt5_props.RESPONSE_TOPIC, "msg/123")
     publish_packet = mosq_test.gen_publish("prop/test", mid=mid, qos=1, payload="message", proto_ver=5, properties=props)
     puback_packet = mosq_test.gen_puback(mid=mid, proto_ver=5)
 

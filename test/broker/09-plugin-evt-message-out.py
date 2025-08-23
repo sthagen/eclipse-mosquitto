@@ -20,10 +20,10 @@ def do_test():
 
     publish_packet_deny = mosq_test.gen_publish("deny", qos=0, payload="message1", proto_ver=5)
 
-    props = mqtt5_props.gen_string_prop(mqtt5_props.PROP_RESPONSE_TOPIC, "response/topic")
+    props = mqtt5_props.gen_string_prop(mqtt5_props.RESPONSE_TOPIC, "response/topic")
     publish_packet1 = mosq_test.gen_publish("out-topic", qos=0, payload="message1", proto_ver=5, properties=props)
 
-    props = mqtt5_props.gen_string_pair_prop(mqtt5_props.PROP_USER_PROPERTY, "key", "value")
+    props = mqtt5_props.gen_string_pair_prop(mqtt5_props.USER_PROPERTY, "key", "value")
     publish_packet2 = mosq_test.gen_publish("new-topic", qos=0, payload="new-message", proto_ver=5, properties=props)
 
     port = mosq_test.get_port()

@@ -30,17 +30,17 @@ def do_test(start_broker):
     helper_connack = mosq_test.gen_connack(rc=0, proto_ver=5)
 
     mid=1
-    props = mqtt5_props.gen_uint32_prop(mqtt5_props.PROP_MESSAGE_EXPIRY_INTERVAL, 2)
+    props = mqtt5_props.gen_uint32_prop(mqtt5_props.MESSAGE_EXPIRY_INTERVAL, 2)
     publish1_packet = mosq_test.gen_publish("02/subpub/expiry/retain/expired", mid=mid, qos=1, retain=True, payload="message1", proto_ver=5, properties=props)
-    puback1_packet = mosq_test.gen_puback(mid, proto_ver=5, reason_code=mqtt5_rc.MQTT_RC_NO_MATCHING_SUBSCRIBERS)
+    puback1_packet = mosq_test.gen_puback(mid, proto_ver=5, reason_code=mqtt5_rc.NO_MATCHING_SUBSCRIBERS)
 
     mid=2
     publish2s_packet = mosq_test.gen_publish("02/subpub/expiry/retain/kept", mid=mid, qos=1, retain=True, payload="message2", proto_ver=5)
-    puback2s_packet = mosq_test.gen_puback(mid, proto_ver=5, reason_code=mqtt5_rc.MQTT_RC_NO_MATCHING_SUBSCRIBERS)
+    puback2s_packet = mosq_test.gen_puback(mid, proto_ver=5, reason_code=mqtt5_rc.NO_MATCHING_SUBSCRIBERS)
 
     mid=1
     publish2r_packet = mosq_test.gen_publish("02/subpub/expiry/retain/kept", mid=mid, qos=1, retain=True, payload="message2", proto_ver=5)
-    puback2r_packet = mosq_test.gen_puback(mid, proto_ver=5, reason_code=mqtt5_rc.MQTT_RC_NO_MATCHING_SUBSCRIBERS)
+    puback2r_packet = mosq_test.gen_puback(mid, proto_ver=5, reason_code=mqtt5_rc.NO_MATCHING_SUBSCRIBERS)
 
 
     port = mosq_test.get_port()

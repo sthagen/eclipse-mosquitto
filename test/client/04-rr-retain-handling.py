@@ -28,7 +28,7 @@ def do_test():
     sock.bind(('', port))
     sock.listen(5)
 
-    props = mqtt5_props.gen_uint16_prop(mqtt5_props.PROP_RECEIVE_MAXIMUM, 1)
+    props = mqtt5_props.gen_uint16_prop(mqtt5_props.RECEIVE_MAXIMUM, 1)
     connect_packet = mosq_test.gen_connect("", proto_ver=5, properties=props)
     connack_packet = mosq_test.gen_connack(rc=0, proto_ver=5)
 
@@ -37,7 +37,7 @@ def do_test():
     subscribe_packet_never = mosq_test.gen_subscribe(mid=1, topic="retain-handling", qos=0x20, proto_ver=5)
     suback_packet = mosq_test.gen_suback(mid=1, qos=0, proto_ver=5)
 
-    props = mqtt5_props.gen_string_prop(mqtt5_props.PROP_RESPONSE_TOPIC, "retain-handling")
+    props = mqtt5_props.gen_string_prop(mqtt5_props.RESPONSE_TOPIC, "retain-handling")
     publish_packet_in = mosq_test.gen_publish("retain-handling", qos=0, payload="m", proto_ver=5, properties=props)
     publish_packet_out = mosq_test.gen_publish("retain-handling", qos=0, payload="m", proto_ver=5)
 

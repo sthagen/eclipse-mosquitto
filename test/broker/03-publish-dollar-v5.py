@@ -30,10 +30,10 @@ def do_test(start_broker):
         broker = mosq_test.start_broker(filename=os.path.basename(__file__), port=port)
 
     try:
-        helper(port, "$SYS/broker/uptime", mqtt5_rc.MQTT_RC_NOT_AUTHORIZED)
-        helper(port, "$SYS/broker/connection/me", mqtt5_rc.MQTT_RC_NOT_AUTHORIZED)
-        helper(port, "$SYS/broker/connection/me/state", mqtt5_rc.MQTT_RC_NO_MATCHING_SUBSCRIBERS)
-        helper(port, "$share/share/03/publish/dollar/v5/topic", mqtt5_rc.MQTT_RC_NOT_AUTHORIZED)
+        helper(port, "$SYS/broker/uptime", mqtt5_rc.NOT_AUTHORIZED)
+        helper(port, "$SYS/broker/connection/me", mqtt5_rc.NOT_AUTHORIZED)
+        helper(port, "$SYS/broker/connection/me/state", mqtt5_rc.NO_MATCHING_SUBSCRIBERS)
+        helper(port, "$share/share/03/publish/dollar/v5/topic", mqtt5_rc.NOT_AUTHORIZED)
 
         rc = 0
     except mosq_test.TestError:

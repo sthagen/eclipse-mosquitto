@@ -17,10 +17,10 @@ def do_test(start_broker):
     subscribe_packet = mosq_test.gen_subscribe(mid, "02/subpub/topic-alias/alias", 0, proto_ver=5)
     suback_packet = mosq_test.gen_suback(mid, 0, proto_ver=5)
 
-    props = mqtt5_props.gen_uint16_prop(mqtt5_props.PROP_TOPIC_ALIAS, 3)
+    props = mqtt5_props.gen_uint16_prop(mqtt5_props.TOPIC_ALIAS, 3)
     publish1_packet = mosq_test.gen_publish("02/subpub/topic-alias/alias", qos=0, payload="message", proto_ver=5, properties=props)
 
-    props = mqtt5_props.gen_uint16_prop(mqtt5_props.PROP_TOPIC_ALIAS, 3)
+    props = mqtt5_props.gen_uint16_prop(mqtt5_props.TOPIC_ALIAS, 3)
     publish2s_packet = mosq_test.gen_publish("", qos=0, payload="message", proto_ver=5, properties=props)
     publish2r_packet = mosq_test.gen_publish("02/subpub/topic-alias/alias", qos=0, payload="message", proto_ver=5)
 

@@ -14,14 +14,14 @@ def do_test(start_broker, proto_ver, clean_session1, clean_session2):
 
     if proto_ver == 5:
         if clean_session1 == False:
-            connect_props1 = mqtt5_props.gen_uint32_prop(mqtt5_props.PROP_SESSION_EXPIRY_INTERVAL, 60)
+            connect_props1 = mqtt5_props.gen_uint32_prop(mqtt5_props.SESSION_EXPIRY_INTERVAL, 60)
         else:
-            connect_props1 = mqtt5_props.gen_uint32_prop(mqtt5_props.PROP_SESSION_EXPIRY_INTERVAL, 0)
+            connect_props1 = mqtt5_props.gen_uint32_prop(mqtt5_props.SESSION_EXPIRY_INTERVAL, 0)
 
         if clean_session2 == False:
-            connect_props2 = mqtt5_props.gen_uint32_prop(mqtt5_props.PROP_SESSION_EXPIRY_INTERVAL, 60)
+            connect_props2 = mqtt5_props.gen_uint32_prop(mqtt5_props.SESSION_EXPIRY_INTERVAL, 60)
         else:
-            connect_props2 = mqtt5_props.gen_uint32_prop(mqtt5_props.PROP_SESSION_EXPIRY_INTERVAL, 0)
+            connect_props2 = mqtt5_props.gen_uint32_prop(mqtt5_props.SESSION_EXPIRY_INTERVAL, 0)
     else:
         connect_props1 = b""
         connect_props2 = b""

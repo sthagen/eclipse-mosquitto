@@ -7,7 +7,7 @@ from mosq_test_helper import *
 
 def do_test(start_broker):
     rc = 1
-    props = mqtt5_props.gen_uint16_prop(mqtt5_props.PROP_TOPIC_ALIAS_MAXIMUM, 65535)
+    props = mqtt5_props.gen_uint16_prop(mqtt5_props.TOPIC_ALIAS_MAXIMUM, 65535)
     connect_packet = mosq_test.gen_connect("02-b2c-topic-alias", proto_ver=5, properties=props)
     connack_packet = mosq_test.gen_connack(rc=0, proto_ver=5)
 
@@ -44,7 +44,7 @@ def do_test(start_broker):
 
             publish_packet_s += mosq_test.gen_publish("02/b2c/topic/alias/%d"%(i), qos=0, payload="message", proto_ver=5)
 
-            props = mqtt5_props.gen_uint16_prop(mqtt5_props.PROP_TOPIC_ALIAS, i)
+            props = mqtt5_props.gen_uint16_prop(mqtt5_props.TOPIC_ALIAS, i)
             publish_packet_r += mosq_test.gen_publish("02/b2c/topic/alias/%d"%(i), qos=0, payload="message", proto_ver=5, properties=props)
 
         if len(publish_packet_s) > 0:
@@ -63,7 +63,7 @@ def do_test(start_broker):
 
             publish_packet_s += mosq_test.gen_publish("02/b2c/topic/alias/%d"%(i), qos=0, payload="message", proto_ver=5)
 
-            props = mqtt5_props.gen_uint16_prop(mqtt5_props.PROP_TOPIC_ALIAS, i)
+            props = mqtt5_props.gen_uint16_prop(mqtt5_props.TOPIC_ALIAS, i)
             publish_packet_r += mosq_test.gen_publish("", qos=0, payload="message", proto_ver=5, properties=props)
 
         if len(publish_packet_s) > 0:

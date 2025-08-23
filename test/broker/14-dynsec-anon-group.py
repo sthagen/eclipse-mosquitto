@@ -95,10 +95,10 @@ connack_packet = mosq_test.gen_connack(rc=0, proto_ver=5)
 
 mid = 1
 subscribe_packet = mosq_test.gen_subscribe(mid, "anon/topic", qos=1, proto_ver=5)
-suback_packet_fail = mosq_test.gen_suback(mid, mqtt5_rc.MQTT_RC_NOT_AUTHORIZED, proto_ver=5)
+suback_packet_fail = mosq_test.gen_suback(mid, mqtt5_rc.NOT_AUTHORIZED, proto_ver=5)
 suback_packet_success = mosq_test.gen_suback(mid, 1, proto_ver=5)
 
-disconnect_packet_kick = mosq_test.gen_disconnect(reason_code=mqtt5_rc.MQTT_RC_ADMINISTRATIVE_ACTION, proto_ver=5)
+disconnect_packet_kick = mosq_test.gen_disconnect(reason_code=mqtt5_rc.ADMINISTRATIVE_ACTION, proto_ver=5)
 
 try:
     os.mkdir(str(port))

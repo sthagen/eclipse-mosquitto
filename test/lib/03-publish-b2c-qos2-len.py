@@ -44,7 +44,7 @@ mosq_test.client_test("c/03-publish-b2c-qos2-len.test", [], do_test, data)
 mosq_test.client_test("cpp/03-publish-b2c-qos2-len.test", [], do_test, data)
 
 # Reason code, one property
-props = mqtt5_props.gen_string_pair_prop(mqtt5_props.PROP_USER_PROPERTY, "key", "value")
+props = mqtt5_props.gen_string_pair_prop(mqtt5_props.USER_PROPERTY, "key", "value")
 data['pubrel_packet'] = mosq_test.gen_pubrel(data['mid'], proto_ver=5, reason_code=0x00, properties=props)
 data['label'] = "qos2 len >5"
 mosq_test.client_test("c/03-publish-b2c-qos2-len.test", [], do_test, data)

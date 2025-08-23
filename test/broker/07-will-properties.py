@@ -56,56 +56,56 @@ def do_test(start_broker, will_props, recvd_props):
 
 def all_tests(start_broker=False):
     # Single test property
-    will_props = mqtt5_props.gen_string_prop(mqtt5_props.PROP_RESPONSE_TOPIC, "response/topic")
+    will_props = mqtt5_props.gen_string_prop(mqtt5_props.RESPONSE_TOPIC, "response/topic")
     rc = do_test(start_broker, will_props, will_props)
     if rc:
         return rc;
 
     # Multiple test properties
-    will_props = mqtt5_props.gen_string_prop(mqtt5_props.PROP_RESPONSE_TOPIC, "response/topic")
-    will_props += mqtt5_props.gen_byte_prop(mqtt5_props.PROP_PAYLOAD_FORMAT_INDICATOR, 0)
+    will_props = mqtt5_props.gen_string_prop(mqtt5_props.RESPONSE_TOPIC, "response/topic")
+    will_props += mqtt5_props.gen_byte_prop(mqtt5_props.PAYLOAD_FORMAT_INDICATOR, 0)
     rc = do_test(start_broker, will_props, will_props)
     if rc:
         return rc;
 
     # Multiple test properties, with property that is removed
-    will_props = mqtt5_props.gen_string_prop(mqtt5_props.PROP_RESPONSE_TOPIC, "response/topic")
-    will_props += mqtt5_props.gen_uint32_prop(mqtt5_props.PROP_WILL_DELAY_INTERVAL, 0)
-    will_props += mqtt5_props.gen_byte_prop(mqtt5_props.PROP_PAYLOAD_FORMAT_INDICATOR, 0)
+    will_props = mqtt5_props.gen_string_prop(mqtt5_props.RESPONSE_TOPIC, "response/topic")
+    will_props += mqtt5_props.gen_uint32_prop(mqtt5_props.WILL_DELAY_INTERVAL, 0)
+    will_props += mqtt5_props.gen_byte_prop(mqtt5_props.PAYLOAD_FORMAT_INDICATOR, 0)
 
-    recv_props = mqtt5_props.gen_string_prop(mqtt5_props.PROP_RESPONSE_TOPIC, "response/topic")
-    recv_props += mqtt5_props.gen_byte_prop(mqtt5_props.PROP_PAYLOAD_FORMAT_INDICATOR, 0)
+    recv_props = mqtt5_props.gen_string_prop(mqtt5_props.RESPONSE_TOPIC, "response/topic")
+    recv_props += mqtt5_props.gen_byte_prop(mqtt5_props.PAYLOAD_FORMAT_INDICATOR, 0)
     rc = do_test(start_broker, will_props, recv_props)
     if rc:
         return rc;
 
     # Multiple test properties, with property that is removed *first*
-    will_props = mqtt5_props.gen_uint32_prop(mqtt5_props.PROP_WILL_DELAY_INTERVAL, 0)
-    will_props += mqtt5_props.gen_string_prop(mqtt5_props.PROP_RESPONSE_TOPIC, "response/topic")
-    will_props += mqtt5_props.gen_string_prop(mqtt5_props.PROP_CORRELATION_DATA, "data")
+    will_props = mqtt5_props.gen_uint32_prop(mqtt5_props.WILL_DELAY_INTERVAL, 0)
+    will_props += mqtt5_props.gen_string_prop(mqtt5_props.RESPONSE_TOPIC, "response/topic")
+    will_props += mqtt5_props.gen_string_prop(mqtt5_props.CORRELATION_DATA, "data")
 
-    recv_props = mqtt5_props.gen_string_prop(mqtt5_props.PROP_RESPONSE_TOPIC, "response/topic")
-    recv_props += mqtt5_props.gen_string_prop(mqtt5_props.PROP_CORRELATION_DATA, "data")
+    recv_props = mqtt5_props.gen_string_prop(mqtt5_props.RESPONSE_TOPIC, "response/topic")
+    recv_props += mqtt5_props.gen_string_prop(mqtt5_props.CORRELATION_DATA, "data")
     rc = do_test(start_broker, will_props, recv_props)
     if rc:
         return rc;
 
     # All properties,  plus multiple user properties (excluding
     # message-expiry-interval, for ease of testing reasons)
-    will_props = mqtt5_props.gen_string_pair_prop(mqtt5_props.PROP_USER_PROPERTY, "key1", "value1")
-    will_props += mqtt5_props.gen_string_prop(mqtt5_props.PROP_RESPONSE_TOPIC, "response/topic")
-    will_props += mqtt5_props.gen_string_prop(mqtt5_props.PROP_CORRELATION_DATA, "data")
-    will_props += mqtt5_props.gen_uint32_prop(mqtt5_props.PROP_WILL_DELAY_INTERVAL, 0)
-    will_props += mqtt5_props.gen_byte_prop(mqtt5_props.PROP_PAYLOAD_FORMAT_INDICATOR, 1)
-    will_props += mqtt5_props.gen_string_prop(mqtt5_props.PROP_CONTENT_TYPE, "application/test")
-    will_props += mqtt5_props.gen_string_pair_prop(mqtt5_props.PROP_USER_PROPERTY, "key2", "value2")
+    will_props = mqtt5_props.gen_string_pair_prop(mqtt5_props.USER_PROPERTY, "key1", "value1")
+    will_props += mqtt5_props.gen_string_prop(mqtt5_props.RESPONSE_TOPIC, "response/topic")
+    will_props += mqtt5_props.gen_string_prop(mqtt5_props.CORRELATION_DATA, "data")
+    will_props += mqtt5_props.gen_uint32_prop(mqtt5_props.WILL_DELAY_INTERVAL, 0)
+    will_props += mqtt5_props.gen_byte_prop(mqtt5_props.PAYLOAD_FORMAT_INDICATOR, 1)
+    will_props += mqtt5_props.gen_string_prop(mqtt5_props.CONTENT_TYPE, "application/test")
+    will_props += mqtt5_props.gen_string_pair_prop(mqtt5_props.USER_PROPERTY, "key2", "value2")
 
-    recv_props = mqtt5_props.gen_string_pair_prop(mqtt5_props.PROP_USER_PROPERTY, "key1", "value1")
-    recv_props += mqtt5_props.gen_string_prop(mqtt5_props.PROP_RESPONSE_TOPIC, "response/topic")
-    recv_props += mqtt5_props.gen_string_prop(mqtt5_props.PROP_CORRELATION_DATA, "data")
-    recv_props += mqtt5_props.gen_byte_prop(mqtt5_props.PROP_PAYLOAD_FORMAT_INDICATOR, 1)
-    recv_props += mqtt5_props.gen_string_prop(mqtt5_props.PROP_CONTENT_TYPE, "application/test")
-    recv_props += mqtt5_props.gen_string_pair_prop(mqtt5_props.PROP_USER_PROPERTY, "key2", "value2")
+    recv_props = mqtt5_props.gen_string_pair_prop(mqtt5_props.USER_PROPERTY, "key1", "value1")
+    recv_props += mqtt5_props.gen_string_prop(mqtt5_props.RESPONSE_TOPIC, "response/topic")
+    recv_props += mqtt5_props.gen_string_prop(mqtt5_props.CORRELATION_DATA, "data")
+    recv_props += mqtt5_props.gen_byte_prop(mqtt5_props.PAYLOAD_FORMAT_INDICATOR, 1)
+    recv_props += mqtt5_props.gen_string_prop(mqtt5_props.CONTENT_TYPE, "application/test")
+    recv_props += mqtt5_props.gen_string_pair_prop(mqtt5_props.USER_PROPERTY, "key2", "value2")
     rc = do_test(start_broker, will_props, recv_props)
     if rc:
         return rc;

@@ -28,7 +28,7 @@ def do_test(start_broker, proto_ver):
             except BrokenPipeError:
                 rc = 0
         else:
-            disconnect_packet = mosq_test.gen_disconnect(proto_ver=5, reason_code = mqtt5_rc.MQTT_RC_MALFORMED_PACKET)
+            disconnect_packet = mosq_test.gen_disconnect(proto_ver=5, reason_code = mqtt5_rc.MALFORMED_PACKET)
             mosq_test.do_send_receive(sock, subscribe_packet, disconnect_packet, "suback")
             rc = 0
 

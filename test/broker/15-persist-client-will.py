@@ -25,10 +25,10 @@ helper_id = "test-helper"
 
 will_properties = mqtt5_props.gen_properties(
     [
-        {"identifier": mqtt5_props.PROP_PAYLOAD_FORMAT_INDICATOR, "value": 1},
-        {"identifier": mqtt5_props.PROP_CONTENT_TYPE, "value": "text"},
+        {"identifier": mqtt5_props.PAYLOAD_FORMAT_INDICATOR, "value": 1},
+        {"identifier": mqtt5_props.CONTENT_TYPE, "value": "text"},
         {
-            "identifier": mqtt5_props.PROP_USER_PROPERTY,
+            "identifier": mqtt5_props.USER_PROPERTY,
             "name": "test-user-property",
             "value": "nothing important",
         },
@@ -43,8 +43,8 @@ will_properties_in_db = (
     + "]"
 )
 
-send_will_disconnect_rc = mqtt5_rc.MQTT_RC_DISCONNECT_WITH_WILL_MSG
-normal_disconnect_rc = mqtt5_rc.MQTT_RC_NORMAL_DISCONNECTION
+send_will_disconnect_rc = mqtt5_rc.DISCONNECT_WITH_WILL_MSG
+normal_disconnect_rc = mqtt5_rc.NORMAL_DISCONNECTION
 
 
 def do_test(
@@ -112,7 +112,7 @@ def do_test(
     will_payload = b"My simple will message"
     if will_delay:
         will_delay_property = mqtt5_props.gen_uint32_prop(
-            mqtt5_props.PROP_WILL_DELAY_INTERVAL, will_delay
+            mqtt5_props.WILL_DELAY_INTERVAL, will_delay
         )
     else:
         will_delay_property = b""
@@ -144,7 +144,7 @@ def do_test(
             will_properties=will_properties + will_delay_property,
         )
         if disconnect_rc:
-            if disconnect_rc == mqtt5_rc.MQTT_RC_SESSION_TAKEN_OVER:
+            if disconnect_rc == mqtt5_rc.SESSION_TAKEN_OVER:
                 publisher_sock = connect_client(
                     port,
                     publisher_id,
@@ -246,7 +246,7 @@ def do_test(
 # If disconnect_rc is not set the client will not disconnect
 # session_expiry, will qos, will retain, disconnect_rc
 
-send_will_disconnect_rc = mqtt5_rc.MQTT_RC_DISCONNECT_WITH_WILL_MSG
+send_will_disconnect_rc = mqtt5_rc.DISCONNECT_WITH_WILL_MSG
 
 # non persistent client connected during crash
 do_test(0, 0, 0)
@@ -303,5 +303,5 @@ do_test(60, 0, 1, will_delay=30, disconnect_rc=send_will_disconnect_rc)
 do_test(60, 1, 1, will_delay=30, disconnect_rc=send_will_disconnect_rc)
 
 # Remove will msg by session takeover through reconnect
-do_test(0, 1, 1, disconnect_rc=mqtt5_rc.MQTT_RC_SESSION_TAKEN_OVER)
-# do_test(60, 1, 1, disconnect_rc=mqtt5_rc.MQTT_RC_SESSION_TAKEN_OVER)
+do_test(0, 1, 1, disconnect_rc=mqtt5_rc.SESSION_TAKEN_OVER)
+# do_test(60, 1, 1, disconnect_rc=mqtt5_rc.SESSION_TAKEN_OVER)

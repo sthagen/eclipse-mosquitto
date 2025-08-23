@@ -29,7 +29,7 @@ def do_test(proto_ver):
     mid = 2
     publish_packet_bad = mosq_test.gen_publish("subpub/qos1/oversize", mid=mid, qos=1, payload="AB", proto_ver=proto_ver)
     if proto_ver == 5:
-        puback_packet_bad = mosq_test.gen_puback(reason_code=mqtt5_rc.MQTT_RC_PACKET_TOO_LARGE, mid=mid, proto_ver=proto_ver)
+        puback_packet_bad = mosq_test.gen_puback(reason_code=mqtt5_rc.PACKET_TOO_LARGE, mid=mid, proto_ver=proto_ver)
     else:
         puback_packet_bad = mosq_test.gen_puback(mid=mid, proto_ver=proto_ver)
 

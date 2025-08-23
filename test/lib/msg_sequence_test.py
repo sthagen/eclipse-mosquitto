@@ -54,7 +54,7 @@ class MsgSequence(object):
         if default_connect:
             self.add_recv(mosq_test.gen_connect("fuzzish", proto_ver=proto_ver), "default connect")
         if default_connack:
-            properties = mqtt5_props.gen_uint16_prop(mqtt5_props.PROP_RECEIVE_MAXIMUM, 20)
+            properties = mqtt5_props.gen_uint16_prop(mqtt5_props.RECEIVE_MAXIMUM, 20)
             self.add_send(mosq_test.gen_connack(rc=0, proto_ver=proto_ver, properties=properties, property_helper=False), "default connack")
 
     def add_msg(self, message):

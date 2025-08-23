@@ -17,7 +17,7 @@ write_config(conf_file, port)
 rc = 1
 
 connect_packet = mosq_test.gen_connect("12-max-packet-broker", proto_ver=5)
-props = mqtt5_props.gen_uint32_prop(mqtt5_props.PROP_MAXIMUM_PACKET_SIZE, 40)
+props = mqtt5_props.gen_uint32_prop(mqtt5_props.MAXIMUM_PACKET_SIZE, 40)
 connack_packet = mosq_test.gen_connack(rc=0, proto_ver=5, properties=props)
 
 publish_packet = mosq_test.gen_publish("12/max/packet/size/broker/test/topic", qos=0, payload="0123456789012345678901234567890", proto_ver=5)

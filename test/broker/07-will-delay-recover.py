@@ -13,8 +13,8 @@ def do_test(start_broker, clean_session):
     connect1_packet = mosq_test.gen_connect("will-delay-recovery", proto_ver=5)
     connack1_packet = mosq_test.gen_connack(rc=0, proto_ver=5)
 
-    connect_props = mqtt5_props.gen_uint32_prop(mqtt5_props.PROP_SESSION_EXPIRY_INTERVAL, 30)
-    props = mqtt5_props.gen_uint32_prop(mqtt5_props.PROP_WILL_DELAY_INTERVAL, 3)
+    connect_props = mqtt5_props.gen_uint32_prop(mqtt5_props.SESSION_EXPIRY_INTERVAL, 30)
+    props = mqtt5_props.gen_uint32_prop(mqtt5_props.WILL_DELAY_INTERVAL, 3)
     connect2_packet = mosq_test.gen_connect("will-delay-recovery-helper", proto_ver=5, will_topic="will/delay/recovery/test", will_payload=b"will delay", will_properties=props, clean_session=clean_session, properties=connect_props)
     connack2a_packet = mosq_test.gen_connack(rc=0, proto_ver=5)
     if clean_session == True:

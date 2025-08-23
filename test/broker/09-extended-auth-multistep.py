@@ -13,21 +13,21 @@ write_config(conf_file, port)
 
 rc = 1
 
-props = mqtt5_props.gen_string_prop(mqtt5_props.PROP_AUTHENTICATION_METHOD, "mirror")
-props += mqtt5_props.gen_string_prop(mqtt5_props.PROP_AUTHENTICATION_DATA, "step1")
+props = mqtt5_props.gen_string_prop(mqtt5_props.AUTHENTICATION_METHOD, "mirror")
+props += mqtt5_props.gen_string_prop(mqtt5_props.AUTHENTICATION_DATA, "step1")
 connect_packet = mosq_test.gen_connect("client-params-test", proto_ver=5, properties=props)
 
 # Server to client
-props = mqtt5_props.gen_string_prop(mqtt5_props.PROP_AUTHENTICATION_METHOD, "mirror")
-props += mqtt5_props.gen_string_prop(mqtt5_props.PROP_AUTHENTICATION_DATA, "1pets")
-auth1_packet = mosq_test.gen_auth(reason_code=mqtt5_rc.MQTT_RC_CONTINUE_AUTHENTICATION, properties=props)
+props = mqtt5_props.gen_string_prop(mqtt5_props.AUTHENTICATION_METHOD, "mirror")
+props += mqtt5_props.gen_string_prop(mqtt5_props.AUTHENTICATION_DATA, "1pets")
+auth1_packet = mosq_test.gen_auth(reason_code=mqtt5_rc.CONTINUE_AUTHENTICATION, properties=props)
 
 # Client to server
-props = mqtt5_props.gen_string_prop(mqtt5_props.PROP_AUTHENTICATION_METHOD, "mirror")
-props += mqtt5_props.gen_string_prop(mqtt5_props.PROP_AUTHENTICATION_DATA, "supercalifragilisticexpialidocious")
-auth2_packet = mosq_test.gen_auth(reason_code=mqtt5_rc.MQTT_RC_CONTINUE_AUTHENTICATION, properties=props)
+props = mqtt5_props.gen_string_prop(mqtt5_props.AUTHENTICATION_METHOD, "mirror")
+props += mqtt5_props.gen_string_prop(mqtt5_props.AUTHENTICATION_DATA, "supercalifragilisticexpialidocious")
+auth2_packet = mosq_test.gen_auth(reason_code=mqtt5_rc.CONTINUE_AUTHENTICATION, properties=props)
 
-props = mqtt5_props.gen_string_prop(mqtt5_props.PROP_AUTHENTICATION_METHOD, "mirror")
+props = mqtt5_props.gen_string_prop(mqtt5_props.AUTHENTICATION_METHOD, "mirror")
 connack_packet = mosq_test.gen_connack(rc=0, proto_ver=5, properties=props)
 
 

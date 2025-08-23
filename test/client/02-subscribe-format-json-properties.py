@@ -32,14 +32,14 @@ def do_test(proto_ver):
             '-D', 'connect', 'topic-alias-maximum', '100'
             ]
 
-    props = mqtt5_props.gen_byte_prop(mqtt5_props.PROP_PAYLOAD_FORMAT_INDICATOR, 1)
-    props += mqtt5_props.gen_string_prop(mqtt5_props.PROP_CONTENT_TYPE, "plain/text")
-    props += mqtt5_props.gen_string_prop(mqtt5_props.PROP_RESPONSE_TOPIC, "/dev/null")
-    props += mqtt5_props.gen_string_prop(mqtt5_props.PROP_CORRELATION_DATA, "2357289375902345")
-    props += mqtt5_props.gen_string_pair_prop(mqtt5_props.PROP_USER_PROPERTY, "name", "value4")
-    props += mqtt5_props.gen_string_pair_prop(mqtt5_props.PROP_USER_PROPERTY, "name", "value3")
-    props += mqtt5_props.gen_string_pair_prop(mqtt5_props.PROP_USER_PROPERTY, "name", "value1")
-    props += mqtt5_props.gen_string_pair_prop(mqtt5_props.PROP_USER_PROPERTY, "name", "value2")
+    props = mqtt5_props.gen_byte_prop(mqtt5_props.PAYLOAD_FORMAT_INDICATOR, 1)
+    props += mqtt5_props.gen_string_prop(mqtt5_props.CONTENT_TYPE, "plain/text")
+    props += mqtt5_props.gen_string_prop(mqtt5_props.RESPONSE_TOPIC, "/dev/null")
+    props += mqtt5_props.gen_string_prop(mqtt5_props.CORRELATION_DATA, "2357289375902345")
+    props += mqtt5_props.gen_string_pair_prop(mqtt5_props.USER_PROPERTY, "name", "value4")
+    props += mqtt5_props.gen_string_pair_prop(mqtt5_props.USER_PROPERTY, "name", "value3")
+    props += mqtt5_props.gen_string_pair_prop(mqtt5_props.USER_PROPERTY, "name", "value1")
+    props += mqtt5_props.gen_string_pair_prop(mqtt5_props.USER_PROPERTY, "name", "value2")
     publish_packet = mosq_test.gen_publish("02/sub/format/json/properties/test", mid=1, qos=1, payload="message", proto_ver=proto_ver, properties=props)
 
     broker = mosq_test.start_broker(filename=os.path.basename(__file__), port=port)

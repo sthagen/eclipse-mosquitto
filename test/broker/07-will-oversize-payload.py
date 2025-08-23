@@ -21,7 +21,7 @@ def do_test(proto_ver, clean_session):
 
     connect_packet_bad = mosq_test.gen_connect("test-helper", will_topic="will/qos0/test", will_payload=b"AB", clean_session=clean_session, proto_ver=proto_ver, session_expiry=60)
     if proto_ver == 5:
-        connack_packet_bad = mosq_test.gen_connack(rc=mqtt5_rc.MQTT_RC_PACKET_TOO_LARGE, proto_ver=proto_ver, property_helper=False)
+        connack_packet_bad = mosq_test.gen_connack(rc=mqtt5_rc.PACKET_TOO_LARGE, proto_ver=proto_ver, property_helper=False)
     else:
         connack_packet_bad = mosq_test.gen_connack(rc=5, proto_ver=proto_ver)
 

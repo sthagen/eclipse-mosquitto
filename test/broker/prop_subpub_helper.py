@@ -19,7 +19,7 @@ def prop_subpub_helper(start_broker, test_name, props_out, props_in, expect_prot
 
     publish_packet_expected = mosq_test.gen_publish("%s/subpub/qos0" % (test_name), qos=0, payload="message", proto_ver=5, properties=props_in)
 
-    disconnect_packet = mosq_test.gen_disconnect(reason_code=mqtt5_rc.MQTT_RC_PROTOCOL_ERROR, proto_ver=5)
+    disconnect_packet = mosq_test.gen_disconnect(reason_code=mqtt5_rc.PROTOCOL_ERROR, proto_ver=5)
 
     port = mosq_test.get_port()
     if start_broker:

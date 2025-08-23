@@ -12,31 +12,31 @@ def do_test(start_broker):
 
     mid = 1
     publish1_packet = mosq_test.gen_publish("03B/no/subs/pub", qos=1, mid=mid, payload="message", proto_ver=5)
-    puback1_packet = mosq_test.gen_puback(mid, proto_ver=5, reason_code=mqtt5_rc.MQTT_RC_NO_MATCHING_SUBSCRIBERS)
+    puback1_packet = mosq_test.gen_puback(mid, proto_ver=5, reason_code=mqtt5_rc.NO_MATCHING_SUBSCRIBERS)
 
     mid = 2
     publish2_packet = mosq_test.gen_publish("03B/no/subs/pub/qos1", qos=1, mid=mid, payload="message", proto_ver=5)
-    puback2_packet = mosq_test.gen_puback(mid, proto_ver=5, reason_code=mqtt5_rc.MQTT_RC_NO_MATCHING_SUBSCRIBERS)
+    puback2_packet = mosq_test.gen_puback(mid, proto_ver=5, reason_code=mqtt5_rc.NO_MATCHING_SUBSCRIBERS)
 
     mid = 3
     publish3_packet = mosq_test.gen_publish("03B/no/subs/pub/qos1/test", qos=1, mid=mid, payload="message", proto_ver=5)
-    puback3_packet = mosq_test.gen_puback(mid, proto_ver=5, reason_code=mqtt5_rc.MQTT_RC_NO_MATCHING_SUBSCRIBERS)
+    puback3_packet = mosq_test.gen_puback(mid, proto_ver=5, reason_code=mqtt5_rc.NO_MATCHING_SUBSCRIBERS)
 
     mid = 4
     publish4_packet = mosq_test.gen_publish("03B/no/subs/pub/qos1/test", qos=1, mid=mid, payload="message", proto_ver=5, retain=True)
-    puback4_packet = mosq_test.gen_puback(mid, proto_ver=5, reason_code=mqtt5_rc.MQTT_RC_NO_MATCHING_SUBSCRIBERS)
+    puback4_packet = mosq_test.gen_puback(mid, proto_ver=5, reason_code=mqtt5_rc.NO_MATCHING_SUBSCRIBERS)
 
     mid = 5
     publish1b_packet = mosq_test.gen_publish("03B/no/subs/pub", qos=1, mid=mid, payload="message", proto_ver=5)
-    puback1b_packet = mosq_test.gen_puback(mid, proto_ver=5, reason_code=mqtt5_rc.MQTT_RC_NO_MATCHING_SUBSCRIBERS)
+    puback1b_packet = mosq_test.gen_puback(mid, proto_ver=5, reason_code=mqtt5_rc.NO_MATCHING_SUBSCRIBERS)
 
     mid = 6
     publish2b_packet = mosq_test.gen_publish("03B/no/subs/pub/qos1", qos=1, mid=mid, payload="message", proto_ver=5)
-    puback2b_packet = mosq_test.gen_puback(mid, proto_ver=5, reason_code=mqtt5_rc.MQTT_RC_NO_MATCHING_SUBSCRIBERS)
+    puback2b_packet = mosq_test.gen_puback(mid, proto_ver=5, reason_code=mqtt5_rc.NO_MATCHING_SUBSCRIBERS)
 
     mid = 7
     publish3b_packet = mosq_test.gen_publish("03B/no/subs/pub/qos1/test", qos=1, mid=mid, payload="message", proto_ver=5)
-    puback3b_packet = mosq_test.gen_puback(mid, proto_ver=5, reason_code=mqtt5_rc.MQTT_RC_NO_MATCHING_SUBSCRIBERS)
+    puback3b_packet = mosq_test.gen_puback(mid, proto_ver=5, reason_code=mqtt5_rc.NO_MATCHING_SUBSCRIBERS)
 
     port = mosq_test.get_port()
     if start_broker:

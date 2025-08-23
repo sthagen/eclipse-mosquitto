@@ -11,7 +11,7 @@ def do_test(conn, data):
     disconnect_packet = mosq_test.gen_disconnect(proto_ver=5)
 
     mid = 1
-    props = mqtt5_props.gen_string_pair_prop(mqtt5_props.PROP_USER_PROPERTY, "key", "value")
+    props = mqtt5_props.gen_string_pair_prop(mqtt5_props.USER_PROPERTY, "key", "value")
     unsubscribe_packet = mosq_test.gen_unsubscribe(mid, "unsubscribe/test", proto_ver=5, properties=props)
     unsuback_packet = mosq_test.gen_unsuback(mid, proto_ver=5)
 

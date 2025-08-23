@@ -44,7 +44,7 @@ def helper(port):
 
 def do_test(start_broker):
     rc = 1
-    props = mqtt5_props.gen_uint16_prop(mqtt5_props.PROP_RECEIVE_MAXIMUM, 1)
+    props = mqtt5_props.gen_uint16_prop(mqtt5_props.RECEIVE_MAXIMUM, 1)
     connect_packet = mosq_test.gen_connect("subpub-qos2-receive-max1", proto_ver=5, properties=props)
     connack_packet = mosq_test.gen_connack(rc=0, proto_ver=5)
 

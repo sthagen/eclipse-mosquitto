@@ -14,7 +14,7 @@ def do_test(start_broker, proto_ver):
     bmod[1] = bmod[1] - 2 # Reduce remaining length by two to remove final two payload length values
 
     connect_packet = struct.pack("B"*len(bmod), *bmod)
-    connack_packet = mosq_test.gen_connack(mqtt5_rc.MQTT_RC_PROTOCOL_ERROR, proto_ver=5)
+    connack_packet = mosq_test.gen_connack(mqtt5_rc.PROTOCOL_ERROR, proto_ver=5)
 
     port = mosq_test.get_port()
     broker = None

@@ -40,7 +40,7 @@ def do_test(proto_ver):
             ]
 
     if proto_ver == 5:
-        props = mqtt5_props.gen_string_prop(mqtt5_props.PROP_RESPONSE_TOPIC, "04/rr/qos1/test/response")
+        props = mqtt5_props.gen_string_prop(mqtt5_props.RESPONSE_TOPIC, "04/rr/qos1/test/response")
     else:
         props = None
     publish_packet_req = mosq_test.gen_publish("04/rr/qos1/test/request", qos=1, mid=1, payload=payload, proto_ver=proto_ver, properties=props)

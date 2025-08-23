@@ -14,8 +14,8 @@ def do_test(start_broker):
     connect1_packet = mosq_test.gen_connect("will-session-exp", proto_ver=5)
     connack1_packet = mosq_test.gen_connack(rc=0, proto_ver=5)
 
-    will_props = mqtt5_props.gen_uint32_prop(mqtt5_props.PROP_WILL_DELAY_INTERVAL, 4)
-    connect_props = mqtt5_props.gen_uint32_prop(mqtt5_props.PROP_SESSION_EXPIRY_INTERVAL, 2)
+    will_props = mqtt5_props.gen_uint32_prop(mqtt5_props.WILL_DELAY_INTERVAL, 4)
+    connect_props = mqtt5_props.gen_uint32_prop(mqtt5_props.SESSION_EXPIRY_INTERVAL, 2)
 
     connect2_packet = mosq_test.gen_connect("will-session-exp-helper", proto_ver=5, properties=connect_props, will_topic="will/session-expiry/test", will_payload=b"will delay", will_qos=2, will_properties=will_props)
     connack2_packet = mosq_test.gen_connack(rc=0, proto_ver=5)

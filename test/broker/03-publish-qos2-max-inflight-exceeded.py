@@ -24,7 +24,7 @@ def do_test(proto_ver):
         i = 21
         publish_packet = mosq_test.gen_publish("pub/qos2/max/inflight/exceeded", qos=2, mid=i, payload="message", proto_ver=proto_ver)
         if proto_ver == 5:
-            disconnect_packet = mosq_test.gen_disconnect(reason_code=mqtt5_rc.MQTT_RC_RECEIVE_MAXIMUM_EXCEEDED, proto_ver=proto_ver)
+            disconnect_packet = mosq_test.gen_disconnect(reason_code=mqtt5_rc.RECEIVE_MAXIMUM_EXCEEDED, proto_ver=proto_ver)
         else:
             disconnect_packet = b""
         try:

@@ -20,7 +20,7 @@ def do_test():
 
     mid = 2
     unsubscribe_packet = mosq_test.gen_unsubscribe(mid, "unsubscribe-topic", proto_ver=5)
-    unsuback_packet = mosq_test.gen_unsuback(mid, mqtt5_rc.MQTT_RC_NO_SUBSCRIPTION_EXISTED, proto_ver=5)
+    unsuback_packet = mosq_test.gen_unsuback(mid, mqtt5_rc.NO_SUBSCRIPTION_EXISTED, proto_ver=5)
 
     publish_packet = mosq_test.gen_publish("unsubscribe-topic", qos=0, payload="message1", proto_ver=5)
 

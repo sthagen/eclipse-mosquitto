@@ -22,13 +22,13 @@ connect_packet = mosq_test.gen_connect(
 connack_packet = mosq_test.gen_connack(rc=0, proto_ver=5)
 
 mid = 1
-props = mqtt5_props.gen_byte_prop(mqtt5_props.PROP_PAYLOAD_FORMAT_INDICATOR, 1)
-props += mqtt5_props.gen_string_prop(mqtt5_props.PROP_CONTENT_TYPE, "plain/text")
-props += mqtt5_props.gen_string_prop(mqtt5_props.PROP_RESPONSE_TOPIC, "/dev/null")
-props += mqtt5_props.gen_string_prop(mqtt5_props.PROP_CORRELATION_DATA, "2357289375902345")
-props += mqtt5_props.gen_string_pair_prop(mqtt5_props.PROP_USER_PROPERTY, "name", "value")
+props = mqtt5_props.gen_byte_prop(mqtt5_props.PAYLOAD_FORMAT_INDICATOR, 1)
+props += mqtt5_props.gen_string_prop(mqtt5_props.CONTENT_TYPE, "plain/text")
+props += mqtt5_props.gen_string_prop(mqtt5_props.RESPONSE_TOPIC, "/dev/null")
+props += mqtt5_props.gen_string_prop(mqtt5_props.CORRELATION_DATA, "2357289375902345")
+props += mqtt5_props.gen_string_pair_prop(mqtt5_props.USER_PROPERTY, "name", "value")
 publish_packet = mosq_test.gen_publish("subpub/qos1", qos=1, mid=mid, payload="message", proto_ver=5, properties=props, retain=True)
-puback_packet = mosq_test.gen_puback(mid, reason_code=mqtt5_rc.MQTT_RC_NO_MATCHING_SUBSCRIBERS, proto_ver=5)
+puback_packet = mosq_test.gen_puback(mid, reason_code=mqtt5_rc.NO_MATCHING_SUBSCRIBERS, proto_ver=5)
 
 publish2_packet = mosq_test.gen_publish("subpub/qos1", qos=0, payload="message", proto_ver=5, properties=props, retain=True)
 

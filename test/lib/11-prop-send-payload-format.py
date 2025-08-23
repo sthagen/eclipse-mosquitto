@@ -16,7 +16,7 @@ def do_test(conn, data):
     connect_packet = mosq_test.gen_connect("prop-test", proto_ver=5)
     connack_packet = mosq_test.gen_connack(rc=0, proto_ver=5)
 
-    props = mqtt5_props.gen_byte_prop(mqtt5_props.PROP_PAYLOAD_FORMAT_INDICATOR, 0x01)
+    props = mqtt5_props.gen_byte_prop(mqtt5_props.PAYLOAD_FORMAT_INDICATOR, 0x01)
     publish_packet = mosq_test.gen_publish("prop/qos0", qos=0, payload="message", proto_ver=5, properties=props)
 
     disconnect_packet = mosq_test.gen_disconnect(proto_ver=5)

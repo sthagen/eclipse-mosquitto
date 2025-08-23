@@ -97,17 +97,17 @@ connack_packet = mosq_test.gen_connack(rc=0, proto_ver=5)
 
 mid = 3
 subscribe_packet = mosq_test.gen_subscribe(mid, "topic", 0, proto_ver=5)
-suback_packet_fail = mosq_test.gen_suback(mid, mqtt5_rc.MQTT_RC_NOT_AUTHORIZED, proto_ver=5)
+suback_packet_fail = mosq_test.gen_suback(mid, mqtt5_rc.NOT_AUTHORIZED, proto_ver=5)
 suback_packet_success = mosq_test.gen_suback(mid, 0, proto_ver=5)
 
 mid = 4
 unsubscribe_packet = mosq_test.gen_unsubscribe(mid, "topic", proto_ver=5)
-unsuback_packet_fail = mosq_test.gen_unsuback(mid, mqtt5_rc.MQTT_RC_NOT_AUTHORIZED, proto_ver=5)
+unsuback_packet_fail = mosq_test.gen_unsuback(mid, mqtt5_rc.NOT_AUTHORIZED, proto_ver=5)
 unsuback_packet_success = mosq_test.gen_unsuback(mid, proto_ver=5)
 
 mid = 5
 publish_packet = mosq_test.gen_publish(topic="topic", mid=mid, qos=1, payload="message", proto_ver=5)
-puback_packet_fail = mosq_test.gen_puback(mid, proto_ver=5, reason_code=mqtt5_rc.MQTT_RC_NOT_AUTHORIZED)
+puback_packet_fail = mosq_test.gen_puback(mid, proto_ver=5, reason_code=mqtt5_rc.NOT_AUTHORIZED)
 puback_packet_success = mosq_test.gen_puback(mid, proto_ver=5)
 
 publish_packet_recv = mosq_test.gen_publish(topic="topic", qos=0, payload="message", proto_ver=5)

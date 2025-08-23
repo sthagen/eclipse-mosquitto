@@ -18,7 +18,7 @@ def do_test(testdir):
     subscribe2_packet = mosq_test.gen_subscribe(mid, pub_topic, 0, proto_ver=5)
     suback_packet = mosq_test.gen_suback(mid, 0, proto_ver=5)
 
-    props = mqtt5_props.gen_string_prop(mqtt5_props.PROP_RESPONSE_TOPIC, resp_topic)
+    props = mqtt5_props.gen_string_prop(mqtt5_props.RESPONSE_TOPIC, resp_topic)
     publish1_packet = mosq_test.gen_publish(pub_topic, qos=0, payload="action", proto_ver=5, properties=props)
 
     publish2_packet = mosq_test.gen_publish(resp_topic, qos=0, payload="a response", proto_ver=5)

@@ -56,7 +56,7 @@ def do_test(start_broker):
         disco_test("disco len=2", disconnect_packet)
 
         # Reason code, one property, len>2
-        props = mqtt5_props.gen_string_pair_prop(mqtt5_props.PROP_USER_PROPERTY, "key", "value")
+        props = mqtt5_props.gen_string_pair_prop(mqtt5_props.USER_PROPERTY, "key", "value")
         disconnect_packet = mosq_test.gen_disconnect(proto_ver=5, reason_code=0, properties=props)
         disco_test("disco len>2", disconnect_packet)
     except mosq_test.TestError:

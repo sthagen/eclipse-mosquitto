@@ -32,7 +32,7 @@ pubrel2_packet = mosq_test.gen_pubrel(mid, proto_ver=proto_ver)
 pubcomp2_packet = mosq_test.gen_pubcomp(mid, proto_ver=proto_ver)
 
 
-props = mqtt5_props.gen_byte_prop(mqtt5_props.PROP_PAYLOAD_FORMAT_INDICATOR, 1)
+props = mqtt5_props.gen_byte_prop(mqtt5_props.PAYLOAD_FORMAT_INDICATOR, 1)
 publish0p_packet = mosq_test.gen_publish("topic/0", qos=0, payload="test-message-0", proto_ver=proto_ver, properties=props)
 
 mid = 3

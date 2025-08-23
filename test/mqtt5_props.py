@@ -1,32 +1,32 @@
 import struct
 
-PROP_PAYLOAD_FORMAT_INDICATOR = 1
-PROP_MESSAGE_EXPIRY_INTERVAL = 2
-PROP_CONTENT_TYPE = 3
-PROP_RESPONSE_TOPIC = 8
-PROP_CORRELATION_DATA = 9
-PROP_SUBSCRIPTION_IDENTIFIER = 11
-PROP_SESSION_EXPIRY_INTERVAL = 17
-PROP_ASSIGNED_CLIENT_IDENTIFIER = 18
-PROP_SERVER_KEEP_ALIVE = 19
-PROP_AUTHENTICATION_METHOD = 21
-PROP_AUTHENTICATION_DATA = 22
-PROP_REQUEST_PROBLEM_INFO = 23
-PROP_WILL_DELAY_INTERVAL = 24
-PROP_REQUEST_RESPONSE_INFO = 25
-PROP_RESPONSE_INFO = 26
-PROP_SERVER_REFERENCE = 28
-PROP_REASON_STRING = 31
-PROP_RECEIVE_MAXIMUM = 33
-PROP_TOPIC_ALIAS_MAXIMUM = 34
-PROP_TOPIC_ALIAS = 35
-PROP_MAXIMUM_QOS = 36
-PROP_RETAIN_AVAILABLE = 37
-PROP_USER_PROPERTY = 38
-PROP_MAXIMUM_PACKET_SIZE = 39
-PROP_WILDCARD_SUB_AVAILABLE = 40
-PROP_SUBSCRIPTION_ID_AVAILABLE = 41
-PROP_SHARED_SUB_AVAILABLE = 42
+PAYLOAD_FORMAT_INDICATOR = 1
+MESSAGE_EXPIRY_INTERVAL = 2
+CONTENT_TYPE = 3
+RESPONSE_TOPIC = 8
+CORRELATION_DATA = 9
+SUBSCRIPTION_IDENTIFIER = 11
+SESSION_EXPIRY_INTERVAL = 17
+ASSIGNED_CLIENT_IDENTIFIER = 18
+SERVER_KEEP_ALIVE = 19
+AUTHENTICATION_METHOD = 21
+AUTHENTICATION_DATA = 22
+REQUEST_PROBLEM_INFO = 23
+WILL_DELAY_INTERVAL = 24
+REQUEST_RESPONSE_INFO = 25
+RESPONSE_INFO = 26
+SERVER_REFERENCE = 28
+REASON_STRING = 31
+RECEIVE_MAXIMUM = 33
+TOPIC_ALIAS_MAXIMUM = 34
+TOPIC_ALIAS = 35
+MAXIMUM_QOS = 36
+RETAIN_AVAILABLE = 37
+USER_PROPERTY = 38
+MAXIMUM_PACKET_SIZE = 39
+WILDCARD_SUB_AVAILABLE = 40
+SUBSCRIPTION_ID_AVAILABLE = 41
+SHARED_SUB_AVAILABLE = 42
 
 def gen_byte_prop(identifier, byte):
     prop = struct.pack('BB', identifier, byte)
@@ -81,45 +81,45 @@ def gen_properties(properties_dict: list[dict]):
         id = prop.get("identifier")
         value = prop.get("value")
         if id in (
-            PROP_PAYLOAD_FORMAT_INDICATOR,
-            PROP_REQUEST_PROBLEM_INFO,
-            PROP_REQUEST_RESPONSE_INFO,
-            PROP_MAXIMUM_QOS,
-            PROP_RETAIN_AVAILABLE,
-            PROP_WILDCARD_SUB_AVAILABLE,
-            PROP_SUBSCRIPTION_ID_AVAILABLE,
-            PROP_SHARED_SUB_AVAILABLE,
+            PAYLOAD_FORMAT_INDICATOR,
+            REQUEST_PROBLEM_INFO,
+            REQUEST_RESPONSE_INFO,
+            MAXIMUM_QOS,
+            RETAIN_AVAILABLE,
+            WILDCARD_SUB_AVAILABLE,
+            SUBSCRIPTION_ID_AVAILABLE,
+            SHARED_SUB_AVAILABLE,
         ):
             props += gen_byte_prop(id, value)
         elif id in (
-            PROP_MESSAGE_EXPIRY_INTERVAL,
-            PROP_SESSION_EXPIRY_INTERVAL,
-            PROP_WILL_DELAY_INTERVAL,
-            PROP_MAXIMUM_PACKET_SIZE,
+            MESSAGE_EXPIRY_INTERVAL,
+            SESSION_EXPIRY_INTERVAL,
+            WILL_DELAY_INTERVAL,
+            MAXIMUM_PACKET_SIZE,
         ):
             props += gen_uint32_prop(id, value)
         elif id in (
-            PROP_CONTENT_TYPE,
-            PROP_RESPONSE_TOPIC,
-            PROP_CORRELATION_DATA,
-            PROP_ASSIGNED_CLIENT_IDENTIFIER,
-            PROP_AUTHENTICATION_METHOD,
-            PROP_AUTHENTICATION_DATA,
-            PROP_RESPONSE_INFO,
-            PROP_SERVER_REFERENCE,
-            PROP_REASON_STRING,
+            CONTENT_TYPE,
+            RESPONSE_TOPIC,
+            CORRELATION_DATA,
+            ASSIGNED_CLIENT_IDENTIFIER,
+            AUTHENTICATION_METHOD,
+            AUTHENTICATION_DATA,
+            RESPONSE_INFO,
+            SERVER_REFERENCE,
+            REASON_STRING,
         ):
             props += gen_string_prop(id, value)
-        elif id == PROP_SUBSCRIPTION_IDENTIFIER:
+        elif id == SUBSCRIPTION_IDENTIFIER:
             props += gen_varint_prop(id, value)
         elif id in (
-            PROP_SERVER_KEEP_ALIVE,
-            PROP_RECEIVE_MAXIMUM,
-            PROP_TOPIC_ALIAS_MAXIMUM,
-            PROP_TOPIC_ALIAS,
+            SERVER_KEEP_ALIVE,
+            RECEIVE_MAXIMUM,
+            TOPIC_ALIAS_MAXIMUM,
+            TOPIC_ALIAS,
         ):
             props += gen_uint16_prop(id, value)
-        elif id == PROP_USER_PROPERTY:
+        elif id == USER_PROPERTY:
             props += gen_string_pair_prop(id, prop["name"], value)
     return props
 
@@ -146,75 +146,75 @@ def unpack_string(b: bytes):
 
 def unpack_property(b: bytes):
     id = struct.unpack("!B", b[0:1])[0]
-    if id == PROP_PAYLOAD_FORMAT_INDICATOR:
+    if id == PAYLOAD_FORMAT_INDICATOR:
         return "PAYLOAD_FORMAT_INDICATOR", struct.unpack("!B", b[1:2])[0], 2
-    elif id == PROP_PAYLOAD_FORMAT_INDICATOR:
+    elif id == PAYLOAD_FORMAT_INDICATOR:
         return "PAYLOAD_FORMAT_INDICATOR", struct.unpack("!B", b[1:2])[0], 2
-    elif id == PROP_REQUEST_PROBLEM_INFO:
+    elif id == REQUEST_PROBLEM_INFO:
         return "REQUEST_PROBLEM_INFO", struct.unpack("!B", b[1:2])[0], 2
-    elif id == PROP_REQUEST_RESPONSE_INFO:
+    elif id == REQUEST_RESPONSE_INFO:
         return "REQUEST_RESPONSE_INFO", struct.unpack("!B", b[1:2])[0], 2
-    elif id == PROP_MAXIMUM_QOS:
+    elif id == MAXIMUM_QOS:
         return "MAXIMUM_QOS", struct.unpack("!B", b[1:2])[0], 2
-    elif id == PROP_RETAIN_AVAILABLE:
+    elif id == RETAIN_AVAILABLE:
         return "RETAIN_AVAILABLE", struct.unpack("!B", b[1:2])[0], 2
-    elif id == PROP_WILDCARD_SUB_AVAILABLE:
+    elif id == WILDCARD_SUB_AVAILABLE:
         return "WILDCARD_SUB_AVAILABLE", struct.unpack("!B", b[1:2])[0], 2
-    elif id == PROP_SUBSCRIPTION_ID_AVAILABLE:
+    elif id == SUBSCRIPTION_ID_AVAILABLE:
         return "SUBSCRIPTION_ID_AVAILABLE", struct.unpack("!B", b[1:2])[0], 2
-    elif id == PROP_SHARED_SUB_AVAILABLE:
+    elif id == SHARED_SUB_AVAILABLE:
         return "SHARED_SUB_AVAILABLE", struct.unpack("!B", b[1:2])[0], 2
-    elif id == PROP_SERVER_KEEP_ALIVE:
+    elif id == SERVER_KEEP_ALIVE:
         return "SERVER_KEEP_ALIVE", struct.unpack("!H", b[1:3])[0], 3
-    elif id == PROP_RECEIVE_MAXIMUM:
+    elif id == RECEIVE_MAXIMUM:
         return "RECEIVE_MAXIMUM", struct.unpack("!H", b[1:3])[0], 3
-    elif id == PROP_TOPIC_ALIAS_MAXIMUM:
+    elif id == TOPIC_ALIAS_MAXIMUM:
         return "TOPIC_ALIAS_MAXIMUM", struct.unpack("!H", b[1:3])[0], 3
-    elif id == PROP_TOPIC_ALIAS:
+    elif id == TOPIC_ALIAS:
         return "TOPIC_ALIAS", struct.unpack("!H", b[1:3])[0], 3
-    elif id == PROP_MESSAGE_EXPIRY_INTERVAL:
+    elif id == MESSAGE_EXPIRY_INTERVAL:
         return "MESSAGE_EXPIRY_INTERVAL", struct.unpack("!B", b[1:5])[0], 5
-    elif id == PROP_SESSION_EXPIRY_INTERVAL:
+    elif id == SESSION_EXPIRY_INTERVAL:
         return "SESSION_EXPIRY_INTERVAL", struct.unpack("!B", b[1:5])[0], 5
-    elif id == PROP_WILL_DELAY_INTERVAL:
+    elif id == WILL_DELAY_INTERVAL:
         return "WILL_DELAY_INTERVAL", struct.unpack("!B", b[1:5])[0], 5
-    elif id == PROP_MAXIMUM_PACKET_SIZE:
+    elif id == MAXIMUM_PACKET_SIZE:
         return "MAXIMUM_PACKET_SIZE", struct.unpack("!B", b[1:5])[0], 5
-    elif id == PROP_CONTENT_TYPE:
+    elif id == CONTENT_TYPE:
         value, pack_len = unpack_string(b[1:])
         return "CONTENT_TYPE", value, pack_len + 1
-    elif id == PROP_RESPONSE_TOPIC:
+    elif id == RESPONSE_TOPIC:
         value, pack_len = unpack_string(b[1:])
         return "RESPONSE_TOPIC", value, pack_len + 1
-    elif id == PROP_CORRELATION_DATA:
+    elif id == CORRELATION_DATA:
         value, pack_len = unpack_string(b[1:])
         return "CORRELATION_DATA", value, pack_len + 1
-    elif id == PROP_ASSIGNED_CLIENT_IDENTIFIER:
+    elif id == ASSIGNED_CLIENT_IDENTIFIER:
         value, pack_len = unpack_string(b[1:])
         return "ASSIGNED_CLIENT_IDENTIFIER", value, pack_len + 1
-    elif id == PROP_AUTHENTICATION_METHOD:
+    elif id == AUTHENTICATION_METHOD:
         value, pack_len = unpack_string(b[1:])
         return "AUTHENTICATION_METHOD", value, pack_len + 1
-    elif id == PROP_AUTHENTICATION_DATA:
+    elif id == AUTHENTICATION_DATA:
         value, pack_len = unpack_string(b[1:])
         return "AUTHENTICATION_DATA", value, pack_len + 1
-    elif id == PROP_RESPONSE_INFO:
+    elif id == RESPONSE_INFO:
         value, pack_len = unpack_string(b[1:])
         return "RESPONSE_INFO", value, pack_len + 1
-    elif id == PROP_SERVER_REFERENCE:
+    elif id == SERVER_REFERENCE:
         value, pack_len = unpack_string(b[1:])
         return "SERVER_REFERENCE", value, pack_len + 1
-    elif id == PROP_REASON_STRING:
+    elif id == REASON_STRING:
         value, pack_len = unpack_string(b[1:])
         return "REASON_STRING", value, pack_len + 1
-    elif id == PROP_SUBSCRIPTION_IDENTIFIER:
+    elif id == SUBSCRIPTION_IDENTIFIER:
         value, pack_len = unpack_varint(b[1:])
         return "REASON_STRING", value, pack_len + 1
-    elif id == PROP_USER_PROPERTY:
+    elif id == USER_PROPERTY:
         name, pack_name_len = unpack_string(b[1:])
         value, pack_value_len = unpack_varint(b[1 + pack_name_len :])
         return (
-            f"PROP_USER_PROPERTY:{name}",
+            f"USER_PROPERTY:{name}",
             value,
             1 + pack_name_len + pack_value_len + pack_len,
         )

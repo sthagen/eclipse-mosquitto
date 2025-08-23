@@ -33,7 +33,7 @@ def do_test(allow_anonymous, password_file, username, expect_success):
                 if expect_success == True:
                     connack_packet = mosq_test.gen_connack(rc=0, proto_ver=proto_ver)
                 else:
-                    connack_packet = mosq_test.gen_connack(rc=mqtt5_rc.MQTT_RC_NOT_AUTHORIZED, proto_ver=proto_ver, properties=None)
+                    connack_packet = mosq_test.gen_connack(rc=mqtt5_rc.NOT_AUTHORIZED, proto_ver=proto_ver, properties=None)
             else:
                 if expect_success == True:
                     connack_packet = mosq_test.gen_connack(rc=0, proto_ver=proto_ver)

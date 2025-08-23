@@ -11,7 +11,7 @@ def do_test(conn, data):
     server_keepalive = 4
     connect_packet = mosq_test.gen_connect("01-server-keepalive-pingreq", keepalive=keepalive, proto_ver=5)
 
-    props = mqtt5_props.gen_uint16_prop(mqtt5_props.PROP_SERVER_KEEP_ALIVE, server_keepalive)
+    props = mqtt5_props.gen_uint16_prop(mqtt5_props.SERVER_KEEP_ALIVE, server_keepalive)
     connack_packet = mosq_test.gen_connack(rc=0, proto_ver=5, properties=props)
 
     pingreq_packet = mosq_test.gen_pingreq()

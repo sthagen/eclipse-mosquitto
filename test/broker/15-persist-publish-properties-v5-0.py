@@ -20,15 +20,15 @@ proto_ver = 5
 connect_packet = mosq_test.gen_connect(source_id, proto_ver=proto_ver, clean_session=True)
 connack_packet = mosq_test.gen_connack(rc=0, proto_ver=proto_ver)
 
-base_props = mqtt5_props.gen_byte_prop(mqtt5_props.PROP_PAYLOAD_FORMAT_INDICATOR, 1)
-base_props += mqtt5_props.gen_string_prop(mqtt5_props.PROP_CONTENT_TYPE, "plain/text")
-base_props += mqtt5_props.gen_string_prop(mqtt5_props.PROP_RESPONSE_TOPIC, "/dev/null")
-base_props += mqtt5_props.gen_string_prop(mqtt5_props.PROP_CORRELATION_DATA, "2357289375902345")
-base_props += mqtt5_props.gen_string_pair_prop(mqtt5_props.PROP_USER_PROPERTY, "name", "value4")
-base_props += mqtt5_props.gen_string_pair_prop(mqtt5_props.PROP_USER_PROPERTY, "name", "value3")
-base_props += mqtt5_props.gen_string_pair_prop(mqtt5_props.PROP_USER_PROPERTY, "name", "value2")
-base_props += mqtt5_props.gen_string_pair_prop(mqtt5_props.PROP_USER_PROPERTY, "name", "value1")
-props = base_props + mqtt5_props.gen_uint32_prop(mqtt5_props.PROP_MESSAGE_EXPIRY_INTERVAL, 60)
+base_props = mqtt5_props.gen_byte_prop(mqtt5_props.PAYLOAD_FORMAT_INDICATOR, 1)
+base_props += mqtt5_props.gen_string_prop(mqtt5_props.CONTENT_TYPE, "plain/text")
+base_props += mqtt5_props.gen_string_prop(mqtt5_props.RESPONSE_TOPIC, "/dev/null")
+base_props += mqtt5_props.gen_string_prop(mqtt5_props.CORRELATION_DATA, "2357289375902345")
+base_props += mqtt5_props.gen_string_pair_prop(mqtt5_props.USER_PROPERTY, "name", "value4")
+base_props += mqtt5_props.gen_string_pair_prop(mqtt5_props.USER_PROPERTY, "name", "value3")
+base_props += mqtt5_props.gen_string_pair_prop(mqtt5_props.USER_PROPERTY, "name", "value2")
+base_props += mqtt5_props.gen_string_pair_prop(mqtt5_props.USER_PROPERTY, "name", "value1")
+props = base_props + mqtt5_props.gen_uint32_prop(mqtt5_props.MESSAGE_EXPIRY_INTERVAL, 60)
 publish_packet = mosq_test.gen_publish(topic, qos=qos, payload="retained message 1", retain=True, proto_ver=proto_ver, properties=props)
 
 mid = 1
@@ -70,7 +70,7 @@ try:
     # Check retained messages exist
     packet = sock.recv(len(publish_packet))
     for i in range(60, 1, -1):
-        props = base_props + mqtt5_props.gen_uint32_prop(mqtt5_props.PROP_MESSAGE_EXPIRY_INTERVAL, i)
+        props = base_props + mqtt5_props.gen_uint32_prop(mqtt5_props.MESSAGE_EXPIRY_INTERVAL, i)
         publish_packet = mosq_test.gen_publish(topic, qos=qos, payload="retained message 1", retain=True, proto_ver=proto_ver, properties=props)
         if packet == publish_packet:
             rc = 0

@@ -8,7 +8,7 @@ from mosq_test_helper import *
 def do_test(conn, data):
     connect_packet = mosq_test.gen_connect("publish-qos1-test", proto_ver=5)
 
-    props = mqtt5_props.gen_uint16_prop(mqtt5_props.PROP_RECEIVE_MAXIMUM, 3)
+    props = mqtt5_props.gen_uint16_prop(mqtt5_props.RECEIVE_MAXIMUM, 3)
     connack_packet = mosq_test.gen_connack(rc=0, proto_ver=5, properties=props, property_helper=False)
 
     disconnect_packet = mosq_test.gen_disconnect(proto_ver=5)

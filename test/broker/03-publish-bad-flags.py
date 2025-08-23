@@ -21,10 +21,10 @@ def do_test(publish_packet, reason_code, error_string):
 
     connect_packet = mosq_test.gen_connect("13-malformed-publish-v5", proto_ver=5)
 
-    connack_props = mqtt5_props.gen_uint16_prop(mqtt5_props.PROP_TOPIC_ALIAS_MAXIMUM, 10)
-    connack_props += mqtt5_props.gen_byte_prop(mqtt5_props.PROP_RETAIN_AVAILABLE, 0)
-    connack_props += mqtt5_props.gen_uint16_prop(mqtt5_props.PROP_RECEIVE_MAXIMUM, 20)
-    connack_props += mqtt5_props.gen_byte_prop(mqtt5_props.PROP_MAXIMUM_QOS, 1)
+    connack_props = mqtt5_props.gen_uint16_prop(mqtt5_props.TOPIC_ALIAS_MAXIMUM, 10)
+    connack_props += mqtt5_props.gen_byte_prop(mqtt5_props.RETAIN_AVAILABLE, 0)
+    connack_props += mqtt5_props.gen_uint16_prop(mqtt5_props.RECEIVE_MAXIMUM, 20)
+    connack_props += mqtt5_props.gen_byte_prop(mqtt5_props.MAXIMUM_QOS, 1)
 
     connack_packet = mosq_test.gen_connack(rc=0, proto_ver=5, properties=connack_props, property_helper=False)
 
@@ -44,11 +44,11 @@ broker = mosq_test.start_broker(filename=os.path.basename(__file__), use_conf=Tr
 try:
     # qos > maximum qos
     publish_packet = mosq_test.gen_publish(topic="test/topic", qos=2, mid=1, proto_ver=5)
-    do_test(publish_packet, mqtt5_rc.MQTT_RC_QOS_NOT_SUPPORTED, "qos > maximum qos")
+    do_test(publish_packet, mqtt5_rc.QOS_NOT_SUPPORTED, "qos > maximum qos")
 
     # retain not supported
     publish_packet = mosq_test.gen_publish(topic="test/topic", qos=0, retain=True, proto_ver=5, payload="a")
-    do_test(publish_packet, mqtt5_rc.MQTT_RC_RETAIN_NOT_SUPPORTED, "retain not supported")
+    do_test(publish_packet, mqtt5_rc.RETAIN_NOT_SUPPORTED, "retain not supported")
 except mosq_test.TestError:
     pass
 finally:

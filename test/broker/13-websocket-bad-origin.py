@@ -18,10 +18,10 @@ def do_test(publish_packet, reason_code, error_string):
 
     connect_packet = mosq_test.gen_connect("13-malformed-publish-v5", proto_ver=5)
 
-    connack_props = mqtt5_props.gen_uint16_prop(mqtt5_props.PROP_TOPIC_ALIAS_MAXIMUM, 10)
-    connack_props += mqtt5_props.gen_byte_prop(mqtt5_props.PROP_RETAIN_AVAILABLE, 0)
-    connack_props += mqtt5_props.gen_uint16_prop(mqtt5_props.PROP_RECEIVE_MAXIMUM, 20)
-    connack_props += mqtt5_props.gen_byte_prop(mqtt5_props.PROP_MAXIMUM_QOS, 1)
+    connack_props = mqtt5_props.gen_uint16_prop(mqtt5_props.TOPIC_ALIAS_MAXIMUM, 10)
+    connack_props += mqtt5_props.gen_byte_prop(mqtt5_props.RETAIN_AVAILABLE, 0)
+    connack_props += mqtt5_props.gen_uint16_prop(mqtt5_props.RECEIVE_MAXIMUM, 20)
+    connack_props += mqtt5_props.gen_byte_prop(mqtt5_props.MAXIMUM_QOS, 1)
 
     connack_packet = mosq_test.gen_connack(rc=0, proto_ver=5, properties=connack_props, property_helper=False)
 

@@ -58,7 +58,7 @@ def publish_messages(
         mid = 10 + i
         props = (
             mqtt5_props.gen_uint32_prop(
-                mqtt5_props.PROP_MESSAGE_EXPIRY_INTERVAL, message_expiry
+                mqtt5_props.MESSAGE_EXPIRY_INTERVAL, message_expiry
             )
             if message_expiry > 0
             else b""

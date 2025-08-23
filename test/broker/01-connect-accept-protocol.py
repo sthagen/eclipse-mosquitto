@@ -27,7 +27,7 @@ def do_test(accept, expect_success):
                 if proto_ver in expect_success:
                     connack_packet = mosq_test.gen_connack(rc=0, proto_ver=proto_ver)
                 else:
-                    connack_packet = mosq_test.gen_connack(rc=mqtt5_rc.MQTT_RC_UNSUPPORTED_PROTOCOL_VERSION, proto_ver=proto_ver, properties=None)
+                    connack_packet = mosq_test.gen_connack(rc=mqtt5_rc.UNSUPPORTED_PROTOCOL_VERSION, proto_ver=proto_ver, properties=None)
             else:
                 if proto_ver in expect_success:
                     connack_packet = mosq_test.gen_connack(rc=0, proto_ver=proto_ver)
