@@ -644,7 +644,6 @@ do {                                                                            
   c -= a; c -= b; c ^= ( b >> 15 );                                              \
 } while (0)
 
-/* coverity[overflow_const] - intentional wrapping in Jenkins hash */
 #define HASH_JEN(key,keylen,hashv)                                               \
 do {                                                                             \
   unsigned _hj_i,_hj_j,_hj_k;                                                    \
@@ -656,6 +655,7 @@ do {                                                                            
     _hj_i +=    (_hj_key[0] + ( (unsigned)_hj_key[1] << 8 )                      \
         + ( (unsigned)_hj_key[2] << 16 )                                         \
         + ( (unsigned)_hj_key[3] << 24 ) );                                      \
+    /* coverity[overflow_const] - intentional wrapping in Jenkins hash */        \
     _hj_j +=    (_hj_key[4] + ( (unsigned)_hj_key[5] << 8 )                      \
         + ( (unsigned)_hj_key[6] << 16 )                                         \
         + ( (unsigned)_hj_key[7] << 24 ) );                                      \
@@ -673,9 +673,13 @@ do {                                                                            
     case 11: hashv += ( (unsigned)_hj_key[10] << 24 ); /* FALLTHROUGH */         \
     case 10: hashv += ( (unsigned)_hj_key[9] << 16 );  /* FALLTHROUGH */         \
     case 9:  hashv += ( (unsigned)_hj_key[8] << 8 );   /* FALLTHROUGH */         \
+    /* coverity[overflow_const] - intentional wrapping in Jenkins hash */        \
     case 8:  _hj_j += ( (unsigned)_hj_key[7] << 24 );  /* FALLTHROUGH */         \
+    /* coverity[overflow_const] - intentional wrapping in Jenkins hash */        \
     case 7:  _hj_j += ( (unsigned)_hj_key[6] << 16 );  /* FALLTHROUGH */         \
+    /* coverity[overflow_const] - intentional wrapping in Jenkins hash */        \
     case 6:  _hj_j += ( (unsigned)_hj_key[5] << 8 );   /* FALLTHROUGH */         \
+    /* coverity[overflow_const] - intentional wrapping in Jenkins hash */        \
     case 5:  _hj_j += _hj_key[4];                      /* FALLTHROUGH */         \
     case 4:  _hj_i += ( (unsigned)_hj_key[3] << 24 );  /* FALLTHROUGH */         \
     case 3:  _hj_i += ( (unsigned)_hj_key[2] << 16 );  /* FALLTHROUGH */         \
