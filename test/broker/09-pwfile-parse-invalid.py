@@ -72,6 +72,10 @@ def username_password_tests(port):
             if rc == 0: rc=1
 
 
+def expect_broker_fail_test(port, expect_fail_log):
+    broker = mosq_test.start_broker(filename=os.path.basename(__file__), use_conf=True, port=port, expect_fail=True, expect_fail_log=expect_fail_log)
+
+
 def all_tests(port):
     # Valid file, single user
     write_pwfile(pw_file, bad_line1=None, bad_line2=None)
@@ -107,47 +111,47 @@ def all_tests(port):
 
     # Invalid file, first line incomplete
     write_pwfile(pw_file, bad_line1='bad:', bad_line2=None)
-    username_password_tests(port)
+    expect_broker_fail_test(port, "Error: Unable to decode line in password file")
 
     # Invalid file, first line incomplete, but with "password"
     write_pwfile(pw_file, bad_line1='bad:bad', bad_line2=None)
-    username_password_tests(port)
+    expect_broker_fail_test(port, "Error: Unable to decode line in password file")
 
     # Invalid file, first line incomplete, partial password hash
     write_pwfile(pw_file, bad_line1='bad:$', bad_line2=None)
-    username_password_tests(port)
+    expect_broker_fail_test(port, "Error: Unable to decode line in password file")
 
     # Invalid file, first line incomplete, partial password hash
     write_pwfile(pw_file, bad_line1='bad:$6', bad_line2=None)
-    username_password_tests(port)
+    expect_broker_fail_test(port, "Error: Unable to decode line in password file")
 
     # Invalid file, first line incomplete, partial password hash
     write_pwfile(pw_file, bad_line1='bad:$6$', bad_line2=None)
-    username_password_tests(port)
+    expect_broker_fail_test(port, "Error: Unable to decode line in password file")
 
     # Valid file, first line incomplete, has valid salt but no password hash
     write_pwfile(pw_file, bad_line1='bad:$6$njERlZMi/7DzNB9E', bad_line2=None)
-    username_password_tests(port)
+    expect_broker_fail_test(port, "Error: Unable to decode line in password file")
 
     # Valid file, first line incomplete, has valid salt but no password hash
     write_pwfile(pw_file, bad_line1='bad:$6$njERlZMi/7DzNB9E$', bad_line2=None)
-    username_password_tests(port)
+    expect_broker_fail_test(port, "Error: Unable to decode line in password file")
 
     # Valid file, first line has invalid hash designator
     write_pwfile(pw_file, bad_line1='bad:$5$njERlZMi/7DzNB9E$iiavfuXvUm8iyDZArTy7smTxh07GXXOrOsqxfW6gkOYVXHGk+W+i/8d3xDxrMwEPygEBhoA8A/gjQC0N2M4Lkw==', bad_line2=None)
-    username_password_tests(port)
+    expect_broker_fail_test(port, "Error: Unable to decode line in password file")
 
     # Invalid file, missing username but valid password hash
     write_pwfile(pw_file, bad_line1=':$6$njERlZMi/7DzNB9E$iiavfuXvUm8iyDZArTy7smTxh07GXXOrOsqxfW6gkOYVXHGk+W+i/8d3xDxrMwEPygEBhoA8A/gjQC0N2M4Lkw==', bad_line2=None)
-    username_password_tests(port)
+    expect_broker_fail_test(port, "Error: Invalid line in password file")
 
     # Valid file, valid username but password salt not base64
     write_pwfile(pw_file, bad_line1='bad:$6$njER{ZMi/7DzNB9E$iiavfuXvUm8iyDZArTy7smTxh07GXXOrOsqxfW6gkOYVXHGk+W+i/8d3xDxrMwEPygEBhoA8A/gjQC0N2M4Lkw==', bad_line2=None)
-    username_password_tests(port)
+    expect_broker_fail_test(port, "Error: Unable to decode line in password file")
 
     # Valid file, valid username but password hash not base64
     write_pwfile(pw_file, bad_line1='bad:$6$njERlZMi/7DzNB9E$iiavfuXv{}8iyDZArTy7smTxh07GXXOrOsqxfW6gkOYVXHGk+W+i/8d3xDxrMwEPygEBhoA8A/gjQC0N2M4Lkw==', bad_line2=None)
-    username_password_tests(port)
+    expect_broker_fail_test(port, "Error: Unable to decode line in password file")
 
 
 
