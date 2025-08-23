@@ -180,13 +180,9 @@ FILE *mosquitto_fopen(const char *path, const char *mode, bool restrict_read)
 
 	if(restrict_read){
 		if(statbuf.st_mode & S_IRWXO){
-#ifdef WITH_BROKER
-			log__printf(NULL, MOSQ_LOG_WARNING,
-#else
 			fprintf(stderr,
-#endif
 					"Warning: File %s has world readable permissions. Future versions will refuse to load this file.\n"
-					"To fix this, use `chmod 0700 %s`.",
+					"To fix this, use `chmod 0700 %s`.\n",
 					path, path);
 #if 0
 			return NULL;
@@ -198,13 +194,9 @@ FILE *mosquitto_fopen(const char *path, const char *mode, bool restrict_read)
 
 			getpwuid_r(getuid(), &pw, buf, sizeof(buf), &result);
 			if(result){
-#ifdef WITH_BROKER
-				log__printf(NULL, MOSQ_LOG_WARNING,
-#else
 				fprintf(stderr,
-#endif
 						"Warning: File %s owner is not %s. Future versions will refuse to load this file."
-						"To fix this, use `chown %s %s`.",
+						"To fix this, use `chown %s %s`.\n",
 						path, result->pw_name, result->pw_name, path);
 			}
 #if 0
@@ -217,12 +209,8 @@ FILE *mosquitto_fopen(const char *path, const char *mode, bool restrict_read)
 			struct group grp, *result;
 
 			if(getgrgid_r(getgid(), &grp, buf, sizeof(buf), &result) == 0){
-#ifdef WITH_BROKER
-				log__printf(NULL, MOSQ_LOG_WARNING,
-#else
 				fprintf(stderr,
-#endif
-						"Warning: File %s group is not %s. Future versions will refuse to load this file.",
+						"Warning: File %s group is not %s. Future versions will refuse to load this file.\n",
 						path, result->gr_name);
 			}
 #if 0
@@ -233,9 +221,7 @@ FILE *mosquitto_fopen(const char *path, const char *mode, bool restrict_read)
 	}
 
 	if(!S_ISREG(statbuf.st_mode)){
-#ifdef WITH_BROKER
-		log__printf(NULL, MOSQ_LOG_ERR, "Error: %s is not a file.", path);
-#endif
+		fprintf(stderr, "Error: %s is not a file.", path);
 		fclose(fptr);
 		return NULL;
 	}
