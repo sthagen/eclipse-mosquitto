@@ -1029,11 +1029,12 @@ static int config__read_file_core(struct mosquitto__config *config, bool reload,
 							break;
 						}
 						cur_bridge->address_count++;
-						cur_bridge->addresses = mosquitto_realloc(cur_bridge->addresses, sizeof(struct bridge_address)*(size_t)cur_bridge->address_count);
-						if(!cur_bridge->addresses){
+						struct bridge_address *new_addresses = mosquitto_realloc(cur_bridge->addresses, sizeof(struct bridge_address)*(size_t)cur_bridge->address_count);
+						if(!new_addresses){
 							log__printf(NULL, MOSQ_LOG_ERR, "Error: Out of memory.");
 							return MOSQ_ERR_NOMEM;
 						}
+						cur_bridge->addresses = new_addresses;
 						memset(&cur_bridge->addresses[cur_bridge->address_count-1], 0, sizeof(struct bridge_address));
 						cur_bridge->addresses[cur_bridge->address_count-1].address = mosquitto_strdup(token);
 						if(!cur_bridge->addresses[cur_bridge->address_count-1].address){
@@ -1113,12 +1114,13 @@ static int config__read_file_core(struct mosquitto__config *config, bool reload,
 							token++;
 						}
 						cur_plugin->config.option_count++;
-						cur_plugin->config.options = mosquitto_realloc(cur_plugin->config.options, (size_t)cur_plugin->config.option_count*sizeof(struct mosquitto_auth_opt));
-						if(!cur_plugin->config.options){
+						struct mosquitto_opt *new_options = mosquitto_realloc(cur_plugin->config.options, (size_t)cur_plugin->config.option_count*sizeof(struct mosquitto_opt));
+						if(!new_options){
 							log__printf(NULL, MOSQ_LOG_ERR, "Error: Out of memory.");
 							mosquitto_FREE(key);
 							return MOSQ_ERR_NOMEM;
 						}
+						cur_plugin->config.options = new_options;
 						cur_plugin->config.options[cur_plugin->config.option_count-1].key = key;
 						cur_plugin->config.options[cur_plugin->config.option_count-1].value = mosquitto_strdup(token);
 						if(!cur_plugin->config.options[cur_plugin->config.option_count-1].value){
