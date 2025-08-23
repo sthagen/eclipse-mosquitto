@@ -1,5 +1,4 @@
 #include <cstring>
-#include <cassert>
 #include <mosquitto/libmosquittopp.h>
 
 static int run = -1;
@@ -36,7 +35,9 @@ int main(int argc, char *argv[])
 {
 	mosquittopp_test *mosq;
 
-	assert(argc == 2);
+	if(argc != 2){
+		return 1;
+	}
 
 	int port = atoi(argv[1]);
 

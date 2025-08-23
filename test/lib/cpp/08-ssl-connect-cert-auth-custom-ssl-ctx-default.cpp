@@ -1,4 +1,3 @@
-#include <cassert>
 #include <signal.h>
 #include <mosquitto/libmosquittopp.h>
 #include <openssl/ssl.h>
@@ -44,7 +43,9 @@ int main(int argc, char *argv[])
 {
 	mosquittopp_test *mosq;
 	SSL_CTX *ssl_ctx;
-	assert(argc == 2);
+	if(argc != 2){
+		return 1;
+	}
 	int port = atoi(argv[1]);
 
 	mosqpp::lib_init();

@@ -1,4 +1,3 @@
-#include <cassert>
 #include <cstdio>
 #include <cstring>
 #include <mosquitto/libmosquittopp.h>
@@ -64,7 +63,9 @@ int main(int argc, char *argv[])
 {
 	mosquittopp_test *mosq;
 
-	assert(argc == 2);
+	if(argc != 2){
+		return 1;
+	}
 	int port = atoi(argv[1]);
 
 	mosqpp::lib_init();

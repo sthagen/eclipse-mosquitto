@@ -53,7 +53,9 @@ int main(int argc, char *argv[])
 	int rc;
 	struct timespec tv = { 0, (long)100e6 };
 
-	assert(argc == 2);
+	if(argc != 2){
+		return 1;
+	}
 	int port = atoi(argv[1]);
 
 	mosqpp::lib_init();

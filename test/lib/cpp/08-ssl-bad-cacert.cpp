@@ -1,4 +1,3 @@
-#include <cassert>
 #include <mosquitto/libmosquittopp.h>
 #include "path_helper.h"
 
@@ -17,7 +16,9 @@ int main(int argc, char *argv[])
 	mosquittopp_test *mosq;
 	int rc = 1;
 
-	assert(argc == 2);
+	if(argc != 2){
+		return 1;
+	}
 	(void)argv;
 
 	mosqpp::lib_init();

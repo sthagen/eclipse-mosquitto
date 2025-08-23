@@ -1,5 +1,4 @@
 #include <cstring>
-#include <cassert>
 #include <mosquitto/libmosquittopp.h>
 
 static int run = -1;
@@ -37,7 +36,9 @@ int main(int argc, char *argv[])
 	mosquitto_property *proplist = NULL;
 	int rc;
 
-	assert(argc == 2);
+	if(argc != 2){
+		return 1;
+	}
 	int port = atoi(argv[1]);
 
 	mosqpp::lib_init();

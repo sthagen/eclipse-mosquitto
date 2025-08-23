@@ -321,7 +321,7 @@ static void varint_prop_read_helper(
 	mosquitto_property *properties;
 	int rc;
 
-	memset(&packet, 0, sizeof(struct mosquitto__packet));
+	memset(&packet, 0, sizeof(struct mosquitto__packet_in));
 	packet.payload = payload;
 	packet.remaining_length = remaining_length;
 	rc = property__read_all(CMD_PUBLISH, &packet, &properties);
@@ -422,7 +422,7 @@ static void TEST_truncated(void)
 	CU_ASSERT_EQUAL(packet.pos, 0);
 
 	/* Proplen > 0 but not enough data */
-	memset(&packet, 0, sizeof(struct mosquitto__packet));
+	memset(&packet, 0, sizeof(struct mosquitto__packet_in));
 	memset(payload, 0, sizeof(payload));
 	payload[0] = 2;
 	packet.payload = payload;
@@ -433,7 +433,7 @@ static void TEST_truncated(void)
 	CU_ASSERT_EQUAL(packet.pos, 1);
 
 	/* Proplen > 0 but not enough data */
-	memset(&packet, 0, sizeof(struct mosquitto__packet));
+	memset(&packet, 0, sizeof(struct mosquitto__packet_in));
 	memset(payload, 0, sizeof(payload));
 	payload[0] = 4;
 	payload[1] = MQTT_PROP_PAYLOAD_FORMAT_INDICATOR;
@@ -471,7 +471,7 @@ static void TEST_invalid_property_id(void)
 	CU_ASSERT_EQUAL(packet.pos, 2);
 
 	/* ID = 4 */
-	memset(&packet, 0, sizeof(struct mosquitto__packet));
+	memset(&packet, 0, sizeof(struct mosquitto__packet_in));
 	memset(payload, 0, sizeof(payload));
 	payload[0] = 4;
 	payload[1] = 4;
@@ -1346,7 +1346,7 @@ static void TEST_packet_connack(void)
 
 	payload[0] = sizeof(payload)-1;
 
-	memset(&packet, 0, sizeof(struct mosquitto__packet));
+	memset(&packet, 0, sizeof(struct mosquitto__packet_in));
 	packet.payload = payload;
 	packet.remaining_length = sizeof(payload);;
 	rc = property__read_all(CMD_CONNACK, &packet, &properties);
