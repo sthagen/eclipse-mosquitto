@@ -853,7 +853,7 @@ int plugin__handle_message_in(struct mosquitto *context, struct mosquitto_base_m
 int plugin__handle_message_out(struct mosquitto *context, struct mosquitto_base_msg *base_msg);
 int plugin__handle_subscribe(struct mosquitto *context, struct mosquitto_subscription *sub);
 int plugin__handle_unsubscribe(struct mosquitto *context, struct mosquitto_subscription *sub);
-void plugin__handle_reload(void);
+int plugin__handle_reload(void);
 void plugin__handle_tick(void);
 int plugin__callback_unregister_all(mosquitto_plugin_id_t *identifier);
 void plugin_persist__handle_restore(void);
@@ -944,7 +944,7 @@ void session_expiry__send_all(void);
  * Signals
  * ============================================================ */
 void signal__setup(void);
-void signal__flag_check(void);
+int signal__flag_check(void);
 
 /* ============================================================
  * Window service and signal related functions

@@ -315,6 +315,7 @@ static void acl__free_entries(struct acl__entry *entry)
 	}
 }
 
+
 void acl_file__cleanup(struct acl_file_data *data)
 {
 	struct acl__user *user, *user_tmp;
@@ -331,4 +332,16 @@ void acl_file__cleanup(struct acl_file_data *data)
 
 	acl__free_entries(data->acl_patterns);
 	data->acl_patterns = NULL;
+}
+
+
+int acl_file__reload(int event, void *event_data, void *userdata)
+{
+	struct acl_file_data *data = userdata;
+
+	UNUSED(event);
+	UNUSED(event_data);
+
+	acl_file__cleanup(data);
+	return acl_file__parse(data);
 }

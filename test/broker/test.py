@@ -296,6 +296,8 @@ tests = [
     (2, './22-http-api-api.py'),
     (2, './22-http-api-file.py'),
     (2, './22-http-api-tls.py'),
+
+    (2, './23-security-acl-file-reload.py'),
 ]
 
 if __name__ == "__main__":

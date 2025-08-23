@@ -46,6 +46,7 @@ struct acl_file_data{
 
 int acl_file__parse(struct acl_file_data *data);
 int acl_file__check(int event, void *event_data, void *userdata);
+int acl_file__reload(int event, void *event_data, void *userdata);
 void acl_file__cleanup(struct acl_file_data *data);
 
 #endif

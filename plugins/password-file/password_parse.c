@@ -56,18 +56,18 @@ int password_file__parse(struct password_file_data *data)
 			if(username){
 				username = mosquitto_trimblanks(username);
 				if(strlen(username) > 65535){
-					mosquitto_log_printf(MOSQ_LOG_NOTICE, "password-file: Warning: Invalid line in password file '%s', username too long.", data->password_file);
-					continue;
+					mosquitto_log_printf(MOSQ_LOG_ERR, "password-file: Error: Invalid line in password file '%s', username too long.", data->password_file);
+					return MOSQ_ERR_INVAL;
 				}
 				if(strlen(username) <= 0){
-					mosquitto_log_printf(MOSQ_LOG_NOTICE, "password-file: Warning: Empty username in password file '%s', ignoring.", data->password_file);
-					continue;
+					mosquitto_log_printf(MOSQ_LOG_ERR, "password-file: Error: Empty username in password file '%s'.", data->password_file);
+					return MOSQ_ERR_INVAL;
 				}
 
 				HASH_FIND(hh, data->unpwd, username, strlen(username), unpwd);
 				if(unpwd){
-					mosquitto_log_printf(MOSQ_LOG_NOTICE, "password-file: Error: Duplicate user '%s' in password file '%s', ignoring.", username, data->password_file);
-					continue;
+					mosquitto_log_printf(MOSQ_LOG_ERR, "password-file: Error: Duplicate user '%s' in password file '%s'.", username, data->password_file);
+					return MOSQ_ERR_INVAL;
 				}
 
 				unpwd = mosquitto_calloc(1, sizeof(struct mosquitto__unpwd));
@@ -89,28 +89,29 @@ int password_file__parse(struct password_file_data *data)
 					password = mosquitto_trimblanks(password);
 
 					if(strlen(password) > 65535){
-						mosquitto_log_printf(MOSQ_LOG_NOTICE, "password-file: Warning: Invalid line in password file '%s', password too long.", data->password_file);
+						mosquitto_log_printf(MOSQ_LOG_ERR, "password-file: Error: Invalid line in password file '%s', password too long.", data->password_file);
 						mosquitto_FREE(unpwd->username);
 						mosquitto_FREE(unpwd);
-						continue;
+						return MOSQ_ERR_INVAL;
 					}
 
 					if(mosquitto_pw_new(&unpwd->pw, MOSQ_PW_DEFAULT)
 							|| mosquitto_pw_decode(unpwd->pw, password)){
 
-						mosquitto_log_printf(MOSQ_LOG_NOTICE, "password-file: Warning: Unable to decode line in password file '%s'.", data->password_file);
+						mosquitto_log_printf(MOSQ_LOG_ERR, "password-file: Error: Unable to decode line in password file '%s'.", data->password_file);
 						mosquitto_pw_cleanup(unpwd->pw);
 						mosquitto_FREE(unpwd->username);
 						mosquitto_FREE(unpwd);
-						continue;
+						return MOSQ_ERR_INVAL;
 					}
 
 					HASH_ADD_KEYPTR(hh, data->unpwd, unpwd->username, strlen(unpwd->username), unpwd);
 				}else{
-					mosquitto_log_printf(MOSQ_LOG_NOTICE, "password-file: Warning: Invalid line in password file '%s': %s", data->password_file, buf);
+					mosquitto_log_printf(MOSQ_LOG_ERR, "password-file: Error: Invalid line in password file '%s': %s", data->password_file, buf);
 					mosquitto_pw_cleanup(unpwd->pw);
 					mosquitto_FREE(unpwd->username);
 					mosquitto_FREE(unpwd);
+					return MOSQ_ERR_INVAL;
 				}
 			}
 		}
@@ -134,4 +135,16 @@ void password_file__cleanup(struct password_file_data *data)
 		mosquitto_FREE(u->username);
 		mosquitto_FREE(u);
 	}
+}
+
+
+int password_file__reload(int event, void *event_data, void *userdata)
+{
+	struct password_file_data *data = userdata;
+
+	UNUSED(event);
+	UNUSED(event_data);
+
+	password_file__cleanup(data);
+	return password_file__parse(data);
 }

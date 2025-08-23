@@ -224,7 +224,9 @@ int mosquitto_main_loop(struct mosquitto__listener_sock *listensock, int listens
 		}
 #endif
 
-		signal__flag_check();
+		rc = signal__flag_check();
+		if(rc) return rc;
+
 #if defined(WITH_WEBSOCKETS) && WITH_WEBSOCKETS == WS_IS_LWS
 		for(int i=0; i<db.config->listener_count; i++){
 			/* Extremely hacky, should be using the lws provided external poll

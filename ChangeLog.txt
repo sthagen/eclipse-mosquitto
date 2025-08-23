@@ -3,6 +3,21 @@
 
 # Broker
 
+## Deprecations
+- The acl_file option is deprecated in favour of the acl-file plugin, which is
+  the same code but moved into a plugin. The acl_file option will be removed
+  in 3.0.
+- The password_file option is deprecated in favour of the password-file plugin,
+  which is the same code but moved into a plugin. The password_file option will
+  be removed in 3.0.
+- The per_listener_settings option is deprecated in favour of the new listener
+  specific options. The per_listener_settings option will be removed in 3.0.
+
+## Behaviour changes
+
+- acl_file and password_file will produce an error on invalid input when
+  reloading the config, causing the broker to quit.
+
 ## Protocol related
 - Add support for broker created topic aliases. Topics are allocated on a
   first come first serve basis.
@@ -136,8 +151,10 @@
   tick callback again.
 
 # Plugins
+- Add acl-file plugin.
+- Add password-file plugin.
 - Add persist-sqlite plugin.
-- Add sparkplug aware plugin.
+- Add sparkplug-aware plugin.
 
 # Dynamic security plugin
 - Add ability to deny wildcard subscriptions for a role to the dynsec plugin.

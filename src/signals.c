@@ -90,7 +90,7 @@ void signal__setup(void)
 #endif
 }
 
-void signal__flag_check(void)
+int signal__flag_check(void)
 {
 #ifdef WITH_PERSISTENCE
 	if(flag_db_backup){
@@ -104,13 +104,17 @@ void signal__flag_check(void)
 		flag_log_rotate = false;
 	}
 	if(flag_reload){
+		int rc;
 		log__printf(NULL, MOSQ_LOG_INFO, "Reloading config.");
 		config__read(db.config, true);
 		listeners__reload_all_certificates();
-		plugin__handle_reload();
+		rc = plugin__handle_reload();
+		if(rc) return rc;
 		mosquitto_security_cleanup(true);
-		mosquitto_security_init(true);
-		mosquitto_security_apply_default();
+		rc = mosquitto_security_init(true);
+		if(rc) return rc;
+		rc = mosquitto_security_apply_default();
+		if(rc) return rc;
 		log__close(db.config);
 		log__init(db.config);
 		keepalive__cleanup();
@@ -132,6 +136,8 @@ void signal__flag_check(void)
 		flag_xtreport = false;
 	}
 #endif
+
+	return MOSQ_ERR_SUCCESS;
 }
 
 /*
