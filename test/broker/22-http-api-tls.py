@@ -85,6 +85,8 @@ try:
             '$SYS/broker/connections/socket/count',
             '$SYS/broker/heap/current',
             '$SYS/broker/heap/maximum',
+            '$SYS/broker/messages/received',
+            '$SYS/broker/bytes/received',
             '$SYS/broker/messages/stored',
             '$SYS/broker/retained messages/count',
             '$SYS/broker/store/messages/bytes',
@@ -110,9 +112,9 @@ try:
         '$SYS/broker/retained messages/count': -1,
         '$SYS/broker/heap/current': -1,
         '$SYS/broker/heap/maximum': -1,
-        '$SYS/broker/messages/received': 0,
+        '$SYS/broker/messages/received': -1,
         '$SYS/broker/messages/sent': 0,
-        '$SYS/broker/bytes/received': 0,
+        '$SYS/broker/bytes/received': -1,
         '$SYS/broker/bytes/sent': 0,
         '$SYS/broker/publish/bytes/received': 0,
         '$SYS/broker/publish/bytes/sent': 0,
@@ -134,7 +136,10 @@ except Exception as e:
     print(e)
 finally:
     os.remove(conf_file)
-    os.remove(f"{mqtt_port}.sock")
+    try:
+        os.remove(f"{mqtt_port}.sock")
+    except FileNotFoundError:
+        pass
     broker.terminate()
     if mosq_test.wait_for_subprocess(broker):
         print("broker not terminated")
