@@ -18,7 +18,7 @@ static void byte_prop_read_helper(
 	mosquitto_property *properties;
 	int rc;
 
-	memset(&packet, 0, sizeof(struct mosquitto__packet));
+	memset(&packet, 0, sizeof(struct mosquitto__packet_in));
 	packet.payload = payload;
 	packet.remaining_length = remaining_length;
 	rc = property__read_all(command, &packet, &properties);
@@ -74,7 +74,7 @@ static void int32_prop_read_helper(
 	mosquitto_property *properties;
 	int rc;
 
-	memset(&packet, 0, sizeof(struct mosquitto__packet));
+	memset(&packet, 0, sizeof(struct mosquitto__packet_in));
 	packet.payload = payload;
 	packet.remaining_length = remaining_length;
 	rc = property__read_all(command, &packet, &properties);
@@ -127,7 +127,7 @@ static void int16_prop_read_helper(
 	mosquitto_property *properties;
 	int rc;
 
-	memset(&packet, 0, sizeof(struct mosquitto__packet));
+	memset(&packet, 0, sizeof(struct mosquitto__packet_in));
 	packet.payload = payload;
 	packet.remaining_length = remaining_length;
 	rc = property__read_all(command, &packet, &properties);
@@ -172,7 +172,7 @@ static void string_prop_read_helper(
 	mosquitto_property *properties;
 	int rc;
 
-	memset(&packet, 0, sizeof(struct mosquitto__packet));
+	memset(&packet, 0, sizeof(struct mosquitto__packet_in));
 	packet.payload = payload;
 	packet.remaining_length = remaining_length;
 	rc = property__read_all(command, &packet, &properties);
@@ -237,7 +237,7 @@ static void binary_prop_read_helper(
 	mosquitto_property *properties;
 	int rc;
 
-	memset(&packet, 0, sizeof(struct mosquitto__packet));
+	memset(&packet, 0, sizeof(struct mosquitto__packet_in));
 	packet.payload = payload;
 	packet.remaining_length = remaining_length;
 	rc = property__read_all(command, &packet, &properties);
@@ -286,7 +286,7 @@ static void string_pair_prop_read_helper(
 	mosquitto_property *properties;
 	int rc;
 
-	memset(&packet, 0, sizeof(struct mosquitto__packet));
+	memset(&packet, 0, sizeof(struct mosquitto__packet_in));
 	packet.payload = payload;
 	packet.remaining_length = remaining_length;
 	rc = property__read_all(CMD_CONNECT, &packet, &properties);
@@ -350,7 +350,7 @@ static void packet_helper_reason_string_user_property(int command)
 	mosquitto_property *properties, *p;
 	int rc;
 
-	memset(&packet, 0, sizeof(struct mosquitto__packet));
+	memset(&packet, 0, sizeof(struct mosquitto__packet_in));
 	packet.payload = payload;
 	packet.remaining_length = sizeof(payload);;
 	rc = property__read_all(command, &packet, &properties);
@@ -391,7 +391,7 @@ static void TEST_no_properties(void)
 	uint8_t payload[5];
 	int rc;
 
-	memset(&packet, 0, sizeof(struct mosquitto__packet));
+	memset(&packet, 0, sizeof(struct mosquitto__packet_in));
 	memset(payload, 0, sizeof(payload));
 	packet.payload = payload;
 	packet.remaining_length = 1;
@@ -412,7 +412,7 @@ static void TEST_truncated(void)
 	int rc;
 
 	/* Zero length packet */
-	memset(&packet, 0, sizeof(struct mosquitto__packet));
+	memset(&packet, 0, sizeof(struct mosquitto__packet_in));
 	memset(payload, 0, sizeof(payload));
 	packet.payload = payload;
 	packet.remaining_length = 0;
@@ -460,7 +460,7 @@ static void TEST_invalid_property_id(void)
 	int rc;
 
 	/* ID = 0 */
-	memset(&packet, 0, sizeof(struct mosquitto__packet));
+	memset(&packet, 0, sizeof(struct mosquitto__packet_in));
 	memset(payload, 0, sizeof(payload));
 	payload[0] = 4;
 	packet.payload = payload;
@@ -1232,7 +1232,7 @@ static void TEST_packet_connect(void)
 
 	payload[0] = sizeof(payload)-1;
 
-	memset(&packet, 0, sizeof(struct mosquitto__packet));
+	memset(&packet, 0, sizeof(struct mosquitto__packet_in));
 	packet.payload = payload;
 	packet.remaining_length = sizeof(payload);;
 	rc = property__read_all(CMD_CONNECT, &packet, &properties);
@@ -1520,7 +1520,7 @@ static void TEST_packet_publish(void)
 
 	payload[0] = sizeof(payload)-1;
 
-	memset(&packet, 0, sizeof(struct mosquitto__packet));
+	memset(&packet, 0, sizeof(struct mosquitto__packet_in));
 	packet.payload = payload;
 	packet.remaining_length = sizeof(payload);;
 	rc = property__read_all(CMD_PUBLISH, &packet, &properties);
@@ -1633,7 +1633,7 @@ static void TEST_packet_subscribe(void)
 
 	payload[0] = sizeof(payload)-1;
 
-	memset(&packet, 0, sizeof(struct mosquitto__packet));
+	memset(&packet, 0, sizeof(struct mosquitto__packet_in));
 	packet.payload = payload;
 	packet.remaining_length = sizeof(payload);;
 	rc = property__read_all(CMD_SUBSCRIBE, &packet, &properties);
@@ -1678,7 +1678,7 @@ static void TEST_packet_unsubscribe(void)
 
 	payload[0] = sizeof(payload)-1;
 
-	memset(&packet, 0, sizeof(struct mosquitto__packet));
+	memset(&packet, 0, sizeof(struct mosquitto__packet_in));
 	packet.payload = payload;
 	packet.remaining_length = sizeof(payload);;
 	rc = property__read_all(CMD_UNSUBSCRIBE, &packet, &properties);
@@ -1717,7 +1717,7 @@ static void TEST_packet_disconnect(void)
 
 	payload[0] = sizeof(payload)-1;
 
-	memset(&packet, 0, sizeof(struct mosquitto__packet));
+	memset(&packet, 0, sizeof(struct mosquitto__packet_in));
 	packet.payload = payload;
 	packet.remaining_length = sizeof(payload);;
 	rc = property__read_all(CMD_DISCONNECT, &packet, &properties);
@@ -1769,7 +1769,7 @@ static void TEST_packet_auth(void)
 
 	payload[0] = sizeof(payload)-1;
 
-	memset(&packet, 0, sizeof(struct mosquitto__packet));
+	memset(&packet, 0, sizeof(struct mosquitto__packet_in));
 	packet.payload = payload;
 	packet.remaining_length = sizeof(payload);;
 	rc = property__read_all(CMD_AUTH, &packet, &properties);

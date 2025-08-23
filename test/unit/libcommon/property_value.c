@@ -228,11 +228,11 @@ static void TEST_value_string_pair_success(void)
 	char value_set[] = "value";
 	const char *value;
 	uint16_t len;
-	char name_set[] = "value";
+	char name_set[] = "name";
 	const char *name;
 	int rc;
 
-	rc = mosquitto_property_add_string_pair(&property, MQTT_PROP_USER_PROPERTY, value_set, name_set);
+	rc = mosquitto_property_add_string_pair(&property, MQTT_PROP_USER_PROPERTY, name_set, value_set);
 	CU_ASSERT_EQUAL(rc, MOSQ_ERR_SUCCESS);
 	CU_ASSERT_PTR_NOT_NULL(property);
 	if(property){

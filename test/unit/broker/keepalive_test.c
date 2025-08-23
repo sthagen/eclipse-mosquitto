@@ -47,6 +47,7 @@ static void TEST_single_client(void)
 	rc = keepalive__init();
 	CU_ASSERT_EQUAL(rc, MOSQ_ERR_SUCCESS);
 	if(rc != MOSQ_ERR_SUCCESS){
+		free(context.id);
 		return;
 	}
 	CU_ASSERT_EQUAL(keepalive_list_max, 3001);
@@ -98,6 +99,7 @@ static void TEST_single_client_update(void)
 	rc = keepalive__init();
 	CU_ASSERT_EQUAL(rc, MOSQ_ERR_SUCCESS);
 	if(rc != MOSQ_ERR_SUCCESS){
+		free(context.id);
 		return;
 	}
 	CU_ASSERT_EQUAL(keepalive_list_max, 3001);
@@ -150,6 +152,7 @@ static void TEST_over_max_keepalive(void)
 	rc = keepalive__init();
 	CU_ASSERT_EQUAL(rc, MOSQ_ERR_SUCCESS);
 	if(rc != MOSQ_ERR_SUCCESS){
+		free(context.id);
 		return;
 	}
 	CU_ASSERT_EQUAL(keepalive_list_max, 3001);

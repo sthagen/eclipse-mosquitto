@@ -118,7 +118,8 @@ int signal__flag_check(void)
 		log__close(db.config);
 		log__init(db.config);
 		keepalive__cleanup();
-		keepalive__init();
+		rc = keepalive__init();
+		if(rc) return rc;
 		broker_control__reload();
 #ifdef WITH_BRIDGE
 		bridge__reload();

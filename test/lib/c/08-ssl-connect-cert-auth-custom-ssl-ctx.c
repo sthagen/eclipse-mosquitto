@@ -74,7 +74,8 @@ int main(int argc, char *argv[])
 	mosquitto_int_option(mosq, MOSQ_OPT_SSL_CTX_WITH_DEFAULTS, 0);
 	mosquitto_void_option(mosq, MOSQ_OPT_SSL_CTX, ssl_ctx);
 
-	mosquitto_connect(mosq, "localhost", port, 60);
+	int rc = mosquitto_connect(mosq, "localhost", port, 60);
+	if(rc) return rc;
 
 	signal(SIGINT, handle_sigint);
 	while(run == -1){
