@@ -58,11 +58,13 @@ int password_file__parse(struct password_file_data *data)
 				if(strlen(username) > 65535){
 					mosquitto_log_printf(MOSQ_LOG_ERR, "password-file: Error: Invalid line in password file '%s', username too long.", data->password_file);
 					fclose(pwfile);
+					mosquitto_FREE(buf);
 					return MOSQ_ERR_INVAL;
 				}
 				if(strlen(username) <= 0){
 					mosquitto_log_printf(MOSQ_LOG_ERR, "password-file: Error: Empty username in password file '%s'.", data->password_file);
 					fclose(pwfile);
+					mosquitto_FREE(buf);
 					return MOSQ_ERR_INVAL;
 				}
 
@@ -70,6 +72,7 @@ int password_file__parse(struct password_file_data *data)
 				if(unpwd){
 					mosquitto_log_printf(MOSQ_LOG_ERR, "password-file: Error: Duplicate user '%s' in password file '%s'.", username, data->password_file);
 					fclose(pwfile);
+					mosquitto_FREE(buf);
 					return MOSQ_ERR_INVAL;
 				}
 
@@ -95,6 +98,7 @@ int password_file__parse(struct password_file_data *data)
 						mosquitto_log_printf(MOSQ_LOG_ERR, "password-file: Error: Invalid line in password file '%s', password too long.", data->password_file);
 						mosquitto_FREE(unpwd->username);
 						mosquitto_FREE(unpwd);
+						mosquitto_FREE(buf);
 						fclose(pwfile);
 						return MOSQ_ERR_INVAL;
 					}
@@ -106,6 +110,7 @@ int password_file__parse(struct password_file_data *data)
 						mosquitto_pw_cleanup(unpwd->pw);
 						mosquitto_FREE(unpwd->username);
 						mosquitto_FREE(unpwd);
+						mosquitto_FREE(buf);
 						fclose(pwfile);
 						return MOSQ_ERR_INVAL;
 					}
@@ -116,6 +121,7 @@ int password_file__parse(struct password_file_data *data)
 					mosquitto_pw_cleanup(unpwd->pw);
 					mosquitto_FREE(unpwd->username);
 					mosquitto_FREE(unpwd);
+					mosquitto_FREE(buf);
 					fclose(pwfile);
 					return MOSQ_ERR_INVAL;
 				}
