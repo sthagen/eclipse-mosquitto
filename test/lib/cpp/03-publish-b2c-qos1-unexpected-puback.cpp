@@ -26,6 +26,7 @@ void mosquittopp_test::on_connect(int rc)
 int main(int argc, char *argv[])
 {
 	mosquittopp_test *mosq;
+	int rc = 1;
 
 	if(argc != 2){
 		return 1;
@@ -39,14 +40,14 @@ int main(int argc, char *argv[])
 	mosq->connect("localhost", port, 5);
 
 	while(1){
-		int rc = mosq->loop(300, 1);
-		if(rc){
-			exit(0);
+		if(mosq->loop(300, 1)){
+			rc = 0;
+			break;
 		}
 	}
 	delete mosq;
 	mosqpp::lib_cleanup();
 
-	return 1;
+	return rc;
 }
 

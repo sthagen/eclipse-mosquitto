@@ -57,6 +57,7 @@ void mosquittopp_test::on_message(const struct mosquitto_message *msg)
 int main(int argc, char *argv[])
 {
 	mosquittopp_test *mosq;
+	int rc = 1;
 
 	if(argc != 2){
 		return 1;
@@ -70,13 +71,15 @@ int main(int argc, char *argv[])
 	mosq->connect("localhost", port, 60);
 
 	while(1){
-		mosq->loop();
+		if(mosq->loop()){
+			rc = 0;
+			break;
+		}
 	}
-	delete mosq;
 
 	delete mosq;
 	mosqpp::lib_cleanup();
 
-	return 1;
+	return rc;
 }
 

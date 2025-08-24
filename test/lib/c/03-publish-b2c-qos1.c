@@ -71,7 +71,9 @@ int main(int argc, char *argv[])
 	if(rc != MOSQ_ERR_SUCCESS) return rc;
 
 	while(1){
-		mosquitto_loop(mosq, 300, 1);
+		if(mosquitto_loop(mosq, 300, 1)){
+			break;
+		}
 	}
 	mosquitto_destroy(mosq);
 
