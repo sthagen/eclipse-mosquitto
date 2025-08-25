@@ -95,6 +95,7 @@ tests = [
 
     (1, './05-clean-session-qos1.py'),
     (1, './05-session-expiry-v5.py'),
+    (1, './05-session-expiry-kick.py'),
 
     (2, './06-bridge-b2br-disconnect-qos1.py'),
     (2, './06-bridge-b2br-disconnect-qos2.py'),

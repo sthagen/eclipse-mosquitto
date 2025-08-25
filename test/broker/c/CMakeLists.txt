@@ -39,6 +39,7 @@ set(PLUGINS
     bad_v5_1
     bad_v6
     bad_vnone_1
+    kick_last_client
     plugin_control
     plugin_evt_client_offline
     plugin_evt_message_in
