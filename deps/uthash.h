@@ -645,6 +645,7 @@ do {                                                                            
 } while (0)
 
 #define HASH_JEN(key,keylen,hashv)                                               \
+/* coverity[overflow_const] - intentional wrapping in Jenkins hash */            \
 do {                                                                             \
   unsigned _hj_i,_hj_j,_hj_k;                                                    \
   unsigned const char *_hj_key=(unsigned const char*)(key);                      \
@@ -665,11 +666,13 @@ do {                                                                            
         + ( (unsigned)_hj_key[10] << 16 )                                        \
         + ( (unsigned)_hj_key[11] << 24 ) );                                     \
                                                                                  \
+    /* coverity[overflow_const] - intentional wrapping in Jenkins hash */        \
      HASH_JEN_MIX(_hj_i, _hj_j, hashv);                                          \
                                                                                  \
      _hj_key += 12;                                                              \
      _hj_k -= 12U;                                                               \
   }                                                                              \
+  /* coverity[overflow_const] - intentional wrapping in Jenkins hash */          \
   hashv += (unsigned)(keylen);                                                   \
   switch ( _hj_k ) {                                                             \
     /* coverity[overflow_const] - intentional wrapping in Jenkins hash */        \
@@ -696,6 +699,7 @@ do {                                                                            
     case 1:  _hj_i += _hj_key[0];                      /* FALLTHROUGH */         \
     default: ;                                                                   \
   }                                                                              \
+  /* coverity[overflow_const] - intentional wrapping in Jenkins hash */          \
   HASH_JEN_MIX(_hj_i, _hj_j, hashv);                                             \
 } while (0)
 
