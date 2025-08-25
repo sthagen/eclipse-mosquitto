@@ -67,6 +67,12 @@ int session_expiry__add(struct mosquitto *context)
 {
 	struct session_expiry_list *item;
 
+	if(context->expiry_list_item){
+		/* Already added, may happen in cases like a client disconnecting then
+		 * being kicked by a plugin. */
+		return MOSQ_ERR_SUCCESS;
+	}
+
 	if(db.config->persistent_client_expiration == 0){
 		if(context->session_expiry_interval == UINT32_MAX){
 			/* There isn't a global expiry set, and the client has asked to
@@ -91,6 +97,12 @@ int session_expiry__add(struct mosquitto *context)
 int session_expiry__add_from_persistence(struct mosquitto *context, time_t expiry_time)
 {
 	struct session_expiry_list *item;
+
+	if(context->expiry_list_item){
+		/* Already added, may happen in cases like a client disconnecting then
+		 * being kicked by a plugin. */
+		return MOSQ_ERR_SUCCESS;
+	}
 
 	if(db.config->persistent_client_expiration == 0){
 		if(context->session_expiry_interval == UINT32_MAX){
