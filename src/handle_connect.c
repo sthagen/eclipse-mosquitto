@@ -920,8 +920,9 @@ static int handle_username_from_cert_options(struct mosquitto *context, char** u
 			if(!context->username){
 				return send__connack_bad_username_or_password_error(context, MOSQ_ERR_AUTH);
 			}
-		}else{
+		}else
 #endif /* FINAL_WITH_TLS_PSK */
+		{
 			if (context->listener->use_identity_as_username) {
 				rc = set_username_from_cert_identity(context);
 			} else { /* use_subject_as_username */
@@ -930,25 +931,25 @@ static int handle_username_from_cert_options(struct mosquitto *context, char** u
 			if(rc) {
 				return rc;
 			}
-#ifdef FINAL_WITH_TLS_PSK
 		}
-#endif /* FINAL_WITH_TLS_PSK */
 	}else
 #endif /* WITH_TLS */
-	if(context->listener->use_identity_as_username && context->listener->require_certificate){
-		mosquitto_FREE(*username);
-		mosquitto_FREE(*password);
+	{
+		if(context->listener->use_identity_as_username && context->listener->require_certificate){
+			mosquitto_FREE(*username);
+			mosquitto_FREE(*password);
 
-		if(!context->username){
-			return send__connack_bad_username_or_password_error(context, MOSQ_ERR_AUTH);
+			if(!context->username){
+				return send__connack_bad_username_or_password_error(context, MOSQ_ERR_AUTH);
+			}
+		}else{
+			/* FIXME - these ensure the mosquitto_clientid() and
+			* mosquitto_client_username() functions work, but is hacky */
+			context->username = *username;
+			context->password = *password;
+			*username = NULL; /* Avoid free() in error: below. */
+			*password = NULL;
 		}
-	}else{
-		/* FIXME - these ensure the mosquitto_clientid() and
-		 * mosquitto_client_username() functions work, but is hacky */
-		context->username = *username;
-		context->password = *password;
-		*username = NULL; /* Avoid free() in error: below. */
-		*password = NULL;
 	}
 
 	return MOSQ_ERR_SUCCESS;
