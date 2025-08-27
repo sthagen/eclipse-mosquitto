@@ -15,12 +15,14 @@ SPDX-License-Identifier: EPL-2.0 OR BSD-3-Clause
 Contributors:
    Roger Light - initial implementation and documentation.
 */
+#if defined(__linux__)
+#  define _GNU_SOURCE  /* Exposes pthread_setname_np on Linux */
+#endif
 
 #include "config.h"
 
 #if defined(WITH_THREADING)
 #if defined(__linux__)
-#  define _GNU_SOURCE  /* Exposes pthread_setname_np on Linux */
 #  include <pthread.h>
 #elif defined(__NetBSD__)
 #  include <pthread.h>
