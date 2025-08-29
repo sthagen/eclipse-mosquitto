@@ -31,14 +31,19 @@ static struct completion_tree_root *commands_pre_connect = NULL;
 
 static void command_tree_create(void)
 {
+	struct completion_tree_cmd *cmd;
+	struct completion_tree_arg_list *help_arg_list;
+
 	if(commands_pre_connect) return;
 
 	commands_pre_connect = calloc(1, sizeof(struct completion_tree_root));
 
-	completion_tree_cmd_add(commands_pre_connect, "auth");
-	completion_tree_cmd_add(commands_pre_connect, "connect");
-	completion_tree_cmd_add(commands_pre_connect, "help");
-	completion_tree_cmd_add(commands_pre_connect, "exit");
+	cmd = completion_tree_cmd_add(commands_pre_connect, NULL, "help");
+	help_arg_list = completion_tree_cmd_add_arg_list(cmd);
+
+	completion_tree_cmd_add(commands_pre_connect, help_arg_list, "auth");
+	completion_tree_cmd_add(commands_pre_connect, help_arg_list, "connect");
+	completion_tree_cmd_add(commands_pre_connect, help_arg_list, "exit");
 }
 
 

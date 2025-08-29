@@ -78,7 +78,7 @@ void completion_tree_arg_list_free(struct completion_tree_arg_list *arg_list);
 void completion_tree_arg_list_args_free(struct completion_tree_arg_list *arg_list);
 void completion_tree_cmd_free(struct completion_tree_cmd *cmd);
 void completion_tree_free(struct completion_tree_root *tree);
-struct completion_tree_cmd *completion_tree_cmd_add(struct completion_tree_root *root, const char *name);
+struct completion_tree_cmd *completion_tree_cmd_add(struct completion_tree_root *root, struct completion_tree_arg_list *help_arg_list, const char *name);
 struct completion_tree_arg_list *completion_tree_cmd_new_arg_list(void);
 void completion_tree_cmd_append_arg_list(struct completion_tree_cmd *cmd, struct completion_tree_arg_list *new_list);
 struct completion_tree_arg_list *completion_tree_cmd_add_arg_list(struct completion_tree_cmd *cmd);

@@ -39,6 +39,7 @@ static void command_tree_create(void)
 {
 	struct completion_tree_cmd *cmd;
 	struct completion_tree_arg_list *arg_list;
+	struct completion_tree_arg_list *help_arg_list;
 
 	completion_tree_arg_list_args_free(tree_clients);
 	completion_tree_arg_list_args_free(tree_groups);
@@ -63,20 +64,23 @@ static void command_tree_create(void)
 		tree_roles->is_shared = true;
 	}
 
-	cmd = completion_tree_cmd_add(commands_dynsec, "addClientRole");
+	cmd = completion_tree_cmd_add(commands_dynsec, NULL, "help");
+	help_arg_list = completion_tree_cmd_add_arg_list(cmd);
+
+	cmd = completion_tree_cmd_add(commands_dynsec, help_arg_list, "addClientRole");
 	completion_tree_cmd_append_arg_list(cmd, tree_clients);
 	completion_tree_cmd_append_arg_list(cmd, tree_roles);
 
-	cmd = completion_tree_cmd_add(commands_dynsec, "addGroupClient");
+	cmd = completion_tree_cmd_add(commands_dynsec, help_arg_list, "addGroupClient");
 	completion_tree_cmd_append_arg_list(cmd, tree_groups);
 	completion_tree_cmd_append_arg_list(cmd, tree_clients);
 
-	cmd = completion_tree_cmd_add(commands_dynsec, "addGroupRole");
+	cmd = completion_tree_cmd_add(commands_dynsec, help_arg_list, "addGroupRole");
 	completion_tree_cmd_append_arg_list(cmd, tree_groups);
 	completion_tree_cmd_append_arg_list(cmd, tree_roles);
 
 	{
-		cmd = completion_tree_cmd_add(commands_dynsec, "addRoleACL");
+		cmd = completion_tree_cmd_add(commands_dynsec, help_arg_list, "addRoleACL");
 		completion_tree_cmd_append_arg_list(cmd, tree_roles);
 
 		arg_list = completion_tree_cmd_add_arg_list(cmd);
@@ -92,58 +96,58 @@ static void command_tree_create(void)
 		completion_tree_arg_list_add_arg(arg_list, "deny");
 	}
 
-	completion_tree_cmd_add(commands_dynsec, "createClient");
-	completion_tree_cmd_add(commands_dynsec, "createGroup");
-	completion_tree_cmd_add(commands_dynsec, "createRole");
+	completion_tree_cmd_add(commands_dynsec, help_arg_list, "createClient");
+	completion_tree_cmd_add(commands_dynsec, help_arg_list, "createGroup");
+	completion_tree_cmd_add(commands_dynsec, help_arg_list, "createRole");
 
-	cmd = completion_tree_cmd_add(commands_dynsec, "deleteClient");
+	cmd = completion_tree_cmd_add(commands_dynsec, help_arg_list, "deleteClient");
 	completion_tree_cmd_append_arg_list(cmd, tree_clients);
 
-	cmd = completion_tree_cmd_add(commands_dynsec, "deleteGroup");
+	cmd = completion_tree_cmd_add(commands_dynsec, help_arg_list, "deleteGroup");
 	completion_tree_cmd_append_arg_list(cmd, tree_groups);
 
-	cmd = completion_tree_cmd_add(commands_dynsec, "deleteRole");
+	cmd = completion_tree_cmd_add(commands_dynsec, help_arg_list, "deleteRole");
 	completion_tree_cmd_append_arg_list(cmd, tree_roles);
 
-	cmd = completion_tree_cmd_add(commands_dynsec, "disableClient");
+	cmd = completion_tree_cmd_add(commands_dynsec, help_arg_list, "disableClient");
 	completion_tree_cmd_append_arg_list(cmd, tree_clients);
 
-	cmd = completion_tree_cmd_add(commands_dynsec, "enableClient");
+	cmd = completion_tree_cmd_add(commands_dynsec, help_arg_list, "enableClient");
 	completion_tree_cmd_append_arg_list(cmd, tree_clients);
 
-	completion_tree_cmd_add(commands_dynsec, "getAnonymousGroup");
+	completion_tree_cmd_add(commands_dynsec, help_arg_list, "getAnonymousGroup");
 
-	completion_tree_cmd_add(commands_dynsec, "getDetails");
+	completion_tree_cmd_add(commands_dynsec, help_arg_list, "getDetails");
 
-	cmd = completion_tree_cmd_add(commands_dynsec, "getClient");
+	cmd = completion_tree_cmd_add(commands_dynsec, help_arg_list, "getClient");
 	completion_tree_cmd_append_arg_list(cmd, tree_clients);
 
-	completion_tree_cmd_add(commands_dynsec, "getDefaultACLAccess");
+	completion_tree_cmd_add(commands_dynsec, help_arg_list, "getDefaultACLAccess");
 
-	cmd = completion_tree_cmd_add(commands_dynsec, "getGroup");
+	cmd = completion_tree_cmd_add(commands_dynsec, help_arg_list, "getGroup");
 	completion_tree_cmd_append_arg_list(cmd, tree_groups);
 
-	cmd = completion_tree_cmd_add(commands_dynsec, "getRole");
+	cmd = completion_tree_cmd_add(commands_dynsec, help_arg_list, "getRole");
 	completion_tree_cmd_append_arg_list(cmd, tree_roles);
 
-	completion_tree_cmd_add(commands_dynsec, "listClients");
-	completion_tree_cmd_add(commands_dynsec, "listGroups");
-	completion_tree_cmd_add(commands_dynsec, "listRoles");
+	completion_tree_cmd_add(commands_dynsec, help_arg_list, "listClients");
+	completion_tree_cmd_add(commands_dynsec, help_arg_list, "listGroups");
+	completion_tree_cmd_add(commands_dynsec, help_arg_list, "listRoles");
 
-	cmd = completion_tree_cmd_add(commands_dynsec, "removeClientRole");
+	cmd = completion_tree_cmd_add(commands_dynsec, help_arg_list, "removeClientRole");
 	completion_tree_cmd_append_arg_list(cmd, tree_clients);
 	completion_tree_cmd_append_arg_list(cmd, tree_roles);
 
-	cmd = completion_tree_cmd_add(commands_dynsec, "removeGroupClient");
+	cmd = completion_tree_cmd_add(commands_dynsec, help_arg_list, "removeGroupClient");
 	completion_tree_cmd_append_arg_list(cmd, tree_groups);
 	completion_tree_cmd_append_arg_list(cmd, tree_clients);
 
-	cmd = completion_tree_cmd_add(commands_dynsec, "removeGroupRole");
+	cmd = completion_tree_cmd_add(commands_dynsec, help_arg_list, "removeGroupRole");
 	completion_tree_cmd_append_arg_list(cmd, tree_groups);
 	completion_tree_cmd_append_arg_list(cmd, tree_roles);
 
 	{
-		cmd = completion_tree_cmd_add(commands_dynsec, "removeRoleACL");
+		cmd = completion_tree_cmd_add(commands_dynsec, help_arg_list, "removeRoleACL");
 		completion_tree_cmd_append_arg_list(cmd, tree_roles);
 
 		arg_list = completion_tree_cmd_add_arg_list(cmd);
@@ -155,17 +159,17 @@ static void command_tree_create(void)
 		completion_tree_arg_list_add_arg(arg_list, "unsubscribePattern");
 	}
 
-	cmd = completion_tree_cmd_add(commands_dynsec, "setAnonymousGroup");
+	cmd = completion_tree_cmd_add(commands_dynsec, help_arg_list, "setAnonymousGroup");
 	completion_tree_cmd_append_arg_list(cmd, tree_groups);
 
-	cmd = completion_tree_cmd_add(commands_dynsec, "setClientId");
+	cmd = completion_tree_cmd_add(commands_dynsec, help_arg_list, "setClientId");
 	completion_tree_cmd_append_arg_list(cmd, tree_clients);
 
-	cmd = completion_tree_cmd_add(commands_dynsec, "setClientPassword");
+	cmd = completion_tree_cmd_add(commands_dynsec, help_arg_list, "setClientPassword");
 	completion_tree_cmd_append_arg_list(cmd, tree_clients);
 
 	{
-		cmd = completion_tree_cmd_add(commands_dynsec, "modifyClient");
+		cmd = completion_tree_cmd_add(commands_dynsec, help_arg_list, "modifyClient");
 		completion_tree_cmd_append_arg_list(cmd, tree_clients);
 
 		arg_list = completion_tree_cmd_add_arg_list(cmd);
@@ -174,7 +178,7 @@ static void command_tree_create(void)
 	}
 
 	{
-		cmd = completion_tree_cmd_add(commands_dynsec, "modifyGroup");
+		cmd = completion_tree_cmd_add(commands_dynsec, help_arg_list, "modifyGroup");
 		completion_tree_cmd_append_arg_list(cmd, tree_groups);
 
 		arg_list = completion_tree_cmd_add_arg_list(cmd);
@@ -183,7 +187,7 @@ static void command_tree_create(void)
 	}
 
 	{
-		cmd = completion_tree_cmd_add(commands_dynsec, "modifyRole");
+		cmd = completion_tree_cmd_add(commands_dynsec, help_arg_list, "modifyRole");
 		completion_tree_cmd_append_arg_list(cmd, tree_roles);
 
 		arg_list = completion_tree_cmd_add_arg_list(cmd);
@@ -193,7 +197,7 @@ static void command_tree_create(void)
 	}
 
 	{
-		cmd = completion_tree_cmd_add(commands_dynsec, "setDefaultACLAccess");
+		cmd = completion_tree_cmd_add(commands_dynsec, help_arg_list, "setDefaultACLAccess");
 
 		arg_list = completion_tree_cmd_add_arg_list(cmd);
 		completion_tree_arg_list_add_arg(arg_list, "publishClientReceive");
@@ -206,10 +210,9 @@ static void command_tree_create(void)
 		completion_tree_arg_list_add_arg(arg_list, "deny");
 	}
 
-	completion_tree_cmd_add(commands_dynsec, "disconnect");
-	completion_tree_cmd_add(commands_dynsec, "help");
-	completion_tree_cmd_add(commands_dynsec, "return");
-	completion_tree_cmd_add(commands_dynsec, "exit");
+	completion_tree_cmd_add(commands_dynsec, help_arg_list, "disconnect");
+	completion_tree_cmd_add(commands_dynsec, help_arg_list, "return");
+	completion_tree_cmd_add(commands_dynsec, help_arg_list, "exit");
 }
 
 

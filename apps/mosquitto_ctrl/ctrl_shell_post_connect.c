@@ -30,15 +30,20 @@ static struct completion_tree_root *commands_post_connect = NULL;
 
 static void command_tree_create(void)
 {
+	struct completion_tree_cmd *cmd;
+	struct completion_tree_arg_list *help_arg_list;
+
 	if(commands_post_connect) return;
 
 	commands_post_connect = calloc(1, sizeof(struct completion_tree_root));
 
-	completion_tree_cmd_add(commands_post_connect, "broker");
-	completion_tree_cmd_add(commands_post_connect, "disconnect");
-	completion_tree_cmd_add(commands_post_connect, "dynsec");
-	completion_tree_cmd_add(commands_post_connect, "help");
-	completion_tree_cmd_add(commands_post_connect, "exit");
+	cmd = completion_tree_cmd_add(commands_post_connect, NULL, "help");
+	help_arg_list = completion_tree_cmd_add_arg_list(cmd);
+
+	completion_tree_cmd_add(commands_post_connect, help_arg_list, "broker");
+	completion_tree_cmd_add(commands_post_connect, help_arg_list, "disconnect");
+	completion_tree_cmd_add(commands_post_connect, help_arg_list, "dynsec");
+	completion_tree_cmd_add(commands_post_connect, help_arg_list, "exit");
 }
 
 static void print_help(char **saveptr)

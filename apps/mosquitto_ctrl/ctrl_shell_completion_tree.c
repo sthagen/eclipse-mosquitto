@@ -76,7 +76,7 @@ void completion_tree_free(struct completion_tree_root *tree)
 	free(tree);
 }
 
-struct completion_tree_cmd *completion_tree_cmd_add(struct completion_tree_root *root, const char *name)
+struct completion_tree_cmd *completion_tree_cmd_add(struct completion_tree_root *root, struct completion_tree_arg_list *help_arg_list, const char *name)
 {
 	struct completion_tree_cmd *new_node;
 
@@ -87,6 +87,8 @@ struct completion_tree_cmd *completion_tree_cmd_add(struct completion_tree_root 
 
 	new_node->next = root->commands;
 	root->commands = new_node;
+
+	completion_tree_arg_list_add_arg(help_arg_list, name);
 
 	return new_node;
 }

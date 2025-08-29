@@ -32,16 +32,21 @@ static struct completion_tree_root *commands_broker = NULL;
 
 static void command_tree_create(void)
 {
+	struct completion_tree_cmd *cmd;
+	struct completion_tree_arg_list *help_arg_list;
+
 	if(commands_broker) return;
 
 	commands_broker = calloc(1, sizeof(struct completion_tree_root));
 
-	completion_tree_cmd_add(commands_broker, "listPlugins");
-	completion_tree_cmd_add(commands_broker, "listListeners");
-	completion_tree_cmd_add(commands_broker, "disconnect");
-	completion_tree_cmd_add(commands_broker, "help");
-	completion_tree_cmd_add(commands_broker, "return");
-	completion_tree_cmd_add(commands_broker, "exit");
+	cmd = completion_tree_cmd_add(commands_broker, NULL, "help");
+	help_arg_list = completion_tree_cmd_add_arg_list(cmd);
+
+	completion_tree_cmd_add(commands_broker, help_arg_list, "listPlugins");
+	completion_tree_cmd_add(commands_broker, help_arg_list, "listListeners");
+	completion_tree_cmd_add(commands_broker, help_arg_list, "disconnect");
+	completion_tree_cmd_add(commands_broker, help_arg_list, "return");
+	completion_tree_cmd_add(commands_broker, help_arg_list, "exit");
 }
 
 
