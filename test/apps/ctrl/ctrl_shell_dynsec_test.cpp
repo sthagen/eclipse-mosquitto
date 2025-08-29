@@ -1243,6 +1243,7 @@ TEST_F(CtrlShellDynsecTest, AddRoleACLPublishClientReceive)
 			"\"command\":\"addRoleACL\","
 			"\"rolename\":\"rolename1\","
 			"\"acltype\":\"publishClientReceive\","
+			"\"priority\":-1,"
 			"\"topic\":\"topic1\","
 			"\"allow\":true"
 			"}]}";
@@ -1281,6 +1282,46 @@ TEST_F(CtrlShellDynsecTest, AddRoleACLPublishClientSend)
 			"\"command\":\"addRoleACL\","
 			"\"rolename\":\"rolename1\","
 			"\"acltype\":\"publishClientSend\","
+			"\"priority\":-1,"
+			"\"topic\":\"topic1\","
+			"\"allow\":true"
+			"}]}";
+	expect_request_response_success(&mosq, request, "addRoleACL");
+
+	const char *outputs[] = {
+		"OK\n",
+		"\n",
+	};
+	expect_outputs(outputs, sizeof(outputs)/sizeof(char *));
+
+	ctrl_shell__main(&config);
+	EXPECT_EQ(pending_payloads, nullptr);
+}
+
+
+TEST_F(CtrlShellDynsecTest, AddRoleACLPublishClientSendWithPriority)
+{
+	mosq_config config{};
+	mosquitto mosq{};
+	const char host[] = "localhost";
+	int port = 1883;
+
+	expect_setup(&config);
+	expect_connect(&mosq, host, port);
+	expect_dynsec(host, port);
+
+	EXPECT_CALL(editline_mock_, readline(t::StrEq("mqtt://localhost:1883|dynsec> ")))
+		.WillOnce(t::Return(strdup("addRoleACL rolename1 publishClientSend allow 42 topic1")))
+		.WillOnce(t::Return(strdup("exit")));
+
+	expect_connect_and_messages(&mosq);
+	expect_single_lists(&mosq);
+
+	const char request[] = "{\"commands\":[{"
+			"\"command\":\"addRoleACL\","
+			"\"rolename\":\"rolename1\","
+			"\"acltype\":\"publishClientSend\","
+			"\"priority\":42,"
 			"\"topic\":\"topic1\","
 			"\"allow\":true"
 			"}]}";
@@ -1319,6 +1360,7 @@ TEST_F(CtrlShellDynsecTest, AddRoleACLSubscribeLiteral)
 			"\"command\":\"addRoleACL\","
 			"\"rolename\":\"rolename1\","
 			"\"acltype\":\"subscribeLiteral\","
+			"\"priority\":-1,"
 			"\"topic\":\"topic1\","
 			"\"allow\":true"
 			"}]}";
@@ -1357,6 +1399,7 @@ TEST_F(CtrlShellDynsecTest, AddRoleACLSubscribePattern)
 			"\"command\":\"addRoleACL\","
 			"\"rolename\":\"rolename1\","
 			"\"acltype\":\"subscribePattern\","
+			"\"priority\":-1,"
 			"\"topic\":\"topic1\","
 			"\"allow\":true"
 			"}]}";
@@ -1397,6 +1440,7 @@ TEST_F(CtrlShellDynsecTest, AddRoleACLUnsubscribeLiteral)
 			"\"command\":\"addRoleACL\","
 			"\"rolename\":\"rolename1\","
 			"\"acltype\":\"unsubscribeLiteral\","
+			"\"priority\":-1,"
 			"\"topic\":\"topic1\","
 			"\"allow\":true"
 			"}]}";
@@ -1435,6 +1479,7 @@ TEST_F(CtrlShellDynsecTest, AddRoleACLUnsubscribePattern)
 			"\"command\":\"addRoleACL\","
 			"\"rolename\":\"rolename1\","
 			"\"acltype\":\"unsubscribePattern\","
+			"\"priority\":-1,"
 			"\"topic\":\"topic1\","
 			"\"allow\":false"
 			"}]}";
@@ -1471,7 +1516,7 @@ TEST_F(CtrlShellDynsecTest, AddRoleACLBadAllow)
 
 	const char *outputs[] = {
 		"Invalid allow/deny 'bad'\n",
-		"addRoleACL rolename acltype allow|deny topic\n",
+		"addRoleACL rolename acltype allow|deny [priority] topic\n",
 		"\n",
 	};
 	expect_outputs(outputs, sizeof(outputs)/sizeof(char *));
@@ -1501,7 +1546,7 @@ TEST_F(CtrlShellDynsecTest, AddRoleACLBadACLType)
 
 	const char *outputs[] = {
 		"Invalid acltype 'bad'\n",
-		"addRoleACL rolename acltype allow|deny topic\n",
+		"addRoleACL rolename acltype allow|deny [priority] topic\n",
 		"\n",
 	};
 	expect_outputs(outputs, sizeof(outputs)/sizeof(char *));
@@ -1530,7 +1575,7 @@ TEST_F(CtrlShellDynsecTest, AddRoleACLNoTopic)
 	expect_single_lists(&mosq);
 
 	const char *outputs[] = {
-		"addRoleACL rolename acltype allow|deny topic\n",
+		"addRoleACL rolename acltype allow|deny [priority] topic\n",
 		"\n",
 	};
 	expect_outputs(outputs, sizeof(outputs)/sizeof(char *));

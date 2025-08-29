@@ -230,13 +230,14 @@ static void print_help(char **saveptr)
 			ctrl_shell_print_help_command("addGroupRole <groupname> <rolename>");
 			ctrl_shell_printf("\nAdds a role to a group.\n");
 		}else if(!strcasecmp(command, "addRoleACL")){
-			ctrl_shell_print_help_command("addRoleACL <rolename> publishClientReceive allow|deny <topic>");
-			ctrl_shell_print_help_command("addRoleACL <rolename> publishClientSend allow|deny <topic>");
-			ctrl_shell_print_help_command("addRoleACL <rolename> subscribeLiteral allow|deny <topic>");
-			ctrl_shell_print_help_command("addRoleACL <rolename> subscribePattern allow|deny <topic>");
-			ctrl_shell_print_help_command("addRoleACL <rolename> unsubscribeLiteral allow|deny <topic>");
-			ctrl_shell_print_help_command("addRoleACL <rolename> unsubscribePattern allow|deny <topic>");
-			ctrl_shell_printf("\nAdds an ACL to a role.\n");
+			ctrl_shell_print_help_command("addRoleACL <rolename> publishClientReceive allow|deny [priority] <topic>");
+			ctrl_shell_print_help_command("addRoleACL <rolename> publishClientSend allow|deny [priority] <topic>");
+			ctrl_shell_print_help_command("addRoleACL <rolename> subscribeLiteral allow|deny [priority] <topic>");
+			ctrl_shell_print_help_command("addRoleACL <rolename> subscribePattern allow|deny [priority] <topic>");
+			ctrl_shell_print_help_command("addRoleACL <rolename> unsubscribeLiteral allow|deny [priority] <topic>");
+			ctrl_shell_print_help_command("addRoleACL <rolename> unsubscribePattern allow|deny [priority] <topic>");
+			ctrl_shell_printf("\nAdds an ACL to a role, with an optional priority.\n");
+			ctrl_shell_printf("\nACLs of a specific type within a role are processed in order from highest to lowest priority with the first matching ACL applying.\n");
 		}else if(!strcasecmp(command, "createClient")){
 			ctrl_shell_print_help_command("createClient <username> [password [clientid]]");
 			ctrl_shell_printf("\nCreate a client with password and optional client id.\n");
@@ -463,10 +464,20 @@ static int send_add_role_acl(char **saveptr)
 	char *rolename = strtok_r(NULL, " ", saveptr);
 	char *acltype = strtok_r(NULL, " ", saveptr);
 	char *allow_s = strtok_r(NULL, " ", saveptr);
+	char *s_priority = strtok_r(NULL, " ", saveptr);
 	char *topic = strtok_r(NULL, " ", saveptr);
+	int priority = -1;
+
+	if(s_priority){
+		if(topic){
+			priority = atoi(s_priority);
+		}else{
+			topic = s_priority;
+		}
+	}
 
 	if(!rolename || !acltype || !allow_s || !topic){
-		ctrl_shell_printf("addRoleACL rolename acltype allow|deny topic\n");
+		ctrl_shell_printf("addRoleACL rolename acltype allow|deny [priority] topic\n");
 		return MOSQ_ERR_INVAL;
 	}
 
@@ -478,13 +489,13 @@ static int send_add_role_acl(char **saveptr)
 			&& strcasecmp(acltype, "unsubscribePattern")
 			){
 
-		ctrl_shell_printf("addRoleACL rolename acltype allow|deny topic\n");
+		ctrl_shell_printf("addRoleACL rolename acltype allow|deny [priority] topic\n");
 		ctrl_shell_printf("Invalid acltype '%s'\n", acltype);
 		return MOSQ_ERR_INVAL;
 	}
 
 	if(strcasecmp(allow_s, "allow") && strcasecmp(allow_s, "deny")){
-		ctrl_shell_printf("addRoleACL rolename acltype allow|deny topic\n");
+		ctrl_shell_printf("addRoleACL rolename acltype allow|deny [priority] topic\n");
 		ctrl_shell_printf("Invalid allow/deny '%s'\n", allow_s);
 		return MOSQ_ERR_INVAL;
 	}
@@ -493,6 +504,7 @@ static int send_add_role_acl(char **saveptr)
 	cJSON_AddStringToObject(j_command, "command", "addRoleACL");
 	cJSON_AddStringToObject(j_command, "rolename", rolename);
 	cJSON_AddStringToObject(j_command, "acltype", acltype);
+	cJSON_AddNumberToObject(j_command, "priority", priority);
 	cJSON_AddStringToObject(j_command, "topic", topic);
 	cJSON_AddBoolToObject(j_command, "allow", !strcasecmp(allow_s, "allow"));
 
