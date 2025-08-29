@@ -51,6 +51,9 @@ const char *ANSI_INPUT = NULL;
 const char *ANSI_ERROR = NULL;
 const char **ANSI_LABEL = NULL;
 const char *ANSI_RESET = "\001\e[0m\002";
+const char *ANSI_TOPIC = NULL;
+const char *ANSI_POSITIVE = NULL;
+const char *ANSI_NEGATIVE = NULL;
 
 const char *ANSI_LABEL_none[] = {"", ""};
 
@@ -62,6 +65,9 @@ const char *ANSI_LABEL_dark[] =  {
 								 "\001\e[38;5;207m\002",
 		                         "\001\e[38;5;219m\002",
 };
+const char ANSI_TOPIC_dark[] =    "\001\e[93m\002";
+const char ANSI_POSITIVE_dark[] =    "\001\e[92m\002";
+const char ANSI_NEGATIVE_dark[] =    "\001\e[95m\002";
 
 const char ANSI_URL_light[] =    "\001\e[38;5;23m\002";
 const char ANSI_MODULE_light[] = "\001\e[38;5;130m\002";
@@ -71,6 +77,9 @@ const char *ANSI_LABEL_light[] =  {
 								 "\001\e[38;5;165m\002",
 		                         "\001\e[38;5;171m\002",
 };
+const char ANSI_TOPIC_light[] =    "\001\e[33m\002";
+const char ANSI_POSITIVE_light[] =    "\001\e[32m\002";
+const char ANSI_NEGATIVE_light[] =    "\001\e[35m\002";
 
 
 char prompt[200];
@@ -589,6 +598,9 @@ void set_no_colour(void)
 	ANSI_ERROR = "";
 	ANSI_LABEL = ANSI_LABEL_none;
 	ANSI_RESET = "";
+	ANSI_TOPIC = "";
+	ANSI_POSITIVE = "";
+	ANSI_NEGATIVE = "";
 }
 
 static void set_bg_light(void)
@@ -598,6 +610,9 @@ static void set_bg_light(void)
 	ANSI_INPUT = ANSI_INPUT_light;
 	ANSI_ERROR = ANSI_ERROR_light;
 	ANSI_LABEL = ANSI_LABEL_light;
+	ANSI_TOPIC = ANSI_TOPIC_light;
+	ANSI_POSITIVE = ANSI_POSITIVE_light;
+	ANSI_NEGATIVE = ANSI_NEGATIVE_light;
 }
 
 static void set_bg_dark(void)
@@ -607,6 +622,9 @@ static void set_bg_dark(void)
 	ANSI_INPUT = ANSI_INPUT_dark;
 	ANSI_ERROR = ANSI_ERROR_dark;
 	ANSI_LABEL = ANSI_LABEL_dark;
+	ANSI_TOPIC = ANSI_TOPIC_dark;
+	ANSI_POSITIVE = ANSI_POSITIVE_dark;
+	ANSI_NEGATIVE = ANSI_NEGATIVE_dark;
 }
 
 

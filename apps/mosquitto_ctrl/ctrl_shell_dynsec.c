@@ -915,7 +915,8 @@ static void print_role(cJSON *j_data)
 					&& json_get_bool(j_acl, "allow", &allow, false, false) == MOSQ_ERR_SUCCESS
 					){
 
-				ctrl_shell_print_value(1, "%-*s %s %s (priority %d)\n", (int)strlen("publishClientReceive"), acltype, allow?"allow":"deny ", topic, priority);
+				const char *ANSI_ALLOW = allow?ANSI_POSITIVE:ANSI_NEGATIVE;
+				ctrl_shell_print_value(1, "%-*s %s%s%s %s%s%s (priority %d)\n", (int)strlen("publishClientReceive"), acltype, ANSI_ALLOW, allow?"allow":"deny", ANSI_RESET, ANSI_TOPIC, topic, ANSI_RESET, priority);
 			}
 		}
 	}

@@ -31,6 +31,9 @@ extern const char *ANSI_INPUT;
 extern const char *ANSI_ERROR;
 extern const char **ANSI_LABEL;
 extern const char *ANSI_RESET;
+extern const char *ANSI_TOPIC;
+extern const char *ANSI_POSITIVE;
+extern const char *ANSI_NEGATIVE;
 
 /* This relatively complex structure is used to store the command tree. It
  * allows for commands to be shared between different parts of the tree, and
