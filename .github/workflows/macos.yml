@@ -36,10 +36,10 @@ jobs:
       - name: Install Homebrew dependencies
         run: |
           brew update
+          brew list cmake || brew install cmake
           brew install \
             argon2 \
             cjson \
-            cmake \
             cunit \
             docbook-xsl \
             gcc \
