@@ -149,7 +149,7 @@ bool ctrl_shell_get_password(char *buf, size_t len)
 }
 
 
-static int response_wait(bool unlock)
+static int response_wait(void)
 {
 	struct timespec timeout;
 	int rc = 0;
@@ -164,9 +164,6 @@ static int response_wait(bool unlock)
 			rc = 1;
 			break;
 		}
-	}
-	if(unlock){
-		pthread_mutex_unlock(&data.response_mutex);
 	}
 
 	return rc;
@@ -190,7 +187,7 @@ int ctrl_shell_publish_blocking(cJSON *j_command)
 	FREE(payload);
 
 	/* Check for publish callback */
-	rc = response_wait(false);
+	rc = response_wait();
 	if(rc){
 		pthread_mutex_unlock(&data.response_mutex);
 		return rc;
@@ -202,7 +199,8 @@ int ctrl_shell_publish_blocking(cJSON *j_command)
 	}
 
 	/* Check for message callback */
-	rc = response_wait(true);
+	rc = response_wait();
+	pthread_mutex_unlock(&data.response_mutex);
 
 	return rc;
 }
@@ -217,7 +215,8 @@ void ctrl_shell__connect_blocking(const char *hostname, int port)
 	/* FIXME - do something with the error */
 	UNUSED(rc);
 
-	response_wait(true);
+	response_wait();
+	pthread_mutex_unlock(&data.response_mutex);
 }
 
 void ctrl_shell_line_callback_set(void (*callback)(char *line))
@@ -308,7 +307,8 @@ static int ctrl_shell__subscribe_blocking(const char *topic, void (*module_on_su
 
 	mosquitto_subscribe(data.mosq, NULL, topic, 1);
 
-	response_wait(true);
+	response_wait();
+	pthread_mutex_unlock(&data.response_mutex);
 
 	if(data.subscribe_rc >= 128){
 		rc = 1;
