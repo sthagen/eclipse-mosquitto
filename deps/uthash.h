@@ -633,14 +633,23 @@ do {                                                                            
 
 #define HASH_JEN_MIX(a,b,c)                                                      \
 do {                                                                             \
+  /* coverity[overflow_const] - intentional wrapping in Jenkins hash */          \
   a -= b; a -= c; a ^= ( c >> 13 );                                              \
+  /* coverity[overflow_const] - intentional wrapping in Jenkins hash */          \
   b -= c; b -= a; b ^= ( a << 8 );                                               \
+  /* coverity[overflow_const] - intentional wrapping in Jenkins hash */          \
   c -= a; c -= b; c ^= ( b >> 13 );                                              \
+  /* coverity[overflow_const] - intentional wrapping in Jenkins hash */          \
   a -= b; a -= c; a ^= ( c >> 12 );                                              \
+  /* coverity[overflow_const] - intentional wrapping in Jenkins hash */          \
   b -= c; b -= a; b ^= ( a << 16 );                                              \
+  /* coverity[overflow_const] - intentional wrapping in Jenkins hash */          \
   c -= a; c -= b; c ^= ( b >> 5 );                                               \
+  /* coverity[overflow_const] - intentional wrapping in Jenkins hash */          \
   a -= b; a -= c; a ^= ( c >> 3 );                                               \
+  /* coverity[overflow_const] - intentional wrapping in Jenkins hash */          \
   b -= c; b -= a; b ^= ( a << 10 );                                              \
+  /* coverity[overflow_const] - intentional wrapping in Jenkins hash */          \
   c -= a; c -= b; c ^= ( b >> 15 );                                              \
 } while (0)
 
