@@ -172,12 +172,31 @@ if(WITH_TLS)
 endif()
 
 # Check for getaddrinfo_a
-include(CheckLibraryExists)
-check_library_exists(anl getaddrinfo_a  "" HAVE_GETADDRINFO_A)
-if(HAVE_GETADDRINFO_A AND WITH_ADNS)
-	target_compile_definitions(mosquitto PRIVATE "WITH_ADNS")
-	target_compile_definitions(mosquitto PRIVATE "HAVE_GETADDRINFO_A")
-	target_link_libraries(mosquitto PRIVATE anl)
+# Prior to glibc 2.34 this required linking with anl
+if(WITH_ADNS)
+	cmake_push_check_state()
+	set(ANL_CODE "
+		#include <stdlib.h>
+		#include <netdb.h>
+		int main(){
+			return getaddrinfo_a(0, NULL, 0, NULL);
+		}
+	")
+	check_source_compiles(C "${ANL_CODE}" HAVE_GETADDRINFO_A)
+	if(HAVE_GETADDRINFO_A)
+		target_compile_definitions(mosquitto PRIVATE "WITH_ADNS")
+	else()
+		set(CMAKE_REQUIRED_LIBRARIES "anl")
+		check_source_compiles(C "${ANL_CODE}" HAVE_GETADDRINFO_A_LIBANL)
+
+		if(HAVE_GETADDRINFO_A_LIBANL)
+			target_compile_definitions(mosquitto PRIVATE "WITH_ADNS")
+			target_link_libraries(mosquitto PRIVATE anl)
+		else()
+			message(FATAL_ERROR "WITH_ADNS is set, but getaddrinfo_a() is not available.")
+		endif()
+	endif()
+	cmake_pop_check_state()
 endif()
 
 

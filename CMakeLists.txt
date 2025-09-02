@@ -34,8 +34,11 @@ if(NOT WIN32)
 	target_compile_options(common-options INTERFACE -Wall -Wextra -Wconversion)
 endif()
 
-include(GNUInstallDirs)
+include(CMakePushCheckState)
 include(CheckIncludeFiles)
+include(CheckLibraryExists)
+include(CheckSourceCompiles)
+include(GNUInstallDirs)
 
 option(WITH_BUNDLED_DEPS "Build with bundled dependencies?" ON)
 option(WITH_TLS "Include SSL/TLS support?" ON)

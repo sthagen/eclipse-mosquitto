@@ -1,5 +1,8 @@
 ifeq ($(WITH_ADNS),yes)
-	LOCAL_LDADD+=-lanl
+	NEED_LIBANL:=$(shell printf 'int main(){return 0;}' | gcc -D_GNU_SOURCE -lanl -o /dev/null -x c - 2>/dev/null || echo yes)
+	ifeq ($(NEED_LIBANL),yes)
+		LOCAL_LDADD+=-lanl
+	endif
 	LOCAL_CPPFLAGS+=-DWITH_ADNS
 endif
 
