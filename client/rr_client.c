@@ -57,6 +57,8 @@ static struct timespec publish_send_time;
 static struct timespec publish_recv_time;
 
 #ifndef WIN32
+
+
 static void my_signal_handler(int signum)
 {
 	if(signum == SIGALRM){
@@ -100,11 +102,13 @@ static void my_message_callback(struct mosquitto *mosq, void *obj, const struct 
 		case MSGMODE_NULL:
 			client_state = rr_s_disconnect;
 			break;
+
 		case MSGMODE_STDIN_LINE:
 			client_state = rr_s_ready_to_publish;
 			break;
 	}
 }
+
 
 void my_connect_callback(struct mosquitto *mosq, void *obj, int result, int flags, const mosquitto_property *properties)
 {
@@ -149,6 +153,7 @@ static void print_version(void)
 	mosquitto_lib_version(&major, &minor, &revision);
 	printf("mosquitto_rr version %s running on libmosquitto %d.%d.%d.\n", VERSION, major, minor, revision);
 }
+
 
 static void print_usage(void)
 {
@@ -273,6 +278,7 @@ static void print_usage(void)
 	printf("\nSee https://mosquitto.org/ for more information.\n\n");
 }
 
+
 static void report_latency(void)
 {
 	if(cfg.measure_latency){
@@ -299,6 +305,7 @@ static void report_latency(void)
 		}
 	}
 }
+
 
 int main(int argc, char *argv[])
 {

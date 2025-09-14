@@ -37,6 +37,7 @@ Contributors:
 
 #define MAX_STRING_LEN 4096
 
+
 void dynsec__print_usage(void)
 {
 	printf("\nDynamic Security module\n");
@@ -95,11 +96,13 @@ void dynsec__print_usage(void)
 	printf("    https://mosquitto.org/documentation/dynamic-security/\n\n");
 }
 
+
 /* ################################################################
  * #
  * # Payload callback
  * #
  * ################################################################ */
+
 
 static void print_list(cJSON *j_response, const char *arrayname, const char *keyname)
 {
@@ -129,6 +132,7 @@ static void print_list(cJSON *j_response, const char *arrayname, const char *key
 	}
 }
 
+
 static void print_json_value(cJSON *value, const char *null_value)
 {
 	if(value){
@@ -145,6 +149,7 @@ static void print_json_value(cJSON *value, const char *null_value)
 		printf("%s",null_value);
 	}
 }
+
 
 static void print_json_array(cJSON *j_list, int slen, const char *label, const char *element_name, const char *optional_element_name, const char *optional_element_null_value)
 {
@@ -331,6 +336,7 @@ static void print_anonymous_group(cJSON *j_response)
 	printf("%s\n", groupname);
 }
 
+
 static void print_default_acl_access(cJSON *j_response)
 {
 	cJSON *j_data, *j_acls, *j_acl;
@@ -360,6 +366,7 @@ static void print_default_acl_access(cJSON *j_response)
 		printf("%-20s : %s\n", acltype, allow?"allow":"deny");
 	}
 }
+
 
 static void dynsec__payload_callback(struct mosq_ctrl *ctrl, long payloadlen, const void *payload)
 {
@@ -425,11 +432,13 @@ static void dynsec__payload_callback(struct mosq_ctrl *ctrl, long payloadlen, co
 	cJSON_Delete(tree);
 }
 
+
 /* ################################################################
  * #
  * # Default ACL access
  * #
  * ################################################################ */
+
 
 static int dynsec__set_default_acl_access(int argc, char *argv[], cJSON *j_command)
 {
@@ -483,6 +492,7 @@ static int dynsec__set_default_acl_access(int argc, char *argv[], cJSON *j_comma
 	return MOSQ_ERR_SUCCESS;
 }
 
+
 static int dynsec__get_default_acl_access(int argc, char *argv[], cJSON *j_command)
 {
 	UNUSED(argc);
@@ -496,6 +506,7 @@ static int dynsec__get_default_acl_access(int argc, char *argv[], cJSON *j_comma
 
 	return MOSQ_ERR_SUCCESS;
 }
+
 
 /* ################################################################
  * #
@@ -521,6 +532,7 @@ static cJSON *init_add_acl_to_role(cJSON *j_acls, const char *type, const char *
 	cJSON_AddItemToArray(j_acls, j_acl);
 	return j_acl;
 }
+
 
 static cJSON *init_add_role(const char *rolename)
 {
@@ -556,6 +568,7 @@ static cJSON *init_add_role(const char *rolename)
 	}
 	return j_role;
 }
+
 
 static cJSON *init_add_client(const char *username, const char *password, const char *rolename)
 {
@@ -610,6 +623,7 @@ static cJSON *init_add_client(const char *username, const char *password, const 
 	return j_client;
 }
 
+
 static cJSON *init_create(const char *username, const char *password, const char *rolename)
 {
 	cJSON *tree, *j_clients, *j_client, *j_roles, *j_role;
@@ -659,6 +673,7 @@ static cJSON *init_create(const char *username, const char *password, const char
 
 	return tree;
 }
+
 
 /* mosquitto_ctrl dynsec init <filename> <admin-user> <admin-password> [role-name] */
 static int dynsec_init(int argc, char *argv[])
@@ -741,11 +756,13 @@ static int dynsec_init(int argc, char *argv[])
 	return -1; /* Suppress client connection */
 }
 
+
 /* ################################################################
  * #
  * # Main
  * #
  * ################################################################ */
+
 
 int dynsec__main(int argc, char *argv[], struct mosq_ctrl *ctrl)
 {

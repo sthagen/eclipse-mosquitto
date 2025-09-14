@@ -20,10 +20,12 @@ Contributors:
 #include <stdio.h>
 #include "ctrl_shell.h"
 
+
 void ctrl_shell__output(const char *buf)
 {
 	printf("%s", buf);
 }
+
 
 char *ctrl_shell_fgets(char *s, int size, FILE *stream)
 {

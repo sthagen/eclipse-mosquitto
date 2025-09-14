@@ -23,6 +23,7 @@ Contributors:
 #include "mosquitto/broker.h"
 #include "persist_sqlite.h"
 
+
 int persist_sqlite__subscription_add_cb(int event, void *event_data, void *userdata)
 {
 	struct mosquitto_evt_persist_subscription *ed = event_data;
@@ -58,6 +59,7 @@ int persist_sqlite__subscription_add_cb(int event, void *event_data, void *userd
 
 	return rc;
 }
+
 
 int persist_sqlite__subscription_remove_cb(int event, void *event_data, void *userdata)
 {

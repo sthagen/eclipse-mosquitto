@@ -10,6 +10,7 @@
 
 struct mosquitto_db db;
 
+
 void do_disconnect(struct mosquitto *context, int reason)
 {
 	UNUSED(reason);
@@ -23,6 +24,7 @@ void do_disconnect(struct mosquitto *context, int reason)
 
 
 #ifndef WITH_OLD_KEEPALIVE
+
 
 static void TEST_single_client(void)
 {
@@ -76,6 +78,7 @@ static void TEST_single_client(void)
 	free(context.id);
 }
 
+
 static void TEST_single_client_update(void)
 {
 	struct mosquitto context;
@@ -126,6 +129,7 @@ static void TEST_single_client_update(void)
 	free(context.id);
 }
 
+
 static void TEST_over_max_keepalive(void)
 {
 	struct mosquitto context;
@@ -167,6 +171,7 @@ static void TEST_over_max_keepalive(void)
 	free(db.config);
 	free(context.id);
 }
+
 
 static void TEST_100k_random_clients(void)
 {
@@ -238,9 +243,11 @@ static void TEST_100k_random_clients(void)
 	free(db.config);
 }
 
+
 /* ========================================================================
  * TEST SUITE SETUP
  * ======================================================================== */
+
 
 int init_keepalive_tests(void)
 {
@@ -266,6 +273,7 @@ int init_keepalive_tests(void)
 	return 0;
 }
 #endif
+
 
 int main(int argc, char *argv[])
 {

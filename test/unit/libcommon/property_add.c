@@ -4,6 +4,7 @@
 #include "mosquitto/mqtt_protocol.h"
 #include "property_common.h"
 
+
 static void check_count(mosquitto_property *proplist, int expected)
 {
 	mosquitto_property *p;
@@ -23,9 +24,11 @@ static void check_count(mosquitto_property *proplist, int expected)
 	CU_ASSERT_EQUAL(count, expected);
 }
 
+
 /* ========================================================================
  * BAD IDENTIFIER
  * ======================================================================== */
+
 
 static void bad_add_byte_helper(int identifier)
 {
@@ -37,6 +40,7 @@ static void bad_add_byte_helper(int identifier)
 	CU_ASSERT_PTR_NULL(proplist);
 }
 
+
 static void bad_add_int16_helper(int identifier)
 {
 	mosquitto_property *proplist = NULL;
@@ -46,6 +50,7 @@ static void bad_add_int16_helper(int identifier)
 	CU_ASSERT_EQUAL(rc, MOSQ_ERR_INVAL);
 	CU_ASSERT_PTR_NULL(proplist);
 }
+
 
 static void bad_add_int32_helper(int identifier)
 {
@@ -57,6 +62,7 @@ static void bad_add_int32_helper(int identifier)
 	CU_ASSERT_PTR_NULL(proplist);
 }
 
+
 static void bad_add_varint_helper(int identifier)
 {
 	mosquitto_property *proplist = NULL;
@@ -66,6 +72,7 @@ static void bad_add_varint_helper(int identifier)
 	CU_ASSERT_EQUAL(rc, MOSQ_ERR_INVAL);
 	CU_ASSERT_PTR_NULL(proplist);
 }
+
 
 static void bad_add_binary_helper(int identifier)
 {
@@ -77,6 +84,7 @@ static void bad_add_binary_helper(int identifier)
 	CU_ASSERT_PTR_NULL(proplist);
 }
 
+
 static void bad_add_string_helper(int identifier)
 {
 	mosquitto_property *proplist = NULL;
@@ -87,6 +95,7 @@ static void bad_add_string_helper(int identifier)
 	CU_ASSERT_PTR_NULL(proplist);
 }
 
+
 static void bad_add_string_pair_helper(int identifier)
 {
 	mosquitto_property *proplist = NULL;
@@ -96,6 +105,7 @@ static void bad_add_string_pair_helper(int identifier)
 	CU_ASSERT_EQUAL(rc, MOSQ_ERR_INVAL);
 	CU_ASSERT_PTR_NULL(proplist);
 }
+
 
 static void TEST_add_bad_byte(void)
 {
@@ -119,6 +129,7 @@ static void TEST_add_bad_byte(void)
 	bad_add_byte_helper(MQTT_PROP_USER_PROPERTY);
 	bad_add_byte_helper(MQTT_PROP_MAXIMUM_PACKET_SIZE);
 }
+
 
 static void TEST_add_bad_int16(void)
 {
@@ -147,6 +158,7 @@ static void TEST_add_bad_int16(void)
 	bad_add_int16_helper(MQTT_PROP_SHARED_SUB_AVAILABLE);
 }
 
+
 static void TEST_add_bad_int32(void)
 {
 	bad_add_int32_helper(MQTT_PROP_PAYLOAD_FORMAT_INDICATOR);
@@ -173,6 +185,7 @@ static void TEST_add_bad_int32(void)
 	bad_add_int32_helper(MQTT_PROP_SUBSCRIPTION_ID_AVAILABLE);
 	bad_add_int32_helper(MQTT_PROP_SHARED_SUB_AVAILABLE);
 }
+
 
 static void TEST_add_bad_varint(void)
 {
@@ -204,6 +217,7 @@ static void TEST_add_bad_varint(void)
 	bad_add_varint_helper(MQTT_PROP_SHARED_SUB_AVAILABLE);
 }
 
+
 static void TEST_add_bad_binary(void)
 {
 	bad_add_binary_helper(MQTT_PROP_PAYLOAD_FORMAT_INDICATOR);
@@ -233,6 +247,7 @@ static void TEST_add_bad_binary(void)
 	bad_add_binary_helper(MQTT_PROP_SHARED_SUB_AVAILABLE);
 }
 
+
 static void TEST_add_bad_string(void)
 {
 	bad_add_string_helper(MQTT_PROP_PAYLOAD_FORMAT_INDICATOR);
@@ -256,6 +271,7 @@ static void TEST_add_bad_string(void)
 	bad_add_string_helper(MQTT_PROP_SUBSCRIPTION_ID_AVAILABLE);
 	bad_add_string_helper(MQTT_PROP_SHARED_SUB_AVAILABLE);
 }
+
 
 static void TEST_add_bad_string_pair(void)
 {
@@ -287,9 +303,11 @@ static void TEST_add_bad_string_pair(void)
 	bad_add_string_pair_helper(MQTT_PROP_SHARED_SUB_AVAILABLE);
 }
 
+
 /* ========================================================================
  * SINGLE ADD
  * ======================================================================== */
+
 
 static void single_add_byte_helper(int identifier)
 {
@@ -308,6 +326,7 @@ static void single_add_byte_helper(int identifier)
 	}
 }
 
+
 static void single_add_int16_helper(int identifier)
 {
 	mosquitto_property *proplist = NULL;
@@ -324,6 +343,7 @@ static void single_add_int16_helper(int identifier)
 		mosquitto_property_free_all(&proplist);
 	}
 }
+
 
 static void single_add_int32_helper(int identifier)
 {
@@ -342,6 +362,7 @@ static void single_add_int32_helper(int identifier)
 	}
 }
 
+
 static void single_add_varint_helper(int identifier)
 {
 	mosquitto_property *proplist = NULL;
@@ -358,6 +379,7 @@ static void single_add_varint_helper(int identifier)
 		mosquitto_property_free_all(&proplist);
 	}
 }
+
 
 static void single_add_binary_helper(int identifier)
 {
@@ -377,6 +399,7 @@ static void single_add_binary_helper(int identifier)
 	}
 }
 
+
 static void single_add_string_helper(int identifier)
 {
 	mosquitto_property *proplist = NULL;
@@ -394,6 +417,7 @@ static void single_add_string_helper(int identifier)
 		mosquitto_property_free_all(&proplist);
 	}
 }
+
 
 static void single_add_string_pair_helper(int identifier)
 {
@@ -415,6 +439,7 @@ static void single_add_string_pair_helper(int identifier)
 	}
 }
 
+
 static void TEST_add_single_byte(void)
 {
 	single_add_byte_helper(MQTT_PROP_PAYLOAD_FORMAT_INDICATOR);
@@ -427,6 +452,7 @@ static void TEST_add_single_byte(void)
 	single_add_byte_helper(MQTT_PROP_SHARED_SUB_AVAILABLE);
 }
 
+
 static void TEST_add_single_int16(void)
 {
 	single_add_int16_helper(MQTT_PROP_SERVER_KEEP_ALIVE);
@@ -434,6 +460,7 @@ static void TEST_add_single_int16(void)
 	single_add_int16_helper(MQTT_PROP_TOPIC_ALIAS_MAXIMUM);
 	single_add_int16_helper(MQTT_PROP_TOPIC_ALIAS);
 }
+
 
 static void TEST_add_single_int32(void)
 {
@@ -443,16 +470,19 @@ static void TEST_add_single_int32(void)
 	single_add_int32_helper(MQTT_PROP_MAXIMUM_PACKET_SIZE);
 }
 
+
 static void TEST_add_single_varint(void)
 {
 	single_add_varint_helper(MQTT_PROP_SUBSCRIPTION_IDENTIFIER);
 }
+
 
 static void TEST_add_single_binary(void)
 {
 	single_add_binary_helper(MQTT_PROP_CORRELATION_DATA);
 	single_add_binary_helper(MQTT_PROP_AUTHENTICATION_DATA);
 }
+
 
 static void TEST_add_single_string(void)
 {
@@ -465,14 +495,17 @@ static void TEST_add_single_string(void)
 	single_add_string_helper(MQTT_PROP_REASON_STRING);
 }
 
+
 static void TEST_add_single_string_pair(void)
 {
 	single_add_string_pair_helper(MQTT_PROP_USER_PROPERTY);
 }
 
+
 /* ========================================================================
  * ADD ALL PROPERTIES FOR A COMMAND
  * ======================================================================== */
+
 
 static void TEST_add_all_connect(void)
 {
@@ -608,6 +641,7 @@ static void TEST_check_length(void)
 	mosquitto_property_free_all(&proplist);
 }
 
+
 static void TEST_remove_single(void)
 {
 	mosquitto_property *proplist = NULL, *property;
@@ -659,6 +693,7 @@ static void TEST_remove_single(void)
 	mosquitto_property_free_all(&proplist);
 }
 
+
 static void TEST_remove_all(void)
 {
 	mosquitto_property *proplist = NULL, *property;
@@ -680,6 +715,7 @@ static void TEST_remove_all(void)
 	CU_ASSERT_PTR_NULL(proplist);
 	mosquitto_property_free_all(&proplist);
 }
+
 
 static void TEST_remove_non_existent(void)
 {
@@ -706,6 +742,7 @@ static void TEST_remove_non_existent(void)
 	mosquitto_property_free_all(&property);
 }
 
+
 static void TEST_remove_invalid(void)
 {
 	mosquitto_property *proplist = NULL;
@@ -730,9 +767,11 @@ static void TEST_remove_invalid(void)
 	mosquitto_property_free_all(&proplist);
 }
 
+
 /* ========================================================================
  * TEST SUITE SETUP
  * ======================================================================== */
+
 
 int init_property_add_tests(void)
 {

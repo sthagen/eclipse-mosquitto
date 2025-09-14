@@ -28,6 +28,7 @@ Contributors:
 #  define PATH_MAX 4096
 #endif
 
+
 void signal_all(enum mosq_signal sig)
 {
 	DIR *dir;

@@ -109,6 +109,7 @@ static struct lws_protocols protocols[] = {
 	}
 };
 
+
 static void easy_address(int sock, struct mosquitto *mosq)
 {
 	char address[1024];
@@ -117,6 +118,7 @@ static void easy_address(int sock, struct mosquitto *mosq)
 		mosq->address = mosquitto_strdup(address);
 	}
 }
+
 
 static int callback_mqtt(
 		struct lws *wsi,
@@ -649,6 +651,7 @@ static int callback_http(
 	return 0;
 }
 
+
 static void log_wrap(int level, const char *line)
 {
 	char *l = (char *)line;
@@ -656,6 +659,7 @@ static void log_wrap(int level, const char *line)
 	l[strlen(line)-1] = '\0'; /* Remove \n */
 	log__printf(NULL, MOSQ_LOG_WEBSOCKETS, "%s", l);
 }
+
 
 void mosq_websockets_init(struct mosquitto__listener *listener, const struct mosquitto__config *conf)
 {

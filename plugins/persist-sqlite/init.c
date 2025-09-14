@@ -433,6 +433,7 @@ fail:
 	return MOSQ_ERR_UNKNOWN;
 }
 
+
 void persist_sqlite__cleanup(struct mosquitto_sqlite *ms)
 {
 	if(ms->db){

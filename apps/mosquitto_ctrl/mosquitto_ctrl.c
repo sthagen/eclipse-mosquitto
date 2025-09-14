@@ -33,6 +33,7 @@ Contributors:
 #include "mosquitto_ctrl.h"
 #include "ctrl_shell_internal.h"
 
+
 static void print_version(void)
 {
 	int major, minor, revision;
@@ -40,6 +41,7 @@ static void print_version(void)
 	mosquitto_lib_version(&major, &minor, &revision);
 	printf("mosquitto_ctrl version %s running on libmosquitto %d.%d.%d.\n", VERSION, major, minor, revision);
 }
+
 
 static void print_usage(void)
 {

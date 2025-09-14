@@ -9,6 +9,7 @@
 
 static int run = -1;
 
+
 static void on_connect(struct mosquitto *mosq, void *obj, int rc)
 {
 	(void)obj;
@@ -19,6 +20,7 @@ static void on_connect(struct mosquitto *mosq, void *obj, int rc)
 		mosquitto_disconnect(mosq);
 	}
 }
+
 
 static void on_disconnect(struct mosquitto *mosq, void *obj, int rc)
 {
@@ -38,6 +40,7 @@ static int password_callback(char* buf, int size, int rwflag, void* userdata)
 
 	return (int)strlen(buf);
 }
+
 
 int main(int argc, char *argv[])
 {

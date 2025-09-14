@@ -76,6 +76,7 @@ static mosquitto_plugin_id_t *mosq_pid = NULL;
 static struct client_list *clients = NULL;
 static struct client_list *active_subs = NULL;
 
+
 static int connect_callback(int event, void *event_data, void *userdata)
 {
 	struct mosquitto_evt_basic_auth *ed = event_data;
@@ -207,6 +208,7 @@ int mosquitto_plugin_init(mosquitto_plugin_id_t *identifier, void **user_data, s
 	rc = mosquitto_callback_register(mosq_pid, MOSQ_EVT_TICK, tick_callback, NULL, NULL);
 	return rc;
 }
+
 
 int mosquitto_plugin_cleanup(void *user_data, struct mosquitto_opt *opts, int opt_count)
 {

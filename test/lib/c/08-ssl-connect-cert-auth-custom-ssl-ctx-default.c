@@ -10,12 +10,14 @@
 
 static int run = -1;
 
+
 void handle_sigint(int signal)
 {
 	(void)signal;
 
 	run = 0;
 }
+
 
 void on_connect(struct mosquitto *mosq, void *obj, int rc)
 {
@@ -28,6 +30,7 @@ void on_connect(struct mosquitto *mosq, void *obj, int rc)
 	}
 }
 
+
 void on_disconnect(struct mosquitto *mosq, void *obj, int rc)
 {
 	(void)mosq;
@@ -35,6 +38,7 @@ void on_disconnect(struct mosquitto *mosq, void *obj, int rc)
 
 	run = rc;
 }
+
 
 int main(int argc, char *argv[])
 {

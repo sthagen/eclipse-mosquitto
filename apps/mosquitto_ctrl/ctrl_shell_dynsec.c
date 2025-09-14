@@ -35,6 +35,7 @@ static struct completion_tree_arg_list *tree_groups = NULL;
 static struct completion_tree_arg_list *tree_roles = NULL;
 static bool do_print_list = false;
 
+
 static void command_tree_create(void)
 {
 	struct completion_tree_cmd *cmd;
@@ -353,6 +354,7 @@ static void print_help(char **saveptr)
 	}
 }
 
+
 static int send_set_default_acl_access(char **saveptr)
 {
 	const char *acltype, *allow_s;
@@ -388,6 +390,7 @@ static int send_set_default_acl_access(char **saveptr)
 	return ctrl_shell_publish_blocking(j_command);
 }
 
+
 static int list_update(const char *command)
 {
 	cJSON *j_command = cJSON_CreateObject();
@@ -397,6 +400,7 @@ static int list_update(const char *command)
 
 	return ctrl_shell_publish_blocking(j_command);
 }
+
 
 static int list_generic(const char *command, char **saveptr)
 {
@@ -416,6 +420,7 @@ static int list_generic(const char *command, char **saveptr)
 
 	return ctrl_shell_publish_blocking(j_command);
 }
+
 
 static int send_create_client(char **saveptr)
 {
@@ -458,6 +463,7 @@ static int send_create_client(char **saveptr)
 
 	return MOSQ_ERR_SUCCESS;
 }
+
 
 static int send_add_role_acl(char **saveptr)
 {
@@ -511,6 +517,7 @@ static int send_add_role_acl(char **saveptr)
 	return ctrl_shell_publish_blocking(j_command);
 }
 
+
 static int send_remove_role_acl(char **saveptr)
 {
 	char *rolename = strtok_r(NULL, " ", saveptr);
@@ -545,6 +552,7 @@ static int send_remove_role_acl(char **saveptr)
 	return ctrl_shell_publish_blocking(j_command);
 
 }
+
 
 static int send_modify(const char *command, const char *objectname, char **saveptr)
 {
@@ -581,6 +589,7 @@ static int send_modify(const char *command, const char *objectname, char **savep
 
 	return ctrl_shell_publish_blocking(j_command);
 }
+
 
 static int send_set_client_password(char **saveptr)
 {
@@ -730,6 +739,7 @@ static void line_callback(char *line)
 	free(line);
 }
 
+
 static void print_json_value(cJSON *value, const char *null_value)
 {
 	if(value){
@@ -746,6 +756,7 @@ static void print_json_value(cJSON *value, const char *null_value)
 		ctrl_shell_print_value(0, "%s", null_value);
 	}
 }
+
 
 static void print_json_array(cJSON *j_list, const char *label, const char *element_name, const char *optional_element_name, const char *optional_element_null_value)
 {
@@ -838,6 +849,7 @@ static void print_client(cJSON *j_data)
 	print_json_array(cJSON_GetObjectItem(j_client, "roles"), "Roles:", "rolename", "priority", "-1");
 	print_json_array(cJSON_GetObjectItem(j_client, "groups"), "Groups:", "groupname", "priority", "-1");
 }
+
 
 static void print_group(cJSON *j_data)
 {
@@ -934,6 +946,7 @@ static void print_role(cJSON *j_data)
 	}
 }
 
+
 static void print_default_acls(cJSON *j_data)
 {
 	cJSON *j_acls = cJSON_GetObjectItem(j_data, "acls");
@@ -953,6 +966,7 @@ static void print_default_acls(cJSON *j_data)
 		}
 	}
 }
+
 
 static void response_callback(const char *command, cJSON *j_data, const char *payload)
 {

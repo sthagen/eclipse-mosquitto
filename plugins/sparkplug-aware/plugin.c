@@ -15,6 +15,7 @@ MOSQUITTO_PLUGIN_DECLARE_VERSION(5);
 
 static mosquitto_plugin_id_t *mosq_pid = NULL;
 
+
 int mosquitto_plugin_init(mosquitto_plugin_id_t *identifier, void **user_data, struct mosquitto_opt *options, int option_count)
 {
 	int rc;

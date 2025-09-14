@@ -26,6 +26,7 @@ Contributors:
 #include "property_mosq.h"
 #include "property_common.h"
 
+
 /* Process the incoming properties, we should be able to assume that only valid
  * properties for CONNECT are present here. */
 int property__process_connect(struct mosquitto *context, mosquitto_property **props)
@@ -198,6 +199,7 @@ int property__process_publish(struct mosquitto__base_msg *base_msg, mosquitto_pr
 
 	return MOSQ_ERR_SUCCESS;
 }
+
 
 /* Process the incoming properties, we should be able to assume that only valid
  * properties for DISCONNECT are present here. */

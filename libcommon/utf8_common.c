@@ -21,6 +21,7 @@ Contributors:
 #include <stdio.h>
 #include "mosquitto.h"
 
+
 BROKER_EXPORT int mosquitto_validate_utf8(const char *str, int len)
 {
 	int i;

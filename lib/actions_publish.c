@@ -36,6 +36,7 @@ int mosquitto_publish(struct mosquitto *mosq, int *mid, const char *topic, int p
 	return mosquitto_publish_v5(mosq, mid, topic, payloadlen, payload, qos, retain, NULL);
 }
 
+
 int mosquitto_publish_v5(struct mosquitto *mosq, int *mid, const char *topic, int payloadlen, const void *payload, int qos, bool retain, const mosquitto_property *properties)
 {
 	struct mosquitto_message_all *message;

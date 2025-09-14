@@ -41,12 +41,14 @@ Contributors:
 #include "logging_mosq.h"
 #include "tls_mosq.h"
 
+
 int mosquitto__server_certificate_verify(int preverify_ok, X509_STORE_CTX *ctx)
 {
 	UNUSED(ctx);
 
 	return preverify_ok;
 }
+
 
 int tls__set_verify_hostname(struct mosquitto *mosq, const char *hostname)
 {

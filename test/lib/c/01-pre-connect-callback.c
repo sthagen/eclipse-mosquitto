@@ -4,6 +4,7 @@
 #include <string.h>
 #include <mosquitto.h>
 
+
 static void on_pre_connect(struct mosquitto *mosq, void *userdata)
 {
 	(void)userdata;
@@ -12,6 +13,7 @@ static void on_pre_connect(struct mosquitto *mosq, void *userdata)
 }
 
 static int run = -1;
+
 
 static void on_connect(struct mosquitto *mosq, void *obj, int rc)
 {
@@ -24,6 +26,7 @@ static void on_connect(struct mosquitto *mosq, void *obj, int rc)
 	}
 }
 
+
 static void on_disconnect(struct mosquitto *mosq, void *obj, int rc)
 {
 	(void)mosq;
@@ -31,6 +34,7 @@ static void on_disconnect(struct mosquitto *mosq, void *obj, int rc)
 
 	run = rc;
 }
+
 
 int main(int argc, char *argv[])
 {

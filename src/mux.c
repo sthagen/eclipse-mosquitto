@@ -19,6 +19,7 @@ Contributors:
 
 #include "mux.h"
 
+
 int mux__init(void)
 {
 #ifdef WITH_EPOLL
@@ -29,6 +30,7 @@ int mux__init(void)
 	return mux_poll__init();
 #endif
 }
+
 
 int mux__add_listeners(struct mosquitto__listener_sock *listensock, int listensock_count)
 {
@@ -41,6 +43,7 @@ int mux__add_listeners(struct mosquitto__listener_sock *listensock, int listenso
 #endif
 }
 
+
 int mux__delete_listeners(struct mosquitto__listener_sock *listensock, int listensock_count)
 {
 #ifdef WITH_EPOLL
@@ -51,6 +54,7 @@ int mux__delete_listeners(struct mosquitto__listener_sock *listensock, int liste
 	return mux_poll__delete_listeners(listensock, listensock_count);
 #endif
 }
+
 
 int mux__add_out(struct mosquitto *context)
 {

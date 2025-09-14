@@ -25,6 +25,7 @@ Contributors:
 #include "sys_tree.h"
 #include "util_mosq.h"
 
+
 int send__auth(struct mosquitto *context, uint8_t reason_code, const void *auth_data, uint16_t auth_data_len)
 {
 	struct mosquitto__packet *packet = NULL;

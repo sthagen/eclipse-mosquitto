@@ -6,6 +6,7 @@
 
 #define QOS 2
 
+
 int cb(struct mosquitto *mosq, void *userdata, const struct mosquitto_message *msg)
 {
 	(void)mosq;
@@ -15,6 +16,7 @@ int cb(struct mosquitto *mosq, void *userdata, const struct mosquitto_message *m
 	assert(!strcmp(msg->topic, "qos2/test"));
 	return 1;
 }
+
 
 int main(int argc, char *argv[])
 {

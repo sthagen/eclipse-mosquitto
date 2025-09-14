@@ -60,6 +60,7 @@ MOSQUITTO_PLUGIN_DECLARE_VERSION(5);
 
 static mosquitto_plugin_id_t *mosq_pid = NULL;
 
+
 static bool is_jailed(const char *str)
 {
 	return strncmp("jailed", str, 6) == 0;
@@ -106,6 +107,7 @@ static int callback_message_in(int event, void *event_data, void *userdata)
 	return MOSQ_ERR_SUCCESS;
 }
 
+
 static int callback_message_out(int event, void *event_data, void *userdata)
 {
 	struct mosquitto_evt_message *ed = event_data;
@@ -151,6 +153,7 @@ static int callback_message_out(int event, void *event_data, void *userdata)
 	return MOSQ_ERR_SUCCESS;
 }
 
+
 static int callback_subscribe(int event, void *event_data, void *userdata)
 {
 	struct mosquitto_evt_subscribe *ed = event_data;
@@ -190,6 +193,7 @@ static int callback_subscribe(int event, void *event_data, void *userdata)
 
 	return MOSQ_ERR_SUCCESS;
 }
+
 
 static int callback_unsubscribe(int event, void *event_data, void *userdata)
 {

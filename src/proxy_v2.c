@@ -76,12 +76,14 @@ struct pp2_tlv_ssl{
 
 const uint8_t signature[12] = {0x0D, 0x0A, 0x0D, 0x0A, 0x00, 0x0D, 0x0A, 0x51, 0x55, 0x49, 0x54, 0x0A};
 
+
 static void proxy_cleanup(struct mosquitto *context)
 {
 	mosquitto_FREE(context->proxy.buf);
 	mosquitto_FREE(context->proxy.tls_version);
 	mosquitto_FREE(context->proxy.cipher);
 }
+
 
 static int read_tlv_ssl(struct mosquitto *context, uint16_t len, bool *have_certificate)
 {
@@ -135,6 +137,7 @@ static int read_tlv_ssl(struct mosquitto *context, uint16_t len, bool *have_cert
 
 	return MOSQ_ERR_SUCCESS;
 }
+
 
 static int read_tlv(struct mosquitto *context, bool *have_certificate)
 {

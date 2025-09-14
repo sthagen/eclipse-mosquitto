@@ -24,6 +24,7 @@ int mosquitto_plugin_version(int supported_version_count, const int *supported_v
 	return 5;
 }
 
+
 int mosquitto_plugin_init(mosquitto_plugin_id_t *identifier, void **user_data, struct mosquitto_opt *auth_opts, int auth_opt_count)
 {
 	UNUSED(user_data);
@@ -40,6 +41,7 @@ int mosquitto_plugin_init(mosquitto_plugin_id_t *identifier, void **user_data, s
 	return MOSQ_ERR_SUCCESS;
 }
 
+
 int mosquitto_plugin_cleanup(void *user_data, struct mosquitto_opt *auth_opts, int auth_opt_count)
 {
 	UNUSED(user_data);
@@ -54,6 +56,7 @@ int mosquitto_plugin_cleanup(void *user_data, struct mosquitto_opt *auth_opts, i
 
 	return MOSQ_ERR_SUCCESS;
 }
+
 
 int handle_tick(int event, void *event_data, void *user_data)
 {
@@ -76,6 +79,7 @@ int handle_tick(int event, void *event_data, void *user_data)
 	return MOSQ_ERR_SUCCESS;
 }
 
+
 int handle_connect(int event, void *event_data, void *user_data)
 {
 	struct mosquitto_evt_basic_auth *ed = event_data;
@@ -89,6 +93,7 @@ int handle_connect(int event, void *event_data, void *user_data)
 
 	return MOSQ_ERR_SUCCESS;
 }
+
 
 int handle_disconnect(int event, void *event_data, void *user_data)
 {

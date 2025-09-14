@@ -37,6 +37,7 @@ Contributors:
 #include "send_mosq.h"
 #include "util_mosq.h"
 
+
 int handle__pubrec(struct mosquitto *mosq)
 {
 	uint8_t reason_code = 0;

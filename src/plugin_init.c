@@ -30,6 +30,7 @@ Contributors:
 typedef int (*FUNC_auth_plugin_version)(void);
 typedef int (*FUNC_plugin_version)(int, const int *);
 
+
 void LIB_ERROR(void)
 {
 #ifdef WIN32

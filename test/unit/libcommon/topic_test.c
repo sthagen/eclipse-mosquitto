@@ -12,6 +12,7 @@ struct topic_test{
 	bool match;
 };
 
+
 static void match_helper(const char *sub, const char *topic)
 {
 	int rc;
@@ -31,6 +32,7 @@ static void match_helper(const char *sub, const char *topic)
 		printf("2: %s:%s\n", sub, topic);
 	}
 }
+
 
 static void no_match_helper(int rc_expected, const char *sub, const char *topic)
 {
@@ -52,9 +54,11 @@ static void no_match_helper(int rc_expected, const char *sub, const char *topic)
 	CU_ASSERT_EQUAL(match, false);
 }
 
+
 /* ========================================================================
  * EMPTY INPUT
  * ======================================================================== */
+
 
 static void TEST_empty_input(void)
 {
@@ -109,6 +113,7 @@ static void TEST_empty_input(void)
 	CU_ASSERT_EQUAL(rc, MOSQ_ERR_INVAL);
 	CU_ASSERT_EQUAL(match, false);
 }
+
 
 static void TEST_topic_pattern_empty_input(void)
 {
@@ -176,6 +181,7 @@ static void TEST_topic_pattern_empty_input(void)
 	CU_ASSERT_EQUAL(match, false);
 }
 
+
 static void TEST_acl_pattern_empty_input(void)
 {
 	int rc;
@@ -242,6 +248,7 @@ static void TEST_acl_pattern_empty_input(void)
 	CU_ASSERT_EQUAL(match, false);
 }
 
+
 static void TEST_sub_match_empty_input(void)
 {
 	int rc;
@@ -272,9 +279,11 @@ static void TEST_sub_match_empty_input(void)
 	CU_ASSERT_EQUAL(match, false);
 }
 
+
 /* ========================================================================
  * VALID MATCHING AND NON-MATCHING
  * ======================================================================== */
+
 
 static void TEST_valid_matching(void)
 {
@@ -369,9 +378,11 @@ static void TEST_invalid(void)
 	no_match_helper(MOSQ_ERR_INVAL, "/#a", "foo/bar");
 }
 
+
 /* ========================================================================
  * TOPIC MATCHES SUB PATTERNS
  * ======================================================================== */
+
 
 static void TEST_topic_pattern_clientid(void)
 {
@@ -429,6 +440,7 @@ static void TEST_topic_pattern_clientid(void)
 	CU_ASSERT_EQUAL(match, false);
 }
 
+
 static void TEST_topic_pattern_username(void)
 {
 	int rc;
@@ -485,6 +497,7 @@ static void TEST_topic_pattern_username(void)
 	CU_ASSERT_EQUAL(match, false);
 }
 
+
 static void TEST_topic_pattern_both(void)
 {
 	int rc;
@@ -539,6 +552,7 @@ static void TEST_topic_pattern_both(void)
 	CU_ASSERT_EQUAL(rc, MOSQ_ERR_SUCCESS);
 	CU_ASSERT_EQUAL(match, false);
 }
+
 
 static void TEST_topic_pattern_wildcard(void)
 {
@@ -622,6 +636,7 @@ static void TEST_topic_pattern_wildcard(void)
 	CU_ASSERT_EQUAL(match, false);
 }
 
+
 static void TEST_topic_pattern_substring_beginning(void)
 {
 	const struct topic_test tests[] = {
@@ -656,6 +671,7 @@ static void TEST_topic_pattern_substring_beginning(void)
 		CU_ASSERT_EQUAL(match, tests[i].match);
 	}
 }
+
 
 static void TEST_topic_pattern_substring_middle(void)
 {
@@ -692,6 +708,7 @@ static void TEST_topic_pattern_substring_middle(void)
 	}
 }
 
+
 static void TEST_topic_pattern_substring_end(void)
 {
 	const struct topic_test tests[] = {
@@ -726,6 +743,7 @@ static void TEST_topic_pattern_substring_end(void)
 		CU_ASSERT_EQUAL(match, tests[i].match);
 	}
 }
+
 
 static void TEST_topic_pattern_substring_only(void)
 {
@@ -766,6 +784,7 @@ static void TEST_topic_pattern_substring_only(void)
 /* ========================================================================
  * SUB MATCHES ACL PATTERNS
  * ======================================================================== */
+
 
 static void TEST_acl_pattern_clientid(void)
 {
@@ -874,6 +893,7 @@ static void TEST_acl_pattern_clientid(void)
 	CU_ASSERT_EQUAL(match, false);
 }
 
+
 static void TEST_acl_pattern_username(void)
 {
 	int rc;
@@ -981,6 +1001,7 @@ static void TEST_acl_pattern_username(void)
 	CU_ASSERT_EQUAL(match, false);
 }
 
+
 static void TEST_acl_pattern_both(void)
 {
 	int rc;
@@ -1035,6 +1056,7 @@ static void TEST_acl_pattern_both(void)
 	CU_ASSERT_EQUAL(rc, MOSQ_ERR_SUCCESS);
 	CU_ASSERT_EQUAL(match, false);
 }
+
 
 static void TEST_acl_pattern_wildcard(void)
 {
@@ -1187,6 +1209,7 @@ static void TEST_acl_pattern_wildcard_wildcard(void)
 	CU_ASSERT_EQUAL(match, false);
 }
 
+
 static void TEST_acl_pattern_substring_beginning(void)
 {
 	const struct topic_test tests[] = {
@@ -1221,6 +1244,7 @@ static void TEST_acl_pattern_substring_beginning(void)
 		CU_ASSERT_EQUAL(match, tests[i].match);
 	}
 }
+
 
 static void TEST_acl_pattern_substring_middle(void)
 {
@@ -1257,6 +1281,7 @@ static void TEST_acl_pattern_substring_middle(void)
 	}
 }
 
+
 static void TEST_acl_pattern_substring_end(void)
 {
 	const struct topic_test tests[] = {
@@ -1291,6 +1316,7 @@ static void TEST_acl_pattern_substring_end(void)
 		CU_ASSERT_EQUAL(match, tests[i].match);
 	}
 }
+
 
 static void TEST_acl_pattern_substring_only(void)
 {
@@ -1332,6 +1358,7 @@ static void TEST_acl_pattern_substring_only(void)
  * PUB TOPIC CHECK
  * ======================================================================== */
 
+
 static void pub_topic_helper(const char *topic, int rc_expected)
 {
 	int rc;
@@ -1343,12 +1370,14 @@ static void pub_topic_helper(const char *topic, int rc_expected)
 	CU_ASSERT_EQUAL(rc, rc_expected);
 }
 
+
 static void TEST_pub_topic_valid(void)
 {
 	pub_topic_helper("pub/topic", MOSQ_ERR_SUCCESS);
 	pub_topic_helper("pub//topic", MOSQ_ERR_SUCCESS);
 	pub_topic_helper("pub/ /topic", MOSQ_ERR_SUCCESS);
 }
+
 
 static void TEST_pub_topic_invalid(void)
 {
@@ -1370,6 +1399,7 @@ static void TEST_pub_topic_invalid(void)
  * SUB TOPIC CHECK
  * ======================================================================== */
 
+
 static void sub_topic_helper(const char *topic, int rc_expected)
 {
 	int rc;
@@ -1380,6 +1410,7 @@ static void sub_topic_helper(const char *topic, int rc_expected)
 	rc = mosquitto_sub_topic_check2(topic, strlen(topic));
 	CU_ASSERT_EQUAL(rc, rc_expected);
 }
+
 
 static void TEST_sub_topic_valid(void)
 {
@@ -1397,6 +1428,7 @@ static void TEST_sub_topic_valid(void)
 	sub_topic_helper("#", MOSQ_ERR_SUCCESS);
 }
 
+
 static void TEST_sub_topic_invalid(void)
 {
 	sub_topic_helper("+sub/topic", MOSQ_ERR_INVAL);
@@ -1410,9 +1442,11 @@ static void TEST_sub_topic_invalid(void)
 	sub_topic_helper("#/sub/topic", MOSQ_ERR_INVAL);
 }
 
+
 /* ========================================================================
  * SUB MATCHES ACL
  * ======================================================================== */
+
 
 static void sub_match_test(const char *acl, const char *sub, bool expected, int rc_expected)
 {
@@ -1454,9 +1488,12 @@ static void TEST_sub_match_acl(void)
 	sub_match_test("a/b/c/d/", "a/b/c/d/+", false, MOSQ_ERR_SUCCESS);
 	sub_match_test("a/b/c/d/+", "a/b/c/d/", true, MOSQ_ERR_SUCCESS);
 }
+
+
 /* ========================================================================
  * TEST SUITE SETUP
  * ======================================================================== */
+
 
 int init_topic_tests(void)
 {

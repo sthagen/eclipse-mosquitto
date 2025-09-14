@@ -6,6 +6,7 @@
 
 static int run = -1;
 
+
 static void on_connect(struct mosquitto *mosq, void *obj, int rc, int flags, const mosquitto_property *properties)
 {
 	(void)obj;
@@ -21,6 +22,7 @@ static void on_connect(struct mosquitto *mosq, void *obj, int rc, int flags, con
 	}
 }
 
+
 static void on_disconnect(struct mosquitto *mosq, void *obj, int rc, const mosquitto_property *properties)
 {
 	(void)mosq;
@@ -30,6 +32,7 @@ static void on_disconnect(struct mosquitto *mosq, void *obj, int rc, const mosqu
 	/* FIXME - should verify flags and all properties here. */
 	run = rc;
 }
+
 
 int main(int argc, char *argv[])
 {

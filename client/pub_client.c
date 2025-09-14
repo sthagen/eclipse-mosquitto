@@ -52,11 +52,13 @@ static int connack_result = 0;
 #ifdef WIN32
 static uint64_t next_publish_tv;
 
+
 static void set_repeat_time(void)
 {
 	uint64_t ticks = GetTickCount64();
 	next_publish_tv = ticks + cfg.repeat_delay.tv_sec*1000 + cfg.repeat_delay.tv_usec/1000;
 }
+
 
 static int check_repeat_time(void)
 {
@@ -72,6 +74,7 @@ static int check_repeat_time(void)
 
 static struct timeval next_publish_tv;
 
+
 static void set_repeat_time(void)
 {
 	gettimeofday(&next_publish_tv, NULL);
@@ -81,6 +84,7 @@ static void set_repeat_time(void)
 	next_publish_tv.tv_sec += next_publish_tv.tv_usec/1000000;
 	next_publish_tv.tv_usec = next_publish_tv.tv_usec%1000000;
 }
+
 
 static int check_repeat_time(void)
 {
@@ -99,6 +103,7 @@ static int check_repeat_time(void)
 }
 #endif
 
+
 void my_disconnect_callback(struct mosquitto *mosq, void *obj, int rc, const mosquitto_property *properties)
 {
 	UNUSED(mosq);
@@ -110,6 +115,7 @@ void my_disconnect_callback(struct mosquitto *mosq, void *obj, int rc, const mos
 		status = STATUS_DISCONNECTED;
 	}
 }
+
 
 int my_publish(struct mosquitto *mosq, int *mid, const char *topic, int payloadlen, void *payload, int qos, bool retain)
 {
@@ -396,6 +402,7 @@ static void print_version(void)
 	printf("mosquitto_pub version %s running on libmosquitto %d.%d.%d.\n", VERSION, major, minor, revision);
 }
 
+
 static void print_usage(void)
 {
 	int major, minor, revision;
@@ -519,6 +526,7 @@ static void print_usage(void)
 #endif
 	printf("\nSee https://mosquitto.org/ for more information.\n\n");
 }
+
 
 int main(int argc, char *argv[])
 {

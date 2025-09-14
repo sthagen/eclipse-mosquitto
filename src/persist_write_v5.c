@@ -38,6 +38,7 @@ Contributors:
 #include "property_mosq.h"
 #include "util_mosq.h"
 
+
 int persist__chunk_cfg_write_v6(FILE *db_fptr, struct PF_cfg *chunk)
 {
 	struct PF_header header;

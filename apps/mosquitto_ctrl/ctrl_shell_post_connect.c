@@ -28,6 +28,7 @@ Contributors:
 
 static struct completion_tree_root *commands_post_connect = NULL;
 
+
 static void command_tree_create(void)
 {
 	struct completion_tree_cmd *cmd;
@@ -45,6 +46,7 @@ static void command_tree_create(void)
 	completion_tree_cmd_add(commands_post_connect, help_arg_list, "dynsec");
 	completion_tree_cmd_add(commands_post_connect, help_arg_list, "exit");
 }
+
 
 static void print_help(char **saveptr)
 {
@@ -85,6 +87,7 @@ const struct module_data mod_data[] = {
 	{ "broker", ctrl_shell__broker_init },
 	{ "dynsec", ctrl_shell__dynsec_init },
 };
+
 
 static void line_callback(char *line)
 {

@@ -48,11 +48,13 @@ static cJSON *add_group_to_json(struct dynsec__group *group);
  * #
  * ################################################################ */
 
+
 /* ################################################################
  * #
  * # Utility functions
  * #
  * ################################################################ */
+
 
 static void group__kick_all(struct dynsec__data *data, struct dynsec__group *group)
 {
@@ -82,6 +84,7 @@ struct dynsec__group *dynsec_groups__find(struct dynsec__data *data, const char 
 	return group;
 }
 
+
 static void group__free_item(struct dynsec__data *data, struct dynsec__group *group)
 {
 	struct dynsec__group *found_group = NULL;
@@ -98,6 +101,7 @@ static void group__free_item(struct dynsec__data *data, struct dynsec__group *gr
 	dynsec_rolelist__cleanup(&group->rolelist);
 	mosquitto_free(group);
 }
+
 
 int dynsec_groups__process_add_role(struct dynsec__data *data, struct mosquitto_control_cmd *cmd)
 {
@@ -184,6 +188,7 @@ void dynsec_groups__cleanup(struct dynsec__data *data)
  * # Config file load
  * #
  * ################################################################ */
+
 
 int dynsec_groups__config_load(struct dynsec__data *data, cJSON *tree)
 {
@@ -605,6 +610,7 @@ static int dynsec__remove_all_clients_from_group(struct dynsec__group *group)
 	return MOSQ_ERR_SUCCESS;
 }
 
+
 static int dynsec__remove_all_roles_from_group(struct dynsec__group *group)
 {
 	struct dynsec__rolelist *rolelist, *rolelist_tmp = NULL;
@@ -615,6 +621,7 @@ static int dynsec__remove_all_roles_from_group(struct dynsec__group *group)
 
 	return MOSQ_ERR_SUCCESS;
 }
+
 
 int dynsec_groups__remove_client(struct dynsec__data *data, const char *username, const char *groupname, bool update_config)
 {
@@ -639,6 +646,7 @@ int dynsec_groups__remove_client(struct dynsec__data *data, const char *username
 	}
 	return MOSQ_ERR_SUCCESS;
 }
+
 
 int dynsec_groups__process_remove_client(struct dynsec__data *data, struct mosquitto_control_cmd *cmd)
 {
@@ -1108,6 +1116,7 @@ int dynsec_groups__process_set_anonymous_group(struct dynsec__data *data, struct
 
 	return MOSQ_ERR_SUCCESS;
 }
+
 
 int dynsec_groups__process_get_anonymous_group(struct dynsec__data *data, struct mosquitto_control_cmd *cmd)
 {

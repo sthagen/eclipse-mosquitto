@@ -23,6 +23,7 @@ Contributors:
 #include "mosquitto.h"
 #include "password_file.h"
 
+
 int password_file__check(int event, void *event_data, void *userdata)
 {
 	struct mosquitto_evt_basic_auth *ed = event_data;

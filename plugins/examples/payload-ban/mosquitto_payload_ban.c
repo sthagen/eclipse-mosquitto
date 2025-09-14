@@ -59,6 +59,7 @@ static mosquitto_plugin_id_t *mosq_pid = NULL;
 static struct banlist *banlist_by_address = NULL;
 static struct banlist *banlist_by_id = NULL;
 
+
 static int basic_auth_callback(int event, void *event_data, void *userdata)
 {
 	struct mosquitto_evt_basic_auth *ed = event_data;

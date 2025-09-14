@@ -74,6 +74,7 @@ static int tls_ex_index_listener = -1;
 /* For EMFILE handling */
 static mosq_sock_t spare_sock = INVALID_SOCKET;
 
+
 void net__broker_init(void)
 {
 	spare_sock = socket(AF_INET, SOCK_STREAM, 0);
@@ -273,6 +274,8 @@ struct mosquitto *net__socket_accept(struct mosquitto__listener_sock *listensock
 }
 
 #ifdef WITH_TLS
+
+
 static int client_certificate_verify(int preverify_ok, X509_STORE_CTX *ctx)
 {
 	/* Preverify should check expiry, revocation. */
@@ -296,6 +299,8 @@ static int client_certificate_verify(int preverify_ok, X509_STORE_CTX *ctx)
 #endif
 
 #ifdef FINAL_WITH_TLS_PSK
+
+
 static unsigned int psk_server_callback(SSL *ssl, const char *identity, unsigned char *psk, unsigned int max_psk_len)
 {
 	struct mosquitto *context;
@@ -348,6 +353,8 @@ static unsigned int psk_server_callback(SSL *ssl, const char *identity, unsigned
 #endif
 
 #ifdef WITH_TLS
+
+
 static void tls_keylog_callback(const SSL *ssl, const char *line)
 {
 	UNUSED(ssl);
@@ -382,6 +389,7 @@ static void tls_keylog_callback(const SSL *ssl, const char *line)
 		}
 	}
 }
+
 
 int net__tls_server_ctx(struct mosquitto__listener *listener)
 {
@@ -483,6 +491,8 @@ int net__tls_server_ctx(struct mosquitto__listener *listener)
 
 
 #ifdef WITH_TLS
+
+
 static int net__load_crl_file(struct mosquitto__listener *listener)
 {
 	X509_STORE *store;
@@ -555,6 +565,8 @@ int net__load_certificates(struct mosquitto__listener *listener)
 
 
 #if defined(WITH_TLS) && !defined(OPENSSL_NO_ENGINE) && OPENSSL_API_LEVEL < 30000
+
+
 static int net__load_engine(struct mosquitto__listener *listener)
 {
 	ENGINE *engine = NULL;
@@ -660,6 +672,8 @@ int net__tls_load_verify(struct mosquitto__listener *listener)
 
 
 #if !defined(WIN32) && !defined(_AIX)
+
+
 static int net__bind_interface(struct mosquitto__listener *listener, struct addrinfo *rp)
 {
 	/*
@@ -866,6 +880,8 @@ static int net__socket_listen_tcp(struct mosquitto__listener *listener)
 
 
 #ifdef WITH_UNIX_SOCKETS
+
+
 static int net__socket_listen_unix(struct mosquitto__listener *listener)
 {
 	struct sockaddr_un addr;
@@ -987,6 +1003,7 @@ int net__socket_listen(struct mosquitto__listener *listener)
 		return 1;
 	}
 }
+
 
 int net__socket_get_address(mosq_sock_t sock, char *buf, size_t len, uint16_t *remote_port)
 {

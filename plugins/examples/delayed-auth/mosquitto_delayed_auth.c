@@ -60,6 +60,7 @@ static mosquitto_plugin_id_t *mosq_pid = NULL;
 static struct client_list *clients = NULL;
 static time_t last_check = 0;
 
+
 static bool authentication_check(struct client_list *client, time_t now)
 {
 	time_t secs;
@@ -68,6 +69,7 @@ static bool authentication_check(struct client_list *client, time_t now)
 
 	return secs > 5 ? true : false;
 }
+
 
 static int basic_auth_callback(int event, void *event_data, void *userdata)
 {
@@ -161,6 +163,7 @@ int mosquitto_plugin_init(mosquitto_plugin_id_t *identifier, void **user_data, s
 	rc = mosquitto_callback_register(mosq_pid, MOSQ_EVT_TICK, tick_callback, NULL, NULL);
 	return rc;
 }
+
 
 int mosquitto_plugin_cleanup(void *user_data, struct mosquitto_opt *opts, int opt_count)
 {

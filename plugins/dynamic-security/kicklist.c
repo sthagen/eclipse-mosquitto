@@ -23,6 +23,7 @@ Contributors:
 
 #include "dynamic_security.h"
 
+
 int dynsec_kicklist__add(struct dynsec__data *data, const char *username)
 {
 	struct dynsec__kicklist *kick;
@@ -47,6 +48,7 @@ int dynsec_kicklist__add(struct dynsec__data *data, const char *username)
 	return MOSQ_ERR_SUCCESS;
 }
 
+
 void dynsec_kicklist__kick(struct dynsec__data *data)
 {
 	struct dynsec__kicklist *kick, *tmp;
@@ -61,6 +63,7 @@ void dynsec_kicklist__kick(struct dynsec__data *data)
 		free(kick);
 	}
 }
+
 
 void dynsec_kicklist__cleanup(struct dynsec__data *data)
 {

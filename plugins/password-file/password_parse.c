@@ -25,6 +25,7 @@ Contributors:
 #include "mosquitto.h"
 #include "password_file.h"
 
+
 int password_file__parse(struct password_file_data *data)
 {
 	FILE *pwfile;

@@ -10,6 +10,7 @@
 #include <cjson/cJSON.h>
 #define CJSON_VERSION_FULL (CJSON_VERSION_MAJOR*1000000+CJSON_VERSION_MINOR*1000+CJSON_VERSION_PATCH)
 
+
 void mosquitto_control_command_reply(struct mosquitto_control_cmd *cmd, const char *error)
 {
 	cJSON *j_response;
@@ -28,6 +29,7 @@ void mosquitto_control_command_reply(struct mosquitto_control_cmd *cmd, const ch
 
 	cJSON_AddItemToArray(cmd->j_responses, j_response);
 }
+
 
 void mosquitto_control_send_response(cJSON *tree, const char *topic)
 {
@@ -83,6 +85,7 @@ static int control__generic_handle_commands(struct mosquitto_control_cmd *cmd, c
 	}
 	return MOSQ_ERR_SUCCESS;
 }
+
 
 int mosquitto_control_generic_callback(struct mosquitto_evt_control *event_data, const char *response_topic, void *userdata,
 		int (*cmd_cb)(struct mosquitto_control_cmd *cmd, void *userdata))

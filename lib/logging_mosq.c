@@ -27,6 +27,7 @@ Contributors:
 #include "mosquitto_internal.h"
 #include "mosquitto.h"
 
+
 int log__printf(struct mosquitto *mosq, unsigned int priority, const char *fmt, ...)
 {
 	va_list va;

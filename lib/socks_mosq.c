@@ -61,6 +61,7 @@ Contributors:
 #define SOCKS_REPLY_COMMAND_NOT_SUPPORTED 0x07U
 #define SOCKS_REPLY_ADDRESS_TYPE_NOT_SUPPORTED 0x08U
 
+
 static inline int socks5__network_error(struct mosquitto *mosq)
 {
 	WINDOWS_SET_ERRNO();
@@ -159,6 +160,8 @@ int mosquitto_socks5_set(struct mosquitto *mosq, const char *host, int port, con
 }
 
 #ifdef WITH_SOCKS
+
+
 static void socks5__packet_alloc(struct mosquitto__packet **packet, uint32_t packet_length)
 {
 	*packet = mosquitto_calloc(1, sizeof(struct mosquitto__packet) + packet_length + WS_PACKET_OFFSET);
@@ -301,6 +304,7 @@ int socks5__send(struct mosquitto *mosq)
 	}
 	return MOSQ_ERR_SUCCESS;
 }
+
 
 int socks5__read(struct mosquitto *mosq)
 {

@@ -155,6 +155,7 @@ void session_expiry__remove_all(void)
 	}
 }
 
+
 void session_expiry__check(void)
 {
 	struct session_expiry_list *item, *tmp;

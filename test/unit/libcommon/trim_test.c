@@ -156,6 +156,7 @@ static void TEST_btrim(void)
  * TEST SUITE SETUP
  * ======================================================================== */
 
+
 int init_trim_tests(void)
 {
 	CU_pSuite test_suite = NULL;

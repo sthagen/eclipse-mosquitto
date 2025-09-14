@@ -40,6 +40,7 @@ Contributors:
 int mid_sent = -1;
 struct mosq_config cfg;
 
+
 void my_log_callback(struct mosquitto *mosq, void *obj, int level, const char *str)
 {
 	UNUSED(mosq);
@@ -48,6 +49,7 @@ void my_log_callback(struct mosquitto *mosq, void *obj, int level, const char *s
 
 	printf("%s\n", str);
 }
+
 
 int load_stdin(void)
 {
@@ -84,6 +86,7 @@ int load_stdin(void)
 
 	return 0;
 }
+
 
 int load_file(const char *filename)
 {

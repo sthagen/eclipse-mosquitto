@@ -36,6 +36,7 @@ Contributors:
 #include "util_mosq.h"
 #include "will_mosq.h"
 
+
 int will__set(struct mosquitto *mosq, const char *topic, int payloadlen, const void *payload, int qos, bool retain, mosquitto_property *properties)
 {
 	int rc = MOSQ_ERR_SUCCESS;
@@ -104,6 +105,7 @@ cleanup:
 
 	return rc;
 }
+
 
 int will__clear(struct mosquitto *mosq)
 {

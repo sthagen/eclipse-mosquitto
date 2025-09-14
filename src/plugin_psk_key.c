@@ -27,6 +27,7 @@ Contributors:
 #include "lib_load.h"
 #include "utlist.h"
 
+
 static int plugin__psk_key_get(struct mosquitto__security_options *opts, struct mosquitto *context, const char *hint, const char *identity, char *key, int max_key_len)
 {
 	struct mosquitto_evt_psk_key event_data;

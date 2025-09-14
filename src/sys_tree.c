@@ -144,10 +144,12 @@ struct metric_load metric_loads[mosq_metric_load_max] = {
 static time_t start_time = 0;
 static time_t last_update = 0;
 
+
 time_t broker_uptime(void)
 {
 	return db.now_s - start_time;
 }
+
 
 void sys_tree__init(void)
 {
@@ -168,6 +170,7 @@ void sys_tree__init(void)
 	sys_tree__update(true);
 }
 
+
 void metrics__int_inc(enum mosq_metric_type m, int64_t value)
 {
 	if(m < mosq_metric_max){
@@ -175,12 +178,14 @@ void metrics__int_inc(enum mosq_metric_type m, int64_t value)
 	}
 }
 
+
 void metrics__int_dec(enum mosq_metric_type m, int64_t value)
 {
 	if(m < mosq_metric_max){
 		metrics[m].next -= value;
 	}
 }
+
 
 static void calc_load(char *buf, double exponent, double i_mult, struct metric_load *m)
 {

@@ -3,9 +3,11 @@
 
 #include "mosquitto.h"
 
+
 /* Test data taken from
  * http://www.cl.cam.ac.uk/~mgk25/ucs/examples/UTF-8-test.txt but modified for
  * updated standard (no 5, 6 byte lengths) */
+
 
 static void utf8_helper_len(const char *text, int len, int expected)
 {
@@ -14,6 +16,7 @@ static void utf8_helper_len(const char *text, int len, int expected)
 	result = mosquitto_validate_utf8(text, len);
 	CU_ASSERT_EQUAL(result, expected);
 }
+
 
 static void utf8_helper(const char *text, int expected)
 {
@@ -199,6 +202,7 @@ static void TEST_utf8_malformed_sequences(void)
 	utf8_helper("3.5.2  ff = \"\xFF\"", MOSQ_ERR_MALFORMED_UTF8);
 	utf8_helper("3.5.3  fe fe ff ff = \"\xFE\xFE\xFF\xFF\"", MOSQ_ERR_MALFORMED_UTF8);
 }
+
 
 static void TEST_utf8_overlong_encoding(void)
 {
@@ -440,6 +444,7 @@ static void TEST_utf8_mqtt_1_5_4_3(void)
 /* ========================================================================
  * TEST SUITE SETUP
  * ======================================================================== */
+
 
 int init_utf8_tests(void)
 {

@@ -30,12 +30,14 @@ void mosquitto_connect_callback_set(struct mosquitto *mosq, LIBMOSQ_CB_connect o
 	COMPAT_pthread_mutex_unlock(&mosq->callback_mutex);
 }
 
+
 void mosquitto_connect_with_flags_callback_set(struct mosquitto *mosq, LIBMOSQ_CB_connect_with_flags on_connect)
 {
 	COMPAT_pthread_mutex_lock(&mosq->callback_mutex);
 	mosq->on_connect_with_flags = on_connect;
 	COMPAT_pthread_mutex_unlock(&mosq->callback_mutex);
 }
+
 
 void mosquitto_connect_v5_callback_set(struct mosquitto *mosq, LIBMOSQ_CB_connect_v5 on_connect)
 {
@@ -44,12 +46,14 @@ void mosquitto_connect_v5_callback_set(struct mosquitto *mosq, LIBMOSQ_CB_connec
 	COMPAT_pthread_mutex_unlock(&mosq->callback_mutex);
 }
 
+
 void mosquitto_pre_connect_callback_set(struct mosquitto *mosq, LIBMOSQ_CB_pre_connect on_pre_connect)
 {
 	COMPAT_pthread_mutex_lock(&mosq->callback_mutex);
 	mosq->on_pre_connect = on_pre_connect;
 	COMPAT_pthread_mutex_unlock(&mosq->callback_mutex);
 }
+
 
 void mosquitto_disconnect_callback_set(struct mosquitto *mosq, LIBMOSQ_CB_disconnect on_disconnect)
 {
@@ -58,12 +62,14 @@ void mosquitto_disconnect_callback_set(struct mosquitto *mosq, LIBMOSQ_CB_discon
 	COMPAT_pthread_mutex_unlock(&mosq->callback_mutex);
 }
 
+
 void mosquitto_disconnect_v5_callback_set(struct mosquitto *mosq, LIBMOSQ_CB_disconnect_v5 on_disconnect)
 {
 	COMPAT_pthread_mutex_lock(&mosq->callback_mutex);
 	mosq->on_disconnect_v5 = on_disconnect;
 	COMPAT_pthread_mutex_unlock(&mosq->callback_mutex);
 }
+
 
 void mosquitto_publish_callback_set(struct mosquitto *mosq, LIBMOSQ_CB_publish on_publish)
 {
@@ -72,12 +78,14 @@ void mosquitto_publish_callback_set(struct mosquitto *mosq, LIBMOSQ_CB_publish o
 	COMPAT_pthread_mutex_unlock(&mosq->callback_mutex);
 }
 
+
 void mosquitto_publish_v5_callback_set(struct mosquitto *mosq, LIBMOSQ_CB_publish_v5 on_publish)
 {
 	COMPAT_pthread_mutex_lock(&mosq->callback_mutex);
 	mosq->on_publish_v5 = on_publish;
 	COMPAT_pthread_mutex_unlock(&mosq->callback_mutex);
 }
+
 
 void mosquitto_message_callback_set(struct mosquitto *mosq, LIBMOSQ_CB_message on_message)
 {
@@ -86,12 +94,14 @@ void mosquitto_message_callback_set(struct mosquitto *mosq, LIBMOSQ_CB_message o
 	COMPAT_pthread_mutex_unlock(&mosq->callback_mutex);
 }
 
+
 void mosquitto_message_v5_callback_set(struct mosquitto *mosq, LIBMOSQ_CB_message_v5 on_message)
 {
 	COMPAT_pthread_mutex_lock(&mosq->callback_mutex);
 	mosq->on_message_v5 = on_message;
 	COMPAT_pthread_mutex_unlock(&mosq->callback_mutex);
 }
+
 
 void mosquitto_subscribe_callback_set(struct mosquitto *mosq, LIBMOSQ_CB_subscribe on_subscribe)
 {
@@ -100,12 +110,14 @@ void mosquitto_subscribe_callback_set(struct mosquitto *mosq, LIBMOSQ_CB_subscri
 	COMPAT_pthread_mutex_unlock(&mosq->callback_mutex);
 }
 
+
 void mosquitto_subscribe_v5_callback_set(struct mosquitto *mosq, LIBMOSQ_CB_subscribe_v5 on_subscribe)
 {
 	COMPAT_pthread_mutex_lock(&mosq->callback_mutex);
 	mosq->on_subscribe_v5 = on_subscribe;
 	COMPAT_pthread_mutex_unlock(&mosq->callback_mutex);
 }
+
 
 void mosquitto_unsubscribe_callback_set(struct mosquitto *mosq, LIBMOSQ_CB_unsubscribe on_unsubscribe)
 {
@@ -114,6 +126,7 @@ void mosquitto_unsubscribe_callback_set(struct mosquitto *mosq, LIBMOSQ_CB_unsub
 	COMPAT_pthread_mutex_unlock(&mosq->callback_mutex);
 }
 
+
 void mosquitto_unsubscribe_v5_callback_set(struct mosquitto *mosq, LIBMOSQ_CB_unsubscribe_v5 on_unsubscribe)
 {
 	COMPAT_pthread_mutex_lock(&mosq->callback_mutex);
@@ -121,12 +134,14 @@ void mosquitto_unsubscribe_v5_callback_set(struct mosquitto *mosq, LIBMOSQ_CB_un
 	COMPAT_pthread_mutex_unlock(&mosq->callback_mutex);
 }
 
+
 void mosquitto_unsubscribe2_v5_callback_set(struct mosquitto *mosq, LIBMOSQ_CB_unsubscribe2_v5 on_unsubscribe)
 {
 	COMPAT_pthread_mutex_lock(&mosq->callback_mutex);
 	mosq->on_unsubscribe2_v5 = on_unsubscribe;
 	COMPAT_pthread_mutex_unlock(&mosq->callback_mutex);
 }
+
 
 void mosquitto_log_callback_set(struct mosquitto *mosq, LIBMOSQ_CB_log on_log)
 {
@@ -294,6 +309,7 @@ void callback__on_disconnect(struct mosquitto *mosq, int rc, const mosquitto_pro
 	}
 	mosq->callback_depth--;
 }
+
 
 int callback__on_ext_auth(struct mosquitto *mosq, const char *auth_method, uint16_t auth_data_len, const void *auth_data, const mosquitto_property *properties)
 {

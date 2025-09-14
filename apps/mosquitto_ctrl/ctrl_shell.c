@@ -87,11 +87,13 @@ struct ctrl_shell data;
 static int generator_arg = -1;
 struct completion_tree_cmd *current_cmd_match = NULL;
 
+
 static void signal_winch(int signal)
 {
 	UNUSED(signal);
 	rl_resize_terminal();
 }
+
 
 static void signal_term(int signal)
 {
@@ -113,15 +115,18 @@ static void term_set_flag(bool set, unsigned int flag)
 	tcsetattr(0, TCSANOW, &ts);
 }
 
+
 static void term_set_echo(bool echo)
 {
 	term_set_flag(echo, ECHO);
 }
 
+
 static void term_set_canon(bool canon)
 {
 	term_set_flag(canon, ICANON);
 }
+
 
 void ctrl_shell_rtrim(char *buf)
 {
@@ -205,6 +210,7 @@ int ctrl_shell_publish_blocking(cJSON *j_command)
 	return rc;
 }
 
+
 void ctrl_shell__connect_blocking(const char *hostname, int port)
 {
 	pthread_mutex_lock(&data.response_mutex);
@@ -219,10 +225,12 @@ void ctrl_shell__connect_blocking(const char *hostname, int port)
 	pthread_mutex_unlock(&data.response_mutex);
 }
 
+
 void ctrl_shell_line_callback_set(void (*callback)(char *line))
 {
 	data.line_callback = callback;
 }
+
 
 int ctrl_shell_command_generic_arg0(const char *command)
 {
@@ -231,6 +239,7 @@ int ctrl_shell_command_generic_arg0(const char *command)
 
 	return ctrl_shell_publish_blocking(j_command);
 }
+
 
 int ctrl_shell_command_generic_arg1(const char *command, const char *itemlabel, char **saveptr)
 {
@@ -248,6 +257,7 @@ int ctrl_shell_command_generic_arg1(const char *command, const char *itemlabel, 
 
 	return ctrl_shell_publish_blocking(j_command);
 }
+
 
 int ctrl_shell_command_generic_int_arg1(const char *command, const char *itemlabel, char **saveptr)
 {
@@ -267,6 +277,7 @@ int ctrl_shell_command_generic_int_arg1(const char *command, const char *itemlab
 	return ctrl_shell_publish_blocking(j_command);
 }
 
+
 int ctrl_shell_command_generic_arg2(const char *command, const char *itemlabel1, const char *itemlabel2, char **saveptr)
 {
 	const char *item1, *item2;
@@ -285,6 +296,7 @@ int ctrl_shell_command_generic_arg2(const char *command, const char *itemlabel1,
 
 	return ctrl_shell_publish_blocking(j_command);
 }
+
 
 static int ctrl_shell__subscribe_blocking(const char *topic, void (*module_on_subscribe)(void))
 {
@@ -452,6 +464,7 @@ char **completion_matcher(const char *text, int start, int end)
 	return matches;
 }
 
+
 int my_get_address(int sock, char *buf, size_t len, uint16_t *remote_port)
 {
 	struct sockaddr_storage addr;
@@ -485,6 +498,7 @@ int my_get_address(int sock, char *buf, size_t len, uint16_t *remote_port)
 	return 1;
 }
 
+
 static void on_connect_reconnect(struct mosquitto *mosq, void *userdata, int rc)
 {
 	UNUSED(userdata);
@@ -501,6 +515,7 @@ static void on_connect_reconnect(struct mosquitto *mosq, void *userdata, int rc)
 	ctrl_shell_printf("%s\n", buf);
 }
 
+
 void ctrl_shell__on_connect(struct mosquitto *mosq, void *userdata, int rc)
 {
 	UNUSED(userdata);
@@ -513,6 +528,7 @@ void ctrl_shell__on_connect(struct mosquitto *mosq, void *userdata, int rc)
 	pthread_mutex_unlock(&data.response_mutex);
 	pthread_cond_signal(&data.response_cond);
 }
+
 
 void ctrl_shell__on_message(struct mosquitto *mosq, void *userdata, const struct mosquitto_message *msg)
 {
@@ -541,6 +557,7 @@ void ctrl_shell__on_message(struct mosquitto *mosq, void *userdata, const struct
 	pthread_cond_signal(&data.response_cond);
 }
 
+
 void ctrl_shell__on_publish(struct mosquitto *mosq, void *userdata, int mid, int reason_code, const mosquitto_property *props)
 {
 	UNUSED(mosq);
@@ -558,6 +575,7 @@ void ctrl_shell__on_publish(struct mosquitto *mosq, void *userdata, int mid, int
 	pthread_cond_signal(&data.response_cond);
 }
 
+
 void ctrl_shell__on_subscribe(struct mosquitto *mosq, void *userdata, int mid, int qos_count, const int *granted_qos)
 {
 	UNUSED(mosq);
@@ -573,6 +591,7 @@ void ctrl_shell__on_subscribe(struct mosquitto *mosq, void *userdata, int mid, i
 	pthread_mutex_unlock(&data.response_mutex);
 	pthread_cond_signal(&data.response_cond);
 }
+
 
 void ctrl_shell__load_module(void (*mod_init)(struct ctrl_shell__module *mod))
 {
@@ -603,6 +622,7 @@ void set_no_colour(void)
 	ANSI_NEGATIVE = "";
 }
 
+
 static void set_bg_light(void)
 {
 	ANSI_URL = ANSI_URL_light;
@@ -614,6 +634,7 @@ static void set_bg_light(void)
 	ANSI_POSITIVE = ANSI_POSITIVE_light;
 	ANSI_NEGATIVE = ANSI_NEGATIVE_light;
 }
+
 
 static void set_bg_dark(void)
 {
@@ -706,6 +727,7 @@ void ctrl_shell__cleanup(void)
 	FREE(data.tls_keyfile);
 }
 
+
 void ctrl_shell__main(struct mosq_config *config)
 {
 	memset(&data, 0, sizeof(data));
@@ -790,6 +812,7 @@ void ctrl_shell__main(struct mosq_config *config)
 	ctrl_shell__cleanup();
 }
 
+
 static void print_label(unsigned int level, const char *label)
 {
 	char *str = calloc(1, level*2 + strlen(label) + 30);
@@ -808,11 +831,13 @@ static void print_label(unsigned int level, const char *label)
 	free(str);
 }
 
+
 void ctrl_shell_print_label(unsigned int level, const char *label)
 {
 	print_label(level, label);
 	ctrl_shell_printf("\n");
 }
+
 
 void ctrl_shell_print_label_value(unsigned int level, const char *label, int align, const char *fmt, ...)
 {
@@ -834,6 +859,7 @@ void ctrl_shell_print_label_value(unsigned int level, const char *label, int ali
 	free(str);
 }
 
+
 void ctrl_shell_print_value(unsigned int level, const char *fmt, ...)
 {
 	va_list va;
@@ -849,10 +875,12 @@ void ctrl_shell_print_value(unsigned int level, const char *fmt, ...)
 	free(str);
 }
 
+
 void ctrl_shell_print_help_command(const char *cmd)
 {
 	ctrl_shell_printf("%s%s%s\n", ANSI_INPUT, cmd, ANSI_RESET);
 }
+
 
 void ctrl_shell_print_help_desc(const char *desc)
 {

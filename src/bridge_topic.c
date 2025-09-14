@@ -23,6 +23,8 @@ Contributors:
 #include "utlist.h"
 
 #ifdef WITH_BRIDGE
+
+
 static int bridge__create_remap_topic(const char *prefix, const char *topic, char **remap_topic)
 {
 	if(prefix){

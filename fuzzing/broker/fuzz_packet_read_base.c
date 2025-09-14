@@ -27,6 +27,7 @@ extern "C" {
 #define kMinInputLength 3
 #define kMaxInputLength 268435455U
 
+
 int fuzz_packet_read_base(const uint8_t *data, size_t size, int (*packet_func)(struct mosquitto *))
 {
 	struct mosquitto *context = NULL;

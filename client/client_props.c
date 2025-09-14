@@ -46,6 +46,7 @@ enum prop_type
 	PROP_TYPE_STRING_PAIR
 };
 
+
 /* This parses property inputs. It should work for any command type, but is limited at the moment.
  *
  * Format:
@@ -58,6 +59,7 @@ enum prop_type
  * publish message-expiry-interval 32
  * connect user-property key value
  */
+
 
 int cfg_parse_property(struct mosq_config *cfg, int argc, char *argv[], int *idx)
 {

@@ -20,6 +20,7 @@ Contributors:
 
 #include "dynamic_security.h"
 
+
 int dynsec__tick_callback(int event, void *event_data, void *userdata)
 {
 	UNUSED(event);

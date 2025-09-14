@@ -40,6 +40,7 @@ Contributors:
 
 #include "mosquitto.h"
 
+
 int mosquitto_getrandom(void *bytes, int count)
 {
 	int rc = MOSQ_ERR_UNKNOWN;

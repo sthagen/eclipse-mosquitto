@@ -51,6 +51,7 @@ void init_config(struct mosq_config *cfg)
 	cfg->protocol_version = MQTT_PROTOCOL_V5;
 }
 
+
 void client_config_cleanup(struct mosq_config *cfg)
 {
 	free(cfg->id);
@@ -82,6 +83,7 @@ void client_config_cleanup(struct mosq_config *cfg)
 #endif
 	free(cfg->data_file);
 }
+
 
 int ctrl_config_parse(struct mosq_config *cfg, int *argc, char **argv[])
 {
@@ -132,6 +134,7 @@ int ctrl_config_parse(struct mosq_config *cfg, int *argc, char **argv[])
 
 	return MOSQ_ERR_SUCCESS;
 }
+
 
 /* Process a tokenised single line from a file or set of real argc/argv */
 static int client_config_line_proc(struct mosq_config *cfg, int *argc, char **argvp[])
@@ -475,6 +478,7 @@ unknown_option:
 	return 1;
 }
 
+
 static char *get_default_cfg_location(void)
 {
 	char *loc = NULL;
@@ -526,6 +530,7 @@ static char *get_default_cfg_location(void)
 #endif
 	return loc;
 }
+
 
 int client_config_load(struct mosq_config *cfg)
 {
@@ -715,6 +720,8 @@ int client_connect(struct mosquitto *mosq, struct mosq_config *cfg)
 }
 
 #ifdef WITH_SOCKS
+
+
 /* Convert %25 -> %, %3a, %3A -> :, %40 -> @ */
 static int mosquitto__urldecode(char *str)
 {
@@ -758,6 +765,7 @@ static int mosquitto__urldecode(char *str)
 	}
 	return 0;
 }
+
 
 static int mosquitto__parse_socks_url(struct mosq_config *cfg, char *url)
 {

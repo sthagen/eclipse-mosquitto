@@ -15,6 +15,7 @@ struct mosquitto__base_msg{
 
 };
 
+
 int log__printf(struct mosquitto *mosq, unsigned int priority, const char *fmt, ...)
 {
 	UNUSED(mosq);
@@ -24,11 +25,13 @@ int log__printf(struct mosquitto *mosq, unsigned int priority, const char *fmt, 
 	return 0;
 }
 
+
 bool net__is_connected(struct mosquitto *mosq)
 {
 	UNUSED(mosq);
 	return false;
 }
+
 
 int net__socket_close(struct mosquitto *mosq)
 {
@@ -37,12 +40,14 @@ int net__socket_close(struct mosquitto *mosq)
 	return MOSQ_ERR_SUCCESS;
 }
 
+
 int net__socket_shutdown(struct mosquitto *mosq)
 {
 	UNUSED(mosq);
 
 	return MOSQ_ERR_SUCCESS;
 }
+
 
 int send__pingreq(struct mosquitto *mosq)
 {
@@ -51,12 +56,14 @@ int send__pingreq(struct mosquitto *mosq)
 	return MOSQ_ERR_SUCCESS;
 }
 
+
 void callback__on_disconnect(struct mosquitto *mosq, int rc, const mosquitto_property *props)
 {
 	UNUSED(mosq);
 	UNUSED(rc);
 	UNUSED(props);
 }
+
 
 void callback__on_publish(struct mosquitto *mosq, int mid, int reason_code, const mosquitto_property *properties)
 {
@@ -66,6 +73,7 @@ void callback__on_publish(struct mosquitto *mosq, int mid, int reason_code, cons
 	UNUSED(properties);
 }
 
+
 void do_client_disconnect(struct mosquitto *mosq, int reason_code, const mosquitto_property *properties)
 {
 	UNUSED(mosq);
@@ -73,11 +81,13 @@ void do_client_disconnect(struct mosquitto *mosq, int reason_code, const mosquit
 	UNUSED(properties);
 }
 
+
 int handle__packet(struct mosquitto *context)
 {
 	UNUSED(context);
 	return MOSQ_ERR_SUCCESS;
 }
+
 
 ssize_t net__read(struct mosquitto *mosq, void *buf, size_t count)
 {
@@ -87,6 +97,7 @@ ssize_t net__read(struct mosquitto *mosq, void *buf, size_t count)
 	return 1;
 }
 
+
 ssize_t net__write(struct mosquitto *mosq, const void *buf, size_t count)
 {
 	UNUSED(mosq);
@@ -95,31 +106,39 @@ ssize_t net__write(struct mosquitto *mosq, const void *buf, size_t count)
 	return 1;
 }
 
+
 void plugin_persist__handle_retain_set(struct mosquitto__base_msg *msg)
 {
 	UNUSED(msg);
 }
+
 
 void plugin_persist__handle_retain_remove(struct mosquitto__base_msg *msg)
 {
 	UNUSED(msg);
 }
 
+
 void plugin_persist__process_retain_events(bool force)
 {
 	UNUSED(force);
 }
+
 
 void plugin_persist__queue_retain_event(struct mosquitto__base_msg *msg, int event)
 {
 	UNUSED(msg);
 	UNUSED(event);
 }
+
+
 void ws__prepare_packet(struct mosquitto *mosq, struct mosquitto__packet *packet)
 {
 	UNUSED(mosq);
 	UNUSED(packet);
 }
+
+
 ssize_t net__read_ws(struct mosquitto *mosq, void *buf, size_t count)
 {
 	UNUSED(mosq);

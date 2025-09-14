@@ -21,6 +21,7 @@ Contributors:
 
 #include "mosquitto_signal.h"
 
+
 static void print_usage(void)
 {
 	printf("mosquitto_signal is a tool for sending control signals to mosquitto.\n");
@@ -44,6 +45,7 @@ static void print_usage(void)
 	printf(" xtreport      - (debug) write internal data to xtmosquitto.kcg.<pid>.<iter>\n");
 	printf("\nSee https://mosquitto.org/ for more information.\n\n");
 }
+
 
 int main(int argc, char *argv[])
 {

@@ -32,6 +32,7 @@ Contributors:
 
 static int run = 1;
 
+
 static void on_message(struct mosquitto *mosq, void *obj, const struct mosquitto_message *msg, const mosquitto_property *properties)
 {
 	struct mosq_ctrl *ctrl = obj;

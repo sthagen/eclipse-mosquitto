@@ -30,6 +30,7 @@ Contributors:
 #include "read_handle.h"
 #include "util_mosq.h"
 
+
 int handle__connack(struct mosquitto *mosq)
 {
 	uint8_t connect_flags;

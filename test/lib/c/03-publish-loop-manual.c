@@ -7,6 +7,7 @@
 
 static int run = -1;
 
+
 static void do_loop(struct mosquitto *mosq)
 {
 	int sock;
@@ -61,6 +62,7 @@ static void on_connect_v5(struct mosquitto *mosq, void *obj, int rc, int flags, 
 	}
 }
 
+
 static void on_disconnect_v5(struct mosquitto *mosq, void *obj, int rc, const mosquitto_property *properties)
 {
 	(void)mosq;
@@ -69,6 +71,7 @@ static void on_disconnect_v5(struct mosquitto *mosq, void *obj, int rc, const mo
 
 	run = rc;
 }
+
 
 static void on_subscribe_v5(struct mosquitto *mosq, void *obj, int mid, int qos_count, const int *granted_qos, const mosquitto_property *props)
 {
@@ -81,6 +84,7 @@ static void on_subscribe_v5(struct mosquitto *mosq, void *obj, int mid, int qos_
 	mosquitto_publish_v5(mosq, NULL, "loop/test", strlen("message"), "message", 0, false, NULL);
 }
 
+
 static void on_message_v5(struct mosquitto *mosq, void *obj, const struct mosquitto_message *msg, const mosquitto_property *properties)
 {
 	(void)mosq;
@@ -90,6 +94,7 @@ static void on_message_v5(struct mosquitto *mosq, void *obj, const struct mosqui
 
 	mosquitto_disconnect(mosq);
 }
+
 
 int main(int argc, char *argv[])
 {

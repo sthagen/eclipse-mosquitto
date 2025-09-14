@@ -4,6 +4,7 @@
 #include <string.h>
 #include <mosquitto.h>
 
+
 static void on_connect(struct mosquitto *mosq, void *obj, int rc)
 {
 	(void)mosq;
@@ -13,6 +14,7 @@ static void on_connect(struct mosquitto *mosq, void *obj, int rc)
 		exit(1);
 	}
 }
+
 
 static void on_message(struct mosquitto *mosq, void *obj, const struct mosquitto_message *msg)
 {
@@ -46,6 +48,7 @@ static void on_message(struct mosquitto *mosq, void *obj, const struct mosquitto
 
 	exit(0);
 }
+
 
 int main(int argc, char *argv[])
 {

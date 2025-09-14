@@ -11,6 +11,7 @@ int init_topic_tests(void);
 int init_trim_tests(void);
 int init_utf8_tests(void);
 
+
 int main(int argc, char *argv[])
 {
 	unsigned int fails;

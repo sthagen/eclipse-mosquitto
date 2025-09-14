@@ -39,17 +39,20 @@ struct connection_array_context{
 static int dynsec__remove_client_from_all_groups(struct dynsec__data *data, const char *username);
 static void client__remove_all_roles(struct dynsec__client *client);
 
+
 /* ################################################################
  * #
  * # Local variables
  * #
  * ################################################################ */
 
+
 /* ################################################################
  * #
  * # Utility functions
  * #
  * ################################################################ */
+
 
 static int client_cmp(void *a, void *b)
 {
@@ -88,6 +91,7 @@ static void client__free_item(struct dynsec__data *data, struct dynsec__client *
 	mosquitto_free(client);
 }
 
+
 void dynsec_clients__cleanup(struct dynsec__data *data)
 {
 	struct dynsec__client *client, *client_tmp;
@@ -97,11 +101,13 @@ void dynsec_clients__cleanup(struct dynsec__data *data)
 	}
 }
 
+
 /* ################################################################
  * #
  * # Config file load and save
  * #
  * ################################################################ */
+
 
 int dynsec_clients__config_load(struct dynsec__data *data, cJSON *tree)
 {
@@ -471,6 +477,7 @@ int dynsec_clients__process_delete(struct dynsec__data *data, struct mosquitto_c
 	}
 }
 
+
 int dynsec_clients__process_disable(struct dynsec__data *data, struct mosquitto_control_cmd *cmd)
 {
 	const char *username;
@@ -616,6 +623,7 @@ static int client__set_password(struct dynsec__client *client, const char *passw
 	return mosquitto_pw_hash_encoded(client->pw, password);
 }
 
+
 int dynsec_clients__process_set_password(struct dynsec__data *data, struct mosquitto_control_cmd *cmd)
 {
 	const char *username, *password;
@@ -674,6 +682,7 @@ static void client__add_new_roles(struct dynsec__client *client, struct dynsec__
 	}
 }
 
+
 static void client__remove_all_roles(struct dynsec__client *client)
 {
 	struct dynsec__rolelist *rolelist, *rolelist_tmp;
@@ -682,6 +691,7 @@ static void client__remove_all_roles(struct dynsec__client *client)
 		dynsec_rolelist__client_remove(client, rolelist->role);
 	}
 }
+
 
 int dynsec_clients__process_modify(struct dynsec__data *data, struct mosquitto_control_cmd *cmd)
 {

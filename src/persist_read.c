@@ -322,6 +322,7 @@ cleanup:
 	return rc;
 }
 
+
 static int persist__retain_chunk_restore(FILE *db_fptr)
 {
 	struct mosquitto__base_msg *base_msg;
@@ -353,6 +354,7 @@ static int persist__retain_chunk_restore(FILE *db_fptr)
 	}
 	return MOSQ_ERR_SUCCESS;
 }
+
 
 static int persist__sub_chunk_restore(FILE *db_fptr)
 {
@@ -540,6 +542,7 @@ error:
 	if(fptr) fclose(fptr);
 	return 1;
 }
+
 
 static int persist__restore_sub(const struct mosquitto_subscription *sub)
 {

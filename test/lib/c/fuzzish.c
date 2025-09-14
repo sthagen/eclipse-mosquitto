@@ -15,11 +15,13 @@ static int proto_ver;
 #  define UNUSED(A) (void)(A)
 #endif
 
+
 static void signal_handler(int s)
 {
 	UNUSED(s);
 	run = 0;
 }
+
 
 static void prop_test(const mosquitto_property *props)
 {
@@ -33,6 +35,7 @@ static void prop_test(const mosquitto_property *props)
 	}
 	mosquitto_property_free_all(&dest);
 }
+
 
 static void msg_test(const struct mosquitto_message *msg)
 {
@@ -48,11 +51,13 @@ static void msg_test(const struct mosquitto_message *msg)
 	mosquitto_message_free_contents(&dest);
 }
 
+
 static void on_pre_connect(struct mosquitto *mosq, void *obj)
 {
 	UNUSED(mosq);
 	UNUSED(obj);
 }
+
 
 static void on_connect(struct mosquitto *mosq, void *obj, int rc)
 {
@@ -191,6 +196,7 @@ error:
 	exit(1);
 }
 
+
 static void on_connect_with_flags(struct mosquitto *mosq, void *obj, int rc, int flags)
 {
 	UNUSED(mosq);
@@ -198,6 +204,7 @@ static void on_connect_with_flags(struct mosquitto *mosq, void *obj, int rc, int
 	UNUSED(rc);
 	UNUSED(flags);
 }
+
 
 static void on_connect_v5(struct mosquitto *mosq, void *obj, int rc, int flags, const mosquitto_property *props)
 {
@@ -209,6 +216,7 @@ static void on_connect_v5(struct mosquitto *mosq, void *obj, int rc, int flags, 
 	prop_test(props);
 }
 
+
 static void on_disconnect(struct mosquitto *mosq, void *obj, int rc)
 {
 	UNUSED(mosq);
@@ -216,6 +224,7 @@ static void on_disconnect(struct mosquitto *mosq, void *obj, int rc)
 
 	run = rc;
 }
+
 
 static void on_disconnect_v5(struct mosquitto *mosq, void *obj, int rc, const mosquitto_property *props)
 {
@@ -227,12 +236,14 @@ static void on_disconnect_v5(struct mosquitto *mosq, void *obj, int rc, const mo
 	run = rc;
 }
 
+
 static void on_publish(struct mosquitto *mosq, void *obj, int mid)
 {
 	UNUSED(mosq);
 	UNUSED(obj);
 	UNUSED(mid);
 }
+
 
 static void on_publish_v5(struct mosquitto *mosq, void *obj, int mid, int reason_code, const mosquitto_property *props)
 {
@@ -244,6 +255,7 @@ static void on_publish_v5(struct mosquitto *mosq, void *obj, int mid, int reason
 	prop_test(props);
 }
 
+
 static void on_message(struct mosquitto *mosq, void *obj, const struct mosquitto_message *msg)
 {
 	UNUSED(mosq);
@@ -251,6 +263,7 @@ static void on_message(struct mosquitto *mosq, void *obj, const struct mosquitto
 
 	msg_test(msg);
 }
+
 
 static void on_message_v5(struct mosquitto *mosq, void *obj, const struct mosquitto_message *msg, const mosquitto_property *props)
 {
@@ -260,6 +273,7 @@ static void on_message_v5(struct mosquitto *mosq, void *obj, const struct mosqui
 	msg_test(msg);
 	prop_test(props);
 }
+
 
 static void on_subscribe(struct mosquitto *mosq, void *obj, int mid, int qos_count, const int *granted_qos)
 {
@@ -278,6 +292,7 @@ static void on_subscribe(struct mosquitto *mosq, void *obj, int mid, int qos_cou
 
 	(void)tot;
 }
+
 
 static void on_subscribe_v5(struct mosquitto *mosq, void *obj, int mid, int qos_count, const int *granted_qos, const mosquitto_property *props)
 {
@@ -298,12 +313,14 @@ static void on_subscribe_v5(struct mosquitto *mosq, void *obj, int mid, int qos_
 	(void)tot;
 }
 
+
 static void on_unsubscribe(struct mosquitto *mosq, void *obj, int mid)
 {
 	UNUSED(mosq);
 	UNUSED(obj);
 	UNUSED(mid);
 }
+
 
 static void on_unsubscribe_v5(struct mosquitto *mosq, void *obj, int mid, const mosquitto_property *props)
 {
@@ -313,6 +330,7 @@ static void on_unsubscribe_v5(struct mosquitto *mosq, void *obj, int mid, const 
 
 	prop_test(props);
 }
+
 
 static void on_unsubscribe2_v5(struct mosquitto *mosq, void *obj, int mid, int reason_code_count, const int *reason_codes, const mosquitto_property *props)
 {
@@ -330,6 +348,7 @@ static void on_unsubscribe2_v5(struct mosquitto *mosq, void *obj, int mid, int r
 		exit(1);
 	}
 }
+
 
 static void on_log(struct mosquitto *mosq, void *obj, int level, const char *str)
 {
@@ -358,6 +377,7 @@ static void setup_signal_handler(void)
 		exit(1);
 	}
 }
+
 
 int main(int argc, char *argv[])
 {

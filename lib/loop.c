@@ -38,6 +38,7 @@ Contributors:
 #define HAVE_PSELECT
 #endif
 
+
 int mosquitto_loop(struct mosquitto *mosq, int timeout, int max_packets)
 {
 #ifdef HAVE_PSELECT

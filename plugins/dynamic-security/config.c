@@ -28,6 +28,7 @@ Contributors:
 #include "dynamic_security.h"
 #include "json_help.h"
 
+
 static int dynsec__general_config_load(struct dynsec__data *data, cJSON *tree)
 {
 	cJSON *j_default_access;
@@ -43,6 +44,7 @@ static int dynsec__general_config_load(struct dynsec__data *data, cJSON *tree)
 	}
 	return MOSQ_ERR_SUCCESS;
 }
+
 
 static int dynsec__general_config_save(struct dynsec__data *data, cJSON *tree)
 {
@@ -68,6 +70,7 @@ static int dynsec__general_config_save(struct dynsec__data *data, cJSON *tree)
 	return MOSQ_ERR_SUCCESS;
 }
 
+
 int dynsec__config_from_json(struct dynsec__data *data, const char *json_str)
 {
 	cJSON *tree;
@@ -91,6 +94,7 @@ int dynsec__config_from_json(struct dynsec__data *data, const char *json_str)
 	cJSON_Delete(tree);
 	return 0;
 }
+
 
 int dynsec__config_load(struct dynsec__data *data)
 {
@@ -147,6 +151,7 @@ int dynsec__config_load(struct dynsec__data *data)
 	return rc;
 }
 
+
 char *dynsec__config_to_json(struct dynsec__data *data)
 {
 	cJSON *tree;
@@ -170,12 +175,14 @@ char *dynsec__config_to_json(struct dynsec__data *data)
 	return json_str;
 }
 
-void dynsec__log_write_error(const char* msg)
+
+void dynsec__log_write_error(const char *msg)
 {
 	mosquitto_log_printf(MOSQ_LOG_ERR, "Error saving Dynamic security plugin config: %s", msg);
 }
 
-int dynsec__write_json_config(FILE* fptr, void* user_data)
+
+int dynsec__write_json_config(FILE *fptr, void *user_data)
 {
 	struct dynsec__data *data = (struct dynsec__data *)user_data;
 	char *json_str;
@@ -198,11 +205,13 @@ int dynsec__write_json_config(FILE* fptr, void* user_data)
 	return rc;
 }
 
+
 void dynsec__config_batch_save(struct dynsec__data *data)
 {
 	data->changeindex++;
 	data->need_save = true;
 }
+
 
 void dynsec__config_save(struct dynsec__data *data)
 {

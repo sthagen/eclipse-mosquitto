@@ -23,6 +23,7 @@ Contributors:
 static int listensock_index = 0;
 extern int g_run;
 
+
 void listener__set_defaults(struct mosquitto__listener *listener)
 {
 	listener->disable_protocol_v3 = false;
@@ -107,6 +108,8 @@ static int listeners__start_single_mqtt(struct mosquitto__listener *listener)
 
 
 #if defined(WITH_WEBSOCKETS) && WITH_WEBSOCKETS == WS_IS_LWS
+
+
 void listeners__add_websockets(struct lws_context *ws_context, mosq_sock_t fd)
 {
 	struct mosquitto__listener *listener = NULL;

@@ -167,6 +167,7 @@ static void config__cleanup_plugins(void);
 static int config__check_bridges(struct mosquitto__config *config);
 #endif
 
+
 static int config__add_listener(struct mosquitto__config *config)
 {
 	struct mosquitto__listener *listener;
@@ -202,6 +203,7 @@ static int config__add_listener(struct mosquitto__config *config)
 	return MOSQ_ERR_SUCCESS;
 }
 
+
 static int config__create_default_listener(struct mosquitto__config *config, const char *option_name)
 {
 	if(config->default_listener) return MOSQ_ERR_SUCCESS;
@@ -231,6 +233,7 @@ static void conf__set_cur_security_options(struct mosquitto__config *config, str
 		(*security_options) = &config->security_options;
 	}
 }
+
 
 static int conf__attempt_resolve(const char *host, const char *text, unsigned int log, const char *msg)
 {
@@ -377,6 +380,7 @@ static void config__cleanup_plugins(void)
 	mosquitto_FREE(db.plugins);
 }
 
+
 void config__init(struct mosquitto__config *config)
 {
 	memset(config, 0, sizeof(struct mosquitto__config));
@@ -384,6 +388,7 @@ void config__init(struct mosquitto__config *config)
 
 	config->daemon = false;
 }
+
 
 void config__cleanup(struct mosquitto__config *config)
 {
@@ -469,6 +474,8 @@ void config__cleanup(struct mosquitto__config *config)
 }
 
 #ifdef WITH_BRIDGE
+
+
 void config__bridge_cleanup(struct mosquitto__bridge *bridge)
 {
 	if(bridge == NULL) return;
@@ -520,12 +527,14 @@ void config__bridge_cleanup(struct mosquitto__bridge *bridge)
 }
 #endif
 
+
 static void print_version(void)
 {
 	printf("mosquitto %s\n", VERSION);
 	printf("Copyright © 2025 Roger Light.\n");
 	printf("License EPL-2.0 OR BSD-3-Clause.\n");
 }
+
 
 static void print_usage(void)
 {
@@ -548,6 +557,7 @@ static void print_usage(void)
 	printf("      server.\n");
 	printf("\nSee https://mosquitto.org/ for more information.\n\n");
 }
+
 
 int config__parse_args(struct mosquitto__config *config, int argc, char *argv[])
 {
@@ -646,6 +656,7 @@ int config__parse_args(struct mosquitto__config *config, int argc, char *argv[])
 	}
 	return config__check(config);
 }
+
 
 static void config__copy(struct mosquitto__config *src, struct mosquitto__config *dest)
 {
@@ -2588,6 +2599,7 @@ static int config__read_file_core(struct mosquitto__config *config, bool reload,
 	return MOSQ_ERR_SUCCESS;
 }
 
+
 int config__read_file(struct mosquitto__config *config, bool reload, const char *file, struct config_recurse *cr, int level, int *lineno)
 {
 	int rc;
@@ -2628,6 +2640,7 @@ int config__read_file(struct mosquitto__config *config, bool reload, const char 
 	return rc;
 }
 
+
 static int config__check_proxy(struct mosquitto__config *config)
 {
 	for(int i=0; i<config->listener_count; i++){
@@ -2648,6 +2661,7 @@ static int config__check_proxy(struct mosquitto__config *config)
 
 	return MOSQ_ERR_SUCCESS;
 }
+
 
 static int config__check(struct mosquitto__config *config)
 {
@@ -2678,6 +2692,8 @@ static int config__check(struct mosquitto__config *config)
 }
 
 #ifdef WITH_BRIDGE
+
+
 static int config__check_bridges(struct mosquitto__config *config)
 {
 	struct mosquitto__bridge *bridge1, *bridge2;
@@ -2774,6 +2790,7 @@ static int conf__parse_bool(char **token, const char *name, bool *value, char **
 	return MOSQ_ERR_SUCCESS;
 }
 
+
 static int conf__parse_int(char **token, const char *name, int *value, char **saveptr)
 {
 	*token = strtok_r(NULL, " ", saveptr);
@@ -2797,6 +2814,7 @@ static int conf__parse_int(char **token, const char *name, int *value, char **sa
 	return MOSQ_ERR_SUCCESS;
 }
 
+
 static int conf__parse_ssize_t(char **token, const char *name, ssize_t *value, char **saveptr)
 {
 	*token = strtok_r(NULL, " ", saveptr);
@@ -2809,6 +2827,7 @@ static int conf__parse_ssize_t(char **token, const char *name, ssize_t *value, c
 
 	return MOSQ_ERR_SUCCESS;
 }
+
 
 static int conf__parse_string(char **token, const char *name, char **value, char **saveptr)
 {

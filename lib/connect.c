@@ -101,6 +101,7 @@ int mosquitto_connect_bind(struct mosquitto *mosq, const char *host, int port, i
 	return mosquitto_connect_bind_v5(mosq, host, port, keepalive, bind_address, NULL);
 }
 
+
 int mosquitto_connect_bind_v5(struct mosquitto *mosq, const char *host, int port, int keepalive, const char *bind_address, const mosquitto_property *properties)
 {
 	int rc;
@@ -161,6 +162,7 @@ int mosquitto_reconnect(struct mosquitto *mosq)
 {
 	return mosquitto__reconnect(mosq, true);
 }
+
 
 int get_address(int sock, char *buf, size_t len, uint16_t *remote_port)
 {
@@ -278,6 +280,7 @@ int mosquitto_disconnect(struct mosquitto *mosq)
 {
 	return mosquitto_disconnect_v5(mosq, 0, NULL);
 }
+
 
 int mosquitto_disconnect_v5(struct mosquitto *mosq, int reason_code, const mosquitto_property *properties)
 {

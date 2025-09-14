@@ -34,11 +34,13 @@ Contributors:
 static cJSON *add_role_to_json(struct dynsec__role *role, bool verbose);
 static void role__remove_all_clients(struct dynsec__data *data, struct dynsec__role *role);
 
+
 /* ################################################################
  * #
  * # Utility functions
  * #
  * ################################################################ */
+
 
 static int role_cmp(void *a, void *b)
 {
@@ -55,6 +57,7 @@ static void role__free_acl(struct dynsec__acl **acl, struct dynsec__acl *item)
 	mosquitto_free(item);
 }
 
+
 static void role__free_all_acls(struct dynsec__acl **acl)
 {
 	struct dynsec__acl *iter, *tmp = NULL;
@@ -63,6 +66,7 @@ static void role__free_all_acls(struct dynsec__acl **acl)
 		role__free_acl(acl, iter);
 	}
 }
+
 
 static void role__free_item(struct dynsec__data *data, struct dynsec__role *role, bool remove_from_hash)
 {
@@ -151,6 +155,7 @@ static int add_single_acl_to_json(cJSON *j_array, const char *acl_type, struct d
 	return 0;
 }
 
+
 static int add_acls_to_json(cJSON *j_role, struct dynsec__role *role)
 {
 	cJSON *j_acls;
@@ -171,6 +176,7 @@ static int add_acls_to_json(cJSON *j_role, struct dynsec__role *role)
 	}
 	return 0;
 }
+
 
 int dynsec_roles__config_save(struct dynsec__data *data, cJSON *tree)
 {
@@ -458,6 +464,7 @@ static void role__remove_all_clients(struct dynsec__data *data, struct dynsec__r
 	}
 }
 
+
 static void role__remove_all_groups(struct dynsec__data *data, struct dynsec__role *role)
 {
 	struct dynsec__grouplist *grouplist, *grouplist_tmp = NULL;
@@ -471,6 +478,7 @@ static void role__remove_all_groups(struct dynsec__data *data, struct dynsec__ro
 		dynsec_rolelist__group_remove(grouplist->group, role);
 	}
 }
+
 
 int dynsec_roles__process_delete(struct dynsec__data *data, struct mosquitto_control_cmd *cmd)
 {
@@ -539,6 +547,7 @@ static cJSON *add_role_to_json(struct dynsec__role *role, bool verbose)
 	}
 	return j_role;
 }
+
 
 int dynsec_roles__process_list(struct dynsec__data *data, struct mosquitto_control_cmd *cmd)
 {

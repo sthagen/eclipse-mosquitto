@@ -60,6 +60,7 @@ static void on_message_callback(struct mosquitto *mosq, void *obj, const struct 
 	}
 }
 
+
 static int on_message_simple(struct mosquitto *mosq, void *obj, const struct mosquitto_message *message)
 {
 	struct userdata__simple *userdata = obj;

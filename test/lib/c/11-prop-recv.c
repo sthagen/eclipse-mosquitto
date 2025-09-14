@@ -8,6 +8,7 @@
 static int run = -1;
 static int qos = -1;
 
+
 static void on_connect(struct mosquitto *mosq, void *obj, int rc)
 {
 	(void)mosq;

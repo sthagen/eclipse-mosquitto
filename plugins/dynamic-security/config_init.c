@@ -32,6 +32,7 @@ Contributors:
 
 const char pw_chars[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-=_+[]{}@#~,./<>?";
 
+
 static int add_default_access(cJSON *j_tree)
 {
 	cJSON *j_default_access;
@@ -223,6 +224,7 @@ static int client_add_admin(struct dynsec__data *data, FILE *pwfile, cJSON *j_cl
 	return MOSQ_ERR_SUCCESS;
 }
 
+
 static int client_add_user(struct dynsec__data *data, FILE *pwfile, cJSON *j_clients)
 {
 	cJSON *j_client, *j_roles;
@@ -262,6 +264,7 @@ static int client_add_user(struct dynsec__data *data, FILE *pwfile, cJSON *j_cli
 
 	return MOSQ_ERR_SUCCESS;
 }
+
 
 static int add_clients(struct dynsec__data *data, cJSON *j_tree)
 {
@@ -325,6 +328,7 @@ static int group_add_anon(cJSON *j_groups)
 	return MOSQ_ERR_SUCCESS;
 }
 
+
 static int add_groups(cJSON *j_tree)
 {
 	cJSON *j_groups;
@@ -355,6 +359,7 @@ static int acl_add(cJSON *j_acls, const char *acltype, const char *topic, int pr
 	}
 }
 
+
 static int add_role_with_full_permission(cJSON *j_roles, const char *role_name, const char *text_description, const char *topic_pattern)
 {
 	cJSON *j_role, *j_acls;
@@ -379,6 +384,7 @@ static int add_role_with_full_permission(cJSON *j_roles, const char *role_name, 
 	}
 	return MOSQ_ERR_SUCCESS;
 }
+
 
 static int role_add_sys_notify(cJSON *j_roles)
 {
@@ -407,6 +413,7 @@ static int role_add_sys_notify(cJSON *j_roles)
 	return MOSQ_ERR_SUCCESS;
 }
 
+
 static int role_add_sys_observe(cJSON *j_roles)
 {
 	cJSON *j_role, *j_acls;
@@ -434,6 +441,7 @@ static int role_add_sys_observe(cJSON *j_roles)
 	}
 	return MOSQ_ERR_SUCCESS;
 }
+
 
 static int role_add_topic_observe(cJSON *j_roles)
 {

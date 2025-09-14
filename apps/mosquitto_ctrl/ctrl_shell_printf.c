@@ -22,12 +22,14 @@ Contributors:
 
 #include "ctrl_shell_internal.h"
 
+
 void ctrl_shell_vprintf(const char *fmt, va_list va)
 {
 	char buf[2000];
 	vsnprintf(buf, sizeof(buf), fmt, va);
 	ctrl_shell__output(buf);
 }
+
 
 void ctrl_shell_printf(const char *fmt, ...)
 {

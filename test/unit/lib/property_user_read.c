@@ -5,6 +5,7 @@
 #include "property_mosq.h"
 #include "packet_mosq.h"
 
+
 static void generate_full_proplist(mosquitto_property **proplist)
 {
 	int rc;
@@ -93,6 +94,7 @@ static void generate_full_proplist(mosquitto_property **proplist)
 	CU_ASSERT_EQUAL(rc, MOSQ_ERR_SUCCESS);
 }
 
+
 static void generate_partial_proplist(mosquitto_property **proplist)
 {
 	int rc;
@@ -146,9 +148,11 @@ static void generate_partial_proplist(mosquitto_property **proplist)
 	CU_ASSERT_EQUAL(rc, MOSQ_ERR_SUCCESS);
 }
 
+
 /* ========================================================================
  * SINGLE READ
  * ======================================================================== */
+
 
 static void read_byte_helper(const mosquitto_property *proplist, int identifier, uint8_t expected_value)
 {
@@ -160,6 +164,7 @@ static void read_byte_helper(const mosquitto_property *proplist, int identifier,
 	CU_ASSERT_EQUAL(value, expected_value);
 }
 
+
 static void read_int16_helper(const mosquitto_property *proplist, int identifier, uint16_t expected_value)
 {
 	const mosquitto_property *prop;
@@ -169,6 +174,7 @@ static void read_int16_helper(const mosquitto_property *proplist, int identifier
 	CU_ASSERT_PTR_NOT_NULL(prop);
 	CU_ASSERT_EQUAL(value, expected_value);
 }
+
 
 static void read_int32_helper(const mosquitto_property *proplist, int identifier, uint32_t expected_value)
 {
@@ -180,6 +186,7 @@ static void read_int32_helper(const mosquitto_property *proplist, int identifier
 	CU_ASSERT_EQUAL(value, expected_value);
 }
 
+
 static void read_varint_helper(const mosquitto_property *proplist, int identifier, uint32_t expected_value)
 {
 	const mosquitto_property *prop;
@@ -189,6 +196,7 @@ static void read_varint_helper(const mosquitto_property *proplist, int identifie
 	CU_ASSERT_PTR_NOT_NULL(prop);
 	CU_ASSERT_EQUAL(value, expected_value);
 }
+
 
 static void read_binary_helper(const mosquitto_property *proplist, int identifier, const void *expected_value, uint16_t expected_length)
 {
@@ -210,6 +218,7 @@ static void read_binary_helper(const mosquitto_property *proplist, int identifie
 	SAFE_FREE(value);
 }
 
+
 static void read_string_helper(const mosquitto_property *proplist, int identifier, const char *expected_value)
 {
 	const mosquitto_property *prop;
@@ -227,6 +236,7 @@ static void read_string_helper(const mosquitto_property *proplist, int identifie
 	}
 	SAFE_FREE(value);
 }
+
 
 static void read_string_pair_helper(const mosquitto_property *proplist, int identifier, const char *expected_key, const char *expected_value)
 {
@@ -279,6 +289,7 @@ static void TEST_read_null_binary(void)
 	mosquitto_property_free_all(&proplist_copy);
 }
 
+
 static void TEST_read_null_string(void)
 {
 	int rc;
@@ -300,6 +311,7 @@ static void TEST_read_null_string(void)
 	mosquitto_property_free_all(&proplist_copy);
 }
 
+
 static void TEST_read_null_string_pair(void)
 {
 	int rc;
@@ -320,6 +332,7 @@ static void TEST_read_null_string_pair(void)
 	mosquitto_property_free_all(&proplist);
 	mosquitto_property_free_all(&proplist_copy);
 }
+
 
 static void TEST_read_single_byte(void)
 {
@@ -355,6 +368,7 @@ static void TEST_read_single_byte(void)
 	mosquitto_property_free_all(&proplist_copy);
 }
 
+
 static void TEST_read_single_int16(void)
 {
 	int rc;
@@ -380,6 +394,7 @@ static void TEST_read_single_int16(void)
 	mosquitto_property_free_all(&proplist);
 	mosquitto_property_free_all(&proplist_copy);
 }
+
 
 static void TEST_read_single_int32(void)
 {
@@ -407,6 +422,7 @@ static void TEST_read_single_int32(void)
 	mosquitto_property_free_all(&proplist_copy);
 }
 
+
 static void TEST_read_single_varint(void)
 {
 	int rc;
@@ -426,6 +442,7 @@ static void TEST_read_single_varint(void)
 	mosquitto_property_free_all(&proplist);
 	mosquitto_property_free_all(&proplist_copy);
 }
+
 
 static void TEST_read_single_binary(void)
 {
@@ -450,6 +467,7 @@ static void TEST_read_single_binary(void)
 	mosquitto_property_free_all(&proplist);
 	mosquitto_property_free_all(&proplist_copy);
 }
+
 
 static void TEST_read_single_string(void)
 {
@@ -485,6 +503,7 @@ static void TEST_read_single_string(void)
 	mosquitto_property_free_all(&proplist_copy);
 }
 
+
 static void TEST_read_single_string_pair(void)
 {
 	int rc;
@@ -507,9 +526,11 @@ static void TEST_read_single_string_pair(void)
 	mosquitto_property_free_all(&proplist_copy);
 }
 
+
 /* ========================================================================
  * MISSING READ
  * ======================================================================== */
+
 
 static void missing_read_helper(mosquitto_property *proplist)
 {
@@ -622,9 +643,11 @@ static void TEST_read_missing(void)
 	mosquitto_property_free_all(&proplist_copy);
 }
 
+
 /* ========================================================================
  * STRING TO PROPERTY INFO
  * ======================================================================== */
+
 
 static void string_to_property_info_helper(const char *str, int rc_expected, int identifier_expected, int type_expected)
 {
@@ -638,6 +661,7 @@ static void string_to_property_info_helper(const char *str, int rc_expected, int
 		CU_ASSERT_EQUAL(type, type_expected);
 	}
 }
+
 
 static void TEST_string_to_property_info(void)
 {
@@ -679,6 +703,7 @@ static void TEST_string_to_property_info(void)
 /* ========================================================================
  * TEST SUITE SETUP
  * ======================================================================== */
+
 
 int init_property_user_read_tests(void)
 {

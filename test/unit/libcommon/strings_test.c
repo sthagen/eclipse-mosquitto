@@ -10,6 +10,7 @@ struct prop_id{
 	int proptype;
 };
 
+
 static void TEST_string_to_property_info(void)
 {
 	const struct prop_id checks[50] = {
@@ -78,6 +79,7 @@ static void TEST_string_to_property_info(void)
 	}
 }
 
+
 static void TEST_mosquitto_strerror(void)
 {
 	const char *str;
@@ -122,6 +124,7 @@ static void TEST_mosquitto_strerror(void)
 	}
 }
 
+
 static void TEST_mosquitto_connack_string(void)
 {
 	const char *str;
@@ -154,6 +157,7 @@ static void TEST_mosquitto_connack_string(void)
 		}
 	}
 }
+
 
 static void TEST_mosquitto_reason_string(void)
 {
@@ -190,6 +194,7 @@ static void TEST_mosquitto_reason_string(void)
 		}
 	}
 }
+
 
 static void TEST_mosquitto_string_to_command(void)
 {
@@ -256,9 +261,11 @@ static void TEST_mosquitto_string_to_command(void)
 	CU_ASSERT_EQUAL(cmd, 0);
 }
 
+
 /* ========================================================================
  * TEST SUITE SETUP
  * ======================================================================== */
+
 
 int init_strings_tests(void)
 {

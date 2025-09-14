@@ -16,6 +16,7 @@ MOSQUITTO_PLUGIN_DECLARE_VERSION(5);
 
 static mosquitto_plugin_id_t *mosq_pid = NULL;
 
+
 static int handle_options(struct acl_file_data *data, struct mosquitto_opt *options, int option_count)
 {
 	for(int i=0; i<option_count; i++){

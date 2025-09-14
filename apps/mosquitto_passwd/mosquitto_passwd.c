@@ -65,6 +65,8 @@ struct cb_helper {
 static enum mosquitto_pwhash_type hashtype = MOSQ_PW_SHA512_PBKDF2;
 
 #ifdef WIN32
+
+
 static FILE *mpw_tmpfile(void)
 {
 	return tmpfile();
@@ -74,6 +76,8 @@ static FILE *mpw_tmpfile(void)
 static char unsigned alphanum[] = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 
 static unsigned char tmpfile_path[36];
+
+
 static FILE *mpw_tmpfile(void)
 {
 	int fd;
@@ -103,6 +107,7 @@ static FILE *mpw_tmpfile(void)
 }
 #endif
 
+
 static void print_usage(void)
 {
 	printf("mosquitto_passwd is a tool for managing password files for mosquitto.\n\n");
@@ -118,6 +123,7 @@ static void print_usage(void)
 	printf(" -U : update a plain text password file to use hashed passwords.\n");
 	printf("\nSee https://mosquitto.org/ for more information.\n\n");
 }
+
 
 static int output_new_password(FILE *fptr, const char *username, const char *password, int iterations)
 {
@@ -236,6 +242,7 @@ static int delete_pwuser_cb(FILE *fptr, FILE *ftmp, const char *username, const 
 	return 0;
 }
 
+
 static int delete_pwuser(FILE *fptr, FILE *ftmp, const char *username)
 {
 	struct cb_helper helper;
@@ -253,7 +260,6 @@ static int delete_pwuser(FILE *fptr, FILE *ftmp, const char *username)
 }
 
 
-
 /* ======================================================================
  * Update a plain text password file to use hashes
  * ====================================================================== */
@@ -268,6 +274,7 @@ static int update_file_cb(FILE *fptr, FILE *ftmp, const char *username, const ch
 		return output_new_password(ftmp, username, password, -1);
 	}
 }
+
 
 static int update_file(FILE *fptr, FILE *ftmp)
 {
@@ -295,6 +302,7 @@ static int update_pwuser_cb(FILE *fptr, FILE *ftmp, const char *username, const 
 	}
 	return rc;
 }
+
 
 static int update_pwuser(FILE *fptr, FILE *ftmp, const char *username, const char *password, int iterations)
 {
@@ -344,6 +352,7 @@ static int copy_contents(FILE *src, FILE *dest)
 	return 0;
 }
 
+
 static int create_backup(char *backup_file, FILE *fptr)
 {
 	FILE *fbackup;
@@ -374,6 +383,7 @@ static int create_backup(char *backup_file, FILE *fptr)
 	rewind(fptr);
 	return 0;
 }
+
 
 static void handle_sigint(int signal)
 {
@@ -413,8 +423,12 @@ static bool is_username_valid(const char *username)
 }
 
 #ifdef WITH_FUZZING
+
+
 int mosquitto_passwd_fuzz_main(int argc, char *argv[])
 #else
+
+
 int main(int argc, char *argv[])
 #endif
 {

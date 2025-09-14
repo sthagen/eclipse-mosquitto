@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include "mosquitto.h"
 
+
 int on_message(struct mosquitto *mosq, void *userdata, const struct mosquitto_message *msg)
 {
 	printf("%s %s (%d)\n", msg->topic, (const char *)msg->payload, msg->payloadlen);

@@ -381,6 +381,7 @@ void plugin_persist__handle_retain_msg_delete(struct mosquitto__base_msg *base_m
 	}
 }
 
+
 void plugin_persist__handle_will_add(struct mosquitto *context)
 {
 	struct mosquitto_evt_persist_will_msg event_data;
@@ -407,6 +408,7 @@ void plugin_persist__handle_will_add(struct mosquitto *context)
 		cb_base->cb(MOSQ_EVT_PERSIST_WILL_ADD, &event_data, cb_base->userdata);
 	}
 }
+
 
 void plugin_persist__handle_will_delete(struct mosquitto *context)
 {

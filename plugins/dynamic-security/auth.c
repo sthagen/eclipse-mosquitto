@@ -25,11 +25,13 @@ Contributors:
 
 #include "dynamic_security.h"
 
+
 /* ################################################################
  * #
  * # Username/password check
  * #
  * ################################################################ */
+
 
 int dynsec_auth__basic_auth_callback(int event, void *event_data, void *userdata)
 {

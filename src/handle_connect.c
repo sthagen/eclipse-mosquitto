@@ -46,6 +46,7 @@ static char nibble_to_hex(uint8_t value)
 	}
 }
 
+
 static char *clientid_gen(uint16_t *idlen, const char *auto_id_prefix, uint16_t auto_id_prefix_len)
 {
 	char *clientid;
@@ -77,6 +78,7 @@ static char *clientid_gen(uint16_t *idlen, const char *auto_id_prefix, uint16_t 
 
 	return clientid;
 }
+
 
 int connect__on_authorised(struct mosquitto *context, void *auth_data_out, uint16_t auth_data_out_len)
 {
@@ -433,11 +435,13 @@ static int check_protocol_version(struct mosquitto__listener *listener, int prot
 	}
 }
 
+
 inline static int send__connack_error_and_return(struct mosquitto *context, uint8_t err_code, int rc)
 {
 	send__connack(context, 0, err_code, NULL);
 	return rc;
 }
+
 
 inline static int send__connack_bad_username_or_password_error(struct mosquitto *context, int rc)
 {
@@ -446,6 +450,7 @@ inline static int send__connack_bad_username_or_password_error(struct mosquitto 
 									: (uint8_t)CONNACK_REFUSED_BAD_USERNAME_PASSWORD;
 	return send__connack_error_and_return(context, err_code, rc);
 }
+
 
 static int read_protocol_name(struct mosquitto *context, char protocol_name[7])
 {
@@ -468,6 +473,7 @@ static int read_protocol_name(struct mosquitto *context, char protocol_name[7])
 
 	return MOSQ_ERR_SUCCESS;
 }
+
 
 static int read_and_verify_protocol_version(struct mosquitto *context, const char *protocol_name,
 											uint8_t *protocol_version)
@@ -537,6 +543,7 @@ static int read_and_verify_protocol_version(struct mosquitto *context, const cha
 	return MOSQ_ERR_SUCCESS;
 }
 
+
 static int read_and_verify_connect_flags(struct mosquitto *context, uint8_t *connect_flags)
 {
 	if(packet__read_byte(&context->in_packet, connect_flags)){
@@ -551,6 +558,7 @@ static int read_and_verify_connect_flags(struct mosquitto *context, uint8_t *con
 	return MOSQ_ERR_SUCCESS;
 }
 
+
 static void set_session_expiry_interval(struct mosquitto *context, uint8_t clean_start, uint8_t protocol_version)
 {
 	/* session_expiry_interval will be overridden if the properties are read later */
@@ -561,6 +569,7 @@ static void set_session_expiry_interval(struct mosquitto *context, uint8_t clean
 		context->session_expiry_interval = 0;
 	}
 }
+
 
 static int read_and_reset_keepalive(struct mosquitto *context)
 {
@@ -575,6 +584,7 @@ static int read_and_reset_keepalive(struct mosquitto *context)
 
 	return MOSQ_ERR_SUCCESS;
 }
+
 
 static int read_and_verify_v5_connect_properties(struct mosquitto *context, mosquitto_property **properties, uint8_t protocol_version)
 {
@@ -598,6 +608,7 @@ static int read_and_verify_v5_connect_properties(struct mosquitto *context, mosq
 
 	return MOSQ_ERR_SUCCESS;
 }
+
 
 static int verify_will_options(struct mosquitto *context, uint8_t will, uint8_t will_qos, uint8_t will_retain, uint8_t protocol_version)
 {
@@ -623,6 +634,7 @@ static int verify_will_options(struct mosquitto *context, uint8_t will, uint8_t 
 
 	return MOSQ_ERR_SUCCESS;
 }
+
 
 static int handle_zero_length_clientid(struct mosquitto *context, char **clientid, bool *allow_zero_length_clientid,
 								 uint8_t clean_start)
@@ -656,7 +668,8 @@ static int handle_zero_length_clientid(struct mosquitto *context, char **clienti
 	return MOSQ_ERR_SUCCESS;
 }
 
-static int check_clientid_prefixes(struct mosquitto *context, const char* clientid)
+
+static int check_clientid_prefixes(struct mosquitto *context, const char *clientid)
 {
 	if(db.config->clientid_prefixes){
 		if(strncmp(db.config->clientid_prefixes, clientid, strlen(db.config->clientid_prefixes))){
@@ -698,6 +711,7 @@ static int read_and_verify_clientid_from_packet(struct mosquitto *context, char*
 	return MOSQ_ERR_SUCCESS;
 }
 
+
 static int set_username_from_packet(struct mosquitto *context, char **username)
 {
 	int rc;
@@ -718,6 +732,7 @@ static int set_username_from_packet(struct mosquitto *context, char **username)
 	return MOSQ_ERR_SUCCESS;
 }
 
+
 static int set_password_from_packet(struct mosquitto *context, char **password)
 {
 	int rc;
@@ -737,6 +752,7 @@ static int set_password_from_packet(struct mosquitto *context, char **password)
 
 	return MOSQ_ERR_SUCCESS;
 }
+
 
 static int read_and_verify_client_credentials_from_packet(struct mosquitto *context,
 														  char **username, uint8_t username_flag,
@@ -769,6 +785,7 @@ static int read_and_verify_client_credentials_from_packet(struct mosquitto *cont
 	return MOSQ_ERR_SUCCESS;
 }
 
+
 static int check_additional_trailing_data(struct mosquitto *context, uint8_t protocol_version)
 {
 	if(context->in_packet.pos != context->in_packet.remaining_length){
@@ -783,6 +800,8 @@ static int check_additional_trailing_data(struct mosquitto *context, uint8_t pro
 }
 
 #ifdef WITH_TLS
+
+
 inline static int get_client_cert_and_subject_name(struct mosquitto *context, X509 **client_cert, X509_NAME **name)
 {
 	*client_cert = SSL_get_peer_certificate(context->ssl);
@@ -799,11 +818,13 @@ inline static int get_client_cert_and_subject_name(struct mosquitto *context, X5
 	return MOSQ_ERR_SUCCESS;
 }
 
+
 inline static int free_x509_and_send_connack_error(struct mosquitto *context, X509 *client_cert, int rc)
 {
 	X509_free(client_cert);
 	return send__connack_bad_username_or_password_error(context, rc);
 }
+
 
 inline static int free_x509_and_BIO_and_send_connack_error(struct mosquitto *context, X509 *client_cert,
 														   BIO *subject_name, int rc)
@@ -811,6 +832,7 @@ inline static int free_x509_and_BIO_and_send_connack_error(struct mosquitto *con
 	BIO_free(subject_name);
 	return free_x509_and_send_connack_error(context, client_cert, rc);
 }
+
 
 static int set_username_from_cert_identity(struct mosquitto *context)
 {
@@ -859,6 +881,7 @@ success:
 	return MOSQ_ERR_SUCCESS;
 }
 
+
 static int set_username_from_cert_subject_name(struct mosquitto *context)
 {
 	X509 *client_cert = NULL;
@@ -901,7 +924,8 @@ static int set_username_from_cert_subject_name(struct mosquitto *context)
 }
 #endif
 
-static int handle_username_from_cert_options(struct mosquitto *context, char** username, char** password)
+
+static int handle_username_from_cert_options(struct mosquitto *context, char **username, char **password)
 {
 	int rc;
 
@@ -954,6 +978,7 @@ static int handle_username_from_cert_options(struct mosquitto *context, char** u
 
 	return MOSQ_ERR_SUCCESS;
 }
+
 
 static int handle_username_as_clientid_option(struct mosquitto *context)
 {

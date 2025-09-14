@@ -18,6 +18,7 @@ uint32_t last_identifier;
 
 struct mosquitto_db db;
 
+
 static void test_cleanup(void)
 {
 	struct mosquitto *ctxt, *ctxt_tmp;
@@ -31,6 +32,7 @@ static void test_cleanup(void)
 	}
 	db__close();
 }
+
 
 static void TEST_persistence_disabled(void)
 {
@@ -90,6 +92,7 @@ static void TEST_corrupt_header(void)
 	rc = persist__restore();
 	CU_ASSERT_EQUAL(rc, 1);
 }
+
 
 static void TEST_unsupported_version(void)
 {
@@ -247,6 +250,7 @@ static void TEST_v3_message_store(void)
 	test_cleanup();
 }
 
+
 static void TEST_v3_client(void)
 {
 	struct mosquitto__config config;
@@ -275,6 +279,7 @@ static void TEST_v3_client(void)
 	}
 	test_cleanup();
 }
+
 
 static void TEST_v3_client_message(void)
 {
@@ -330,6 +335,7 @@ static void TEST_v3_client_message(void)
 	test_cleanup();
 }
 
+
 static void TEST_v3_retain(void)
 {
 	struct mosquitto__config config;
@@ -380,6 +386,7 @@ static void TEST_v3_retain(void)
 	test_cleanup();
 }
 
+
 static void TEST_v3_sub(void)
 {
 	struct mosquitto__config config;
@@ -414,6 +421,7 @@ static void TEST_v3_sub(void)
 	}
 	test_cleanup();
 }
+
 
 static void TEST_v4_message_store(void)
 {
@@ -451,6 +459,7 @@ static void TEST_v4_message_store(void)
 	}
 	test_cleanup();
 }
+
 
 static void TEST_v6_config_ok(void)
 {
@@ -594,6 +603,7 @@ static void TEST_v6_message_store_props(void)
 	test_cleanup();
 }
 
+
 static void TEST_v5_client(void)
 {
 	struct mosquitto__config config;
@@ -622,6 +632,7 @@ static void TEST_v5_client(void)
 	}
 	test_cleanup();
 }
+
 
 static void TEST_v6_client(void)
 {
@@ -662,6 +673,7 @@ static void TEST_v6_client(void)
 	}
 	test_cleanup();
 }
+
 
 static void TEST_v6_client_message(void)
 {
@@ -713,6 +725,7 @@ static void TEST_v6_client_message(void)
 	test_cleanup();
 }
 
+
 static void TEST_v6_client_message_props(void)
 {
 	struct mosquitto__config config;
@@ -763,6 +776,7 @@ static void TEST_v6_client_message_props(void)
 	test_cleanup();
 }
 
+
 static void TEST_v6_retain(void)
 {
 	struct mosquitto__config config;
@@ -810,6 +824,7 @@ static void TEST_v6_retain(void)
 	test_cleanup();
 }
 
+
 static void TEST_v6_sub(void)
 {
 	struct mosquitto__config config;
@@ -846,9 +861,11 @@ static void TEST_v6_sub(void)
 	test_cleanup();
 }
 
+
 /* ========================================================================
  * TEST SUITE SETUP
  * ======================================================================== */
+
 
 int init_persist_read_tests(void)
 {
@@ -895,6 +912,7 @@ int init_persist_read_tests(void)
 
 	return 0;
 }
+
 
 int main(int argc, char *argv[])
 {

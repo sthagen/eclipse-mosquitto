@@ -28,6 +28,7 @@ struct mosquitto *context__init(void)
 	return m;
 }
 
+
 int log__printf(struct mosquitto *mosq, unsigned int priority, const char *fmt, ...)
 {
 	UNUSED(mosq);
@@ -37,11 +38,13 @@ int log__printf(struct mosquitto *mosq, unsigned int priority, const char *fmt, 
 	return 0;
 }
 
+
 bool net__is_connected(struct mosquitto *mosq)
 {
 	UNUSED(mosq);
 	return false;
 }
+
 
 int net__socket_close(struct mosquitto *mosq)
 {
@@ -50,12 +53,14 @@ int net__socket_close(struct mosquitto *mosq)
 	return MOSQ_ERR_SUCCESS;
 }
 
+
 int net__socket_shutdown(struct mosquitto *mosq)
 {
 	UNUSED(mosq);
 
 	return MOSQ_ERR_SUCCESS;
 }
+
 
 int send__pingreq(struct mosquitto *mosq)
 {
@@ -64,7 +69,8 @@ int send__pingreq(struct mosquitto *mosq)
 	return MOSQ_ERR_SUCCESS;
 }
 
-int mosquitto_acl_check(struct mosquitto *context, const char *topic, uint32_t payloadlen, void* payload, uint8_t qos, bool retain, int access)
+
+int mosquitto_acl_check(struct mosquitto *context, const char *topic, uint32_t payloadlen, void *payload, uint8_t qos, bool retain, int access)
 {
 	UNUSED(context);
 	UNUSED(topic);
@@ -76,6 +82,7 @@ int mosquitto_acl_check(struct mosquitto *context, const char *topic, uint32_t p
 
 	return MOSQ_ERR_SUCCESS;
 }
+
 
 int acl__find_acls(struct mosquitto *context)
 {
@@ -96,12 +103,14 @@ int sub__add(struct mosquitto *context, const struct mosquitto_subscription *sub
 	return MOSQ_ERR_SUCCESS;
 }
 
+
 void callback__on_disconnect(struct mosquitto *mosq, int rc, const mosquitto_property *props)
 {
 	UNUSED(mosq);
 	UNUSED(rc);
 	UNUSED(props);
 }
+
 
 void context__add_to_by_id(struct mosquitto *context)
 {
@@ -111,40 +120,51 @@ void context__add_to_by_id(struct mosquitto *context)
 	}
 }
 
+
 void context__send_will(struct mosquitto *context)
 {
 	UNUSED(context);
 }
 
+
 void plugin_persist__handle_retain_msg_set(struct mosquitto__base_msg *msg)
 {
 	UNUSED(msg);
 }
+
+
 void plugin_persist__handle_retain_msg_delete(struct mosquitto__base_msg *msg)
 {
 	UNUSED(msg);
 }
+
+
 void plugin_persist__handle_base_msg_add(struct mosquitto__base_msg *msg)
 {
 	UNUSED(msg);
 }
+
 
 void plugin_persist__process_retain_events(bool force)
 {
 	UNUSED(force);
 }
 
+
 void plugin_persist__queue_retain_event(struct mosquitto__base_msg *msg, int event)
 {
 	UNUSED(msg);
 	UNUSED(event);
 }
+
+
 int session_expiry__add_from_persistence(struct mosquitto *context, time_t expiry_time)
 {
 	UNUSED(context);
 	UNUSED(expiry_time);
 	return 0;
 }
+
 
 void mosquitto_log_printf(int level, const char *fmt, ...)
 {
@@ -160,35 +180,49 @@ struct mosquitto__subhier *sub__add_hier_entry(struct mosquitto__subhier *parent
 
 	return NULL;
 }
+
+
 void plugin_persist__handle_client_msg_add(struct mosquitto *context, const struct mosquitto__client_msg *cmsg)
 {
 	UNUSED(context);
 	UNUSED(cmsg);
 }
+
+
 void plugin_persist__handle_client_msg_delete(struct mosquitto *context, const struct mosquitto__client_msg *cmsg)
 {
 	UNUSED(context);
 	UNUSED(cmsg);
 }
+
+
 void plugin_persist__handle_client_msg_update(struct mosquitto *context, const struct mosquitto__client_msg *cmsg)
 {
 	UNUSED(context);
 	UNUSED(cmsg);
 }
+
+
 void plugin_persist__handle_client_msg_clear(struct mosquitto *context, uint8_t direction)
 {
 	UNUSED(context);
 	UNUSED(direction);
 }
+
+
 void plugin_persist__handle_base_msg_delete(struct mosquitto__base_msg *msg)
 {
 	UNUSED(msg);
 }
+
+
 void plugin_persist__handle_subscription_delete(struct mosquitto *context, char *sub)
 {
 	UNUSED(context);
 	UNUSED(sub);
 }
+
+
 int sub__messages_queue(const char *source_id, const char *topic, uint8_t qos, int retain, struct mosquitto__base_msg **base_msg)
 {
 	UNUSED(source_id);
@@ -199,15 +233,21 @@ int sub__messages_queue(const char *source_id, const char *topic, uint8_t qos, i
 	return 0;
 }
 #ifdef WITH_SYS_TREE
+
+
 void metrics__int_inc(enum mosq_metric_type m, int64_t value)
 {
 	UNUSED(m); UNUSED(value);
 }
+
+
 void metrics__int_dec(enum mosq_metric_type m, int64_t value)
 {
 	UNUSED(m); UNUSED(value);
 }
 #endif
+
+
 int send__publish(struct mosquitto *mosq, uint16_t mid, const char *topic, uint32_t payloadlen, const void *payload, uint8_t qos, bool retain, bool dup, uint32_t subscription_identifier, const mosquitto_property *store_props, uint32_t expiry_interval)
 {
 	UNUSED(mosq);
@@ -225,6 +265,7 @@ int send__publish(struct mosquitto *mosq, uint16_t mid, const char *topic, uint3
 	return MOSQ_ERR_SUCCESS;
 }
 
+
 int send__pubcomp(struct mosquitto *mosq, uint16_t mid, const mosquitto_property *properties)
 {
 	UNUSED(mosq);
@@ -233,6 +274,7 @@ int send__pubcomp(struct mosquitto *mosq, uint16_t mid, const mosquitto_property
 
 	return MOSQ_ERR_SUCCESS;
 }
+
 
 int send__pubrec(struct mosquitto *mosq, uint16_t mid, uint8_t reason_code, const mosquitto_property *properties)
 {
@@ -244,6 +286,7 @@ int send__pubrec(struct mosquitto *mosq, uint16_t mid, uint8_t reason_code, cons
 	return MOSQ_ERR_SUCCESS;
 }
 
+
 int send__pubrel(struct mosquitto *mosq, uint16_t mid, const mosquitto_property *properties)
 {
 	UNUSED(mosq);
@@ -252,6 +295,7 @@ int send__pubrel(struct mosquitto *mosq, uint16_t mid, const mosquitto_property 
 
 	return MOSQ_ERR_SUCCESS;
 }
+
 
 int sub__init(void)
 {

@@ -87,6 +87,7 @@ static void free__sub(struct P_sub *chunk)
 	free(chunk->topic);
 }
 
+
 static void free__client(struct P_client *chunk)
 {
 	free(chunk->username);
@@ -431,8 +432,12 @@ static void cleanup_msg_store()
 }
 
 #ifdef WITH_FUZZING
+
+
 int db_dump_fuzz_main(int argc, char *argv[])
 #else
+
+
 int main(int argc, char *argv[])
 #endif
 {

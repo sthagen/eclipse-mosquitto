@@ -17,9 +17,11 @@ static void TEST_maximum_packet_size(void)
 	CU_ASSERT_EQUAL(rc, MOSQ_ERR_OVERSIZE_PACKET);
 }
 
+
 /* ========================================================================
  * TEST SUITE SETUP
  * ======================================================================== */
+
 
 int init_publish_tests(void)
 {

@@ -11,6 +11,7 @@
 static int run = -1;
 static int sent_mid;
 
+
 static void on_connect(struct mosquitto *mosq, void *obj, int rc)
 {
 	(void)obj;
@@ -21,6 +22,7 @@ static void on_connect(struct mosquitto *mosq, void *obj, int rc)
 		mosquitto_publish(mosq, &sent_mid, "psk/test", strlen("message"), "message", 0, false);
 	}
 }
+
 
 static void on_publish(struct mosquitto *mosq, void *obj, int mid)
 {
@@ -33,6 +35,7 @@ static void on_publish(struct mosquitto *mosq, void *obj, int mid)
 	}
 }
 
+
 static void on_disconnect(struct mosquitto *mosq, void *obj, int rc)
 {
 	(void)mosq;
@@ -40,6 +43,7 @@ static void on_disconnect(struct mosquitto *mosq, void *obj, int rc)
 
 	run = rc;
 }
+
 
 int main(int argc, char *argv[])
 {

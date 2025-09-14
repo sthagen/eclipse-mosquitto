@@ -12,6 +12,7 @@ static mosquitto_plugin_id_t *plg_id = NULL;
 
 MOSQUITTO_PLUGIN_DECLARE_VERSION(5);
 
+
 static int psk_callback(int event, void *event_data, void *userdata)
 {
 	struct mosquitto_evt_psk_key *ed = event_data;
@@ -29,6 +30,7 @@ static int psk_callback(int event, void *event_data, void *userdata)
 
 	return 0;
 }
+
 
 int mosquitto_plugin_init(mosquitto_plugin_id_t *identifier, void **user_data, struct mosquitto_opt *auth_opts, int auth_opt_count)
 {

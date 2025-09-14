@@ -98,6 +98,8 @@ int mosquitto_security_cleanup_default(void)
 
 
 #ifdef WITH_TLS
+
+
 static void security__disconnect_auth(struct mosquitto *context)
 {
 	if(context->protocol == mosq_p_mqtt5){
@@ -107,6 +109,7 @@ static void security__disconnect_auth(struct mosquitto *context)
 	do_disconnect(context, MOSQ_ERR_AUTH);
 }
 #endif
+
 
 /* Apply security settings after a reload.
  * Includes:

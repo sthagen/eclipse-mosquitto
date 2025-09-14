@@ -52,6 +52,7 @@ static mosquitto_plugin_id_t *plg_id = NULL;
 #  include <unistd.h>
 #endif
 
+
 int mosquitto_plugin_init(mosquitto_plugin_id_t *identifier, void **user_data, struct mosquitto_opt *options, int option_count)
 {
 	int i;
@@ -132,6 +133,7 @@ error:
 	dynsec_data.config_file = NULL;
 	return rc;
 }
+
 
 int mosquitto_plugin_cleanup(void *user_data, struct mosquitto_opt *options, int option_count)
 {

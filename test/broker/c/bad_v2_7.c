@@ -13,6 +13,7 @@ enum mosq_err_t {
 	MOSQ_ERR_ACL_DENIED = 12
 };
 
+
 int mosquitto_auth_plugin_version(void)
 {
 	return 2;

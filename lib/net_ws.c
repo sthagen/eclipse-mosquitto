@@ -329,6 +329,7 @@ ssize_t net__read_ws(struct mosquitto *mosq, void *buf, size_t count)
 	return len;
 }
 
+
 int ws__create_accept_key(const char *client_key, size_t client_key_len, char **encoded)
 {
 	const EVP_MD *digest;

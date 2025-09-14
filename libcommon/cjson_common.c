@@ -29,6 +29,7 @@ Contributors:
 
 #include "mosquitto.h"
 
+
 cJSON *mosquitto_properties_to_json(const mosquitto_property *properties)
 {
 	cJSON *array, *obj;

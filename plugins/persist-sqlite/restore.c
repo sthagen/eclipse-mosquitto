@@ -27,6 +27,7 @@ Contributors:
 #include "mosquitto/mqtt_protocol.h"
 #include "persist_sqlite.h"
 
+
 static uint8_t hex2nibble(char c)
 {
 	switch(c){
@@ -55,6 +56,7 @@ static uint8_t hex2nibble(char c)
 		default: return 0;
 	}
 }
+
 
 static mosquitto_property *json_to_properties(const char *json)
 {
@@ -508,6 +510,7 @@ static int will_restore(struct mosquitto_sqlite *ms)
 
 	return rc;
 }
+
 
 int persist_sqlite__restore_cb(int event, void *event_data, void *userdata)
 {

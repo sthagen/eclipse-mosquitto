@@ -39,6 +39,7 @@ Contributors:
 
 #define MAX_BUFFER_LEN 65500
 
+
 void get_password__reset_term(void)
 {
 #ifndef WIN32
@@ -103,6 +104,7 @@ static int gets_quiet(char *s, int len)
 	return 0;
 #endif
 }
+
 
 int get_password(const char *prompt, const char *verify_prompt, bool quiet, char *password, size_t len)
 {

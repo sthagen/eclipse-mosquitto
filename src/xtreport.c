@@ -64,6 +64,7 @@ static void client_cost(FILE *fptr, struct mosquitto *context, int fn_index)
 			);
 }
 
+
 static void report_subscriptions(FILE *fptr, struct mosquitto *context, int *fn_index_max)
 {
 	for(int i=0; i<context->subs_count; i++){

@@ -53,6 +53,7 @@ Contributors:
 
 static mosquitto_plugin_id_t *mosq_pid = NULL;
 
+
 int mosquitto_plugin_version(int supported_version_count, const int *supported_versions)
 {
 	int i;
@@ -64,6 +65,7 @@ int mosquitto_plugin_version(int supported_version_count, const int *supported_v
 	}
 	return -1;
 }
+
 
 static int basic_auth_callback(int event, void *event_data, void *userdata)
 {
@@ -87,6 +89,7 @@ static int basic_auth_callback(int event, void *event_data, void *userdata)
 	}
 }
 
+
 int mosquitto_plugin_init(mosquitto_plugin_id_t *identifier, void **user_data, struct mosquitto_opt *opts, int opt_count)
 {
 	UNUSED(user_data);
@@ -96,6 +99,7 @@ int mosquitto_plugin_init(mosquitto_plugin_id_t *identifier, void **user_data, s
 	mosq_pid = identifier;
 	return mosquitto_callback_register(mosq_pid, MOSQ_EVT_BASIC_AUTH, basic_auth_callback, NULL, NULL);
 }
+
 
 /* mosquitto_plugin_cleanup() is optional in 2.1 and later. Use it only if you have your own cleanup to do */
 int mosquitto_plugin_cleanup(void *user_data, struct mosquitto_opt *opts, int opt_count)

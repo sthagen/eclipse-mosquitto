@@ -73,6 +73,7 @@ static void print_help(char **saveptr)
 	}
 }
 
+
 static void line_callback(char *line)
 {
 	if(!line){
@@ -110,6 +111,7 @@ static void line_callback(char *line)
 	free(line);
 }
 
+
 static void print_plugins(cJSON *j_data)
 {
 	cJSON *j_plugins, *j_plugin;
@@ -137,6 +139,7 @@ static void print_plugins(cJSON *j_data)
 		ctrl_shell_print_value(0, "\n");
 	}
 }
+
 
 static void print_listeners(cJSON *j_data)
 {
@@ -167,6 +170,7 @@ static void print_listeners(cJSON *j_data)
 	}
 
 }
+
 
 static void handle_response(const char *command, cJSON *j_data, const char *payload)
 {

@@ -27,11 +27,13 @@ Contributors:
 #include "dynamic_security.h"
 #include "json_help.h"
 
+
 /* ################################################################
  * #
  * # Utility functions
  * #
  * ################################################################ */
+
 
 static int rolelist_cmp(void *a, void *b)
 {
@@ -54,6 +56,7 @@ static void dynsec_rolelist__free_item(struct dynsec__rolelist **base_rolelist, 
 	mosquitto_free(rolelist);
 }
 
+
 void dynsec_rolelist__cleanup(struct dynsec__rolelist **base_rolelist)
 {
 	struct dynsec__rolelist *rolelist, *rolelist_tmp;
@@ -62,6 +65,7 @@ void dynsec_rolelist__cleanup(struct dynsec__rolelist **base_rolelist)
 		dynsec_rolelist__free_item(base_rolelist, rolelist);
 	}
 }
+
 
 static int dynsec_rolelist__remove_role(struct dynsec__rolelist **base_rolelist, const struct dynsec__role *role)
 {

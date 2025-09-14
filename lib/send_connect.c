@@ -34,6 +34,7 @@ Contributors:
 #include "property_mosq.h"
 #include "send_mosq.h"
 
+
 int send__connect(struct mosquitto *mosq, uint16_t keepalive, bool clean_session, const mosquitto_property *properties)
 {
 	struct mosquitto__packet *packet = NULL;

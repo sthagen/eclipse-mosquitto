@@ -50,6 +50,7 @@ Contributors:
  * #
  * ################################################################ */
 
+
 static int dynsec_clientlist__cmp(void *a, void *b)
 {
 	struct dynsec__clientlist *clientlist_a = a;
@@ -67,6 +68,7 @@ void dynsec_clientlist__kick_all(struct dynsec__data *data, struct dynsec__clien
 		dynsec_kicklist__add(data, clientlist->client->username);
 	}
 }
+
 
 cJSON *dynsec_clientlist__all_to_json(struct dynsec__clientlist *base_clientlist)
 {

@@ -47,6 +47,7 @@ cJSON *j_client_msgs = NULL;
 cJSON *j_retained_msgs = NULL;
 cJSON *j_subscriptions = NULL;
 
+
 void json_init(void)
 {
 	j_tree = cJSON_CreateObject();
@@ -67,6 +68,7 @@ void json_init(void)
 	}
 }
 
+
 void json_print(void)
 {
 	char *jstr = cJSON_Print(j_tree);
@@ -74,10 +76,12 @@ void json_print(void)
 	free(jstr);
 }
 
+
 void json_cleanup(void)
 {
 	cJSON_Delete(j_tree);
 }
+
 
 void json_add_base_msg(struct P_base_msg *chunk)
 {
@@ -114,6 +118,7 @@ void json_add_base_msg(struct P_base_msg *chunk)
 	}
 }
 
+
 void json_add_client(struct P_client *chunk)
 {
 	cJSON *j_client;
@@ -132,6 +137,7 @@ void json_add_client(struct P_client *chunk)
 
 }
 
+
 void json_add_client_msg(struct P_client_msg *chunk)
 {
 	cJSON *j_client_msg;
@@ -149,6 +155,7 @@ void json_add_client_msg(struct P_client_msg *chunk)
 	cJSON_AddNumberToObject(j_client_msg, "subscription-identifier", chunk->subscription_identifier);
 }
 
+
 void json_add_subscription(struct P_sub *chunk)
 {
 	cJSON *j_subscription;
@@ -162,6 +169,7 @@ void json_add_subscription(struct P_sub *chunk)
 	cJSON_AddNumberToObject(j_subscription, "options", chunk->F.options);
 	cJSON_AddNumberToObject(j_subscription, "identifier", chunk->F.identifier);
 }
+
 
 void json_add_retained_msg(struct P_retain *chunk)
 {

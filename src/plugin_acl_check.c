@@ -27,6 +27,7 @@ Contributors:
 #include "lib_load.h"
 #include "utlist.h"
 
+
 int acl__pre_check(mosquitto_plugin_id_t *plugin, struct mosquitto *context, int access)
 {
 	const char *username;

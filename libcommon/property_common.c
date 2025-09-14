@@ -620,6 +620,7 @@ BROKER_EXPORT int mosquitto_property_add_string_pair(mosquitto_property **propli
 	return MOSQ_ERR_SUCCESS;
 }
 
+
 BROKER_EXPORT int mosquitto_property_check_all(int command, const mosquitto_property *properties)
 {
 	const mosquitto_property *p, *tail;
@@ -677,6 +678,7 @@ BROKER_EXPORT int mosquitto_property_check_all(int command, const mosquitto_prop
 
 	return MOSQ_ERR_SUCCESS;
 }
+
 
 static const mosquitto_property *property__get_property(const mosquitto_property *proplist, int identifier, bool skip_first)
 {
@@ -1125,6 +1127,7 @@ uint16_t mosquitto_property_string_name_length(const mosquitto_property *propert
 		return 0;
 	}
 }
+
 
 /* Return the number of bytes we need to add on to the remaining length when
  * encoding these properties. */

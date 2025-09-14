@@ -11,6 +11,7 @@
 static int run = -1;
 static bool should_run = true;
 
+
 static void on_connect(struct mosquitto *mosq, void *obj, int rc)
 {
 	(void)obj;
@@ -22,6 +23,7 @@ static void on_connect(struct mosquitto *mosq, void *obj, int rc)
 	}
 }
 
+
 static void on_disconnect(struct mosquitto *mosq, void *obj, int rc)
 {
 	(void)mosq;
@@ -29,6 +31,7 @@ static void on_disconnect(struct mosquitto *mosq, void *obj, int rc)
 
 	run = rc;
 }
+
 
 static void on_subscribe(struct mosquitto *mosq, void *obj, int mid, int qos_count, const int *granted_qos)
 {
@@ -60,12 +63,14 @@ static const char* loglevel_as_str(int level)
 	return "UNKNOWN";
 }
 
+
 static void on_log(struct mosquitto *mosq, void *user_data, int level, const char *msg)
 {
 	(void)mosq;
 	(void)user_data;
 	fprintf(stderr, "%s: %s\n", loglevel_as_str(level), msg);
 }
+
 
 int main(int argc, char *argv[])
 {

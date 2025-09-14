@@ -37,6 +37,7 @@ Contributors:
 #include "send_mosq.h"
 #include "util_mosq.h"
 
+
 int send__pingreq(struct mosquitto *mosq)
 {
 	int rc;
@@ -56,6 +57,7 @@ int send__pingreq(struct mosquitto *mosq)
 	return rc;
 }
 
+
 int send__pingresp(struct mosquitto *mosq)
 {
 #ifdef WITH_BROKER
@@ -66,6 +68,7 @@ int send__pingresp(struct mosquitto *mosq)
 #endif
 	return send__simple_command(mosq, CMD_PINGRESP);
 }
+
 
 int send__puback(struct mosquitto *mosq, uint16_t mid, uint8_t reason_code, const mosquitto_property *properties)
 {
@@ -79,6 +82,7 @@ int send__puback(struct mosquitto *mosq, uint16_t mid, uint8_t reason_code, cons
 	/* We don't use Reason String or User Property yet. */
 	return send__command_with_mid(mosq, CMD_PUBACK, mid, false, reason_code, properties);
 }
+
 
 int send__pubcomp(struct mosquitto *mosq, uint16_t mid, const mosquitto_property *properties)
 {
@@ -109,6 +113,7 @@ int send__pubrec(struct mosquitto *mosq, uint16_t mid, uint8_t reason_code, cons
 	return send__command_with_mid(mosq, CMD_PUBREC, mid, false, reason_code, properties);
 }
 
+
 int send__pubrel(struct mosquitto *mosq, uint16_t mid, const mosquitto_property *properties)
 {
 #ifdef WITH_BROKER
@@ -120,6 +125,7 @@ int send__pubrel(struct mosquitto *mosq, uint16_t mid, const mosquitto_property 
 	/* We don't use Reason String or User Property yet. */
 	return send__command_with_mid(mosq, CMD_PUBREL|2, mid, false, 0, properties);
 }
+
 
 /* For PUBACK, PUBCOMP, PUBREC, and PUBREL */
 int send__command_with_mid(struct mosquitto *mosq, uint8_t command, uint16_t mid, bool dup, uint8_t reason_code, const mosquitto_property *properties)
@@ -163,6 +169,7 @@ int send__command_with_mid(struct mosquitto *mosq, uint8_t command, uint16_t mid
 
 	return packet__queue(mosq, packet);
 }
+
 
 /* For DISCONNECT, PINGREQ and PINGRESP */
 int send__simple_command(struct mosquitto *mosq, uint8_t command)

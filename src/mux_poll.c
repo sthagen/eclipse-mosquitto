@@ -59,6 +59,7 @@ static void loop_handle_reads_writes(void);
 static struct pollfd *pollfds = NULL;
 static size_t pollfd_max, pollfd_current_max = 0;
 
+
 int mux_poll__init(void)
 {
 #ifdef WIN32
@@ -167,6 +168,7 @@ int mux_poll__new(struct mosquitto *context)
 	return mux_poll__add(context, POLLIN);
 }
 
+
 int mux_poll__delete(struct mosquitto *context)
 {
 	size_t pollfd_index;
@@ -191,8 +193,6 @@ int mux_poll__delete(struct mosquitto *context)
 
 	return MOSQ_ERR_SUCCESS;
 }
-
-
 
 
 int mux_poll__handle(struct mosquitto__listener_sock *listensock, int listensock_count)

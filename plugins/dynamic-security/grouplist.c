@@ -25,11 +25,13 @@ Contributors:
 #include "dynamic_security.h"
 #include "json_help.h"
 
+
 /* ################################################################
  * #
  * # Plugin global variables
  * #
  * ################################################################ */
+
 
 /* ################################################################
  * #
@@ -37,17 +39,20 @@ Contributors:
  * #
  * ################################################################ */
 
+
 /* ################################################################
  * #
  * # Local variables
  * #
  * ################################################################ */
 
+
 /* ################################################################
  * #
  * # Utility functions
  * #
  * ################################################################ */
+
 
 static int dynsec_grouplist__cmp(void *a, void *b)
 {
@@ -62,6 +67,7 @@ static int dynsec_grouplist__cmp(void *a, void *b)
 		return prio;
 	}
 }
+
 
 cJSON *dynsec_grouplist__all_to_json(struct dynsec__grouplist *base_grouplist)
 {
@@ -89,7 +95,6 @@ cJSON *dynsec_grouplist__all_to_json(struct dynsec__grouplist *base_grouplist)
 	}
 	return j_groups;
 }
-
 
 
 int dynsec_grouplist__add(struct dynsec__grouplist **base_grouplist, struct dynsec__group *group, int priority)

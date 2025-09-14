@@ -162,6 +162,7 @@ static void alias__free_l2r(struct mosquitto *mosq)
 	mosq->alias_count_l2r = 0;
 }
 
+
 void alias__free_all(struct mosquitto *mosq)
 {
 	alias__free_r2l(mosq);

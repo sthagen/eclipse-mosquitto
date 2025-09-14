@@ -56,6 +56,8 @@ Contributors:
 extern int g_run;
 
 #if defined(WITH_WEBSOCKETS) && WITH_WEBSOCKETS == WS_IS_LWS && LWS_LIBRARY_VERSION_NUMBER == 3002000
+
+
 void lws__sul_callback(struct lws_sorted_usec_list *l)
 {
 }
@@ -125,6 +127,7 @@ static void read_message_expiry_interval(mosquitto_property **proplist, uint32_t
 		p = mosquitto_property_next(p);
 	}
 }
+
 
 static void queue_plugin_msgs(void)
 {
@@ -250,6 +253,7 @@ int mosquitto_main_loop(struct mosquitto__listener_sock *listensock, int listens
 
 	return MOSQ_ERR_SUCCESS;
 }
+
 
 void do_disconnect(struct mosquitto *context, int reason)
 {

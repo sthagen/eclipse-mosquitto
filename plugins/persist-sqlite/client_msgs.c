@@ -58,6 +58,7 @@ int persist_sqlite__client_msg_add_cb(int event, void *event_data, void *userdat
 	return rc;
 }
 
+
 int persist_sqlite__client_msg_remove_cb(int event, void *event_data, void *userdata)
 {
 	struct mosquitto_evt_persist_client_msg *ed = event_data;

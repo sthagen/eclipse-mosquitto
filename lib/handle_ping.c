@@ -36,6 +36,7 @@ Contributors:
 #include "send_mosq.h"
 #include "util_mosq.h"
 
+
 int handle__pingreq(struct mosquitto *mosq)
 {
 	assert(mosq);
@@ -54,6 +55,7 @@ int handle__pingreq(struct mosquitto *mosq)
 	return MOSQ_ERR_PROTOCOL;
 #endif
 }
+
 
 int handle__pingresp(struct mosquitto *mosq)
 {

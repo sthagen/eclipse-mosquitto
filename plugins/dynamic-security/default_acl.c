@@ -28,6 +28,7 @@ Contributors:
 #include "dynamic_security.h"
 #include "json_help.h"
 
+
 int dynsec__process_set_default_acl_access(struct dynsec__data *data, struct mosquitto_control_cmd *cmd)
 {
 	cJSON *j_actions, *j_action;

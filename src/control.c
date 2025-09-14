@@ -26,6 +26,8 @@ Contributors:
 #include "send_mosq.h"
 
 #ifdef WITH_CONTROL
+
+
 /* Process messages coming in on $CONTROL/<feature>. These messages aren't
  * passed on to other clients. */
 int control__process(struct mosquitto *context, struct mosquitto__base_msg *base_msg)
@@ -86,6 +88,7 @@ int control__process(struct mosquitto *context, struct mosquitto__base_msg *base
 }
 #endif
 
+
 int control__register_callback(mosquitto_plugin_id_t *pid, MOSQ_FUNC_generic_callback cb_func, const char *topic, void *userdata)
 {
 #ifdef WITH_CONTROL
@@ -143,6 +146,7 @@ int control__register_callback(mosquitto_plugin_id_t *pid, MOSQ_FUNC_generic_cal
 #endif
 }
 
+
 int control__unregister_callback(mosquitto_plugin_id_t *identifier, MOSQ_FUNC_generic_callback cb_func, const char *topic)
 {
 #ifdef WITH_CONTROL
@@ -182,6 +186,7 @@ int control__unregister_callback(mosquitto_plugin_id_t *identifier, MOSQ_FUNC_ge
 	return MOSQ_ERR_NOT_SUPPORTED;
 #endif
 }
+
 
 /* Unregister all control callbacks for a single plugin */
 void control__unregister_all_callbacks(mosquitto_plugin_id_t *identifier)

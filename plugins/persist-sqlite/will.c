@@ -21,6 +21,7 @@ SPDX-License-Identifier: EPL-2.0 OR BSD-3-Clause
 #include "persist_sqlite.h"
 #include "util.h"
 
+
 int persist_sqlite__will_add_cb(int event, void *event_data, void *userdata)
 {
 	struct mosquitto_evt_persist_will_msg *ed = event_data;

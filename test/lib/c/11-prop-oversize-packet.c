@@ -7,6 +7,7 @@
 static int run = -1;
 static int sent_mid = -1;
 
+
 static void on_connect(struct mosquitto *mosq, void *obj, int rc)
 {
 	(void)obj;
@@ -39,6 +40,7 @@ static void on_connect(struct mosquitto *mosq, void *obj, int rc)
 	}
 }
 
+
 static void on_publish(struct mosquitto *mosq, void *obj, int mid)
 {
 	(void)obj;
@@ -50,6 +52,7 @@ static void on_publish(struct mosquitto *mosq, void *obj, int mid)
 		exit(1);
 	}
 }
+
 
 int main(int argc, char *argv[])
 {

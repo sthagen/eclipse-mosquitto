@@ -25,6 +25,7 @@ Contributors:
 #include "mosquitto/broker.h"
 #include "persist_sqlite.h"
 
+
 int persist_sqlite__tick_cb(int event, void *event_data, void *userdata)
 {
 	struct mosquitto_evt_tick *ed = event_data;

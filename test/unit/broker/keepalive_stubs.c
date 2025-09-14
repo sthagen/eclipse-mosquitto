@@ -5,6 +5,7 @@
 #include <net_mosq.h>
 #include <send_mosq.h>
 
+
 int log__printf(struct mosquitto *mosq, unsigned int priority, const char *fmt, ...)
 {
 	UNUSED(mosq);
@@ -14,11 +15,13 @@ int log__printf(struct mosquitto *mosq, unsigned int priority, const char *fmt, 
 	return 0;
 }
 
+
 bool net__is_connected(struct mosquitto *mosq)
 {
 	UNUSED(mosq);
 	return true;
 }
+
 
 void loop__update_next_event(time_t new_ms)
 {

@@ -148,11 +148,13 @@ static struct mosquitto *bridge__new(struct mosquitto__bridge *bridge)
 	return new_context;
 }
 
+
 static void bridge__destroy(struct mosquitto *context)
 {
 	send__disconnect(context, MQTT_RC_SUCCESS, NULL);
 	context__cleanup(context, true);
 }
+
 
 void bridge__start_all(void)
 {
@@ -183,6 +185,7 @@ void bridge__start_all(void)
 		db.config->bridges[i] = NULL;
 	}
 }
+
 
 static int bridge__set_tcp_keepalive(struct mosquitto *context)
 {
@@ -216,7 +219,10 @@ static int bridge__set_tcp_keepalive(struct mosquitto *context)
 }
 
 #ifdef WITH_TCP_USER_TIMEOUT
-static int bridge__set_tcp_user_timeout(struct mosquitto *context) {
+
+
+static int bridge__set_tcp_user_timeout(struct mosquitto *context)
+{
 	int timeout = context->bridge->tcp_user_timeout;
 	if(timeout >= 0) {
 		if(setsockopt(context->sock, IPPROTO_TCP, TCP_USER_TIMEOUT, (char *)&timeout, sizeof(timeout))) {
@@ -229,6 +235,8 @@ static int bridge__set_tcp_user_timeout(struct mosquitto *context) {
 #endif
 
 #if defined(__GLIBC__) && defined(WITH_ADNS)
+
+
 static int bridge__connect_step1(struct mosquitto *context)
 {
 	int rc;
@@ -448,6 +456,7 @@ int bridge__connect_step3(struct mosquitto *context)
 	}
 }
 #else
+
 
 int bridge__connect(struct mosquitto *context)
 {
@@ -779,6 +788,7 @@ void bridge__reload(void)
 	}
 }
 
+
 void bridge__db_cleanup(void)
 {
 	int i;
@@ -871,12 +881,14 @@ static void bridge__packet_cleanup(struct mosquitto *context)
 	packet__cleanup(&(context->in_packet));
 }
 
+
 static int rand_between(int low, int high)
 {
 	int r;
 	mosquitto_getrandom(&r, sizeof(int));
 	return (abs(r) % (high - low)) + low;
 }
+
 
 static void bridge__backoff_step(struct mosquitto__bridge *bridge)
 {
@@ -891,10 +903,12 @@ static void bridge__backoff_step(struct mosquitto__bridge *bridge)
 	}
 }
 
+
 static void bridge__backoff_reset(struct mosquitto__bridge *bridge)
 {
 	bridge->restart_timeout = bridge->backoff_base;
 }
+
 
 static void bridge__update_backoff(struct mosquitto__bridge *bridge)
 {
@@ -912,6 +926,7 @@ static void bridge__update_backoff(struct mosquitto__bridge *bridge)
 
 	log__printf(NULL, MOSQ_LOG_INFO, "Bridge %s next backoff will be %d ms", bridge->name, bridge->restart_timeout);
 }
+
 
 static void bridge_check_pending(struct mosquitto *context)
 {
@@ -939,6 +954,7 @@ static void bridge_check_pending(struct mosquitto *context)
 	}
 }
 
+
 static bool reload_if_needed(struct mosquitto *context)
 {
 	int i;
@@ -955,6 +971,7 @@ static bool reload_if_needed(struct mosquitto *context)
 
 	return false;
 }
+
 
 void bridge_check(void)
 {

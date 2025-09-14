@@ -26,14 +26,17 @@
 static int run = 1;
 static MYSQL_STMT *stmt = NULL;
 
+
 void handle_signal(int s)
 {
 	run = 0;
 }
 
+
 void connect_callback(struct mosquitto *mosq, void *obj, int result)
 {
 }
+
 
 void message_callback(struct mosquitto *mosq, void *obj, const struct mosquitto_message *message)
 {
@@ -54,6 +57,7 @@ void message_callback(struct mosquitto *mosq, void *obj, const struct mosquitto_
 	mysql_stmt_bind_param(stmt, bind);
 	mysql_stmt_execute(stmt);
 }
+
 
 int main(int argc, char *argv[])
 {

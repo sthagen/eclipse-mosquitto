@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include "mosquitto.h"
 
+
 int main(int argc, char *argv[])
 {
 	int rc;

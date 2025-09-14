@@ -64,11 +64,14 @@ static struct mosquitto **keepalive_list = NULL;
 #endif
 
 #ifndef WITH_OLD_KEEPALIVE
+
+
 static int calc_index(struct mosquitto *context)
 {
 	return (int)(context->last_msg_in + context->keepalive*3/2) % keepalive_list_max;
 }
 #endif
+
 
 int keepalive__init(void)
 {
@@ -98,6 +101,7 @@ int keepalive__init(void)
 	return MOSQ_ERR_SUCCESS;
 }
 
+
 void keepalive__cleanup(void)
 {
 #ifndef WITH_OLD_KEEPALIVE
@@ -112,6 +116,7 @@ void keepalive__cleanup(void)
 	keepalive_list_max = 0;
 #endif
 }
+
 
 int keepalive__add(struct mosquitto *context)
 {
@@ -131,6 +136,8 @@ int keepalive__add(struct mosquitto *context)
 
 
 #ifndef WITH_OLD_KEEPALIVE
+
+
 void keepalive__check(void)
 {
 	struct mosquitto *context, *ctxt_tmp;
@@ -167,6 +174,8 @@ void keepalive__check(void)
 	last_keepalive_check = db.now_s;
 }
 #else
+
+
 void keepalive__check(void)
 {
 	struct mosquitto *context, *ctxt_tmp;

@@ -4,6 +4,7 @@
 #include <mosquitto/broker.h>
 #include <mosquitto/broker_plugin.h>
 
+
 int mosquitto_auth_plugin_version(void)
 {
 	return 4;

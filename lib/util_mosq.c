@@ -59,6 +59,7 @@ Contributors:
 #include <libwebsockets.h>
 #endif
 
+
 int mosquitto__check_keepalive(struct mosquitto *mosq)
 {
 	time_t next_msg_out;
@@ -127,6 +128,7 @@ int mosquitto__check_keepalive(struct mosquitto *mosq)
 	return MOSQ_ERR_SUCCESS;
 }
 
+
 uint16_t mosquitto__mid_generate(struct mosquitto *mosq)
 {
 	/* FIXME - this would be better with atomic increment, but this is safer
@@ -150,6 +152,8 @@ uint16_t mosquitto__mid_generate(struct mosquitto *mosq)
 
 
 #ifdef WITH_TLS
+
+
 int mosquitto__hex2bin_sha1(const char *hex, unsigned char **bin)
 {
 	unsigned char *sha, tmp[SHA_DIGEST_LENGTH];
@@ -166,6 +170,7 @@ int mosquitto__hex2bin_sha1(const char *hex, unsigned char **bin)
 	*bin = sha;
 	return MOSQ_ERR_SUCCESS;
 }
+
 
 int mosquitto__hex2bin(const char *hex, unsigned char *bin, int bin_max_len)
 {
@@ -203,12 +208,14 @@ int mosquitto__hex2bin(const char *hex, unsigned char *bin, int bin_max_len)
 }
 #endif
 
+
 void util__increment_receive_quota(struct mosquitto *mosq)
 {
 	if(mosq->msgs_in.inflight_quota < mosq->msgs_in.inflight_maximum){
 		mosq->msgs_in.inflight_quota++;
 	}
 }
+
 
 void util__increment_send_quota(struct mosquitto *mosq)
 {
@@ -224,6 +231,7 @@ void util__decrement_receive_quota(struct mosquitto *mosq)
 		mosq->msgs_in.inflight_quota--;
 	}
 }
+
 
 void util__decrement_send_quota(struct mosquitto *mosq)
 {
@@ -259,12 +267,15 @@ enum mosquitto_client_state mosquitto__get_state(struct mosquitto *mosq)
 }
 
 #ifndef WITH_BROKER
+
+
 void mosquitto__set_request_disconnect(struct mosquitto *mosq, bool request_disconnect)
 {
 	COMPAT_pthread_mutex_lock(&mosq->state_mutex);
 	mosq->request_disconnect = request_disconnect;
 	COMPAT_pthread_mutex_unlock(&mosq->state_mutex);
 }
+
 
 bool mosquitto__get_request_disconnect(struct mosquitto *mosq)
 {

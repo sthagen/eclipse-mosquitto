@@ -27,6 +27,7 @@ Contributors:
 
 #define UNUSED(A) (void)(A)
 
+
 int ctrl_shell__connect(void)
 {
 	if(data.port == PORT_UNDEFINED){

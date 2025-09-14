@@ -27,6 +27,7 @@ Contributors:
 #include "lib_load.h"
 #include "utlist.h"
 
+
 static int plugin__ext_auth_start(struct mosquitto__security_options *opts, struct mosquitto *context, bool reauth, const void *data_in, uint16_t data_in_len, void **data_out, uint16_t *data_out_len)
 {
 	struct mosquitto_evt_extended_auth event_data;

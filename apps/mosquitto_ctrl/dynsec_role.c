@@ -30,6 +30,7 @@ Contributors:
 #include "mosquitto_ctrl.h"
 #include "json_help.h"
 
+
 int dynsec_role__create(int argc, char *argv[], cJSON *j_command)
 {
 	char *rolename = NULL;
@@ -49,6 +50,7 @@ int dynsec_role__create(int argc, char *argv[], cJSON *j_command)
 		return MOSQ_ERR_SUCCESS;
 	}
 }
+
 
 int dynsec_role__delete(int argc, char *argv[], cJSON *j_command)
 {
@@ -70,6 +72,7 @@ int dynsec_role__delete(int argc, char *argv[], cJSON *j_command)
 	}
 }
 
+
 int dynsec_role__get(int argc, char *argv[], cJSON *j_command)
 {
 	char *rolename = NULL;
@@ -89,6 +92,7 @@ int dynsec_role__get(int argc, char *argv[], cJSON *j_command)
 		return MOSQ_ERR_SUCCESS;
 	}
 }
+
 
 int dynsec_role__list_all(int argc, char *argv[], cJSON *j_command)
 {
@@ -115,6 +119,7 @@ int dynsec_role__list_all(int argc, char *argv[], cJSON *j_command)
 		return MOSQ_ERR_SUCCESS;
 	}
 }
+
 
 int dynsec_role__add_acl(int argc, char *argv[], cJSON *j_command)
 {
@@ -167,6 +172,7 @@ int dynsec_role__add_acl(int argc, char *argv[], cJSON *j_command)
 		return MOSQ_ERR_SUCCESS;
 	}
 }
+
 
 int dynsec_role__remove_acl(int argc, char *argv[], cJSON *j_command)
 {

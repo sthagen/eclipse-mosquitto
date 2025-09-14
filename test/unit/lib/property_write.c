@@ -6,6 +6,7 @@
 #include "property_mosq.h"
 #include "packet_mosq.h"
 
+
 static void byte_prop_write_helper(
 		int command,
 		uint32_t remaining_length,
@@ -158,6 +159,7 @@ static void int16_prop_write_helper(
 	free(packet);
 }
 
+
 static void string_prop_write_helper(
 		int command,
 		uint32_t remaining_length,
@@ -273,6 +275,7 @@ static void binary_prop_write_helper(
 	free(packet);
 }
 
+
 static void string_pair_prop_write_helper(
 		uint32_t remaining_length,
 		int rc_expected,
@@ -343,6 +346,7 @@ static void string_pair_prop_write_helper(
 	free(packet);
 }
 
+
 static void varint_prop_write_helper(
 		uint32_t remaining_length,
 		int rc_expected,
@@ -403,9 +407,11 @@ static void varint_prop_write_helper(
 	free(packet);
 }
 
+
 /* ========================================================================
  * BAD IDENTIFIER
  * ======================================================================== */
+
 
 static void TEST_bad_identifier(void)
 {
@@ -432,120 +438,144 @@ static void TEST_bad_identifier(void)
  * SINGLE PROPERTIES
  * ======================================================================== */
 
+
 static void TEST_single_payload_format_indicator(void)
 {
 	byte_prop_write_helper(CMD_PUBLISH, 3, MOSQ_ERR_SUCCESS, MQTT_PROP_PAYLOAD_FORMAT_INDICATOR, 1);
 }
+
 
 static void TEST_single_request_problem_information(void)
 {
 	byte_prop_write_helper(CMD_CONNECT, 3, MOSQ_ERR_SUCCESS, MQTT_PROP_REQUEST_PROBLEM_INFORMATION, 1);
 }
 
+
 static void TEST_single_request_response_information(void)
 {
 	byte_prop_write_helper(CMD_CONNECT, 3, MOSQ_ERR_SUCCESS, MQTT_PROP_REQUEST_RESPONSE_INFORMATION, 1);
 }
+
 
 static void TEST_single_maximum_qos(void)
 {
 	byte_prop_write_helper(CMD_CONNACK, 3, MOSQ_ERR_SUCCESS, MQTT_PROP_MAXIMUM_QOS, 1);
 }
 
+
 static void TEST_single_retain_available(void)
 {
 	byte_prop_write_helper(CMD_CONNACK, 3, MOSQ_ERR_SUCCESS, MQTT_PROP_RETAIN_AVAILABLE, 1);
 }
+
 
 static void TEST_single_wildcard_subscription_available(void)
 {
 	byte_prop_write_helper(CMD_CONNACK, 3, MOSQ_ERR_SUCCESS, MQTT_PROP_WILDCARD_SUB_AVAILABLE, 0);
 }
 
+
 static void TEST_single_subscription_identifier_available(void)
 {
 	byte_prop_write_helper(CMD_CONNACK, 3, MOSQ_ERR_SUCCESS, MQTT_PROP_SUBSCRIPTION_ID_AVAILABLE, 0);
 }
+
 
 static void TEST_single_shared_subscription_available(void)
 {
 	byte_prop_write_helper(CMD_CONNACK, 3, MOSQ_ERR_SUCCESS, MQTT_PROP_SHARED_SUB_AVAILABLE, 1);
 }
 
+
 static void TEST_single_message_expiry_interval(void)
 {
 	int32_prop_write_helper(CMD_PUBLISH, 6, MOSQ_ERR_SUCCESS, MQTT_PROP_MESSAGE_EXPIRY_INTERVAL, 0x12233445);
 }
+
 
 static void TEST_single_session_expiry_interval(void)
 {
 	int32_prop_write_helper(CMD_CONNACK, 6, MOSQ_ERR_SUCCESS, MQTT_PROP_SESSION_EXPIRY_INTERVAL, 0x45342312);
 }
 
+
 static void TEST_single_will_delay_interval(void)
 {
 	int32_prop_write_helper(CMD_WILL, 6, MOSQ_ERR_SUCCESS, MQTT_PROP_WILL_DELAY_INTERVAL, 0x45342312);
 }
+
 
 static void TEST_single_maximum_packet_size(void)
 {
 	int32_prop_write_helper(CMD_CONNECT, 6, MOSQ_ERR_SUCCESS, MQTT_PROP_MAXIMUM_PACKET_SIZE, 0x45342312);
 }
 
+
 static void TEST_single_server_keep_alive(void)
 {
 	int16_prop_write_helper(CMD_CONNACK, 4, MOSQ_ERR_SUCCESS, MQTT_PROP_SERVER_KEEP_ALIVE, 0x4534);
 }
+
 
 static void TEST_single_receive_maximum(void)
 {
 	int16_prop_write_helper(CMD_CONNACK, 4, MOSQ_ERR_SUCCESS, MQTT_PROP_RECEIVE_MAXIMUM, 0x6842);
 }
 
+
 static void TEST_single_topic_alias_maximum(void)
 {
 	int16_prop_write_helper(CMD_CONNECT, 4, MOSQ_ERR_SUCCESS, MQTT_PROP_TOPIC_ALIAS_MAXIMUM, 0x6842);
 }
+
 
 static void TEST_single_topic_alias(void)
 {
 	int16_prop_write_helper(CMD_PUBLISH, 4, MOSQ_ERR_SUCCESS, MQTT_PROP_TOPIC_ALIAS, 0x6842);
 }
 
+
 static void TEST_single_content_type(void)
 {
 	string_prop_write_helper(CMD_PUBLISH, 9, MOSQ_ERR_SUCCESS, MQTT_PROP_CONTENT_TYPE, "hello");
 }
+
 
 static void TEST_single_response_topic(void)
 {
 	string_prop_write_helper(CMD_WILL, 9, MOSQ_ERR_SUCCESS, MQTT_PROP_RESPONSE_TOPIC, "hello");
 }
 
+
 static void TEST_single_assigned_client_identifier(void)
 {
 	string_prop_write_helper(CMD_CONNACK, 9, MOSQ_ERR_SUCCESS, MQTT_PROP_ASSIGNED_CLIENT_IDENTIFIER, "hello");
 }
+
 
 static void TEST_single_authentication_method(void)
 {
 	string_prop_write_helper(CMD_CONNECT, 9, MOSQ_ERR_SUCCESS, MQTT_PROP_AUTHENTICATION_METHOD, "hello");
 }
 
+
 static void TEST_single_response_information(void)
 {
 	string_prop_write_helper(CMD_CONNACK, 9, MOSQ_ERR_SUCCESS, MQTT_PROP_RESPONSE_INFORMATION, "hello");
 }
+
 
 static void TEST_single_server_reference(void)
 {
 	string_prop_write_helper(CMD_CONNACK, 9, MOSQ_ERR_SUCCESS, MQTT_PROP_SERVER_REFERENCE, "hello");
 }
 
+
 static void TEST_single_reason_string(void)
 {
 	string_prop_write_helper(CMD_PUBREC, 9, MOSQ_ERR_SUCCESS, MQTT_PROP_REASON_STRING, "hello");
 }
+
 
 static void TEST_single_correlation_data(void)
 {
@@ -554,6 +584,7 @@ static void TEST_single_correlation_data(void)
 	binary_prop_write_helper(CMD_PUBLISH, 9, MOSQ_ERR_SUCCESS, MQTT_PROP_CORRELATION_DATA, payload, 5);
 }
 
+
 static void TEST_single_authentication_data(void)
 {
 	uint8_t payload[5] = {1, 'e', 0, 'l', 9};
@@ -561,10 +592,12 @@ static void TEST_single_authentication_data(void)
 	binary_prop_write_helper(CMD_CONNECT, 9, MOSQ_ERR_SUCCESS, MQTT_PROP_AUTHENTICATION_DATA, payload, 5);
 }
 
+
 static void TEST_single_user_property(void)
 {
 	string_pair_prop_write_helper(10, MOSQ_ERR_SUCCESS, MQTT_PROP_USER_PROPERTY, "za", "bc", false);
 }
+
 
 static void TEST_single_subscription_identifier(void)
 {
@@ -582,6 +615,7 @@ static void TEST_single_subscription_identifier(void)
 /* ========================================================================
  * TEST SUITE SETUP
  * ======================================================================== */
+
 
 int init_property_write_tests(void)
 {

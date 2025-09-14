@@ -90,6 +90,7 @@ static const char *get_event_name(enum mosquitto_plugin_event event)
 	return "";
 }
 
+
 static bool check_callback_exists(struct mosquitto__callback *cb_base, mosquitto_plugin_id_t *identifier, MOSQ_FUNC_generic_callback cb_func)
 {
 	struct mosquitto__callback *tail, *tmp;
@@ -168,7 +169,6 @@ static struct mosquitto__callback **plugin__get_callback_base(struct mosquitto__
 	}
 	return NULL;
 }
-
 
 
 static int remove_callback(mosquitto_plugin_id_t *plugin, struct plugin_own_callback *own)

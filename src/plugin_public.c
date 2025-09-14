@@ -30,6 +30,7 @@ Contributors:
 #  include <openssl/ssl.h>
 #endif
 
+
 BROKER_EXPORT int mosquitto_plugin_set_info(mosquitto_plugin_id_t *identifier,
 		const char *plugin_name,
 		const char *plugin_version)
@@ -323,6 +324,7 @@ BROKER_EXPORT int mosquitto_set_username(struct mosquitto *client, const char *u
 	return MOSQ_ERR_SUCCESS;
 }
 
+
 BROKER_EXPORT int mosquitto_set_clientid(struct mosquitto *client, const char *clientid)
 {
 	struct mosquitto *found_client;
@@ -369,6 +371,7 @@ BROKER_EXPORT int mosquitto_set_clientid(struct mosquitto *client, const char *c
 	return MOSQ_ERR_SUCCESS;
 }
 
+
 /* Check to see whether durable clients still have rights to their subscriptions. */
 static void check_subscription_acls(struct mosquitto *context)
 {
@@ -394,7 +397,6 @@ static void check_subscription_acls(struct mosquitto *context)
 }
 
 
-
 static void disconnect_client(struct mosquitto *context, bool with_will)
 {
 	if(context->protocol == mosq_p_mqtt5){
@@ -408,6 +410,7 @@ static void disconnect_client(struct mosquitto *context, bool with_will)
 	}
 	do_disconnect(context, MOSQ_ERR_ADMINISTRATIVE_ACTION);
 }
+
 
 BROKER_EXPORT int mosquitto_kick_client_by_clientid(const char *clientid, bool with_will)
 {
@@ -429,6 +432,7 @@ BROKER_EXPORT int mosquitto_kick_client_by_clientid(const char *clientid, bool w
 	}
 }
 
+
 BROKER_EXPORT int mosquitto_kick_client_by_username(const char *username, bool with_will)
 {
 	struct mosquitto *ctxt, *ctxt_tmp;
@@ -449,6 +453,7 @@ BROKER_EXPORT int mosquitto_kick_client_by_username(const char *username, bool w
 	return MOSQ_ERR_SUCCESS;
 }
 
+
 BROKER_EXPORT int mosquitto_apply_on_all_clients(int (*FUNC_client_functor)(const struct mosquitto *, void *), void *functor_context)
 {
 	int rc = MOSQ_ERR_SUCCESS;
@@ -463,6 +468,7 @@ BROKER_EXPORT int mosquitto_apply_on_all_clients(int (*FUNC_client_functor)(cons
 
 	return rc;
 }
+
 
 BROKER_EXPORT int mosquitto_persist_client_add(struct mosquitto_client *client)
 {
@@ -612,6 +618,7 @@ static struct mosquitto__base_msg *find_store_msg(uint64_t store_id)
 	HASH_FIND(hh, db.msg_store, &store_id, sizeof(store_id), base_msg);
 	return base_msg;
 }
+
 
 BROKER_EXPORT int mosquitto_persist_client_msg_add(struct mosquitto_client_msg *client_msg)
 {
@@ -851,6 +858,7 @@ BROKER_EXPORT void mosquitto_complete_basic_auth(const char *clientid, int resul
 		}
 	}
 }
+
 
 BROKER_EXPORT int mosquitto_broker_node_id_set(uint16_t id)
 {

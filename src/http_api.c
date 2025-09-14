@@ -64,6 +64,7 @@ extern struct metric metrics[mosq_metric_max];
 #define S_ISREG(mode) (((mode) & S_IFMT) == S_IFREG)
 #endif
 
+
 static char *http__canonical_filename(
 		const char *url,
 		const char *http_dir,
@@ -381,6 +382,7 @@ int http_api__start_local(struct mosquitto__listener *listener)
 	return http_api__start(listener);
 }
 
+
 int http_api__start(struct mosquitto__listener *listener)
 {
 	unsigned int flags = MHD_USE_AUTO_INTERNAL_THREAD;
@@ -488,6 +490,7 @@ int http_api__start(struct mosquitto__listener *listener)
 		return MOSQ_ERR_UNKNOWN;
 	}
 }
+
 
 void http_api__stop(struct mosquitto__listener *listener)
 {

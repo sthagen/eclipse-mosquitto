@@ -33,6 +33,7 @@ Contributors:
 
 #include "uthash.h"
 
+
 int context__init_sock(struct mosquitto *context, mosq_sock_t sock, bool get_address)
 {
 	context->sock = sock;
@@ -121,6 +122,7 @@ struct mosquitto *context__init(void)
 
 	return context;
 }
+
 
 static void context__cleanup_out_packets(struct mosquitto *context)
 {
@@ -281,6 +283,7 @@ void context__disconnect(struct mosquitto *context, int reason)
 	context__cleanup_out_packets(context);
 }
 
+
 void context__add_to_disused(struct mosquitto *context)
 {
 	if(context->state == mosq_cs_disused) return;
@@ -292,6 +295,7 @@ void context__add_to_disused(struct mosquitto *context)
 	context->for_free_next = db.ll_for_free;
 	db.ll_for_free = context;
 }
+
 
 void context__free_disused(void)
 {

@@ -40,6 +40,7 @@ Contributors:
 static clockid_t time_clock = CLOCK_MONOTONIC;
 #endif
 
+
 void mosquitto_time_init(void)
 {
 #if _POSIX_TIMERS>0 && defined(_POSIX_MONOTONIC_CLOCK)
@@ -56,6 +57,7 @@ void mosquitto_time_init(void)
 #endif
 #endif
 }
+
 
 time_t mosquitto_time(void)
 {
@@ -86,6 +88,7 @@ time_t mosquitto_time(void)
 #endif
 }
 
+
 void mosquitto_time_ns(time_t *s, long *ns)
 {
 #ifdef WIN32
@@ -107,6 +110,7 @@ void mosquitto_time_ns(time_t *s, long *ns)
 	*ns = tv.tv_usec * 1000;
 #endif
 }
+
 
 long mosquitto_time_cmp(time_t t1_s, long t1_ns, time_t t2_s, long t2_ns)
 {

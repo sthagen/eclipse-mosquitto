@@ -45,6 +45,7 @@ Contributors:
 #  define metrics__int_dec(stat, val)
 #endif
 
+
 int packet__alloc(struct mosquitto__packet **packet, uint8_t command, uint32_t remaining_length)
 {
 	uint8_t remaining_bytes[5], byte;
@@ -90,6 +91,7 @@ int packet__alloc(struct mosquitto__packet **packet, uint8_t command, uint32_t r
 	return MOSQ_ERR_SUCCESS;
 }
 
+
 void packet__cleanup(struct mosquitto__packet_in *packet)
 {
 	if(!packet) return;
@@ -125,6 +127,7 @@ void packet__cleanup_all_no_locks(struct mosquitto *mosq)
 
 	packet__cleanup(&mosq->in_packet);
 }
+
 
 void packet__cleanup_all(struct mosquitto *mosq)
 {
@@ -378,6 +381,7 @@ static int read_header(struct mosquitto *mosq, ssize_t (*func_read)(struct mosqu
 	}
 	return MOSQ_ERR_SUCCESS;
 }
+
 
 static int packet__read_single(struct mosquitto *mosq, enum mosquitto_client_state state, ssize_t (*local__read)(struct mosquitto *, void *, size_t))
 {

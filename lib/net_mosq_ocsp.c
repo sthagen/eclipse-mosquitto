@@ -54,7 +54,8 @@ in this Software without prior written authorization of the copyright holder.
 #include <openssl/ssl.h>
 #include <openssl/ocsp.h>
 
-int mosquitto__verify_ocsp_status_cb(SSL * ssl, void *arg)
+
+int mosquitto__verify_ocsp_status_cb(SSL *ssl, void *arg)
 {
 	struct mosquitto *mosq = (struct mosquitto *)arg;
 	int ocsp_status, result2, i;

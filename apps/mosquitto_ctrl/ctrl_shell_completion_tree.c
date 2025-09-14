@@ -41,6 +41,7 @@ void completion_tree_arg_list_args_free(struct completion_tree_arg_list *arg_lis
 	arg_list->args = NULL;
 }
 
+
 void completion_tree_arg_list_free(struct completion_tree_arg_list *arg_list)
 {
 	if(!arg_list) return;
@@ -49,6 +50,7 @@ void completion_tree_arg_list_free(struct completion_tree_arg_list *arg_list)
 	completion_tree_arg_list_args_free(arg_list);
 	free(arg_list);
 }
+
 
 void completion_tree_cmd_free(struct completion_tree_cmd *cmd)
 {
@@ -60,6 +62,7 @@ void completion_tree_cmd_free(struct completion_tree_cmd *cmd)
 	free(cmd->arg_lists);
 	free(cmd);
 }
+
 
 void completion_tree_free(struct completion_tree_root *tree)
 {

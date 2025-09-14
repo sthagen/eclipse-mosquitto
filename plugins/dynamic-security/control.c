@@ -30,6 +30,7 @@ Contributors:
 
 #define RESPONSE_TOPIC "$CONTROL/dynamic-security/v1/response"
 
+
 static int dynsec__handle_command(struct mosquitto_control_cmd *cmd, void *userdata)
 {
 	struct dynsec__data *data = userdata;

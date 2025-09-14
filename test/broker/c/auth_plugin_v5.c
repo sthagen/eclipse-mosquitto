@@ -12,6 +12,7 @@ static mosquitto_plugin_id_t *plg_id;
 
 MOSQUITTO_PLUGIN_DECLARE_VERSION(5);
 
+
 int mosquitto_plugin_init(mosquitto_plugin_id_t *identifier, void **user_data, struct mosquitto_opt *auth_opts, int auth_opt_count)
 {
 	(void)user_data;
@@ -26,6 +27,7 @@ int mosquitto_plugin_init(mosquitto_plugin_id_t *identifier, void **user_data, s
 	return MOSQ_ERR_SUCCESS;
 }
 
+
 int mosquitto_plugin_cleanup(void *user_data, struct mosquitto_opt *auth_opts, int auth_opt_count)
 {
 	(void)user_data;
@@ -37,6 +39,7 @@ int mosquitto_plugin_cleanup(void *user_data, struct mosquitto_opt *auth_opts, i
 
 	return MOSQ_ERR_SUCCESS;
 }
+
 
 int mosquitto_auth_acl_check_v5(int event, void *event_data, void *user_data)
 {
@@ -66,6 +69,7 @@ int mosquitto_auth_acl_check_v5(int event, void *event_data, void *user_data)
 		return MOSQ_ERR_ACL_DENIED;
 	}
 }
+
 
 int mosquitto_auth_unpwd_check_v5(int event, void *event_data, void *user_data)
 {

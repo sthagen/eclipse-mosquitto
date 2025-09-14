@@ -10,6 +10,7 @@ Copyright (c) 2023 Cedalo Gmbh
 #include "mosquitto.h"
 #include "plugin_global.h"
 
+
 int plugin__message_in_callback(int event, void *event_data, void *user_data)
 {
 	struct mosquitto_evt_message *ed = event_data;

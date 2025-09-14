@@ -43,6 +43,7 @@ void message__cleanup(struct mosquitto_message_all **message)
 	mosquitto_FREE(msg);
 }
 
+
 void message__cleanup_all(struct mosquitto *mosq)
 {
 	struct mosquitto_message_all *tail, *tmp;
@@ -58,6 +59,7 @@ void message__cleanup_all(struct mosquitto *mosq)
 		message__cleanup(&tail);
 	}
 }
+
 
 int mosquitto_message_copy(struct mosquitto_message *dst, const struct mosquitto_message *src)
 {
@@ -83,6 +85,7 @@ int mosquitto_message_copy(struct mosquitto_message *dst, const struct mosquitto
 	return MOSQ_ERR_SUCCESS;
 }
 
+
 int message__delete(struct mosquitto *mosq, uint16_t mid, enum mosquitto_msg_direction dir, int qos)
 {
 	struct mosquitto_message_all *message;
@@ -95,6 +98,7 @@ int message__delete(struct mosquitto *mosq, uint16_t mid, enum mosquitto_msg_dir
 	}
 	return rc;
 }
+
 
 void mosquitto_message_free(struct mosquitto_message **message)
 {
@@ -109,6 +113,7 @@ void mosquitto_message_free(struct mosquitto_message **message)
 	mosquitto_FREE(msg);
 }
 
+
 void mosquitto_message_free_contents(struct mosquitto_message *message)
 {
 	if(!message) return;
@@ -116,6 +121,7 @@ void mosquitto_message_free_contents(struct mosquitto_message *message)
 	mosquitto_FREE(message->topic);
 	mosquitto_FREE(message->payload);
 }
+
 
 int message__queue(struct mosquitto *mosq, struct mosquitto_message_all *message, enum mosquitto_msg_direction dir)
 {
@@ -134,6 +140,7 @@ int message__queue(struct mosquitto *mosq, struct mosquitto_message_all *message
 
 	return message__release_to_inflight(mosq, dir);
 }
+
 
 void message__reconnect_reset(struct mosquitto *mosq, bool update_quota_only)
 {
@@ -271,6 +278,7 @@ int message__remove(struct mosquitto *mosq, uint16_t mid, enum mosquitto_msg_dir
 	}
 }
 
+
 void message__retry_check(struct mosquitto *mosq)
 {
 	struct mosquitto_message_all *msg;
@@ -312,6 +320,7 @@ void mosquitto_message_retry_set(struct mosquitto *mosq, unsigned int message_re
 	UNUSED(message_retry);
 }
 
+
 int message__out_update(struct mosquitto *mosq, uint16_t mid, enum mosquitto_msg_state state, int qos)
 {
 	struct mosquitto_message_all *message, *tmp;
@@ -332,6 +341,7 @@ int message__out_update(struct mosquitto *mosq, uint16_t mid, enum mosquitto_msg
 	COMPAT_pthread_mutex_unlock(&mosq->msgs_out.mutex);
 	return MOSQ_ERR_NOT_FOUND;
 }
+
 
 int mosquitto_max_inflight_messages_set(struct mosquitto *mosq, unsigned int max_inflight_messages)
 {

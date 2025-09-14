@@ -54,6 +54,7 @@ const char hexseplist[32] = {
 	'^', '_', '`', '{', '|', '}', '~', ' ',
 };
 
+
 static int check_format(const char *str)
 {
 	size_t i;
@@ -229,6 +230,7 @@ static void init_config(struct mosq_config *cfg, int pub_or_sub)
 	cfg->transport = MOSQ_T_TCP;
 }
 
+
 void client_config_cleanup(struct mosq_config *cfg)
 {
 	int i;
@@ -292,6 +294,7 @@ void client_config_cleanup(struct mosq_config *cfg)
 	mosquitto_property_free_all(&cfg->will_props);
 	free(cfg->options_file);
 }
+
 
 /* Find if there is "-o" in the options */
 static int client_config_options_file(struct mosq_config *cfg, int argc, char *argv[])
@@ -513,6 +516,7 @@ int client_config_load(struct mosq_config *cfg, int pub_or_sub, int argc, char *
 
 	return MOSQ_ERR_SUCCESS;
 }
+
 
 static int cfg_add_topic(struct mosq_config *cfg, int type, char *topic, const char *arg)
 {
@@ -1332,6 +1336,8 @@ unknown_option:
 
 
 #ifdef WITH_TLS
+
+
 static int client_tls_opts_set(struct mosquitto *mosq, struct mosq_config *cfg)
 {
 	int rc;
@@ -1457,6 +1463,7 @@ int client_opts_set(struct mosquitto *mosq, struct mosq_config *cfg)
 	return MOSQ_ERR_SUCCESS;
 }
 
+
 int clientid_generate(struct mosq_config *cfg)
 {
 	if(cfg->id_prefix){
@@ -1469,6 +1476,7 @@ int clientid_generate(struct mosq_config *cfg)
 	}
 	return MOSQ_ERR_SUCCESS;
 }
+
 
 int client_connect(struct mosquitto *mosq, struct mosq_config *cfg)
 {
@@ -1528,6 +1536,8 @@ int client_connect(struct mosquitto *mosq, struct mosq_config *cfg)
 }
 
 #ifdef WITH_SOCKS
+
+
 /* Convert %25 -> %, %3a, %3A -> :, %40 -> @ */
 static int mosquitto__urldecode(char *str)
 {
@@ -1571,6 +1581,7 @@ static int mosquitto__urldecode(char *str)
 	}
 	return 0;
 }
+
 
 static int mosquitto__parse_socks_url(struct mosq_config *cfg, char *url)
 {
@@ -1770,6 +1781,8 @@ void err_printf(const struct mosq_config *cfg, const char *fmt, ...)
 }
 
 #ifdef WITH_TLS
+
+
 static void tls_keylog_callback(const SSL *ssl, const char *line)
 {
 	struct mosq_config *cfg;

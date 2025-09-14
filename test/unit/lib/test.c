@@ -10,6 +10,7 @@ int init_property_read_tests(void);
 int init_property_user_read_tests(void);
 int init_property_write_tests(void);
 
+
 int main(int argc, char *argv[])
 {
 	unsigned int fails;

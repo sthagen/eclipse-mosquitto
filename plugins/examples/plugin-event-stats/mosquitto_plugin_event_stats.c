@@ -82,6 +82,7 @@ const char evt_topics[][60] = {
 	TOPIC_BASE "message/out", /* MOSQ_EVT_MESSAGE_OUT */
 };
 
+
 static int callback_tick(int event, void *event_data, void *userdata)
 {
 	struct mosquitto_evt_tick *ed = event_data;
@@ -143,6 +144,7 @@ int mosquitto_plugin_init(mosquitto_plugin_id_t *identifier, void **user_data, s
 
 	return MOSQ_ERR_SUCCESS;
 }
+
 
 /* mosquitto_plugin_cleanup() is optional in 2.1 and later. Use it only if you have your own cleanup to do */
 int mosquitto_plugin_cleanup(void *user_data, struct mosquitto_opt *opts, int opt_count)

@@ -28,6 +28,7 @@ Contributors:
 #include "mosquitto_ctrl.h"
 #include "mosquitto.h"
 
+
 void broker__print_usage(void)
 {
 	printf("\nBroker Control module\n");
@@ -37,11 +38,13 @@ void broker__print_usage(void)
 	printf("List listeners  :          listListeners\n");
 }
 
+
 /* ################################################################
  * #
  * # Payload callback
  * #
  * ################################################################ */
+
 
 static void print_listeners(cJSON *j_response)
 {
@@ -189,6 +192,7 @@ static void broker__payload_callback(struct mosq_ctrl *ctrl, long payloadlen, co
 	cJSON_Delete(tree);
 }
 
+
 static int broker__list_plugins(int argc, char *argv[], cJSON *j_command)
 {
 	UNUSED(argc);
@@ -202,6 +206,7 @@ static int broker__list_plugins(int argc, char *argv[], cJSON *j_command)
 
 	return MOSQ_ERR_SUCCESS;
 }
+
 
 static int broker__list_listeners(int argc, char *argv[], cJSON *j_command)
 {
@@ -217,11 +222,13 @@ static int broker__list_listeners(int argc, char *argv[], cJSON *j_command)
 	return MOSQ_ERR_SUCCESS;
 }
 
+
 /* ################################################################
  * #
  * # Main
  * #
  * ################################################################ */
+
 
 int broker__main(int argc, char *argv[], struct mosq_ctrl *ctrl)
 {

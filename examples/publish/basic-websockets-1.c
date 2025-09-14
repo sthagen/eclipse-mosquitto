@@ -14,6 +14,7 @@
 #  define UNUSED(A) (void)(A)
 #endif
 
+
 /* Callback called when the client receives a CONNACK message from the broker. */
 void on_connect(struct mosquitto *mosq, void *obj, int reason_code)
 {
@@ -55,6 +56,7 @@ int get_temperature(void)
 	sleep(1); /* Prevent a storm of messages - this pretend sensor works at 1Hz */
 	return (int)random()%100;
 }
+
 
 /* This function pretends to read some data from a sensor and publish it.*/
 void publish_sensor_data(struct mosquitto *mosq)

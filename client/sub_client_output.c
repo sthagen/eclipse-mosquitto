@@ -71,6 +71,7 @@ struct watch_topic{
 static int watch_max = 2;
 static struct watch_topic *watch_items = NULL;
 
+
 static int get_time(struct tm **ti, long *ns)
 {
 #ifdef WIN32
@@ -114,12 +115,14 @@ static const signed char nibble_to_hex[] = {
 	'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'
 };
 
+
 static void hexsep(int xpos, int precision, char sepchar)
 {
 	if(precision > 0 && xpos%precision == (precision-1)){
 		putchar(sepchar);
 	}
 }
+
 
 static void write_payload(const unsigned char *payload, int payloadlen, int hex, struct fieldoptions *fopts)
 {
@@ -285,6 +288,7 @@ static void format_time_8601(const struct tm *ti, int ns, char *buf, size_t len)
 	buf[strlen("2020-05-06T21:48:00.000000")] = c;
 }
 
+
 static int json_print(const struct mosquitto_message *message, const mosquitto_property *properties, const struct tm *ti, int ns, bool escaped, bool pretty)
 {
 	char buf[100];
@@ -369,6 +373,8 @@ static void formatted_print_blank(struct fieldoptions *fopts)
 
 
 #ifdef __STDC_IEC_559__
+
+
 static int formatted_print_float(const unsigned char *payload, int payloadlen, char format, struct fieldoptions *fopts)
 {
 	float float_value;
@@ -449,6 +455,7 @@ static void formatted_print_str(const char *value, struct fieldoptions *fopts)
 		}
 	}
 }
+
 
 static void formatted_print_percent(const struct mosq_config *lcfg, const struct mosquitto_message *message, const mosquitto_property *properties, char format, struct fieldoptions *fopts)
 {
@@ -803,6 +810,8 @@ static void rand_init(void)
 }
 
 #ifndef WIN32
+
+
 static void watch_print(const struct mosquitto_message *message)
 {
 	struct watch_topic *item = NULL;
@@ -882,6 +891,7 @@ void print_message(struct mosq_config *lcfg, const struct mosquitto_message *mes
 	}
 #endif
 }
+
 
 void output_init(struct mosq_config *lcfg)
 {

@@ -34,6 +34,7 @@ Contributors:
 #include "send_mosq.h"
 #include "util_mosq.h"
 
+
 static int property__process_publish(struct mosquitto *mosq, mosquitto_property *props, struct mosquitto_message_all *message, uint16_t *topic_alias)
 {
 	while(props){

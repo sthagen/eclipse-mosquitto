@@ -7,6 +7,7 @@
 
 static int run = -1;
 
+
 static void on_connect(struct mosquitto *mosq, void *obj, int rc)
 {
 	(void)obj;
@@ -17,6 +18,7 @@ static void on_connect(struct mosquitto *mosq, void *obj, int rc)
 		mosquitto_subscribe(mosq, NULL, "request/topic", 0);
 	}
 }
+
 
 static void on_message_v5(struct mosquitto *mosq, void *obj, const struct mosquitto_message *msg, const mosquitto_property *props)
 {
@@ -38,6 +40,7 @@ static void on_message_v5(struct mosquitto *mosq, void *obj, const struct mosqui
 		}
 	}
 }
+
 
 static void on_publish(struct mosquitto *mosq, void *obj, int mid)
 {

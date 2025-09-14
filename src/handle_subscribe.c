@@ -27,7 +27,6 @@ Contributors:
 #include "property_mosq.h"
 
 
-
 int handle__subscribe(struct mosquitto *context)
 {
 	int rc = 0;

@@ -33,6 +33,8 @@ Contributors:
 #include "util_mosq.h"
 
 #ifdef WITH_SRV
+
+
 static void srv_callback(void *arg, int status, int timeouts, unsigned char *abuf, int alen)
 {
 	struct mosquitto *mosq = arg;
@@ -53,6 +55,7 @@ static void srv_callback(void *arg, int status, int timeouts, unsigned char *abu
 	}
 }
 #endif
+
 
 int mosquitto_connect_srv(struct mosquitto *mosq, const char *host, int keepalive, const char *bind_address)
 {

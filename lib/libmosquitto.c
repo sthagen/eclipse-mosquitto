@@ -88,6 +88,7 @@ int mosquitto_lib_init(void)
 	return MOSQ_ERR_SUCCESS;
 }
 
+
 int mosquitto_lib_cleanup(void)
 {
 	if (init_refcount == 1) {
@@ -100,6 +101,7 @@ int mosquitto_lib_cleanup(void)
 
 	return MOSQ_ERR_SUCCESS;
 }
+
 
 static int alloc_packet_buffer(struct mosquitto *mosq)
 {
@@ -144,6 +146,7 @@ struct mosquitto *mosquitto_new(const char *id, bool clean_start, void *userdata
 	}
 	return mosq;
 }
+
 
 int mosquitto_reinitialise(struct mosquitto *mosq, const char *id, bool clean_start, void *userdata)
 {
@@ -339,6 +342,7 @@ void mosquitto__destroy(struct mosquitto *mosq)
 	}
 }
 
+
 void mosquitto_destroy(struct mosquitto *mosq)
 {
 	if(!mosq) return;
@@ -346,6 +350,7 @@ void mosquitto_destroy(struct mosquitto *mosq)
 	mosquitto__destroy(mosq);
 	mosquitto_FREE(mosq);
 }
+
 
 int mosquitto_socket(struct mosquitto *mosq)
 {

@@ -28,12 +28,14 @@ Contributors:
 
 #include "mosquitto_ctrl.h"
 
+
 void ctrl_help(void)
 {
 	printf("\nExample module\n");
 	printf("==============\n");
 	printf("    mosquitto_ctrl example help\n");
 }
+
 
 int ctrl_main(int argc, char *argv[], struct mosq_ctrl *ctrl)
 {

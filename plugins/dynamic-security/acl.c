@@ -24,13 +24,16 @@ Contributors:
 
 typedef int (*MOSQ_FUNC_acl_check)(struct dynsec__data *data, struct mosquitto_evt_acl_check *, struct dynsec__rolelist *);
 
+
 /* FIXME - CACHE! */
+
 
 /* ################################################################
  * #
  * # ACL check - publish broker to client
  * #
  * ################################################################ */
+
 
 static int acl_check_publish_c_recv(struct dynsec__data *data, struct mosquitto_evt_acl_check *ed, struct dynsec__rolelist *base_rolelist)
 {
@@ -68,6 +71,7 @@ static int acl_check_publish_c_recv(struct dynsec__data *data, struct mosquitto_
  * #
  * ################################################################ */
 
+
 static int acl_check_publish_c_send(struct dynsec__data *data, struct mosquitto_evt_acl_check *ed, struct dynsec__rolelist *base_rolelist)
 {
 	struct dynsec__rolelist *rolelist, *rolelist_tmp = NULL;
@@ -103,6 +107,7 @@ static int acl_check_publish_c_send(struct dynsec__data *data, struct mosquitto_
  * # ACL check - subscribe
  * #
  * ################################################################ */
+
 
 static int acl_check_subscribe(struct dynsec__data *data, struct mosquitto_evt_acl_check *ed, struct dynsec__rolelist *base_rolelist)
 {
@@ -157,6 +162,7 @@ static int acl_check_subscribe(struct dynsec__data *data, struct mosquitto_evt_a
  * #
  * ################################################################ */
 
+
 static int acl_check_unsubscribe(struct dynsec__data *data, struct mosquitto_evt_acl_check *ed, struct dynsec__rolelist *base_rolelist)
 {
 	struct dynsec__rolelist *rolelist, *rolelist_tmp = NULL;
@@ -204,6 +210,7 @@ static int acl_check_unsubscribe(struct dynsec__data *data, struct mosquitto_evt
  * # ACL check - generic check
  * #
  * ################################################################ */
+
 
 static int acl_check(struct dynsec__data *data, struct mosquitto_evt_acl_check *ed, MOSQ_FUNC_acl_check check, bool acl_default_access)
 {
@@ -257,6 +264,7 @@ static int acl_check(struct dynsec__data *data, struct mosquitto_evt_acl_check *
  * # ACL check - plugin callback
  * #
  * ################################################################ */
+
 
 int dynsec__acl_check_callback(int event, void *event_data, void *userdata)
 {

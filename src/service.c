@@ -43,6 +43,7 @@ static char* fix_name(char* name)
 	return name;
 }
 
+
 static void print_error(void)
 {
 	char *buf = NULL;
@@ -75,6 +76,7 @@ void __stdcall service_handler(DWORD fdwControl)
 			break;
 	}
 }
+
 
 /* Function called when started as a service. */
 void __stdcall service_main(DWORD dwArgc, LPTSTR *lpszArgv)
@@ -179,6 +181,7 @@ void service_install(char* name)
 	}
 }
 
+
 void service_uninstall(char *name)
 {
 	SC_HANDLE sc_manager, svc_handle;
@@ -204,6 +207,7 @@ void service_uninstall(char *name)
 		print_error();
 	}
 }
+
 
 void service_run(char *name)
 {

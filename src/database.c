@@ -27,6 +27,7 @@ Contributors:
 #include "sys_tree.h"
 #include "util_mosq.h"
 
+
 /**
  * Is this context ready to take more in flight messages right now?
  * @param context the client context of interest
@@ -146,6 +147,7 @@ void db__msg_add_to_inflight_stats(struct mosquitto_msg_data *msg_data, struct m
 	}
 }
 
+
 static void db__msg_remove_from_inflight_stats(struct mosquitto_msg_data *msg_data, struct mosquitto__client_msg *client_msg)
 {
 	msg_data->inflight_count--;
@@ -166,6 +168,7 @@ void db__msg_add_to_queued_stats(struct mosquitto_msg_data *msg_data, struct mos
 		msg_data->queued_bytes12 += client_msg->base_msg->data.payloadlen;
 	}
 }
+
 
 static void db__msg_remove_from_queued_stats(struct mosquitto_msg_data *msg_data, struct mosquitto__client_msg *client_msg)
 {
@@ -208,6 +211,7 @@ int db__open(struct mosquitto__config *config)
 	return MOSQ_ERR_SUCCESS;
 }
 
+
 static void subhier_clean(struct mosquitto__subhier **subhier)
 {
 	struct mosquitto__subhier *peer, *subhier_tmp;
@@ -226,6 +230,7 @@ static void subhier_clean(struct mosquitto__subhier **subhier)
 		mosquitto_FREE(peer);
 	}
 }
+
 
 int db__close(void)
 {
@@ -270,6 +275,7 @@ void db__msg_store_free(struct mosquitto__base_msg *base_msg)
 	mosquitto_FREE(base_msg);
 }
 
+
 void db__msg_store_remove(struct mosquitto__base_msg *base_msg, bool notify)
 {
 	if(base_msg == NULL) return;
@@ -292,10 +298,12 @@ void db__msg_store_clean(void)
 	}
 }
 
+
 void db__msg_store_ref_inc(struct mosquitto__base_msg *base_msg)
 {
 	base_msg->ref_count++;
 }
+
 
 void db__msg_store_ref_dec(struct mosquitto__base_msg **base_msg)
 {
@@ -354,6 +362,7 @@ static void db__message_remove_queued(struct mosquitto *context, struct mosquitt
 	mosquitto_FREE(item);
 }
 
+
 static void db__fill_inflight_out_from_queue(struct mosquitto *context)
 {
 	struct mosquitto__client_msg *client_msg, *tmp;
@@ -381,6 +390,7 @@ static void db__fill_inflight_out_from_queue(struct mosquitto *context)
 		db__message_dequeue_first(context, &context->msgs_out);
 	}
 }
+
 
 void db__message_dequeue_first(struct mosquitto *context, struct mosquitto_msg_data *msg_data)
 {
@@ -524,6 +534,7 @@ int db__message_insert_incoming(struct mosquitto *context, uint64_t cmsg_id, str
 	}
 	return rc;
 }
+
 
 int db__message_insert_outgoing(struct mosquitto *context, uint64_t cmsg_id, uint16_t mid, uint8_t qos, bool retain, struct mosquitto__base_msg *base_msg, uint32_t subscription_identifier, bool update, bool persist)
 {
@@ -703,6 +714,7 @@ int db__message_insert_outgoing(struct mosquitto *context, uint64_t cmsg_id, uin
 	return rc;
 }
 
+
 static inline int db__message_update_outgoing_state(struct mosquitto *context, struct mosquitto__client_msg *head,
   uint16_t mid,	enum mosquitto_msg_state state, int qos, bool persist)
 {
@@ -803,6 +815,7 @@ int db__messages_delete(struct mosquitto *context, bool force_free)
 	return MOSQ_ERR_SUCCESS;
 }
 
+
 int db__messages_easy_queue(struct mosquitto *context, const char *topic, uint8_t qos, uint32_t payloadlen, const void *payload, int retain, uint32_t message_expiry_interval, mosquitto_property **properties)
 {
 	struct mosquitto__base_msg *base_msg;
@@ -861,6 +874,7 @@ int db__messages_easy_queue(struct mosquitto *context, const char *topic, uint8_
 
 
 #define MOSQ_UUID_EPOCH 1637168273
+
 
 /* db__new_msg_id() attempts to generate a new unique id on the broker, or a
  * number of brokers. It uses the 10-bit node ID, which can be set by plugins
@@ -978,6 +992,7 @@ int db__message_store(const struct mosquitto *source, struct mosquitto__base_msg
 	return MOSQ_ERR_SUCCESS;
 }
 
+
 int db__message_store_find(struct mosquitto *context, uint16_t mid, struct mosquitto__client_msg **client_msg)
 {
 	struct mosquitto__client_msg *cmsg;
@@ -1002,6 +1017,7 @@ int db__message_store_find(struct mosquitto *context, uint16_t mid, struct mosqu
 
 	return 1;
 }
+
 
 /* Called on reconnect to set outgoing messages to a sensible state and force a
  * retry, and to set incoming messages to expect an appropriate retry. */
@@ -1241,6 +1257,7 @@ void db__expire_all_messages(struct mosquitto *context)
 	}
 }
 
+
 static void db__client_messages_check_acl(struct mosquitto *context, struct mosquitto_msg_data *msg_data, struct mosquitto__client_msg **head,
 	void (*decrement_stats_fn)(struct mosquitto_msg_data *msg_data, struct mosquitto__client_msg *client_msg))
 {
@@ -1269,7 +1286,6 @@ static void db__client_messages_check_acl(struct mosquitto *context, struct mosq
 }
 
 
-
 void db__check_acl_of_all_messages(struct mosquitto *context)
 {
 	db__client_messages_check_acl(context, &context->msgs_in, &context->msgs_in.inflight, &db__msg_remove_from_inflight_stats);
@@ -1277,6 +1293,7 @@ void db__check_acl_of_all_messages(struct mosquitto *context)
 	db__client_messages_check_acl(context, &context->msgs_out, &context->msgs_out.inflight, &db__msg_remove_from_inflight_stats);
 	db__client_messages_check_acl(context, &context->msgs_out, &context->msgs_out.queued, &db__msg_remove_from_queued_stats);
 }
+
 
 static int db__message_write_inflight_out_single(struct mosquitto *context, struct mosquitto__client_msg *client_msg)
 {

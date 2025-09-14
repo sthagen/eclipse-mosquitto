@@ -7,6 +7,7 @@
 
 static int run = -1;
 
+
 static void on_connect(struct mosquitto *mosq, void *obj, int rc, int flags, const mosquitto_property *properties)
 {
 	(void)obj;
@@ -21,6 +22,7 @@ static void on_connect(struct mosquitto *mosq, void *obj, int rc, int flags, con
 		mosquitto_disconnect(mosq);
 	}
 }
+
 
 static int on_ext_auth(struct mosquitto *mosq, void *obj, const char *auth_method, uint16_t auth_data_len, const void *auth_data, const mosquitto_property *properties)
 {
@@ -40,6 +42,7 @@ static int on_ext_auth(struct mosquitto *mosq, void *obj, const char *auth_metho
 	return mosquitto_ext_auth_continue(mosq, auth_method, strlen("test-reply"), "test-reply", NULL);
 }
 
+
 static void on_disconnect(struct mosquitto *mosq, void *obj, int rc, const mosquitto_property *properties)
 {
 	(void)mosq;
@@ -49,6 +52,7 @@ static void on_disconnect(struct mosquitto *mosq, void *obj, int rc, const mosqu
 	/* FIXME - should verify flags and all properties here. */
 	run = rc;
 }
+
 
 int main(int argc, char *argv[])
 {

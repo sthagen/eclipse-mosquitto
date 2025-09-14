@@ -64,6 +64,7 @@ static struct mosquitto__subhier *sub__add_hier_entry(struct mosquitto__subhier 
 static unsigned int hashv_plus = 0;
 static unsigned int hashv_hash = 0;
 
+
 static int subs__send(struct mosquitto__subleaf *leaf, const char *topic, uint8_t qos, int retain, struct mosquitto__base_msg *stored)
 {
 	bool client_retain;
@@ -125,6 +126,7 @@ static int subs__shared_process(struct mosquitto__subhier *hier, const char *top
 
 	return rc;
 }
+
 
 static int subs__process(struct mosquitto__subhier *hier, const char *source_id, const char *topic, uint8_t qos, int retain, struct mosquitto__base_msg *stored)
 {
@@ -607,6 +609,7 @@ int sub__add(struct mosquitto *context, const struct mosquitto_subscription *sub
 	return rc;
 }
 
+
 int sub__remove(struct mosquitto *context, const char *sub, uint8_t *reason)
 {
 	int rc = 0;
@@ -635,6 +638,7 @@ int sub__remove(struct mosquitto *context, const char *sub, uint8_t *reason)
 
 	return rc;
 }
+
 
 int sub__messages_queue(const char *source_id, const char *topic, uint8_t qos, int retain, struct mosquitto__base_msg **stored)
 {
@@ -781,6 +785,7 @@ int sub__clean_session(struct mosquitto *context)
 	return MOSQ_ERR_SUCCESS;
 }
 
+
 void sub__tree_print(struct mosquitto__subhier *root, int level)
 {
 	int i;
@@ -808,6 +813,7 @@ void sub__tree_print(struct mosquitto__subhier *root, int level)
 		sub__tree_print(branch->children, level+1);
 	}
 }
+
 
 int sub__init(void)
 {

@@ -41,6 +41,7 @@ static bool flag_db_backup = false;
 static bool flag_tree_print = false;
 static bool flag_xtreport = false;
 
+
 static void handle_signal(int signal)
 {
 	UNUSED(signal);
@@ -89,6 +90,7 @@ void signal__setup(void)
 	CreateThread(NULL, 0, SigThreadProc, NULL, 0, NULL);
 #endif
 }
+
 
 int signal__flag_check(void)
 {
@@ -160,7 +162,9 @@ int signal__flag_check(void)
 #ifdef WIN32
 
 #define MOSQ_MAX_EVTS 6
-DWORD WINAPI SigThreadProc(void* data)
+
+
+DWORD WINAPI SigThreadProc(void *data)
 {
 	TCHAR evt_name[MAX_PATH];
 	static HANDLE evt[MOSQ_MAX_EVTS];

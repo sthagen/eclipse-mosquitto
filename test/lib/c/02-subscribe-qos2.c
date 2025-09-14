@@ -7,6 +7,7 @@
 
 static int run = -1;
 
+
 static void on_connect(struct mosquitto *mosq, void *obj, int rc)
 {
 	(void)obj;
@@ -18,6 +19,7 @@ static void on_connect(struct mosquitto *mosq, void *obj, int rc)
 	}
 }
 
+
 static void on_disconnect(struct mosquitto *mosq, void *obj, int rc)
 {
 	(void)mosq;
@@ -25,6 +27,7 @@ static void on_disconnect(struct mosquitto *mosq, void *obj, int rc)
 
 	run = rc;
 }
+
 
 static void on_subscribe(struct mosquitto *mosq, void *obj, int mid, int qos_count, const int *granted_qos)
 {
@@ -36,6 +39,7 @@ static void on_subscribe(struct mosquitto *mosq, void *obj, int mid, int qos_cou
 	}
 	mosquitto_disconnect(mosq);
 }
+
 
 int main(int argc, char *argv[])
 {

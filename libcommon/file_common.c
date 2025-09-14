@@ -46,6 +46,7 @@ Contributors:
 
 #include "mosquitto.h"
 
+
 FILE *mosquitto_fopen(const char *path, const char *mode, bool restrict_read)
 {
 #ifdef WIN32

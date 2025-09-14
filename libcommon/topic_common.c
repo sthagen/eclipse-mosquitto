@@ -31,6 +31,7 @@ Contributors:
 
 #include "mosquitto.h"
 
+
 /* Check that a topic used for publishing is valid.
  * Search for + or # in a topic. Return MOSQ_ERR_INVAL if found.
  * Also returns MOSQ_ERR_INVAL if the topic string is too long.
@@ -60,6 +61,7 @@ BROKER_EXPORT int mosquitto_pub_topic_check(const char *str)
 	return MOSQ_ERR_SUCCESS;
 }
 
+
 BROKER_EXPORT int mosquitto_pub_topic_check2(const char *str, size_t len)
 {
 	size_t i;
@@ -80,6 +82,7 @@ BROKER_EXPORT int mosquitto_pub_topic_check2(const char *str, size_t len)
 
 	return MOSQ_ERR_SUCCESS;
 }
+
 
 /* Check that a topic used for subscriptions is valid.
  * Search for + or # in a topic, check they aren't in invalid positions such as
@@ -119,6 +122,7 @@ BROKER_EXPORT int mosquitto_sub_topic_check(const char *str)
 
 	return MOSQ_ERR_SUCCESS;
 }
+
 
 BROKER_EXPORT int mosquitto_sub_topic_check2(const char *str, size_t len)
 {
@@ -318,6 +322,7 @@ static int topic_matches_sub(const char *sub, const char *topic, const char *cli
 	return MOSQ_ERR_SUCCESS;
 }
 
+
 static int sub_matches_acl(const char *acl, const char *sub, const char *clientid, const char *username, bool match_patterns, bool *result)
 {
 	size_t apos;
@@ -491,25 +496,30 @@ static int sub_matches_acl(const char *acl, const char *sub, const char *clienti
 	return MOSQ_ERR_SUCCESS;
 }
 
+
 BROKER_EXPORT int mosquitto_sub_matches_acl(const char *acl, const char *sub, bool *result)
 {
 	return sub_matches_acl(acl, sub, NULL, NULL, false, result);
 }
+
 
 BROKER_EXPORT int mosquitto_sub_matches_acl_with_pattern(const char *acl, const char *sub, const char *clientid, const char *username, bool *result)
 {
 	return sub_matches_acl(acl, sub, clientid, username, true, result);
 }
 
+
 BROKER_EXPORT int mosquitto_topic_matches_sub(const char *sub, const char *topic, bool *result)
 {
 	return topic_matches_sub(sub, topic, NULL, NULL, false, result);
 }
 
+
 BROKER_EXPORT int mosquitto_topic_matches_sub_with_pattern(const char *sub, const char *topic, const char *clientid, const char *username, bool *result)
 {
 	return topic_matches_sub(sub, topic, clientid, username, true, result);
 }
+
 
 /* Does a topic match a subscription? */
 BROKER_EXPORT int mosquitto_topic_matches_sub2(const char *sub, size_t sublen, const char *topic, size_t topiclen, bool *result)
@@ -694,6 +704,7 @@ int mosquitto_sub_topic_tokenise(const char *subtopic, char ***topics, int *coun
 
 	return MOSQ_ERR_SUCCESS;
 }
+
 
 int mosquitto_sub_topic_tokens_free(char ***topics, int count)
 {

@@ -32,6 +32,7 @@ static time_t next_ping = 0;
 static time_t ping_sec = 0;
 #endif
 
+
 void watchdog__init(void)
 {
 #ifdef WITH_SYSTEMD
@@ -49,6 +50,7 @@ void watchdog__init(void)
 	}
 #endif
 }
+
 
 void watchdog__check(void)
 {

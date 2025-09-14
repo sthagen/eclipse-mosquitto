@@ -13,10 +13,12 @@ enum mosq_err_t {
 	MOSQ_ERR_ACL_DENIED = 12
 };
 
+
 int mosquitto_auth_plugin_version(void)
 {
 	return 2;
 }
+
 
 int mosquitto_auth_plugin_init(void **user_data, struct mosquitto_auth_opt *auth_opts, int auth_opt_count)
 {
@@ -27,6 +29,7 @@ int mosquitto_auth_plugin_init(void **user_data, struct mosquitto_auth_opt *auth
 	return MOSQ_ERR_SUCCESS;
 }
 
+
 int mosquitto_auth_plugin_cleanup(void *user_data, struct mosquitto_auth_opt *auth_opts, int auth_opt_count)
 {
 	(void)user_data;
@@ -35,6 +38,7 @@ int mosquitto_auth_plugin_cleanup(void *user_data, struct mosquitto_auth_opt *au
 
 	return MOSQ_ERR_SUCCESS;
 }
+
 
 int mosquitto_auth_security_init(void *user_data, struct mosquitto_auth_opt *auth_opts, int auth_opt_count, bool reload)
 {

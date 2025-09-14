@@ -16,6 +16,7 @@ int last_qos;
 
 struct mosquitto_db db;
 
+
 static void test_cleanup(void)
 {
 	struct mosquitto *ctxt, *ctxt_tmp;
@@ -31,6 +32,7 @@ static void test_cleanup(void)
 
 	db__close();
 }
+
 
 /* read entire file into memory */
 static int file_read(const char *filename, uint8_t **data, size_t *len)
@@ -67,6 +69,7 @@ static int file_read(const char *filename, uint8_t **data, size_t *len)
 	}
 }
 
+
 /* Crude file diff, only for small files */
 static int file_diff(const char *one, const char *two)
 {
@@ -91,6 +94,7 @@ static int file_diff(const char *one, const char *two)
 
 	return rc;
 }
+
 
 static void TEST_persistence_disabled(void)
 {
@@ -368,6 +372,8 @@ static void TEST_v6_sub(void)
 
 
 #if 0
+
+
 NOT WORKING
 static void TEST_v5_full(void)
 {

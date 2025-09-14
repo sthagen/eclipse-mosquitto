@@ -3,6 +3,7 @@
 
 #include "packet_mosq.h"
 
+
 static void byte_read_helper(
 		uint8_t *payload,
 		uint32_t remaining_length,
@@ -171,6 +172,7 @@ static void bytes_read_helper(
  * BYTE INTEGER TESTS
  * ======================================================================== */
 
+
 /* This tests reading a Byte from an incoming packet.
  *
  * It tests:
@@ -213,6 +215,7 @@ static void TEST_byte_read_success(void)
 /* ========================================================================
  * TWO BYTE INTEGER TESTS
  * ======================================================================== */
+
 
 /* This tests reading a Two Byte Integer from an incoming packet.
  *
@@ -276,6 +279,7 @@ static void TEST_uint16_read_success(void)
 /* ========================================================================
  * FOUR BYTE INTEGER TESTS
  * ======================================================================== */
+
 
 /* This tests reading a Four Byte Integer from an incoming packet.
  *
@@ -358,6 +362,7 @@ static void TEST_uint32_read_success(void)
 /* ========================================================================
  * VARIABLE BYTE INTEGER TESTS
  * ======================================================================== */
+
 
 /* This tests reading a Variable Byte Integer from an incoming packet.
  *
@@ -470,6 +475,7 @@ static void TEST_varint_read_boundaries(void)
 	varint_read_helper(payload, 4, MOSQ_ERR_SUCCESS, 268435455, 4);
 }
 
+
 /* This tests reading a Variable Byte Integer from an incoming packet.
  *
  * It tests:
@@ -547,6 +553,7 @@ static void TEST_varint_read_overlong_encoding(void)
  * UTF-8 STRING TESTS
  * ======================================================================== */
 
+
 /* This tests reading a UTF-8 Encoded String from an incoming packet.
  *
  * It tests:
@@ -556,6 +563,7 @@ static void TEST_string_read_empty(void)
 {
 	string_read_helper(NULL, 0, MOSQ_ERR_MALFORMED_PACKET, NULL, UINT16_MAX);
 }
+
 
 /* This tests reading a UTF-8 Encoded String from an incoming packet.
  *
@@ -608,6 +616,7 @@ static void TEST_string_read_empty_string(void)
 	payload[1] = 0x00;
 	string_read_helper(payload, 2, MOSQ_ERR_SUCCESS, (const uint8_t *)"", 0);
 }
+
 
 /* This tests reading a UTF-8 Encoded String from an incoming packet.
  *
@@ -690,6 +699,7 @@ static void TEST_string_read_mqtt_1_5_4_3(void)
  * BINARY DATA TESTS
  * ======================================================================== */
 
+
 /* This tests reading Binary Data from an incoming packet.
  *
  * It tests:
@@ -742,6 +752,7 @@ static void TEST_binary_data_read_truncated(void)
  * MULTIPLE BYTE TESTS
  * ======================================================================== */
 
+
 /* This tests reading multiple bytes (payload) from an incoming packet.
  *
  * It tests:
@@ -753,6 +764,7 @@ static void TEST_bytes_read_empty(void)
 	bytes_read_helper(NULL, 0, MOSQ_ERR_SUCCESS, NULL, 0);
 }
 
+
 /* This tests reading multiple bytes (payload) from an incoming packet.
  *
  * It tests:
@@ -762,6 +774,7 @@ static void TEST_bytes_read_truncated(void)
 {
 	bytes_read_helper(NULL, 0, MOSQ_ERR_MALFORMED_PACKET, NULL, 1);
 }
+
 
 /* This tests reading multiple bytes from an incoming packet.
  *
@@ -783,6 +796,7 @@ static void TEST_bytes_read_success(void)
 /* ========================================================================
  * TEST SUITE SETUP
  * ======================================================================== */
+
 
 int init_datatype_read_tests(void)
 {

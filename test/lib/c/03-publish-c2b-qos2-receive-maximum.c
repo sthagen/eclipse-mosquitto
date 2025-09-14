@@ -6,6 +6,7 @@
 
 static int run = -1;
 
+
 static void on_connect(struct mosquitto *mosq, void *obj, int rc, int flags, const mosquitto_property *properties)
 {
 	int i;
@@ -23,6 +24,7 @@ static void on_connect(struct mosquitto *mosq, void *obj, int rc, int flags, con
 	}
 }
 
+
 static void on_publish(struct mosquitto *mosq, void *obj, int mid, int reason_code, const mosquitto_property *properties)
 {
 	(void)obj;
@@ -34,6 +36,7 @@ static void on_publish(struct mosquitto *mosq, void *obj, int mid, int reason_co
 		run = 0;
 	}
 }
+
 
 int main(int argc, char *argv[])
 {

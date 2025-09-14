@@ -6,6 +6,7 @@
 
 static int run = -1;
 
+
 static void on_connect(struct mosquitto *mosq, void *obj, int rc)
 {
 	(void)mosq;
@@ -16,6 +17,7 @@ static void on_connect(struct mosquitto *mosq, void *obj, int rc)
 		exit(1);
 	}
 }
+
 
 int main(int argc, char *argv[])
 {

@@ -25,6 +25,7 @@ Contributors:
 #include "sys_tree.h"
 #include "util_mosq.h"
 
+
 int send__connack(struct mosquitto *context, uint8_t ack, uint8_t reason_code, const mosquitto_property *properties)
 {
 	struct mosquitto__packet *packet = NULL;

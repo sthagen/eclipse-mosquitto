@@ -66,6 +66,7 @@ int allow_severity = LOG_INFO;
 int deny_severity = LOG_INFO;
 #endif
 
+
 static int set_umask(void)
 {
 #if !defined(__CYGWIN__) && !defined(WIN32)
@@ -116,7 +117,8 @@ static int check_uid(const char *s, const char *name)
 	return (int)id;
 }
 
-/* Prints the name of the process user from its user id if not found 
+
+/* Prints the name of the process user from its user id if not found
  * it simply prints out the user id
  */
 static void print_pwname(void)
@@ -131,6 +133,7 @@ static void print_pwname(void)
 #endif
 }
 
+
 /* mosquitto shouldn't run as root.
  * This function will attempt to change to an unprivileged user and group if
  * running as root. The user is given in config->user.
@@ -139,6 +142,7 @@ static void print_pwname(void)
  * Note that setting config->user to "root" does not produce an error, but it
  * strongly discouraged.
  */
+
 
 static int drop_privileges(struct mosquitto__config *config)
 {
@@ -234,6 +238,7 @@ static int drop_privileges(struct mosquitto__config *config)
 #endif
 	return MOSQ_ERR_SUCCESS;
 }
+
 
 static void mosquitto__daemonise(void)
 {
@@ -385,6 +390,7 @@ static void post_shutdown_cleanup(void)
 	net__broker_cleanup();
 }
 
+
 static void cjson_init(void)
 {
 	cJSON_Hooks hooks = {mosquitto_malloc, mosquitto_free};
@@ -392,8 +398,12 @@ static void cjson_init(void)
 }
 
 #ifdef WITH_FUZZING
+
+
 int mosquitto_fuzz_main(int argc, char *argv[])
 #else
+
+
 int main(int argc, char *argv[])
 #endif
 {
@@ -581,6 +591,8 @@ int main(int argc, char *argv[])
 }
 
 #ifdef WIN32
+
+
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
 	char **argv;

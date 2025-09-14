@@ -39,6 +39,7 @@ MOSQUITTO_PLUGIN_DECLARE_VERSION(5);
 static mosquitto_plugin_id_t *plg_id = NULL;
 static struct mosquitto_sqlite plg_data;
 
+
 static int conf_parse_uint(const char *in, const char *name, unsigned int *value, int min_value)
 {
 	int v = atoi(in);
@@ -51,6 +52,7 @@ static int conf_parse_uint(const char *in, const char *name, unsigned int *value
 	return MOSQ_ERR_SUCCESS;
 }
 
+
 static void set_defaults(void)
 {
 	/* "normal" synchronous mode. */
@@ -61,6 +63,7 @@ static void set_defaults(void)
 
 	plg_data.page_size = 4 * 1024;
 }
+
 
 static int get_db_file(struct mosquitto_opt *options, int option_count)
 {
@@ -93,6 +96,7 @@ static int get_db_file(struct mosquitto_opt *options, int option_count)
 
 	return MOSQ_ERR_SUCCESS;
 }
+
 
 int mosquitto_plugin_init(mosquitto_plugin_id_t *identifier, void **user_data, struct mosquitto_opt *options, int option_count)
 {
@@ -184,6 +188,7 @@ fail:
 	mosquitto_plugin_cleanup(NULL, NULL, 0);
 	return rc;
 }
+
 
 int mosquitto_plugin_cleanup(void *user_data, struct mosquitto_opt *options, int option_count)
 {

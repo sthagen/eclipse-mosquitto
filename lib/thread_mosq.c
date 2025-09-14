@@ -38,8 +38,8 @@ Contributors:
 #include "mosquitto_internal.h"
 #include "net_mosq.h"
 #include "util_mosq.h"
-
 void *mosquitto__thread_main(void *obj);
+
 
 int mosquitto_loop_start(struct mosquitto *mosq)
 {
@@ -64,6 +64,7 @@ int mosquitto_loop_start(struct mosquitto *mosq)
 	return MOSQ_ERR_NOT_SUPPORTED;
 #endif
 }
+
 
 int mosquitto_loop_stop(struct mosquitto *mosq, bool force)
 {
@@ -104,6 +105,8 @@ int mosquitto_loop_stop(struct mosquitto *mosq, bool force)
 }
 
 #ifdef WITH_THREADING
+
+
 void *mosquitto__thread_main(void *obj)
 {
 	struct mosquitto *mosq = obj;
@@ -141,6 +144,7 @@ void *mosquitto__thread_main(void *obj)
 	return obj;
 }
 #endif
+
 
 int mosquitto_threaded_set(struct mosquitto *mosq, bool threaded)
 {

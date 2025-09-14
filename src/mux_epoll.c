@@ -42,6 +42,7 @@ static void loop_handle_reads_writes(struct mosquitto *context, uint32_t events)
 
 static struct epoll_event ep_events[MAX_EVENTS];
 
+
 int mux_epoll__init(void)
 {
 	memset(&ep_events, 0, sizeof(struct epoll_event)*MAX_EVENTS);
@@ -54,6 +55,7 @@ int mux_epoll__init(void)
 
 	return MOSQ_ERR_SUCCESS;
 }
+
 
 int mux_epoll__add_listeners(struct mosquitto__listener_sock *listensock, int listensock_count)
 {
@@ -72,6 +74,7 @@ int mux_epoll__add_listeners(struct mosquitto__listener_sock *listensock, int li
 	return MOSQ_ERR_SUCCESS;
 }
 
+
 int mux_epoll__delete_listeners(struct mosquitto__listener_sock *listensock, int listensock_count)
 {
 	for(int i=0; i<listensock_count; i++){
@@ -82,6 +85,7 @@ int mux_epoll__delete_listeners(struct mosquitto__listener_sock *listensock, int
 
 	return MOSQ_ERR_SUCCESS;
 }
+
 
 int mux_epoll__add_out(struct mosquitto *context)
 {

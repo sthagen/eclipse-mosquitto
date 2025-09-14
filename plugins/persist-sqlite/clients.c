@@ -24,6 +24,7 @@ Contributors:
 #include "persist_sqlite.h"
 #include "util.h"
 
+
 int persist_sqlite__client_add_cb(int event, void *event_data, void *userdata)
 {
 	struct mosquitto_evt_persist_client *ed = event_data;
@@ -69,6 +70,7 @@ int persist_sqlite__client_add_cb(int event, void *event_data, void *userdata)
 
 	return rc;
 }
+
 
 int persist_sqlite__client_remove_cb(int event, void *event_data, void *userdata)
 {

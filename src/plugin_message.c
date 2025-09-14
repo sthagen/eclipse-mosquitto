@@ -27,6 +27,7 @@ struct should_free {
 	bool properties;
 };
 
+
 static int plugin__handle_message_single(struct mosquitto__callback *callbacks, enum mosquitto_plugin_event ev_type, struct should_free *to_free, struct mosquitto *context, struct mosquitto_base_msg *stored)
 {
 	struct mosquitto_evt_message event_data;
@@ -76,6 +77,7 @@ static int plugin__handle_message_single(struct mosquitto__callback *callbacks, 
 	return rc;
 }
 
+
 int plugin__handle_message_out(struct mosquitto *context, struct mosquitto_base_msg *stored)
 {
 	int rc = MOSQ_ERR_SUCCESS;
@@ -93,6 +95,7 @@ int plugin__handle_message_out(struct mosquitto *context, struct mosquitto_base_
 
 	return rc;
 }
+
 
 int plugin__handle_message_in(struct mosquitto *context, struct mosquitto_base_msg *stored)
 {

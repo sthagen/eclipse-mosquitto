@@ -35,8 +35,8 @@ Contributors:
 #include "mosquitto/mqtt_protocol.h"
 
 static mosquitto_plugin_id_t plg_id;
-
 static int broker__handle_control(struct mosquitto_control_cmd *cmd, void *userdata);
+
 
 static int add_plugin_info(cJSON *j_plugins, mosquitto_plugin_id_t *pid)
 {
@@ -246,6 +246,7 @@ void broker_control__reload(void)
  * # $CONTROL/broker/v1 handler
  * #
  * ################################################################ */
+
 
 static int broker__handle_control(struct mosquitto_control_cmd *cmd, void *userdata)
 {

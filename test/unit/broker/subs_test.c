@@ -10,6 +10,7 @@
 
 struct mosquitto_db db;
 
+
 static void hier_quick_check(struct mosquitto__subhier **sub, struct mosquitto *context, const char *topic)
 {
 	if(sub != NULL){

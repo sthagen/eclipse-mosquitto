@@ -64,6 +64,7 @@ int retain__init(void)
 	return MOSQ_ERR_SUCCESS;
 }
 
+
 BROKER_EXPORT int mosquitto_persist_retain_msg_set(const char *topic, uint64_t base_msg_id)
 {
 	struct mosquitto__base_msg *base_msg;
@@ -84,7 +85,6 @@ BROKER_EXPORT int mosquitto_persist_retain_msg_set(const char *topic, uint64_t b
 
 	return rc;
 }
-
 
 
 BROKER_EXPORT int mosquitto_persist_retain_msg_delete(const char *topic)
@@ -193,6 +193,7 @@ int retain__store(const char *topic, struct mosquitto__base_msg *base_msg, char 
 	return MOSQ_ERR_SUCCESS;
 }
 
+
 static bool retain__delete_expired_msg(struct mosquitto__retainhier *branch)
 {
 	if(branch->retained && branch->retained->data.expiry_time > 0 && db.now_real_s >= branch->retained->data.expiry_time){
@@ -206,6 +207,7 @@ static bool retain__delete_expired_msg(struct mosquitto__retainhier *branch)
 	}
 	return false;
 }
+
 
 static int retain__process(struct mosquitto__retainhier *branch, struct mosquitto *context, const struct mosquitto_subscription *sub)
 {
@@ -349,6 +351,7 @@ int retain__queue(struct mosquitto *context, const struct mosquitto_subscription
 	return MOSQ_ERR_SUCCESS;
 }
 
+
 void retain__expire(struct mosquitto__retainhier **retainhier)
 {
 	struct mosquitto__retainhier *peer, *retainhier_tmp;
@@ -360,6 +363,7 @@ void retain__expire(struct mosquitto__retainhier **retainhier)
 		}
 	}
 }
+
 
 void retain__clean(struct mosquitto__retainhier **retainhier)
 {

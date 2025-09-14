@@ -29,6 +29,8 @@ Contributors:
 #include "mosquitto.h"
 
 #ifdef WITH_TLS
+
+
 int mosquitto_base64_encode(const unsigned char *in, size_t in_len, char **encoded)
 {
 	BIO *bmem, *b64;

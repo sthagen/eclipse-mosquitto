@@ -5,9 +5,11 @@
 
 #include "packet_mosq.h"
 
+
 /* ========================================================================
  * BYTE TESTS
  * ======================================================================== */
+
 
 /* This tests writing a Byte to an incoming packet.  */
 static void TEST_byte_write(void)
@@ -36,6 +38,7 @@ static void TEST_byte_write(void)
 /* ========================================================================
  * TWO BYTE INTEGER TESTS
  * ======================================================================== */
+
 
 /* This tests writing a Two Byte Integer to an incoming packet.  */
 static void TEST_uint16_write(void)
@@ -67,6 +70,7 @@ static void TEST_uint16_write(void)
  * FOUR BYTE INTEGER TESTS
  * ======================================================================== */
 
+
 /* This tests writing a Four Byte Integer to an incoming packet.  */
 static void TEST_uint32_write(void)
 {
@@ -97,6 +101,7 @@ static void TEST_uint32_write(void)
  * UTF-8 STRING TESTS
  * ======================================================================== */
 
+
 /* This tests writing a UTF-8 String to an incoming packet.  */
 static void TEST_string_write(void)
 {
@@ -126,6 +131,7 @@ static void TEST_string_write(void)
 /* ========================================================================
  * TEST SUITE SETUP
  * ======================================================================== */
+
 
 int init_datatype_write_tests(void)
 {

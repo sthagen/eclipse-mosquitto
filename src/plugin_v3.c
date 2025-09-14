@@ -32,6 +32,7 @@ Contributors:
 typedef int (*FUNC_auth_plugin_version)(void);
 typedef int (*FUNC_plugin_version)(int, const int *);
 
+
 static int plugin_v3_basic_auth(int event, void *event_data, void *userdata)
 {
 	mosquitto_plugin_id_t *plugin = userdata;
@@ -49,6 +50,7 @@ static int plugin_v3_basic_auth(int event, void *event_data, void *userdata)
 			ed->username,
 			ed->password);
 }
+
 
 static int plugin_v3_acl_check(int event, void *event_data, void *userdata)
 {
@@ -81,6 +83,7 @@ static int plugin_v3_acl_check(int event, void *event_data, void *userdata)
 		return rc;
 	}
 }
+
 
 static int plugin_v3_psk_key_get(int event, void *event_data, void *userdata)
 {

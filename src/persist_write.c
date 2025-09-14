@@ -35,6 +35,7 @@ Contributors:
 #include "persist.h"
 #include "util_mosq.h"
 
+
 static int persist__client_messages_save(FILE *db_fptr, struct mosquitto *context, struct mosquitto__client_msg *queue)
 {
 	struct P_client_msg chunk;
@@ -150,6 +151,7 @@ static int persist__message_store_save(FILE *db_fptr)
 	return MOSQ_ERR_SUCCESS;
 }
 
+
 static int persist__client_save(FILE *db_fptr)
 {
 	struct mosquitto *context, *ctxt_tmp;
@@ -256,6 +258,7 @@ static int persist__subs_save(FILE *db_fptr, struct mosquitto__subhier *node, co
 	return MOSQ_ERR_SUCCESS;
 }
 
+
 static int persist__subs_save_all(FILE *db_fptr)
 {
 	struct mosquitto__subhier *subhier, *subhier_tmp;
@@ -274,6 +277,7 @@ static int persist__subs_save_all(FILE *db_fptr)
 
 	return MOSQ_ERR_SUCCESS;
 }
+
 
 static int persist__retain_save(FILE *db_fptr, struct mosquitto__retainhier *node, int level)
 {
@@ -298,6 +302,7 @@ static int persist__retain_save(FILE *db_fptr, struct mosquitto__retainhier *nod
 	return MOSQ_ERR_SUCCESS;
 }
 
+
 static int persist__retain_save_all(FILE *db_fptr)
 {
 	struct mosquitto__retainhier *retainhier, *retainhier_tmp;
@@ -318,6 +323,7 @@ static void persist__log_write_error(const char* msg)
 	log__printf(NULL, MOSQ_LOG_ERR, "Error saving in-memory database, %s", msg);
 }
 
+
 int persist__backup(bool shutdown)
 {
 	if(db.config == NULL) return MOSQ_ERR_INVAL;
@@ -329,7 +335,8 @@ int persist__backup(bool shutdown)
 	return mosquitto_write_file(db.config->persistence_filepath, true, &persist__write_data, &shutdown, &persist__log_write_error);
 }
 
-static int persist__write_data(FILE* db_fptr, void* user_data)
+
+static int persist__write_data(FILE *db_fptr, void *user_data)
 {
 	bool shutdown = *(bool*)(user_data);
 	uint32_t db_version_w = htonl(MOSQ_DB_VERSION);

@@ -34,6 +34,7 @@ static void loop_handle_reads_writes(struct mosquitto *context, short events);
 
 static struct kevent event_list[MAX_EVENTS];
 
+
 int mux_kqueue__init(void)
 {
 	memset(&event_list, 0, sizeof(struct kevent)*MAX_EVENTS);
@@ -46,6 +47,7 @@ int mux_kqueue__init(void)
 
 	return MOSQ_ERR_SUCCESS;
 }
+
 
 int mux_kqueue__add_listeners(struct mosquitto__listener_sock *listensock, int listensock_count)
 {
@@ -64,6 +66,7 @@ int mux_kqueue__add_listeners(struct mosquitto__listener_sock *listensock, int l
 	return MOSQ_ERR_SUCCESS;
 }
 
+
 int mux_kqueue__delete_listeners(struct mosquitto__listener_sock *listensock, int listensock_count)
 {
 	struct kevent ev;
@@ -77,6 +80,7 @@ int mux_kqueue__delete_listeners(struct mosquitto__listener_sock *listensock, in
 
 	return MOSQ_ERR_SUCCESS;
 }
+
 
 int mux_kqueue__loop_setup(void)
 {

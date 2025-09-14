@@ -45,15 +45,19 @@ static unsigned long memcount = 0;
 static unsigned long max_memcount = 0;
 
 static size_t mem_limit = 0;
+
+
 void mosquitto_memory_set_limit(size_t lim)
 {
 	mem_limit = lim;
 }
 
+
 unsigned long mosquitto_memory_used(void)
 {
 	return memcount;
 }
+
 
 unsigned long mosquitto_max_memory_used(void)
 {
@@ -70,20 +74,25 @@ unsigned long mosquitto_max_memory_used(void)
 static const char *alloc_marker = "MOSQ_MEM";
 
 static unsigned long dummycounter = 0;
+
+
 unsigned long mosq__get_dummy_counter(void)
 {
 	return dummycounter;
 }
+
 
 static void set_alloc_marker(char *mem, size_t size)
 {
 	memcpy(mem + size - ALLOC_MARKER_SIZE, alloc_marker, ALLOC_MARKER_SIZE);
 }
 
+
 static bool check_alloc_marker(char *mem, size_t size)
 {
 	return strncmp(mem + size - ALLOC_MARKER_SIZE, alloc_marker, ALLOC_MARKER_SIZE) == 0;
 }
+
 
 static void trigger_alloc_mismatch(char *mem, size_t size)
 {
@@ -105,6 +114,7 @@ static void trigger_alloc_mismatch(char *mem, size_t size)
 #if !defined(__libc_free)
 void __libc_free(void *ptr);
 #endif
+
 
 void free(void *ptr)
 {
@@ -137,6 +147,7 @@ static void set_alloc_marker(char* mem, size_t size) { UNUSED(mem); UNUSED(size)
  * Alloc functions with tracking
  * ================================================== */
 
+
 BROKER_EXPORT void *mosquitto_malloc(size_t size)
 {
 	void *mem;
@@ -156,6 +167,7 @@ BROKER_EXPORT void *mosquitto_malloc(size_t size)
 
 	return mem;
 }
+
 
 BROKER_EXPORT void *mosquitto_realloc(void *ptr, size_t size)
 {
@@ -196,6 +208,7 @@ BROKER_EXPORT void *mosquitto_realloc(void *ptr, size_t size)
 	return mem;
 }
 
+
 BROKER_EXPORT void mosquitto_free(void *mem)
 {
 	if(!mem){
@@ -226,19 +239,23 @@ BROKER_EXPORT void mosquitto_free(void *mem)
 
 #else /* #ifdef WITH_REAL_MEMORY_TRACKING */
 
+
 /* ==================================================
  * Alloc functions without tracking
  * ================================================== */
+
 
 BROKER_EXPORT void *mosquitto_malloc(size_t size)
 {
 	return malloc(size);
 }
 
+
 BROKER_EXPORT void *mosquitto_realloc(void *ptr, size_t size)
 {
 	return realloc(ptr, size);
 }
+
 
 BROKER_EXPORT void mosquitto_free(void *mem)
 {
@@ -252,6 +269,7 @@ BROKER_EXPORT void mosquitto_free(void *mem)
  * Alloc functions that use the tracked/untracked versions
  * ================================================== */
 
+
 BROKER_EXPORT void *mosquitto_calloc(size_t nmemb, size_t size)
 {
 	void *mem;
@@ -262,6 +280,7 @@ BROKER_EXPORT void *mosquitto_calloc(size_t nmemb, size_t size)
 	}
 	return mem;
 }
+
 
 BROKER_EXPORT char *mosquitto_strdup(const char *s)
 {
@@ -274,6 +293,7 @@ BROKER_EXPORT char *mosquitto_strdup(const char *s)
 	}
 	return str;
 }
+
 
 BROKER_EXPORT char *mosquitto_strndup(const char *s, size_t n)
 {

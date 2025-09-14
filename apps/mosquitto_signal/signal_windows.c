@@ -33,6 +33,7 @@ Contributors:
 #undef WITH_TLS
 #include "config.h"
 
+
 static const char *msig_to_string(enum mosq_sig msig)
 {
 	switch(msig){
@@ -50,6 +51,7 @@ static const char *msig_to_string(enum mosq_sig msig)
 			return "";
 	}
 }
+
 
 void signal_all(enum mosq_signal msig)
 {
@@ -80,6 +82,7 @@ void signal_all(enum mosq_signal msig)
 		}
 	}
 }
+
 
 void send_signal(int pid, enum mosq_signal msig)
 {

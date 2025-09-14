@@ -32,6 +32,7 @@ Contributors:
 #include "send_mosq.h"
 #include "util_mosq.h"
 
+
 int handle__packet(struct mosquitto *mosq)
 {
 	int rc = MOSQ_ERR_INVAL;

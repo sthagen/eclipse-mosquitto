@@ -69,6 +69,8 @@ void CALLBACK timeout_cb(PVOID lpParameter, BOOLEAN TimerOrWaitFired)
 	timeout_h = NULL;
 }
 #else
+
+
 static void my_signal_handler(int signum)
 {
 	if(signum == SIGALRM || signum == SIGTERM || signum == SIGINT){
@@ -135,6 +137,7 @@ static void my_message_callback(struct mosquitto *mosq, void *obj, const struct 
 	}
 }
 
+
 static void my_connect_callback(struct mosquitto *mosq, void *obj, int result, int flags, const mosquitto_property *properties)
 {
 	int i;
@@ -168,6 +171,7 @@ static void my_connect_callback(struct mosquitto *mosq, void *obj, int result, i
 	}
 }
 
+
 static void my_subscribe_callback(struct mosquitto *mosq, void *obj, int mid, int qos_count, const int *granted_qos)
 {
 	int i;
@@ -192,6 +196,7 @@ static void my_subscribe_callback(struct mosquitto *mosq, void *obj, int mid, in
 	}
 }
 
+
 static void my_log_callback(struct mosquitto *mosq, void *obj, int level, const char *str)
 {
 	UNUSED(mosq);
@@ -201,6 +206,7 @@ static void my_log_callback(struct mosquitto *mosq, void *obj, int level, const 
 	printf("%s\n", str);
 }
 
+
 static void print_version(void)
 {
 	int major, minor, revision;
@@ -208,6 +214,7 @@ static void print_version(void)
 	mosquitto_lib_version(&major, &minor, &revision);
 	printf("mosquitto_sub version %s running on libmosquitto %d.%d.%d.\n", VERSION, major, minor, revision);
 }
+
 
 static void print_usage(void)
 {
@@ -347,6 +354,7 @@ static void print_usage(void)
 #endif
 	printf("\nSee https://mosquitto.org/ for more information.\n\n");
 }
+
 
 int main(int argc, char *argv[])
 {
