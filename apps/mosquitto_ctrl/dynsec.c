@@ -146,7 +146,7 @@ static void print_json_value(cJSON *value, const char *null_value)
 			printf("%s", buffer);
 		}
 	}else if(null_value){
-		printf("%s",null_value);
+		printf("%s", null_value);
 	}
 }
 
@@ -166,7 +166,7 @@ static void print_json_array(cJSON *j_list, int slen, const char *label, const c
 				printf("%-*s %s", (int)slen, label, stmp);
 				if(optional_element_name){
 					printf(" (%s: ", optional_element_name);
-					print_json_value(cJSON_GetObjectItem(j_elem,optional_element_name),optional_element_null_value);
+					print_json_value(cJSON_GetObjectItem(j_elem, optional_element_name), optional_element_null_value);
 					printf(")");
 				}
 			}else if(cJSON_IsString(j_elem) && j_elem->valuestring){
@@ -184,7 +184,7 @@ static void print_json_array(cJSON *j_list, int slen, const char *label, const c
 static void print_client(cJSON *j_response)
 {
 	cJSON *j_data, *j_client, *jtmp;
-	const int label_width = strlen( "Connections:");
+	const int label_width = strlen("Connections:");
 
 	j_data = cJSON_GetObjectItem(j_response, "data");
 	if(j_data == NULL || !cJSON_IsObject(j_data)){
@@ -513,6 +513,7 @@ static int dynsec__get_default_acl_access(int argc, char *argv[], cJSON *j_comma
  * # Init
  * #
  * ################################################################ */
+
 
 static cJSON *init_add_acl_to_role(cJSON *j_acls, const char *type, const char *topic)
 {

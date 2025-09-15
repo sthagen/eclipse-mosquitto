@@ -54,7 +54,7 @@ int mosquitto_auth_acl_check_v5(int event, void *event_data, void *user_data)
 
 	if(username && !strcmp(username, "readonly") && ed->access == MOSQ_ACL_READ){
 		return MOSQ_ERR_SUCCESS;
-	}else if(username && !strcmp(username, "readonly") && ed->access == MOSQ_ACL_SUBSCRIBE &&!strchr(ed->topic, '#') && !strchr(ed->topic, '+')) {
+	}else if(username && !strcmp(username, "readonly") && ed->access == MOSQ_ACL_SUBSCRIBE &&!strchr(ed->topic, '#') && !strchr(ed->topic, '+')){
 		return MOSQ_ERR_SUCCESS;
 	}else if(username && !strcmp(username, "readwrite")){
 		if((!strcmp(ed->topic, "readonly") && ed->access == MOSQ_ACL_READ)

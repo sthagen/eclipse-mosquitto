@@ -64,12 +64,12 @@ int send__publish(struct mosquitto *mosq, uint16_t mid, const char *topic, uint3
 
 	{
 		struct mosquitto_base_msg tmp_msg;
-		tmp_msg.topic = (char *) topic;
+		tmp_msg.topic = (char *)topic;
 		tmp_msg.payloadlen = payloadlen;
-		tmp_msg.payload = (void *) payload;
+		tmp_msg.payload = (void *)payload;
 		tmp_msg.qos = qos;
 		tmp_msg.retain = retain;
-		tmp_msg.properties = (mosquitto_property *) store_props;
+		tmp_msg.properties = (mosquitto_property *)store_props;
 
 		rc = plugin__handle_message_out(mosq, &tmp_msg);
 
@@ -95,9 +95,9 @@ int send__publish(struct mosquitto *mosq, uint16_t mid, const char *topic, uint3
 						"Rejected PUBLISH to %s, quota exceeded.", mosq->id);
 			}
 
-			if(payload_changed) mosquitto_free((void *) payload);
-			if(topic_changed) mosquitto_free((char *) topic);
-			if(properties_changed) mosquitto_property_free_all((mosquitto_property **) &store_props);
+			if(payload_changed) mosquitto_free((void *)payload);
+			if(topic_changed) mosquitto_free((char *)topic);
+			if(properties_changed) mosquitto_property_free_all((mosquitto_property **)&store_props);
 
 			return MOSQ_ERR_SUCCESS;
 		}
@@ -175,9 +175,9 @@ int send__publish(struct mosquitto *mosq, uint16_t mid, const char *topic, uint3
 
 #ifdef WITH_BROKER
 	rc = send__real_publish(mosq, mid, topic, payloadlen, payload, qos, retain, dup, subscription_identifier, store_props, expiry_interval);
-	if(payload_changed) mosquitto_free((void *) payload);
-	if(topic_changed) mosquitto_free((char *) topic);
-	if(properties_changed) mosquitto_property_free_all((mosquitto_property **) &store_props);
+	if(payload_changed) mosquitto_free((void *)payload);
+	if(topic_changed) mosquitto_free((char *)topic);
+	if(properties_changed) mosquitto_property_free_all((mosquitto_property **)&store_props);
 	return rc;
 #else
 	return send__real_publish(mosq, mid, topic, payloadlen, payload, qos, retain, dup, subscription_identifier, store_props, expiry_interval);

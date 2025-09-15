@@ -185,9 +185,9 @@ DWORD WINAPI SigThreadProc(void *data)
 		evt[i] = CreateEvent(NULL, TRUE, FALSE, evt_name);
 	}
 
-	while (g_run) {
+	while(g_run){
 		int wr = WaitForMultipleObjects(MOSQ_MAX_EVTS, evt, FALSE, INFINITE);
-		switch (wr) {
+		switch(wr){
 			case WAIT_OBJECT_0 + 0:
 				handle_signal(SIGINT);
 				break;

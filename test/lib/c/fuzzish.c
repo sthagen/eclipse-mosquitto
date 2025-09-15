@@ -361,7 +361,7 @@ static void on_log(struct mosquitto *mosq, void *obj, int level, const char *str
 		exit(1);
 	}
 	size_t i = strlen(str);
-	if (i == SIZE_MAX){
+	if(i == SIZE_MAX){
 		printf("too large on_log\n");
 		exit(1);
 	}
@@ -373,7 +373,7 @@ static void setup_signal_handler(void)
 	struct sigaction act = { 0 };
 
 	act.sa_handler = &signal_handler;
-	if(sigaction(SIGTERM, &act, NULL) < 0) {
+	if(sigaction(SIGTERM, &act, NULL) < 0){
 		exit(1);
 	}
 }

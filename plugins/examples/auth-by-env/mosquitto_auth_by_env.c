@@ -52,8 +52,7 @@ static int basic_auth_callback(int event, void *event_data, void *userdata)
 	if(!strcmp(ed->password, environment_password)){
 		/* Password matched MOSQUITTO_PASSWORD */
 		return MOSQ_ERR_SUCCESS;
-	}
-	else{
+	}else{
 		return MOSQ_ERR_PLUGIN_DEFER;
 	}
 }

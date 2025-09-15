@@ -26,6 +26,7 @@ Contributors:
 
 #define UNUSED(A) (void)(A)
 
+
 void completion_tree_arg_list_args_free(struct completion_tree_arg_list *arg_list)
 {
 	struct completion_tree_arg *arg, *next;
@@ -101,6 +102,7 @@ struct completion_tree_arg_list *completion_tree_cmd_new_arg_list(void)
 	return calloc(1, sizeof(struct completion_tree_arg_list));
 }
 
+
 void completion_tree_cmd_append_arg_list(struct completion_tree_cmd *cmd, struct completion_tree_arg_list *new_list)
 {
 	struct completion_tree_arg_list **arg_list;
@@ -126,6 +128,7 @@ struct completion_tree_arg_list *completion_tree_cmd_add_arg_list(struct complet
 
 	return new_list;
 }
+
 
 void completion_tree_arg_list_add_arg(struct completion_tree_arg_list *arg_list, const char *name)
 {

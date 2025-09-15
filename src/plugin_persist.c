@@ -75,7 +75,7 @@ void plugin_persist__handle_client_add(struct mosquitto *context)
 		cb_base->cb(MOSQ_EVT_PERSIST_CLIENT_ADD, &event_data, cb_base->userdata);
 	}
 
-	if (context->will){
+	if(context->will){
 		plugin_persist__handle_will_add(context);
 	}
 
@@ -116,7 +116,7 @@ void plugin_persist__handle_client_update(struct mosquitto *context)
 		cb_base->cb(MOSQ_EVT_PERSIST_CLIENT_UPDATE, &event_data, cb_base->userdata);
 	}
 
-	if (context->will){
+	if(context->will){
 		plugin_persist__handle_will_add(context);
 	}else{
 		plugin_persist__handle_will_delete(context);

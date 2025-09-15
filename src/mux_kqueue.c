@@ -40,7 +40,7 @@ int mux_kqueue__init(void)
 	memset(&event_list, 0, sizeof(struct kevent)*MAX_EVENTS);
 
 	db.kqueuefd = 0;
-	if ((db.kqueuefd = kqueue()) == -1) {
+	if((db.kqueuefd = kqueue()) == -1){
 		log__printf(NULL, MOSQ_LOG_ERR, "Error in kqueue creating: %s", strerror(errno));
 		return MOSQ_ERR_UNKNOWN;
 	}

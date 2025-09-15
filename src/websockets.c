@@ -139,7 +139,7 @@ static int callback_mqtt(
 	uint8_t byte;
 	char ip_addr_buff[1024];
 
-	switch (reason) {
+	switch(reason){
 		case LWS_CALLBACK_ESTABLISHED:
 			mosq = context__init();
 			if(mosq){
@@ -223,7 +223,7 @@ static int callback_mqtt(
 				packet = mosq->out_packet;
 				count = lws_write(wsi, &packet->payload[packet->pos], packet->to_process, LWS_WRITE_BINARY);
 				if(count < 0){
-					if (mosq->state == mosq_cs_disconnect_ws
+					if(mosq->state == mosq_cs_disconnect_ws
 							|| mosq->state == mosq_cs_disconnecting
 							|| mosq->state == mosq_cs_disused){
 
@@ -238,7 +238,7 @@ static int callback_mqtt(
 				packet->to_process -= ucount;
 				packet->pos += ucount;
 				if(packet->to_process > 0){
-					if (mosq->state == mosq_cs_disconnect_ws
+					if(mosq->state == mosq_cs_disconnect_ws
 							|| mosq->state == mosq_cs_disconnecting
 							|| mosq->state == mosq_cs_disused){
 
@@ -259,7 +259,7 @@ static int callback_mqtt(
 
 				mosq->next_msg_out = db.now_s + mosq->keepalive;
 			}
-			if (mosq->state == mosq_cs_disconnect_ws
+			if(mosq->state == mosq_cs_disconnect_ws
 					|| mosq->state == mosq_cs_disconnecting
 					|| mosq->state == mosq_cs_disused){
 
@@ -342,12 +342,12 @@ static int callback_mqtt(
 
 				keepalive__update(mosq);
 
-				if(rc && mosq->out_packet) {
+				if(rc && mosq->out_packet){
 					if(mosq->state != mosq_cs_disconnecting){
 						mosquitto__set_state(mosq, mosq_cs_disconnect_ws);
 					}
 					lws_callback_on_writable(mosq->wsi);
-				} else if (rc) {
+				}else if(rc){
 					do_disconnect(mosq, MOSQ_ERR_CONN_LOST);
 					return -1;
 				}
@@ -445,7 +445,7 @@ static int callback_http(
 
 	/* FIXME - ssl cert verification is done here. */
 
-	switch (reason) {
+	switch(reason){
 		case LWS_CALLBACK_HTTP:
 			if(!u){
 				return -1;
@@ -638,7 +638,7 @@ static int callback_http(
 
 #ifdef WITH_TLS
 		case LWS_CALLBACK_OPENSSL_PERFORM_CLIENT_CERT_VERIFICATION:
-			if(!len || (SSL_get_verify_result((SSL*)in) != X509_V_OK)){
+			if(!len || (SSL_get_verify_result((SSL *)in) != X509_V_OK)){
 				return 1;
 			}
 			break;
@@ -694,8 +694,7 @@ void mosq_websockets_init(struct mosquitto__listener *listener, const struct mos
 #ifdef WITH_TLS
 	if(listener->cafile){
 		info.ssl_ca_filepath = listener->cafile;
-	}
-	else if(listener->capath){
+	}else if(listener->capath){
 		log__printf(NULL, MOSQ_LOG_WARNING, "Warning: CA path option is not supported for websockets");
 	}
 	info.ssl_cert_filepath = listener->certfile;

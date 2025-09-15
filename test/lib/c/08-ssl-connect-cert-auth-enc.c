@@ -30,7 +30,8 @@ static void on_disconnect(struct mosquitto *mosq, void *obj, int rc)
 	run = rc;
 }
 
-static int password_callback(char* buf, int size, int rwflag, void* userdata)
+
+static int password_callback(char *buf, int size, int rwflag, void *userdata)
 {
 	(void)rwflag;
 	(void)userdata;

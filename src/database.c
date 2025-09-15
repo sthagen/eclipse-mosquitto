@@ -614,7 +614,7 @@ int db__message_insert_outgoing(struct mosquitto *context, uint64_t cmsg_id, uin
 			return 2;
 		}
 	}else{
-		if (db__ready_for_queue(context, qos, msg_data)){
+		if(db__ready_for_queue(context, qos, msg_data)){
 			state = mosq_ms_queued;
 		}else{
 			metrics__int_inc(mosq_counter_mqtt_publish_dropped, 1);
@@ -735,12 +735,13 @@ static inline int db__message_update_outgoing_state(struct mosquitto *context, s
 	return MOSQ_ERR_NOT_FOUND;
 }
 
+
 int db__message_update_outgoing(struct mosquitto *context, uint16_t mid, enum mosquitto_msg_state state, int qos, bool persist)
 {
 	int rc;
 
 	rc = db__message_update_outgoing_state(context, context->msgs_out.inflight, mid, state, qos, persist);
-	if (!persist && rc == MOSQ_ERR_NOT_FOUND){
+	if(!persist && rc == MOSQ_ERR_NOT_FOUND){
 		rc = db__message_update_outgoing_state(context, context->msgs_out.queued, mid, state, qos, persist);
 	}
 	return rc;
@@ -1145,14 +1146,14 @@ int db__message_reconnect_reset(struct mosquitto *context)
 }
 
 
-int db__message_remove_incoming(struct mosquitto* context, uint16_t mid)
+int db__message_remove_incoming(struct mosquitto *context, uint16_t mid)
 {
 	struct mosquitto__client_msg *client_msg, *tmp;
 
 	if(!context) return MOSQ_ERR_INVAL;
 
 	DL_FOREACH_SAFE(context->msgs_in.inflight, client_msg, tmp){
-		if(client_msg->data.mid == mid) {
+		if(client_msg->data.mid == mid){
 			if(client_msg->base_msg->data.qos != 2){
 				return MOSQ_ERR_PROTOCOL;
 			}

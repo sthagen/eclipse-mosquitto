@@ -64,6 +64,7 @@ int broker_password_file__init(void)
 	return MOSQ_ERR_SUCCESS;
 }
 
+
 void broker_password_file__cleanup(void)
 {
 	if(db.config->per_listener_settings){

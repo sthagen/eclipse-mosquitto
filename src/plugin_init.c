@@ -48,7 +48,7 @@ void LIB_ERROR(void)
 static int plugin__load_single(mosquitto_plugin_id_t *plugin)
 {
 	void *lib;
-	int (*plugin_version)(int, const int*) = NULL;
+	int (*plugin_version)(int, const int *) = NULL;
 	int (*plugin_auth_version)(void) = NULL;
 	int version;
 	int rc;

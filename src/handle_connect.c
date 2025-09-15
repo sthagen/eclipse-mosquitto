@@ -313,7 +313,7 @@ int connect__on_authorised(struct mosquitto *context, void *auth_data_out, uint1
 
 		if(context->session_expiry_interval != 0){
 			plugin_persist__handle_client_add(context);
-		}else if (context->will){
+		}else if(context->will){
 			plugin_persist__handle_will_add(context);
 		}
 	}
@@ -597,7 +597,7 @@ static int read_and_verify_v5_connect_properties(struct mosquitto *context, mosq
 		}else if(rc == MOSQ_ERR_MALFORMED_PACKET){
 			send__connack(context, 0, MQTT_RC_MALFORMED_PACKET, NULL);
 		}
-		if(rc) {
+		if(rc){
 			return rc;
 		}
 	}
@@ -698,13 +698,13 @@ static int read_and_verify_clientid_from_packet(struct mosquitto *context, char*
 
 	if(slen == 0){
 		rc = handle_zero_length_clientid(context, clientid, allow_zero_length_clientid, clean_start);
-		if (rc != MOSQ_ERR_SUCCESS) {
+		if(rc != MOSQ_ERR_SUCCESS){
 			return rc;
 		}
 	}
 
 	rc = check_clientid_prefixes(context, *clientid);
-	if (rc != MOSQ_ERR_SUCCESS) {
+	if(rc != MOSQ_ERR_SUCCESS){
 		return rc;
 	}
 
@@ -763,7 +763,7 @@ static int read_and_verify_client_credentials_from_packet(struct mosquitto *cont
 
 	if(username_flag){
 		rc = set_username_from_packet(context, username);
-		if (rc != MOSQ_ERR_SUCCESS) {
+		if(rc != MOSQ_ERR_SUCCESS){
 			return rc;
 		}
 	}else{
@@ -777,7 +777,7 @@ static int read_and_verify_client_credentials_from_packet(struct mosquitto *cont
 	}
 	if(password_flag){
 		rc = set_password_from_packet(context, password);
-		if (rc != MOSQ_ERR_SUCCESS) {
+		if(rc != MOSQ_ERR_SUCCESS){
 			return rc;
 		}
 	}
@@ -839,7 +839,7 @@ static int set_username_from_cert_identity(struct mosquitto *context)
 	X509 *client_cert = NULL;
 	X509_NAME *name = NULL;
 
-	if(get_client_cert_and_subject_name(context, &client_cert, &name)) {
+	if(get_client_cert_and_subject_name(context, &client_cert, &name)){
 		return MOSQ_ERR_AUTH;
 	}
 
@@ -857,11 +857,11 @@ static int set_username_from_cert_identity(struct mosquitto *context)
 
 	ASN1_STRING *name_asn1 = NULL;
 	name_asn1 = X509_NAME_ENTRY_get_data(name_entry);
-	if (name_asn1 == NULL) {
+	if(name_asn1 == NULL){
 		return free_x509_and_send_connack_error(context, client_cert, MOSQ_ERR_AUTH);
 	}
 	const char *cert_identity = NULL;
-	cert_identity = (char *) ASN1_STRING_get0_data(name_asn1);
+	cert_identity = (char *)ASN1_STRING_get0_data(name_asn1);
 	if(mosquitto_validate_utf8(cert_identity, (int)strlen(cert_identity))){
 		return free_x509_and_send_connack_error(context, client_cert, MOSQ_ERR_AUTH);
 	}
@@ -871,7 +871,7 @@ static int set_username_from_cert_identity(struct mosquitto *context)
 		return free_x509_and_send_connack_error(context, client_cert, MOSQ_ERR_NOMEM);
 	}
 	/* Make sure there isn't an embedded NUL character in the CN */
-	if ((size_t)ASN1_STRING_length(name_asn1) != strlen(context->username)) {
+	if((size_t)ASN1_STRING_length(name_asn1) != strlen(context->username)){
 		return free_x509_and_send_connack_error(context, client_cert, MOSQ_ERR_AUTH);
 	}
 
@@ -887,7 +887,7 @@ static int set_username_from_cert_subject_name(struct mosquitto *context)
 	X509 *client_cert = NULL;
 	X509_NAME *name = NULL;
 
-	if(get_client_cert_and_subject_name(context, &client_cert, &name)) {
+	if(get_client_cert_and_subject_name(context, &client_cert, &name)){
 		return MOSQ_ERR_AUTH;
 	}
 
@@ -947,12 +947,12 @@ static int handle_username_from_cert_options(struct mosquitto *context, char **u
 		}else
 #endif /* FINAL_WITH_TLS_PSK */
 		{
-			if (context->listener->use_identity_as_username) {
+			if(context->listener->use_identity_as_username){
 				rc = set_username_from_cert_identity(context);
-			} else { /* use_subject_as_username */
+			}else{   /* use_subject_as_username */
 				rc = set_username_from_cert_subject_name(context);
 			}
-			if(rc) {
+			if(rc){
 				return rc;
 			}
 		}
@@ -1037,20 +1037,20 @@ int handle__connect(struct mosquitto *context)
 	}
 
 	rc = read_protocol_name(context, protocol_name);
-	if (rc != MOSQ_ERR_SUCCESS) {
+	if(rc != MOSQ_ERR_SUCCESS){
 		goto handle_connect_error;
 	}
 
 	rc = read_and_verify_protocol_version(context, protocol_name, &protocol_version);
-	if (rc != MOSQ_ERR_SUCCESS) {
-		if (rc == MOSQ_ERR_MALFORMED_PACKET) {
+	if(rc != MOSQ_ERR_SUCCESS){
+		if(rc == MOSQ_ERR_MALFORMED_PACKET){
 			return rc;
 		}
 		goto handle_connect_error;
 	}
 
 	rc = read_and_verify_connect_flags(context, &connect_flags);
-	if (rc != MOSQ_ERR_SUCCESS) {
+	if(rc != MOSQ_ERR_SUCCESS){
 		goto handle_connect_error;
 	}
 
@@ -1058,12 +1058,12 @@ int handle__connect(struct mosquitto *context)
 	set_session_expiry_interval(context, clean_start, protocol_version);
 
 	rc = read_and_reset_keepalive(context);
-	if (rc != MOSQ_ERR_SUCCESS) {
+	if(rc != MOSQ_ERR_SUCCESS){
 		goto handle_connect_error;
 	}
 
 	rc = read_and_verify_v5_connect_properties(context, &properties, protocol_version);
-	if (rc != MOSQ_ERR_SUCCESS) {
+	if(rc != MOSQ_ERR_SUCCESS){
 		goto handle_connect_error;
 	}
 
@@ -1071,7 +1071,7 @@ int handle__connect(struct mosquitto *context)
 	will_qos = (connect_flags & 0x18) >> 3;
 	will_retain = ((connect_flags & 0x20) == 0x20);
 	rc = verify_will_options(context, will, will_qos, will_retain, protocol_version);
-	if (rc != MOSQ_ERR_SUCCESS) {
+	if(rc != MOSQ_ERR_SUCCESS){
 		goto handle_connect_error;
 	}
 
@@ -1086,7 +1086,7 @@ int handle__connect(struct mosquitto *context)
 	}
 
 	rc = read_and_verify_clientid_from_packet(context, &clientid, &allow_zero_length_clientid, clean_start);
-	if (rc != MOSQ_ERR_SUCCESS) {
+	if(rc != MOSQ_ERR_SUCCESS){
 		goto handle_connect_error;
 	}
 
@@ -1115,12 +1115,12 @@ int handle__connect(struct mosquitto *context)
 	password_flag = connect_flags & 0x40;
 	username_flag = connect_flags & 0x80;
 	rc = read_and_verify_client_credentials_from_packet(context, &username, username_flag, &password, password_flag, clientid);
-	if (rc != MOSQ_ERR_SUCCESS) {
+	if(rc != MOSQ_ERR_SUCCESS){
 		goto handle_connect_error;
 	}
 
 	rc = check_additional_trailing_data(context, protocol_version);
-	if (rc != MOSQ_ERR_SUCCESS) {
+	if(rc != MOSQ_ERR_SUCCESS){
 		goto handle_connect_error;
 	}
 
@@ -1132,14 +1132,14 @@ int handle__connect(struct mosquitto *context)
 
 	/* use_identity_as_username or use_subject_as_username */
 	rc = handle_username_from_cert_options(context, &username, &password);
-	if (rc != MOSQ_ERR_SUCCESS) {
+	if(rc != MOSQ_ERR_SUCCESS){
 		goto handle_connect_error;
 	}
 
 	/* use_username_as_clientid */
 	if(context->listener->use_username_as_clientid){
 		rc = handle_username_as_clientid_option(context);
-		if (rc != MOSQ_ERR_SUCCESS) {
+		if(rc != MOSQ_ERR_SUCCESS){
 			goto handle_connect_error;
 		}
 	}

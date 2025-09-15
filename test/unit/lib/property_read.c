@@ -1295,9 +1295,11 @@ static void TEST_bad_subscription_identifier(void)
 	varint_prop_read_helper(payload, 7, MOSQ_ERR_MALFORMED_PACKET, MQTT_PROP_SUBSCRIPTION_IDENTIFIER, 0);
 }
 
+
 /* ========================================================================
  * CONTROL PACKET TESTS
  * ======================================================================== */
+
 
 static void TEST_packet_connect(void)
 {
@@ -1404,6 +1406,7 @@ static void TEST_packet_connect(void)
 
 	mosquitto_property_free_all(&properties);
 }
+
 
 static void TEST_packet_connack(void)
 {
@@ -1587,6 +1590,7 @@ static void TEST_packet_connack(void)
 
 	mosquitto_property_free_all(&properties);
 }
+
 
 static void TEST_packet_publish(void)
 {

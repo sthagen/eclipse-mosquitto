@@ -137,11 +137,11 @@ static void line_callback(char *line)
 	}else if(!strcasecmp(command, "connect")){
 		char *url = strtok_r(NULL, " ", &saveptr);
 		if(url){
-			if(!strncasecmp(url, "mqtt://", 7)) {
+			if(!strncasecmp(url, "mqtt://", 7)){
 				url += 7;
 				data.port = 1883;
 				data.url_scheme = "mqtt";
-			} else if(!strncasecmp(url, "mqtts://", 8)) {
+			}else if(!strncasecmp(url, "mqtts://", 8)){
 #ifdef WITH_TLS
 				url += 8;
 				data.port = 8883;
@@ -151,12 +151,12 @@ static void line_callback(char *line)
 				free(line);
 				return;
 #endif
-			} else if(!strncasecmp(url, "ws://", 5)) {
+			}else if(!strncasecmp(url, "ws://", 5)){
 				url += 5;
 				data.port = 1883;
 				data.transport = MOSQ_T_WEBSOCKETS;
 				data.url_scheme = "ws";
-			} else if(!strncasecmp(url, "wss://", 6)) {
+			}else if(!strncasecmp(url, "wss://", 6)){
 #ifdef WITH_TLS
 				url += 6;
 				data.port = 8883;

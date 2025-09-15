@@ -100,7 +100,7 @@ static int acl__check_dollar(const char *topic, int access)
 }
 
 
-static int plugin__acl_check(struct mosquitto__security_options *opts, struct mosquitto *context, const char *topic, uint32_t payloadlen, void* payload, uint8_t qos, bool retain, int access)
+static int plugin__acl_check(struct mosquitto__security_options *opts, struct mosquitto *context, const char *topic, uint32_t payloadlen, void *payload, uint8_t qos, bool retain, int access)
 {
 	int rc = MOSQ_ERR_PLUGIN_DEFER;
 	struct mosquitto_acl_msg msg;
@@ -135,7 +135,8 @@ static int plugin__acl_check(struct mosquitto__security_options *opts, struct mo
 	return rc;
 }
 
-int mosquitto_acl_check(struct mosquitto *context, const char *topic, uint32_t payloadlen, void* payload, uint8_t qos, bool retain, int access)
+
+int mosquitto_acl_check(struct mosquitto *context, const char *topic, uint32_t payloadlen, void *payload, uint8_t qos, bool retain, int access)
 {
 	int rc;
 	int rc_final;

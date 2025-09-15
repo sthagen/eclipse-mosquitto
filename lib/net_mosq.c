@@ -142,7 +142,7 @@ int net__init(void)
 {
 #ifdef WIN32
 	WSADATA wsaData;
-	if(WSAStartup(MAKEWORD(2,2), &wsaData) != 0){
+	if(WSAStartup(MAKEWORD(2, 2), &wsaData) != 0){
 		return MOSQ_ERR_UNKNOWN;
 	}
 #endif
@@ -233,8 +233,7 @@ int net__socket_close(struct mosquitto *mosq)
 #endif
 
 #if defined(WITH_BROKER) && defined(WITH_WEBSOCKETS) && WITH_WEBSOCKETS == WS_IS_LWS
-	if(mosq->wsi)
-	{
+	if(mosq->wsi){
 		if(mosq->state != mosq_cs_disconnecting){
 			mosquitto__set_state(mosq, mosq_cs_disconnect_ws);
 		}
@@ -301,7 +300,7 @@ static unsigned int psk_client_callback(SSL *ssl, const char *hint,
 	snprintf(identity, max_identity_len, "%s", mosq->tls_psk_identity);
 
 	len = mosquitto__hex2bin(mosq->tls_psk, psk, (int)max_psk_len);
-	if (len < 0) return 0;
+	if(len < 0)  return 0;
 	return (unsigned int)len;
 }
 #endif
@@ -586,17 +585,17 @@ int net__socket_connect_tls(struct mosquitto *mosq)
 	long res;
 
 	ERR_clear_error();
-	if (mosq->tls_ocsp_required) {
+	if(mosq->tls_ocsp_required){
 		/* Note: OCSP is available in all currently supported OpenSSL versions. */
-		if ((res=SSL_set_tlsext_status_type(mosq->ssl, TLSEXT_STATUSTYPE_ocsp)) != 1) {
+		if((res=SSL_set_tlsext_status_type(mosq->ssl, TLSEXT_STATUSTYPE_ocsp)) != 1){
 			log__printf(mosq, MOSQ_LOG_ERR, "Could not activate OCSP (error: %ld)", res);
 			return MOSQ_ERR_OCSP;
 		}
-		if ((res=SSL_CTX_set_tlsext_status_cb(mosq->ssl_ctx, mosquitto__verify_ocsp_status_cb)) != 1) {
+		if((res=SSL_CTX_set_tlsext_status_cb(mosq->ssl_ctx, mosquitto__verify_ocsp_status_cb)) != 1){
 			log__printf(mosq, MOSQ_LOG_ERR, "Could not activate OCSP (error: %ld)", res);
 			return MOSQ_ERR_OCSP;
 		}
-		if ((res=SSL_CTX_set_tlsext_status_arg(mosq->ssl_ctx, mosq)) != 1) {
+		if((res=SSL_CTX_set_tlsext_status_arg(mosq->ssl_ctx, mosq)) != 1){
 			log__printf(mosq, MOSQ_LOG_ERR, "Could not activate OCSP (error: %ld)", res);
 			return MOSQ_ERR_OCSP;
 		}
@@ -733,8 +732,8 @@ static int net__init_ssl_ctx(struct mosquitto *mosq)
 		SSL_CTX_set_options(mosq->ssl_ctx, SSL_OP_NO_COMPRESSION);
 
 		/* Set ALPN */
-		if(mosq->tls_alpn) {
-			tls_alpn_len = (uint8_t) strnlen(mosq->tls_alpn, 254);
+		if(mosq->tls_alpn){
+			tls_alpn_len = (uint8_t)strnlen(mosq->tls_alpn, 254);
 			tls_alpn_wire[0] = tls_alpn_len;  /* first byte is length of string */
 			memcpy(tls_alpn_wire + 1, mosq->tls_alpn, tls_alpn_len);
 			SSL_CTX_set_alpn_protos(mosq->ssl_ctx, tls_alpn_wire, tls_alpn_len + 1U);
@@ -924,7 +923,7 @@ int net__socket_connect_step3(struct mosquitto *mosq, const char *host)
 		/*
 		 * required for the SNI resolving
 		 */
-		if(SSL_set_tlsext_host_name(mosq->ssl, host) != 1) {
+		if(SSL_set_tlsext_host_name(mosq->ssl, host) != 1){
 			net__socket_close(mosq);
 			return MOSQ_ERR_TLS;
 		}
@@ -958,7 +957,7 @@ int net__socket_connect(struct mosquitto *mosq, const char *host, uint16_t port,
 
 	if(mosq->tcp_nodelay && port){
 		int flag = 1;
-		if(setsockopt(mosq->sock, IPPROTO_TCP, TCP_NODELAY, (const void*)&flag, sizeof(int)) != 0){
+		if(setsockopt(mosq->sock, IPPROTO_TCP, TCP_NODELAY, (const void *)&flag, sizeof(int)) != 0){
 			log__printf(mosq, MOSQ_LOG_WARNING, "Warning: Unable to set TCP_NODELAY.");
 		}
 	}
@@ -983,10 +982,9 @@ static void net__handle_ssl(struct mosquitto *mosq, int ret)
 	int err;
 
 	err = SSL_get_error(mosq->ssl, ret);
-	if (err == SSL_ERROR_WANT_READ) {
+	if(err == SSL_ERROR_WANT_READ){
 		errno = EAGAIN;
-	}
-	else if (err == SSL_ERROR_WANT_WRITE) {
+	}else if(err == SSL_ERROR_WANT_WRITE){
 #ifdef WITH_BROKER
 		mux__add_out(mosq);
 #else

@@ -230,7 +230,7 @@ int socks5__send(struct mosquitto *mosq)
 			if(!packet) return MOSQ_ERR_NOMEM;
 
 			packet->payload[3 + WS_PACKET_OFFSET] = SOCKS_ATYPE_IP_V4;
-			memcpy(&(packet->payload[4 + WS_PACKET_OFFSET]), (const void*)&addr_ipv4, 4);
+			memcpy(&(packet->payload[4 + WS_PACKET_OFFSET]), (const void *)&addr_ipv4, 4);
 			packet->payload[4+4 + WS_PACKET_OFFSET] = MOSQ_MSB(mosq->port);
 			packet->payload[4+4+1 + WS_PACKET_OFFSET] = MOSQ_LSB(mosq->port);
 		}else if(ipv6_pton_result == 1){
@@ -240,7 +240,7 @@ int socks5__send(struct mosquitto *mosq)
 			if(!packet) return MOSQ_ERR_NOMEM;
 
 			packet->payload[3 + WS_PACKET_OFFSET] = SOCKS_ATYPE_IP_V6;
-			memcpy(&(packet->payload[4 + WS_PACKET_OFFSET]), (const void*)&addr_ipv6, 16);
+			memcpy(&(packet->payload[4 + WS_PACKET_OFFSET]), (const void *)&addr_ipv6, 16);
 			packet->payload[4+16 + WS_PACKET_OFFSET] = MOSQ_MSB(mosq->port);
 			packet->payload[4+16+1 + WS_PACKET_OFFSET] = MOSQ_LSB(mosq->port);
 		}else{

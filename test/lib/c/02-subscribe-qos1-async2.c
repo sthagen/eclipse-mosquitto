@@ -46,9 +46,9 @@ static void on_subscribe(struct mosquitto *mosq, void *obj, int mid, int qos_cou
 }
 
 
-static const char* loglevel_as_str(int level)
+static const char *loglevel_as_str(int level)
 {
-	switch (level){
+	switch(level){
 		case MOSQ_LOG_INFO:
 			return "INFO";
 		case MOSQ_LOG_NOTICE:

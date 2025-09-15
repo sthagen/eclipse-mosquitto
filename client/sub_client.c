@@ -51,16 +51,17 @@ static HANDLE timeout_h = NULL;
 #endif
 
 #ifdef WIN32
+
+
 void CALLBACK timeout_cb(PVOID lpParameter, BOOLEAN TimerOrWaitFired)
 {
 	UNUSED(lpParameter);
 	UNUSED(TimerOrWaitFired);
 
-	if (connack_received) {
+	if(connack_received){
 		process_messages = false;
 		mosquitto_disconnect_v5(g_mosq, MQTT_RC_DISCONNECT_WITH_WILL_MSG, cfg.disconnect_props);
-	}
-	else {
+	}else{
 		exit(-1);
 	}
 
@@ -464,7 +465,7 @@ int main(int argc, char *argv[])
 #ifdef WIN32
 			Sleep(1000);
 #else
-			struct timespec ts = {1,0};
+			struct timespec ts = {1, 0};
 			nanosleep(&ts, NULL);
 #endif
 			int message_count = message_rate_msg_count;

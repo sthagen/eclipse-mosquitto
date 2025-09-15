@@ -207,7 +207,7 @@ int mosquitto_security_apply_default(void)
 					security__disconnect_auth(context);
 					continue;
 				}
-				if (context->listener->use_identity_as_username) { /* use_identity_as_username */
+				if(context->listener->use_identity_as_username){   /* use_identity_as_username */
 					int i = X509_NAME_get_index_by_NID(name, NID_commonName, -1);
 					if(i == -1){
 						X509_free(client_cert);
@@ -217,25 +217,25 @@ int mosquitto_security_apply_default(void)
 					name_entry = X509_NAME_get_entry(name, i);
 					if(name_entry){
 						name_asn1 = X509_NAME_ENTRY_get_data(name_entry);
-						if (name_asn1 == NULL) {
+						if(name_asn1 == NULL){
 							X509_free(client_cert);
 							security__disconnect_auth(context);
 							continue;
 						}
-						context->username = mosquitto_strdup((char *) ASN1_STRING_get0_data(name_asn1));
+						context->username = mosquitto_strdup((char *)ASN1_STRING_get0_data(name_asn1));
 						if(!context->username){
 							X509_free(client_cert);
 							security__disconnect_auth(context);
 							continue;
 						}
 						/* Make sure there isn't an embedded NUL character in the CN */
-						if ((size_t)ASN1_STRING_length(name_asn1) != strlen(context->username)) {
+						if((size_t)ASN1_STRING_length(name_asn1) != strlen(context->username)){
 							X509_free(client_cert);
 							security__disconnect_auth(context);
 							continue;
 						}
 					}
-				} else { /* use_subject_as_username */
+				}else{   /* use_subject_as_username */
 					subject_bio = BIO_new(BIO_s_mem());
 					X509_NAME_print_ex(subject_bio, X509_get_subject_name(client_cert), 0, XN_FLAG_RFC2253);
 					data_start = NULL;

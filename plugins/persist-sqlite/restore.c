@@ -435,25 +435,27 @@ static int retain_restore(struct mosquitto_sqlite *ms)
 	return MOSQ_ERR_SUCCESS;
 }
 
+
 static int publish_will_msg(const char *topic, int payloadlen, const void *payload, int qos, bool retain, mosquitto_property *properties)
 {
 	void *payload_mosq = NULL;
 	int rc;
 
-	if (payloadlen){
+	if(payloadlen){
 		payload_mosq = mosquitto_malloc((size_t)payloadlen);
-		if (!payload_mosq){
+		if(!payload_mosq){
 			return MOSQ_ERR_NOMEM;
 		}
 		memcpy(payload_mosq, payload, (size_t)payloadlen);
 	}
 
 	rc = mosquitto_broker_publish(NULL, topic, payloadlen, payload_mosq, qos, retain, properties);
-	if (rc != MOSQ_ERR_SUCCESS){
+	if(rc != MOSQ_ERR_SUCCESS){
 		mosquitto_free(payload_mosq);
 	}
 	return rc;
 }
+
 
 static int will_restore(struct mosquitto_sqlite *ms)
 {
@@ -461,7 +463,7 @@ static int will_restore(struct mosquitto_sqlite *ms)
 	int rc;
 	long count = 0, failed = 0;
 	const char *clientid, *topic;
-	const void* payload;
+	const void *payload;
 	mosquitto_property *properties;
 	int payloadlen, qos, retain;
 
@@ -487,10 +489,10 @@ static int will_restore(struct mosquitto_sqlite *ms)
 		properties = json_to_properties((const char *)sqlite3_column_text(stmt, 6));
 
 		rc = mosquitto_client_will_set(clientid, topic, payloadlen, payload, qos, retain, properties);
-		if (rc == MOSQ_ERR_NOT_FOUND){
+		if(rc == MOSQ_ERR_NOT_FOUND){
 			/* If the client does not exist this is the will message of a non-persistent client. */
 			rc = publish_will_msg(topic, payloadlen, payload, qos, retain, properties);
-		} else if (rc == MOSQ_ERR_SUCCESS && (sqlite3_column_int64(stmt, 7) == 0 && sqlite3_column_int64(stmt, 8) == 0)) {
+		}else if(rc == MOSQ_ERR_SUCCESS && (sqlite3_column_int64(stmt, 7) == 0 && sqlite3_column_int64(stmt, 8) == 0)){
 			/* If the client is a persistent client and was connected at the moment of a crash
 				 and has no will delay we publish it's will message now, but need a new copy of the properties. */
 			properties = json_to_properties((const char *)sqlite3_column_text(stmt, 6));

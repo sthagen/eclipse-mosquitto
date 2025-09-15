@@ -234,7 +234,7 @@ void context__send_will(struct mosquitto *ctxt)
 					&ctxt->will->properties);
 		}
 	}
-	
+
 	will__clear(ctxt);
 }
 
@@ -249,7 +249,8 @@ void context__disconnect(struct mosquitto *context, int reason)
 	if(context->transport == mosq_t_ws){
 		uint8_t buf[4] = {0x88, 0x02, 0x03, context->wsd.disconnect_reason};
 		/* Send the disconnect reason, but don't care if it fails */
-		if(send(context->sock, buf, 4, 0)){};
+		if(send(context->sock, buf, 4, 0)){
+		}
 	}
 #endif
 

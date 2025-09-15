@@ -249,9 +249,9 @@ static int retain__process(struct mosquitto__retainhier *branch, struct mosquitt
 	}
 
 	sub_qos = sub->options & 0x03;
-	if (db.config->upgrade_outgoing_qos){
+	if(db.config->upgrade_outgoing_qos){
 		qos = sub_qos;
-	} else {
+	}else{
 		qos = retained->data.qos;
 		if(qos > sub_qos) qos = sub_qos;
 	}

@@ -47,9 +47,9 @@ void mosquitto_time_init(void)
 	struct timespec tp;
 
 #ifdef CLOCK_BOOTTIME
-	if (clock_gettime(CLOCK_BOOTTIME, &tp) == 0) {
+	if(clock_gettime(CLOCK_BOOTTIME, &tp) == 0){
 		time_clock = CLOCK_BOOTTIME;
-	} else {
+	}else{
 		time_clock = CLOCK_MONOTONIC;
 	}
 #else
@@ -66,10 +66,10 @@ time_t mosquitto_time(void)
 #elif _POSIX_TIMERS>0 && defined(_POSIX_MONOTONIC_CLOCK)
 	struct timespec tp;
 
-	if (clock_gettime(time_clock, &tp) == 0)
+	if(clock_gettime(time_clock, &tp) == 0)
 		return tp.tv_sec;
 
-	return (time_t) -1;
+	return (time_t)-1;
 #elif defined(__APPLE__)
 	static mach_timebase_info_data_t tb;
 	uint64_t ticks;

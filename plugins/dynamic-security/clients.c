@@ -893,7 +893,7 @@ static int dynsec__remove_client_from_all_groups(struct dynsec__data *data, cons
 
 static int dynsec__add_client_address(const struct mosquitto *client, void *context_ptr)
 {
-	struct connection_array_context *functor_context = (struct connection_array_context*)context_ptr;
+	struct connection_array_context *functor_context = (struct connection_array_context *)context_ptr;
 	const char *username = mosquitto_client_username(client);
 
 	if((username == NULL && functor_context->username == NULL)

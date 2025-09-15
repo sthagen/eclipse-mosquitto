@@ -48,7 +48,7 @@ int mux_epoll__init(void)
 	memset(&ep_events, 0, sizeof(struct epoll_event)*MAX_EVENTS);
 
 	db.epollfd = 0;
-	if ((db.epollfd = epoll_create(MAX_EVENTS)) == -1) {
+	if((db.epollfd = epoll_create(MAX_EVENTS)) == -1){
 		log__printf(NULL, MOSQ_LOG_ERR, "Error in epoll creating: %s", strerror(errno));
 		return MOSQ_ERR_UNKNOWN;
 	}
@@ -65,7 +65,7 @@ int mux_epoll__add_listeners(struct mosquitto__listener_sock *listensock, int li
 		memset(&ev, 0, sizeof(struct epoll_event));
 		ev.data.ptr = &listensock[i];
 		ev.events = EPOLLIN;
-		if (epoll_ctl(db.epollfd, EPOLL_CTL_ADD, listensock[i].sock, &ev) == -1) {
+		if(epoll_ctl(db.epollfd, EPOLL_CTL_ADD, listensock[i].sock, &ev) == -1){
 			log__printf(NULL, MOSQ_LOG_ERR, "Error in epoll initial registering: %s", strerror(errno));
 			return MOSQ_ERR_UNKNOWN;
 		}
@@ -78,7 +78,7 @@ int mux_epoll__add_listeners(struct mosquitto__listener_sock *listensock, int li
 int mux_epoll__delete_listeners(struct mosquitto__listener_sock *listensock, int listensock_count)
 {
 	for(int i=0; i<listensock_count; i++){
-		if (epoll_ctl(db.epollfd, EPOLL_CTL_DEL, listensock[i].sock, NULL) == -1) {
+		if(epoll_ctl(db.epollfd, EPOLL_CTL_DEL, listensock[i].sock, NULL) == -1){
 			return MOSQ_ERR_UNKNOWN;
 		}
 	}
@@ -89,14 +89,14 @@ int mux_epoll__delete_listeners(struct mosquitto__listener_sock *listensock, int
 
 int mux_epoll__add_out(struct mosquitto *context)
 {
-	if(!(context->events & EPOLLOUT)) {
+	if(!(context->events & EPOLLOUT)){
 		struct epoll_event ev;
 
 		memset(&ev, 0, sizeof(struct epoll_event));
 		ev.data.ptr = context;
 		ev.events = EPOLLIN | EPOLLOUT;
-		if(epoll_ctl(db.epollfd, EPOLL_CTL_MOD, context->sock, &ev) == -1) {
-			if((errno != ENOENT)||(epoll_ctl(db.epollfd, EPOLL_CTL_ADD, context->sock, &ev) == -1)) {
+		if(epoll_ctl(db.epollfd, EPOLL_CTL_MOD, context->sock, &ev) == -1){
+			if((errno != ENOENT)||(epoll_ctl(db.epollfd, EPOLL_CTL_ADD, context->sock, &ev) == -1)){
 				log__printf(NULL, MOSQ_LOG_DEBUG, "Error in epoll re-registering to EPOLLOUT: %s", strerror(errno));
 			}
 		}
@@ -108,14 +108,14 @@ int mux_epoll__add_out(struct mosquitto *context)
 
 int mux_epoll__remove_out(struct mosquitto *context)
 {
-	if(context->events & EPOLLOUT) {
+	if(context->events & EPOLLOUT){
 		struct epoll_event ev;
 
 		memset(&ev, 0, sizeof(struct epoll_event));
 		ev.data.ptr = context;
 		ev.events = EPOLLIN;
-		if(epoll_ctl(db.epollfd, EPOLL_CTL_MOD, context->sock, &ev) == -1) {
-			if((errno != ENOENT)||(epoll_ctl(db.epollfd, EPOLL_CTL_ADD, context->sock, &ev) == -1)) {
+		if(epoll_ctl(db.epollfd, EPOLL_CTL_MOD, context->sock, &ev) == -1){
+			if((errno != ENOENT)||(epoll_ctl(db.epollfd, EPOLL_CTL_ADD, context->sock, &ev) == -1)){
 				log__printf(NULL, MOSQ_LOG_DEBUG, "Error in epoll re-registering to EPOLLIN: %s", strerror(errno));
 			}
 		}
@@ -132,7 +132,7 @@ int mux_epoll__new(struct mosquitto *context)
 	memset(&ev, 0, sizeof(struct epoll_event));
 	ev.events = EPOLLIN;
 	ev.data.ptr = context;
-	if (epoll_ctl(db.epollfd, EPOLL_CTL_ADD, context->sock, &ev) == -1) {
+	if(epoll_ctl(db.epollfd, EPOLL_CTL_ADD, context->sock, &ev) == -1){
 		if(errno != EEXIST){
 			log__printf(NULL, MOSQ_LOG_ERR, "Error in epoll accepting: %s", strerror(errno));
 		}

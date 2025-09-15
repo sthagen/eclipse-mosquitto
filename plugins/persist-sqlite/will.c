@@ -30,13 +30,13 @@ int persist_sqlite__will_add_cb(int event, void *event_data, void *userdata)
 	char *propties_json_str = NULL;
 	UNUSED(event);
 
-	if (!ed->data.clientid || !ed->data.topic){
+	if(!ed->data.clientid || !ed->data.topic){
 		return MOSQ_ERR_INVAL;
 	}
-	
+
 	if(ed->data.properties){
 		propties_json_str = properties_to_json_str(ed->data.properties);
-		if (!propties_json_str){
+		if(!propties_json_str){
 			return MOSQ_ERR_NOMEM;
 		}
 	}
@@ -53,9 +53,10 @@ int persist_sqlite__will_add_cb(int event, void *event_data, void *userdata)
 	rc = sqlite3_single_step_stmt(rc, ms, ms->will_add_stmt);
 	sqlite3_reset(ms->will_add_stmt);
 	mosquitto_free(propties_json_str);
-	
+
 	return rc;
 }
+
 
 int persist_sqlite__will_remove_cb(int event, void *event_data, void *userdata)
 {
@@ -64,11 +65,11 @@ int persist_sqlite__will_remove_cb(int event, void *event_data, void *userdata)
 	int rc = MOSQ_ERR_SUCCESS;
 	UNUSED(event);
 
-	if(sqlite3_bind_text_from_c_str( ms->will_remove_stmt, 1, ed->data.clientid) != SQLITE_OK){
+	if(sqlite3_bind_text_from_c_str(ms->will_remove_stmt, 1, ed->data.clientid) != SQLITE_OK){
 		rc = MOSQ_ERR_UNKNOWN;
 	}
 	rc = sqlite3_single_step_stmt(rc, ms, ms->will_remove_stmt);
 	sqlite3_reset(ms->will_remove_stmt);
-	
+
 	return rc;
 }

@@ -61,7 +61,7 @@ int mosquitto_auth_acl_check(void *user_data, int access, struct mosquitto *clie
 
 	if(username && !strcmp(username, "readonly") && access == MOSQ_ACL_READ){
 		return MOSQ_ERR_SUCCESS;
-	}else if(username && !strcmp(username, "readonly") && access == MOSQ_ACL_SUBSCRIBE &&!strchr(msg->topic, '#') && !strchr(msg->topic, '+')) {
+	}else if(username && !strcmp(username, "readonly") && access == MOSQ_ACL_SUBSCRIBE &&!strchr(msg->topic, '#') && !strchr(msg->topic, '+')){
 		return MOSQ_ERR_SUCCESS;
 	}else if(username && !strcmp(username, "readwrite")){
 		if((!strcmp(msg->topic, "readonly") && access == MOSQ_ACL_READ)

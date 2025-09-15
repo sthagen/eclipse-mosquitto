@@ -205,12 +205,12 @@ static int bridge__set_tcp_keepalive(struct mosquitto *context)
 		setsockopt(context->sock, IPPROTO_TCP, TCP_KEEPCNT, (char *)&counter, sizeof(counter));
 #else
 	ret =
-		setsockopt(context->sock, SOL_SOCKET, SO_KEEPALIVE, (const void*)&enabled, sizeof(enabled)) ||
+		setsockopt(context->sock, SOL_SOCKET, SO_KEEPALIVE, (const void *)&enabled, sizeof(enabled)) ||
 #ifndef __APPLE__
-		setsockopt(context->sock, IPPROTO_TCP, TCP_KEEPIDLE, (const void*)&idle, sizeof(idle)) ||
+		setsockopt(context->sock, IPPROTO_TCP, TCP_KEEPIDLE, (const void *)&idle, sizeof(idle)) ||
 #endif
-		setsockopt(context->sock, IPPROTO_TCP, TCP_KEEPINTVL, (const void*)&interval, sizeof(interval)) ||
-		setsockopt(context->sock, IPPROTO_TCP, TCP_KEEPCNT, (const void*)&counter, sizeof(counter));
+		setsockopt(context->sock, IPPROTO_TCP, TCP_KEEPINTVL, (const void *)&interval, sizeof(interval)) ||
+		setsockopt(context->sock, IPPROTO_TCP, TCP_KEEPCNT, (const void *)&counter, sizeof(counter));
 #endif
 
 	if(ret) return MOSQ_ERR_UNKNOWN;
@@ -224,8 +224,8 @@ static int bridge__set_tcp_keepalive(struct mosquitto *context)
 static int bridge__set_tcp_user_timeout(struct mosquitto *context)
 {
 	int timeout = context->bridge->tcp_user_timeout;
-	if(timeout >= 0) {
-		if(setsockopt(context->sock, IPPROTO_TCP, TCP_USER_TIMEOUT, (char *)&timeout, sizeof(timeout))) {
+	if(timeout >= 0){
+		if(setsockopt(context->sock, IPPROTO_TCP, TCP_USER_TIMEOUT, (char *)&timeout, sizeof(timeout))){
 			return MOSQ_ERR_UNKNOWN;
 		}
 	}
@@ -329,7 +329,7 @@ static int bridge__connect_step1(struct mosquitto *context)
 
 	log__printf(NULL, MOSQ_LOG_NOTICE, "Connecting bridge (step 1) %s (%s:%d)", context->bridge->name, context->bridge->addresses[context->bridge->cur_address].address, context->bridge->addresses[context->bridge->cur_address].port);
 	rc = net__try_connect_step1(context, context->bridge->addresses[context->bridge->cur_address].address);
-	if(rc > 0 ){
+	if(rc > 0){
 		if(rc == MOSQ_ERR_TLS){
 			mux__delete(context);
 			net__socket_close(context);
@@ -582,7 +582,7 @@ int bridge__connect(struct mosquitto *context)
 
 	HASH_ADD(hh_sock, db.contexts_by_sock, sock, sizeof(context->sock), context);
 
-	if (bridge__set_tcp_keepalive(context) != MOSQ_ERR_SUCCESS) return MOSQ_ERR_UNKNOWN;
+	if(bridge__set_tcp_keepalive(context) != MOSQ_ERR_SUCCESS)  return MOSQ_ERR_UNKNOWN;
 #ifdef WITH_TCP_USER_TIMEOUT
 	if(bridge__set_tcp_user_timeout(context)) return MOSQ_ERR_UNKNOWN;
 #endif
@@ -819,7 +819,7 @@ void bridge__cleanup(struct mosquitto *context)
 	if(db.bridge_count == 0){
 		mosquitto_FREE(db.bridges);
 	}else{
-		db.bridges = mosquitto_realloc(db.bridges, (unsigned) db.bridge_count * sizeof(db.bridges[0]));
+		db.bridges = mosquitto_realloc(db.bridges, (unsigned)db.bridge_count * sizeof(db.bridges[0]));
 	}
 
 	mosquitto_FREE(context->bridge->name);
@@ -915,10 +915,10 @@ static void bridge__update_backoff(struct mosquitto__bridge *bridge)
 	if(!bridge) return;
 	if(!bridge->backoff_cap) return; /* skip if not using jitter */
 
-	if (bridge->connected_at && db.now_s - bridge->connected_at >= bridge->stable_connection_period) {
+	if(bridge->connected_at && db.now_s - bridge->connected_at >= bridge->stable_connection_period){
 		log__printf(NULL, MOSQ_LOG_INFO, "Bridge %s connection was stable enough, resetting backoff", bridge->name);
 		bridge__backoff_reset(bridge);
-	} else {
+	}else{
 		bridge__backoff_step(bridge);
 	}
 

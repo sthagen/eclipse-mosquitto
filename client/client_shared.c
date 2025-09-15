@@ -757,15 +757,15 @@ int client_config_line_proc(struct mosq_config *cfg, int pub_or_sub, int argc, c
 			if(i==argc-1){
 				fprintf(stderr, "Error: -L argument given but no URL specified.\n\n");
 				return 1;
-			} else {
+			}else{
 				char *url = argv[i+1];
 				char *topic;
 				char *tmp;
 
-				if(!strncasecmp(url, "mqtt://", 7)) {
+				if(!strncasecmp(url, "mqtt://", 7)){
 					url += 7;
 					cfg->port = 1883;
-				} else if(!strncasecmp(url, "mqtts://", 8)) {
+				}else if(!strncasecmp(url, "mqtts://", 8)){
 #ifdef WITH_TLS
 					url += 8;
 					cfg->port = 8883;
@@ -774,11 +774,11 @@ int client_config_line_proc(struct mosq_config *cfg, int pub_or_sub, int argc, c
 					fprintf(stderr, "Error: TLS support not available.\n\n");
 					return 1;
 #endif
-				} else if(!strncasecmp(url, "ws://", 5)) {
+				}else if(!strncasecmp(url, "ws://", 5)){
 					url += 5;
 					cfg->port = 1883;
 					cfg->transport = MOSQ_T_WEBSOCKETS;
-				} else if(!strncasecmp(url, "wss://", 6)) {
+				}else if(!strncasecmp(url, "wss://", 6)){
 #ifdef WITH_TLS
 					url += 6;
 					cfg->port = 8883;
@@ -788,7 +788,7 @@ int client_config_line_proc(struct mosq_config *cfg, int pub_or_sub, int argc, c
 					fprintf(stderr, "Error: TLS support not available.\n\n");
 					return 1;
 #endif
-				} else {
+				}else{
 					fprintf(stderr, "Error: Unsupported URL scheme.\n\n");
 					return 1;
 				}
@@ -803,11 +803,11 @@ int client_config_line_proc(struct mosq_config *cfg, int pub_or_sub, int argc, c
 					return 1;
 
 				tmp = strchr(url, '@');
-				if(tmp) {
+				if(tmp){
 					char *colon;
 					*tmp++ = 0;
 					colon = strchr(url, ':');
-					if(colon) {
+					if(colon){
 						*colon = 0;
 						cfg->password = strdup(colon + 1);
 					}
@@ -817,7 +817,7 @@ int client_config_line_proc(struct mosq_config *cfg, int pub_or_sub, int argc, c
 				cfg->host = url;
 
 				tmp = strchr(url, ':');
-				if(tmp) {
+				if(tmp){
 					*tmp++ = 0;
 					cfg->port = atoi(tmp);
 				}
@@ -1052,11 +1052,11 @@ int client_config_line_proc(struct mosq_config *cfg, int pub_or_sub, int argc, c
 				fprintf(stderr, "Error: --retain-handling argument given but no option specified.\n\n");
 				return 1;
 			}else{
-				if(!strcmp(argv[i+1],"always")){
+				if(!strcmp(argv[i+1], "always")){
 					MQTT_SUB_OPT_SET_RETAIN_HANDLING(cfg->sub_opts, MQTT_SUB_OPT_SEND_RETAIN_ALWAYS);
-				}else if(!strcmp(argv[i+1],"new")){
+				}else if(!strcmp(argv[i+1], "new")){
 					MQTT_SUB_OPT_SET_RETAIN_HANDLING(cfg->sub_opts, MQTT_SUB_OPT_SEND_RETAIN_NEW);
-				}else if(!strcmp(argv[i+1],"never")){
+				}else if(!strcmp(argv[i+1], "never")){
 					MQTT_SUB_OPT_SET_RETAIN_HANDLING(cfg->sub_opts, MQTT_SUB_OPT_SEND_RETAIN_NEVER);
 				}else{
 					fprintf(stderr, "Error: Unknown value '%s' for --retain-handling.\n\n", argv[i+1]);
@@ -1330,7 +1330,7 @@ int client_config_line_proc(struct mosq_config *cfg, int pub_or_sub, int argc, c
 	return MOSQ_ERR_SUCCESS;
 
 unknown_option:
-	fprintf(stderr, "Error: Unknown option '%s'.\n",argv[i]);
+	fprintf(stderr, "Error: Unknown option '%s'.\n", argv[i]);
 	return 1;
 }
 
@@ -1768,6 +1768,7 @@ cleanup:
 	return 1;
 }
 #endif
+
 
 void err_printf(const struct mosq_config *cfg, const char *fmt, ...)
 {

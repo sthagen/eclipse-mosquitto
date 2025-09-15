@@ -72,6 +72,7 @@ int ctrl_shell__connect(void)
 	return 0;
 }
 
+
 void ctrl_shell__disconnect(void)
 {
 	if(!data.mosq) return;

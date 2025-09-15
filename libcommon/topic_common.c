@@ -153,6 +153,7 @@ BROKER_EXPORT int mosquitto_sub_topic_check2(const char *str, size_t len)
 	return MOSQ_ERR_SUCCESS;
 }
 
+
 static int topic_matches_sub(const char *sub, const char *topic, const char *clientid, const char *username, bool match_patterns, bool *result)
 {
 	size_t spos;

@@ -982,7 +982,7 @@ BROKER_EXPORT int mosquitto_property_copy_all(mosquitto_property **dest, const m
 
 			case MQTT_PROP_TYPE_STRING:
 				pnew->value.s.len = src->value.s.len;
-				pnew->value.s.v = src->value.s.v ? mosquitto_strdup(src->value.s.v) : (char*)mosquitto_calloc(1,1);
+				pnew->value.s.v = src->value.s.v ? mosquitto_strdup(src->value.s.v) : (char *)mosquitto_calloc(1, 1);
 				if(!pnew->value.s.v){
 					mosquitto_property_free_all(dest);
 					return MOSQ_ERR_NOMEM;
@@ -1003,14 +1003,14 @@ BROKER_EXPORT int mosquitto_property_copy_all(mosquitto_property **dest, const m
 
 			case MQTT_PROP_TYPE_STRING_PAIR:
 				pnew->value.s.len = src->value.s.len;
-				pnew->value.s.v = src->value.s.v ? mosquitto_strdup(src->value.s.v) : (char*)mosquitto_calloc(1,1);
+				pnew->value.s.v = src->value.s.v ? mosquitto_strdup(src->value.s.v) : (char *)mosquitto_calloc(1, 1);
 				if(!pnew->value.s.v){
 					mosquitto_property_free_all(dest);
 					return MOSQ_ERR_NOMEM;
 				}
 
 				pnew->name.len = src->name.len;
-				pnew->name.v = src->name.v ? mosquitto_strdup(src->name.v) : (char*)mosquitto_calloc(1,1);
+				pnew->name.v = src->name.v ? mosquitto_strdup(src->name.v) : (char *)mosquitto_calloc(1, 1);
 				if(!pnew->name.v){
 					mosquitto_property_free_all(dest);
 					return MOSQ_ERR_NOMEM;

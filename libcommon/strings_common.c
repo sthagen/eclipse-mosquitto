@@ -28,6 +28,7 @@ Contributors:
 #include "mosquitto.h"
 #include "mosquitto/mqtt_protocol.h"
 
+
 const char *mosquitto_strerror(int mosq_errno)
 {
 	switch(mosq_errno){
@@ -135,15 +136,16 @@ const char *mosquitto_strerror(int mosq_errno)
 		case MOSQ_ERR_CONNECTION_RATE_EXCEEDED:
 			return "Connection rate exceeded";
 		default:
-			if(mosq_errno >= 128) {
+			if(mosq_errno >= 128){
 				// If mosq_errno is greater than 127,
 				// a mqtt5_return_code error was used
 				return mosquitto_reason_string(mosq_errno);
-			} else {
+			}else{
 				return "Unknown error";
 			}
 	}
 }
+
 
 const char *mosquitto_connack_string(int connack_code)
 {
@@ -164,6 +166,7 @@ const char *mosquitto_connack_string(int connack_code)
 			return "Connection Refused: unknown reason";
 	}
 }
+
 
 const char *mosquitto_reason_string(int reason_code)
 {

@@ -316,9 +316,10 @@ static int persist__retain_save_all(FILE *db_fptr)
 	return MOSQ_ERR_SUCCESS;
 }
 
-static int persist__write_data(FILE* db_fptr, void* user_data);
+static int persist__write_data(FILE *db_fptr, void *user_data);
 
-static void persist__log_write_error(const char* msg)
+
+static void persist__log_write_error(const char *msg)
 {
 	log__printf(NULL, MOSQ_LOG_ERR, "Error saving in-memory database, %s", msg);
 }
@@ -338,10 +339,10 @@ int persist__backup(bool shutdown)
 
 static int persist__write_data(FILE *db_fptr, void *user_data)
 {
-	bool shutdown = *(bool*)(user_data);
+	bool shutdown = *(bool *)(user_data);
 	uint32_t db_version_w = htonl(MOSQ_DB_VERSION);
 	uint32_t crc = 0;
-	const char* err;
+	const char *err;
 	struct PF_cfg cfg_chunk;
 	int rc = MOSQ_ERR_UNKNOWN;
 
@@ -362,7 +363,7 @@ static int persist__write_data(FILE *db_fptr, void *user_data)
 		goto error;
 	}
 
-	if (persist__client_save(db_fptr)
+	if(persist__client_save(db_fptr)
 			|| persist__subs_save_all(db_fptr)
 			|| persist__retain_save_all(db_fptr)){
 		goto error;

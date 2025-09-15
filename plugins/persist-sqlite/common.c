@@ -23,7 +23,7 @@ Contributors:
 #include "persist_sqlite.h"
 
 
-int persist_sqlite__client_msg_remove(struct mosquitto_sqlite *ms, const char* clientid, int64_t store_id, int direction)
+int persist_sqlite__client_msg_remove(struct mosquitto_sqlite *ms, const char *clientid, int64_t store_id, int direction)
 {
 	int rc = 1;
 

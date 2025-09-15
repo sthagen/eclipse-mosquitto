@@ -634,10 +634,12 @@ int mosquitto_pw_decode(struct mosquitto_pw *pw, const char *password)
 	}
 }
 
+
 const char *mosquitto_pw_get_encoded(struct mosquitto_pw *pw)
 {
 	return pw?pw->encoded_password:NULL;
 }
+
 
 int mosquitto_pw_set_param(struct mosquitto_pw *pw, int param, int value)
 {

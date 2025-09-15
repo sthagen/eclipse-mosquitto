@@ -734,7 +734,7 @@ static void formatted_print(const struct mosq_config *lcfg, const struct mosquit
 						}
 					}
 
-					char strf[3] = {0, 0 ,0};
+					char strf[3] = {0, 0, 0};
 					strf[0] = '%';
 					strf[1] = lcfg->format[i];
 					strf[2] = 0;

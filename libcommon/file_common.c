@@ -134,7 +134,7 @@ FILE *mosquitto_fopen(const char *path, const char *mode, bool restrict_read)
 			}
 			return fptr;
 
-		}else {
+		}else{
 			return fopen(buf, mode);
 		}
 	}
@@ -304,7 +304,7 @@ char *mosquitto_fgets(char **buf, int *buflen, FILE *stream)
 		} \
 	}while (0)
 
-int mosquitto_write_file(const char* target_path, bool restrict_read, int (*write_fn)(FILE* fptr, void* user_data), void* user_data, void (*log_fn)(const char* msg))
+int mosquitto_write_file(const char *target_path, bool restrict_read, int (*write_fn)(FILE *fptr, void *user_data), void *user_data, void (*log_fn)(const char *msg))
 {
 	int rc = 0;
 	FILE *fptr = NULL;

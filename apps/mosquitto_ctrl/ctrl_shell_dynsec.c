@@ -773,7 +773,7 @@ static void print_json_array(cJSON *j_list, const char *label, const char *eleme
 				ctrl_shell_print_value(1, "%s", stmp);
 				if(optional_element_name){
 					ctrl_shell_print_value(0, " (%s: ", optional_element_name);
-					print_json_value(cJSON_GetObjectItem(j_elem,optional_element_name),optional_element_null_value);
+					print_json_value(cJSON_GetObjectItem(j_elem, optional_element_name), optional_element_null_value);
 					ctrl_shell_print_value(0, ")");
 				}
 			}else if(cJSON_IsString(j_elem) && j_elem->valuestring){

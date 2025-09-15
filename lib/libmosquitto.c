@@ -43,6 +43,7 @@ static unsigned int init_refcount = 0;
 
 void mosquitto__destroy(struct mosquitto *mosq);
 
+
 int mosquitto_lib_version(int *major, int *minor, int *revision)
 {
 	if(major) *major = LIBMOSQUITTO_MAJOR;
@@ -51,18 +52,19 @@ int mosquitto_lib_version(int *major, int *minor, int *revision)
 	return LIBMOSQUITTO_VERSION_NUMBER;
 }
 
+
 int mosquitto_lib_init(void)
 {
 	int rc;
 
-	if (init_refcount == 0) {
+	if(init_refcount == 0){
 		mosquitto_time_init();
 #ifdef WIN32
 		srand((unsigned int)GetTickCount64());
 #elif _POSIX_TIMERS>0 && defined(_POSIX_MONOTONIC_CLOCK)
 		struct timespec tp;
 #ifdef CLOCK_BOOTTIME
-		if (clock_gettime(CLOCK_BOOTTIME, &tp) != 0)
+		if(clock_gettime(CLOCK_BOOTTIME, &tp) != 0)
 #endif
 		clock_gettime(CLOCK_MONOTONIC, &tp);
 		srand((unsigned int)tp.tv_nsec);
@@ -79,7 +81,7 @@ int mosquitto_lib_init(void)
 #endif
 
 		rc = net__init();
-		if (rc != MOSQ_ERR_SUCCESS) {
+		if(rc != MOSQ_ERR_SUCCESS){
 			return rc;
 		}
 	}
@@ -91,11 +93,11 @@ int mosquitto_lib_init(void)
 
 int mosquitto_lib_cleanup(void)
 {
-	if (init_refcount == 1) {
+	if(init_refcount == 1){
 		net__cleanup();
 	}
 
-	if (init_refcount > 0) {
+	if(init_refcount > 0){
 		--init_refcount;
 	}
 

@@ -343,7 +343,7 @@ int packet__write(struct mosquitto *mosq)
 #endif
 	}
 #ifdef WITH_BROKER
-	if (mosq->out_packet == NULL) {
+	if(mosq->out_packet == NULL){
 		mux__remove_out(mosq);
 	}
 #endif

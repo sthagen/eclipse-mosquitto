@@ -69,6 +69,7 @@ int broker_acl_file__init(void)
 	return MOSQ_ERR_SUCCESS;
 }
 
+
 void broker_acl_file__cleanup(void)
 {
 	if(db.config->per_listener_settings){

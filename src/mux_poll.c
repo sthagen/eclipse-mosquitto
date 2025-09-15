@@ -74,7 +74,7 @@ int mux_poll__init(void)
 		return MOSQ_ERR_NOMEM;
 	}
 	memset(pollfds, 0, sizeof(struct pollfd)*pollfd_max);
-	for(size_t i=0; i<pollfd_max; i++) {
+	for(size_t i=0; i<pollfd_max; i++){
 		pollfds[i].fd = INVALID_SOCKET;
 	}
 
@@ -117,7 +117,7 @@ int mux_poll__delete_listeners(struct mosquitto__listener_sock *listensock, int 
 }
 
 
-static int mux_poll__add(struct mosquitto* context, uint16_t evt)
+static int mux_poll__add(struct mosquitto *context, uint16_t evt)
 {
 	if(context->events == evt){
 		return MOSQ_ERR_SUCCESS;
@@ -128,7 +128,7 @@ static int mux_poll__add(struct mosquitto* context, uint16_t evt)
 		pollfds[context->pollfd_index].events = (short int)evt;
 		pollfds[context->pollfd_index].revents = 0;
 	}else{
-		for(size_t i=0; i<pollfd_max; i++) {
+		for(size_t i=0; i<pollfd_max; i++){
 			if(pollfds[i].fd == INVALID_SOCKET){
 				pollfds[i].fd = context->sock;
 				pollfds[i].events = POLLIN;
@@ -155,7 +155,7 @@ int mux_poll__add_out(struct mosquitto *context)
 
 int mux_poll__remove_out(struct mosquitto *context)
 {
-	if(context->events & POLLOUT) {
+	if(context->events & POLLOUT){
 		return mux_poll__new(context);
 	}else{
 		return MOSQ_ERR_SUCCESS;

@@ -46,7 +46,7 @@ HANDLE syslog_h;
 
 #ifdef ANDROID
 #include <android/log.h>
-static const char* LOG_TAG = "mosquitto";
+static const char *LOG_TAG = "mosquitto";
 #endif
 
 static char log_fptr_buffer[BUFSIZ];
@@ -144,7 +144,7 @@ int log__init(struct mosquitto__config *config)
 	if(log_destinations & MQTT3_LOG_DLT){
 		dlt_fifo_check();
 		if(dlt_allowed){
-			DLT_REGISTER_APP("MQTT","mosquitto log");
+			DLT_REGISTER_APP("MQTT", "mosquitto log");
 			dlt_register_context(&dltContext, "MQTT", "mosquitto DLT context");
 		}
 	}
@@ -184,7 +184,7 @@ int log__close(struct mosquitto__config *config)
 
 DltLogLevelType get_dlt_level(unsigned int priority)
 {
-	switch (priority) {
+	switch(priority){
 		case MOSQ_LOG_ERR:
 			return DLT_LOG_ERROR;
 		case MOSQ_LOG_WARNING:
@@ -208,7 +208,7 @@ DltLogLevelType get_dlt_level(unsigned int priority)
 
 android_LogPriority get_android_level(unsigned int priority)
 {
-	switch (priority) {
+	switch(priority){
 		case MOSQ_LOG_ERR:
 			return ANDROID_LOG_ERROR;
 		case MOSQ_LOG_WARNING:

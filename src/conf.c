@@ -221,6 +221,7 @@ static int config__create_default_listener(struct mosquitto__config *config, con
 	return MOSQ_ERR_SUCCESS;
 }
 
+
 static void conf__set_cur_security_options(struct mosquitto__config *config, struct mosquitto__listener **cur_listener, struct mosquitto__security_options **security_options, const char *option_name)
 {
 	if(config->per_listener_settings){
@@ -628,7 +629,7 @@ int config__parse_args(struct mosquitto__config *config, int argc, char *argv[])
 		}else if(!strcmp(argv[i], "--test-config")){
 			config->test_configuration = true;
 		}else{
-			fprintf(stderr, "Error: Unknown option '%s'.\n",argv[i]);
+			fprintf(stderr, "Error: Unknown option '%s'.\n", argv[i]);
 			print_usage();
 			return MOSQ_ERR_INVAL;
 		}
@@ -1036,7 +1037,7 @@ static int config__read_file_core(struct mosquitto__config *config, bool reload,
 						return MOSQ_ERR_INVAL;
 					}
 					while((token = strtok_r(NULL, " ", &saveptr))){
-						if (token[0] == '#'){
+						if(token[0] == '#'){
 							break;
 						}
 						struct bridge_address *new_addresses = mosquitto_realloc(cur_bridge->addresses, sizeof(struct bridge_address)*(size_t)(cur_bridge->address_count+1));
@@ -1429,21 +1430,21 @@ static int config__read_file_core(struct mosquitto__config *config, bool reload,
 					REQUIRE_BRIDGE(token);
 
 					if(conf__parse_int(&token, "bridge_tcp_keepalive_idle", &tmp_int, &saveptr)) return MOSQ_ERR_INVAL;
-					if(tmp_int <= 0) {
+					if(tmp_int <= 0){
 						log__printf(NULL, MOSQ_LOG_ERR, "Error: invalid TCP keepalive idle value.");
 						return MOSQ_ERR_INVAL;
 					}
 					cur_bridge->tcp_keepalive_idle = (unsigned int)tmp_int;
 
 					if(conf__parse_int(&token, "bridge_tcp_keepalive_interval", &tmp_int, &saveptr)) return MOSQ_ERR_INVAL;
-					if(tmp_int <= 0) {
+					if(tmp_int <= 0){
 						log__printf(NULL, MOSQ_LOG_ERR, "Error: invalid TCP keepalive interval value.");
 						return MOSQ_ERR_INVAL;
 					}
 					cur_bridge->tcp_keepalive_interval = (unsigned int)tmp_int;
 
 					if(conf__parse_int(&token, "bridge_tcp_keepalive_counter", &tmp_int, &saveptr)) return MOSQ_ERR_INVAL;
-					if(tmp_int <= 0) {
+					if(tmp_int <= 0){
 						log__printf(NULL, MOSQ_LOG_ERR, "Error: invalid TCP keepalive counter value.");
 						return MOSQ_ERR_INVAL;
 					}
@@ -1456,7 +1457,7 @@ static int config__read_file_core(struct mosquitto__config *config, bool reload,
 					REQUIRE_BRIDGE(token);
 #ifdef WITH_TCP_USER_TIMEOUT
 					if(conf__parse_int(&token, "bridge_tcp_user_timeout", &tmp_int, &saveptr)) return MOSQ_ERR_INVAL;
-					if(tmp_int < 0) {
+					if(tmp_int < 0){
 						log__printf(NULL, MOSQ_LOG_ERR, "Error: invalid TCP user timeout value.");
 						return MOSQ_ERR_INVAL;
 					}
@@ -1548,7 +1549,7 @@ static int config__read_file_core(struct mosquitto__config *config, bool reload,
 				}else if(!strcmp(token, "local_cleansession")){
 #ifdef WITH_BRIDGE
 					REQUIRE_BRIDGE(token);
-					if(conf__parse_bool(&token, "local_cleansession", (bool *) &cur_bridge->clean_start_local, &saveptr)) return MOSQ_ERR_INVAL;
+					if(conf__parse_bool(&token, "local_cleansession", (bool *)&cur_bridge->clean_start_local, &saveptr))  return MOSQ_ERR_INVAL;
 #else
 					log__printf(NULL, MOSQ_LOG_WARNING, "Warning: Bridge support not available.");
 #endif
@@ -1759,7 +1760,7 @@ static int config__read_file_core(struct mosquitto__config *config, bool reload,
 
 					/* Look for bind address / unix socket path */
 					token = strtok_r(NULL, " ", &saveptr);
-					if (token != NULL && token[0] == '#'){
+					if(token != NULL && token[0] == '#'){
 						token = NULL;
 					}
 
@@ -2372,7 +2373,7 @@ static int config__read_file_core(struct mosquitto__config *config, bool reload,
 					char *kpass_sha = NULL, *kpass_sha_bin = NULL;
 					REQUIRE_LISTENER_OR_DEFAULT_LISTENER(token);
 					if(conf__parse_string(&token, "tls_engine_kpass_sha1", &kpass_sha, &saveptr)) return MOSQ_ERR_INVAL;
-					if(mosquitto__hex2bin_sha1(kpass_sha, (unsigned char**)&kpass_sha_bin) != MOSQ_ERR_SUCCESS){
+					if(mosquitto__hex2bin_sha1(kpass_sha, (unsigned char **)&kpass_sha_bin) != MOSQ_ERR_SUCCESS){
 						mosquitto_FREE(kpass_sha);
 						return MOSQ_ERR_INVAL;
 					}
@@ -2418,7 +2419,7 @@ static int config__read_file_core(struct mosquitto__config *config, bool reload,
 					// Check if the topic is quoted (e.g. for spaces within topic names), but not the
 					// special case of ""
 					if(token[0] == '"' && token [1] != '"'){
-						if (strchr(saveptr, '"') == NULL) {
+						if(strchr(saveptr, '"') == NULL){
 							log__printf(NULL, MOSQ_LOG_ERR, "Error: Missing closing quote in topic value (%s).", saveptr);
 							return MOSQ_ERR_INVAL;
 						}
@@ -2430,7 +2431,7 @@ static int config__read_file_core(struct mosquitto__config *config, bool reload,
 						}
 
 						topic = mosquitto_malloc(strlen(token) + slen + 1);
-						if (!topic) {
+						if(!topic){
 							log__printf(NULL, MOSQ_LOG_ERR, "Error: Out of memory.");
 							return MOSQ_ERR_NOMEM;
 						}
@@ -2442,7 +2443,7 @@ static int config__read_file_core(struct mosquitto__config *config, bool reload,
 						}
 					}else{
 						topic = mosquitto_strdup(token);
-						if (!topic) {
+						if(!topic){
 							log__printf(NULL, MOSQ_LOG_ERR, "Error: Out of memory.");
 							return MOSQ_ERR_NOMEM;
 						}
@@ -2463,7 +2464,7 @@ static int config__read_file_core(struct mosquitto__config *config, bool reload,
 						}
 						token = strtok_r(NULL, " ", &saveptr);
 						if(token){
-							if (token[0] == '#'){
+							if(token[0] == '#'){
 								(void)strtok_r(NULL, "", &saveptr);
 							}
 							qos = (uint8_t)atoi(token);
@@ -2477,7 +2478,7 @@ static int config__read_file_core(struct mosquitto__config *config, bool reload,
 							if(token){
 								if(!strcmp(token, "\"\"") || token[0] == '#'){
 									local_prefix = NULL;
-									if (token[0] == '#'){
+									if(token[0] == '#'){
 										(void)strtok_r(NULL, "", &saveptr);
 									}
 								}else{

@@ -70,6 +70,7 @@ int psk_file__init(void)
 	return MOSQ_ERR_SUCCESS;
 }
 
+
 int psk_file__cleanup(void)
 {
 	int rc;

@@ -29,6 +29,7 @@ Contributors:
 #include "send_mosq.h"
 #include "util_mosq.h"
 
+
 void message__cleanup(struct mosquitto_message_all **message)
 {
 	struct mosquitto_message_all *msg;
@@ -172,7 +173,7 @@ void message__reconnect_reset(struct mosquitto *mosq, bool update_quota_only)
 
 		if(mosq->msgs_out.inflight_quota != 0){
 			util__decrement_send_quota(mosq);
-			if (update_quota_only == false){
+			if(update_quota_only == false){
 				if(message->msg.qos == 1){
 					message->state = mosq_ms_publish_qos1;
 				}else if(message->msg.qos == 2){

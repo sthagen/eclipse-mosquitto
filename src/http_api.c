@@ -299,7 +299,7 @@ static enum MHD_Result http_api__process_file(struct mosquitto__listener *listen
 	if(!S_ISREG(statbuf.st_mode)){
 		fclose(fptr);
 		http_api__send_error_response(connection, "Not found.\n", 404);
-        return MHD_YES;
+		return MHD_YES;
 	}
 	uint64_t flen = (uint64_t )statbuf.st_size;
 

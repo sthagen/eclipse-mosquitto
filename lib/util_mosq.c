@@ -180,8 +180,8 @@ int mosquitto__hex2bin(const char *hex, unsigned char *bin, int bin_max_len)
 	size_t i = 0;
 
 	/* Count the number of leading zero */
-	for(i=0; i<strlen(hex); i=i+2) {
-		if(strncmp(hex + i, "00", 2) == 0) {
+	for(i=0; i<strlen(hex); i=i+2){
+		if(strncmp(hex + i, "00", 2) == 0){
 			if(leading_zero >= bin_max_len){
 				return 0;
 			}

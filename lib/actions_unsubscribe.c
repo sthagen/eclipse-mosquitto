@@ -34,10 +34,12 @@ int mosquitto_unsubscribe(struct mosquitto *mosq, int *mid, const char *sub)
 	return mosquitto_unsubscribe_multiple(mosq, mid, 1, (char *const *const)&sub, NULL);
 }
 
+
 int mosquitto_unsubscribe_v5(struct mosquitto *mosq, int *mid, const char *sub, const mosquitto_property *properties)
 {
 	return mosquitto_unsubscribe_multiple(mosq, mid, 1, (char *const *const)&sub, properties);
 }
+
 
 int mosquitto_unsubscribe_multiple(struct mosquitto *mosq, int *mid, int sub_count, char *const *const sub, const mosquitto_property *properties)
 {

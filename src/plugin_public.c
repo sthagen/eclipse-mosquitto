@@ -524,7 +524,7 @@ BROKER_EXPORT int mosquitto_persist_client_add(struct mosquitto_client *client)
 	}
 
 	context__add_to_by_id(context);
-	session_expiry__add_from_persistence(context,context->session_expiry_time);
+	session_expiry__add_from_persistence(context, context->session_expiry_time);
 
 	return MOSQ_ERR_SUCCESS;
 error:
@@ -871,20 +871,21 @@ BROKER_EXPORT int mosquitto_broker_node_id_set(uint16_t id)
 	}
 }
 
+
 BROKER_EXPORT const char *mosquitto_persistence_location(void)
 {
 	return db.config->persistence_location;
 }
 
 
-BROKER_EXPORT int mosquitto_client_will_set(const char* clientid, const char *topic, int payloadlen, const void *payload, int qos, bool retain, mosquitto_property *properties)
+BROKER_EXPORT int mosquitto_client_will_set(const char *clientid, const char *topic, int payloadlen, const void *payload, int qos, bool retain, mosquitto_property *properties)
 {
-	struct mosquitto* mosq = mosquitto_client(clientid);
-	if (!mosq){
+	struct mosquitto *mosq = mosquitto_client(clientid);
+	if(!mosq){
 		return MOSQ_ERR_NOT_FOUND;
 	}
-	if (properties && mosq->protocol != mosq_p_mqtt5){
-		if (net__is_connected(mosq)) {
+	if(properties && mosq->protocol != mosq_p_mqtt5){
+		if(net__is_connected(mosq)){
 			return MOSQ_ERR_NOT_SUPPORTED;
 		}
 		mosq->protocol = mosq_p_mqtt5;

@@ -176,7 +176,7 @@ struct mosquitto *net__socket_accept(struct mosquitto__listener_sock *listensock
 	if(db.config->set_tcp_nodelay && listensock->listener->port){
 		int flag = 1;
 #ifdef WIN32
-		if (setsockopt(new_sock, IPPROTO_TCP, TCP_NODELAY, (char *)&flag, sizeof(int)) != 0) {
+		if(setsockopt(new_sock, IPPROTO_TCP, TCP_NODELAY, (char *)&flag, sizeof(int)) != 0){
 #else
 		if(setsockopt(new_sock, IPPROTO_TCP, TCP_NODELAY, &flag, sizeof(int)) != 0){
 #endif
@@ -330,7 +330,7 @@ static unsigned int psk_server_callback(SSL *ssl, const char *identity, unsigned
 	}
 
 	len = mosquitto__hex2bin(psk_key, psk, (int)max_psk_len);
-	if (len < 0){
+	if(len < 0){
 		mosquitto_FREE(psk_key);
 		return 0;
 	}
@@ -777,7 +777,7 @@ static int net__socket_listen_tcp(struct mosquitto__listener *listener)
 	hints.ai_socktype = SOCK_STREAM;
 
 	rc = getaddrinfo(listener->host, service, &hints, &ainfo);
-	if (rc){
+	if(rc){
 		log__printf(NULL, MOSQ_LOG_ERR, "Error creating listener: %s.", gai_strerror(rc));
 		return INVALID_SOCKET;
 	}

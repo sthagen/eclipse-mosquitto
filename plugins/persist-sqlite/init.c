@@ -26,30 +26,29 @@ Contributors:
 #include "mosquitto/broker.h"
 
 
-static int extract_version_numbers(void *data_ptr, int num_columns, char** values, char** column_names)
+static int extract_version_numbers(void *data_ptr, int num_columns, char **values, char **column_names)
 {
 	unsigned int found = 0;
-	int *version_array = (int*)data_ptr;
+	int *version_array = (int *)data_ptr;
 
-	for (int i = 0; i < num_columns; ++i) {
-		if (!sqlite3_stricmp(column_names[i], "MAJOR")){
+	for(int i = 0; i < num_columns; ++i){
+		if(!sqlite3_stricmp(column_names[i], "MAJOR")){
 			version_array[0] = values[i] ? atoi(values[i]) : 0;
 			found |= 0x4;
-		}
-		else if (!sqlite3_stricmp(column_names[i], "MINOR")){
+		}else if(!sqlite3_stricmp(column_names[i], "MINOR")){
 			version_array[1] = values[i] ? atoi(values[i]) : 0;
 			found |= 0x2;
-		}
-		else if (!sqlite3_stricmp(column_names[i], "PATCH")){
+		}else if(!sqlite3_stricmp(column_names[i], "PATCH")){
 			version_array[2] = values[i] ? atoi(values[i]) : 0;
 			found |= 0x1;
 		}
 	}
-	if (found != 0x7){
+	if(found != 0x7){
 		return SQLITE_MISMATCH;
 	}
 	return SQLITE_OK;
 }
+
 
 static int create_tables_1_1(struct mosquitto_sqlite *ms)
 {
@@ -206,7 +205,7 @@ static int create_tables(struct mosquitto_sqlite *ms)
 			&extract_version_numbers, db_schema_version, NULL);
 	if(rc) goto fail;
 
-	if (db_schema_version[0] == 0){
+	if(db_schema_version[0] == 0){
 		rc = sqlite3_exec((*ms).db,
 		  "INSERT INTO version_info(component,major,minor,patch) "
 			"VALUES ('database_schema','1','0','0');",
@@ -214,7 +213,7 @@ static int create_tables(struct mosquitto_sqlite *ms)
 		if(rc) goto fail;
 		memcpy(db_schema_version, (int[3]){1, 0, 0}, sizeof(db_schema_version));
 	}
-	if (db_schema_version[0] == 1){
+	if(db_schema_version[0] == 1){
 		/* 1.0.x needs to be upgraded to 1.1 */
 		if (db_schema_version[1] == 0){
 			rc = create_tables_1_1(ms);
@@ -438,7 +437,7 @@ void persist_sqlite__cleanup(struct mosquitto_sqlite *ms)
 {
 	if(ms->db){
 		int rc = sqlite3_exec(ms->db, "END;", NULL, NULL, NULL);
-		if (rc !=  SQLITE_OK){
+		if(rc !=  SQLITE_OK){
 			mosquitto_log_printf(MOSQ_LOG_ERR, "Error: Sqlite persistence: Closing final transaction %s", sqlite3_errstr(rc));
 		}
 	}
@@ -464,12 +463,12 @@ void persist_sqlite__cleanup(struct mosquitto_sqlite *ms)
 	sqlite3_finalize(ms->will_remove_stmt);
 
 	if(ms->db){
-		int rc = sqlite3_wal_checkpoint_v2(ms->db,NULL,SQLITE_CHECKPOINT_TRUNCATE,NULL,NULL);
-		if (rc !=  SQLITE_OK){
+		int rc = sqlite3_wal_checkpoint_v2(ms->db, NULL, SQLITE_CHECKPOINT_TRUNCATE, NULL, NULL);
+		if(rc !=  SQLITE_OK){
 			mosquitto_log_printf(MOSQ_LOG_WARNING, "Warning: Sqlite persistence: Final  wal_checkpoint  %s", sqlite3_errstr(rc));
 		}
 		rc = sqlite3_close(ms->db);
-		if (rc !=  SQLITE_OK){
+		if(rc !=  SQLITE_OK){
 			mosquitto_log_printf(MOSQ_LOG_WARNING, "Warning: Sqlite persistence: Error closing database: %s", sqlite3_errstr(rc));
 		}
 		ms->db = NULL;

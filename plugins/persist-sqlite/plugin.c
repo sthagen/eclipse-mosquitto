@@ -105,7 +105,7 @@ int mosquitto_plugin_init(mosquitto_plugin_id_t *identifier, void **user_data, s
 
 	UNUSED(user_data);
 
-	memset(&plg_data, 0,sizeof(struct mosquitto_sqlite));
+	memset(&plg_data, 0, sizeof(struct mosquitto_sqlite));
 	set_defaults();
 
 	if(get_db_file(options, option_count)){

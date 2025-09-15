@@ -19,6 +19,7 @@ static void on_connect(struct mosquitto *mosq, void *obj, int rc)
 	}
 }
 
+
 static void on_subscribe(struct mosquitto *mosq, void *obj, int mid, int sub_count, const int *subs)
 {
 	char *const unsubs[] = {"unsubscribe/test", "no-sub"};

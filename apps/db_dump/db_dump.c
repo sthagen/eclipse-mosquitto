@@ -177,7 +177,7 @@ static int dump__client_chunk_process(FILE *db_fd, uint32_t length)
 	if(do_json){
 		json_add_client(&chunk);
 	}
-	if(do_print) {
+	if(do_print){
 		print__client(&chunk, length);
 	}
 	free__client(&chunk);
@@ -222,7 +222,7 @@ static int dump__client_msg_chunk_process(FILE *db_fd, uint32_t length)
 	if(do_json){
 		json_add_client_msg(&chunk);
 	}
-	if(do_print) {
+	if(do_print){
 		print__client_msg(&chunk, length);
 	}
 	free__client_msg(&chunk);
@@ -381,7 +381,7 @@ static int dump__sub_chunk_process(FILE *db_fd, uint32_t length)
 	if(do_json){
 		json_add_subscription(&chunk);
 	}
-	if(do_print) {
+	if(do_print){
 		print__sub(&chunk, length);
 	}
 	free__sub(&chunk);

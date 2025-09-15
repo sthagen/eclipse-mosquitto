@@ -198,7 +198,7 @@ int proxy_v2__read(struct mosquitto *context)
 		context->proxy.len = ntohs(hdr.len);
 		if(context->proxy.len > 0){
 			/* PROXY_PACKET_LIMIT=500 bytes, arbitrary upper limit */
-			switch (context->proxy.fam){
+			switch(context->proxy.fam){
 				case PROXY_TCP_IPV4:
 					if(context->proxy.len < 12 || context->proxy.len > PROXY_PACKET_LIMIT){
 						return MOSQ_ERR_INVAL;
