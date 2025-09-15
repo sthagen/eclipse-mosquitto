@@ -83,14 +83,13 @@ int mosquitto_connect_srv(struct mosquitto *mosq, const char *host, int keepaliv
 			h = mosquitto_malloc(strlen(host) + strlen("_secure-mqtt._tcp.") + 1);
 			if(!h) return MOSQ_ERR_NOMEM;
 			sprintf(h, "_secure-mqtt._tcp.%s", host);
-		}else{
+		}else
 #endif
+		{
 			h = mosquitto_malloc(strlen(host) + strlen("_mqtt._tcp.") + 1);
 			if(!h) return MOSQ_ERR_NOMEM;
 			sprintf(h, "_mqtt._tcp.%s", host);
-#ifdef WITH_TLS
 		}
-#endif
 		ares_search(mosq->achan, h, ns_c_in, ns_t_srv, srv_callback, mosq);
 		mosquitto_FREE(h);
 	}

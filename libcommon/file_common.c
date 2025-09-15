@@ -293,16 +293,17 @@ char *mosquitto_fgets(char **buf, int *buflen, FILE *stream)
 
 
 #define INVOKE_LOG_FN(format, ...) \
-	do{ \
-	  if(log_fn){ \
-			int tmp_err_no = errno; \
-			char msg[2*PATH_MAX]; \
-			snprintf(msg, sizeof(msg), (format), __VA_ARGS__); \
-			msg[sizeof(msg)-1] = '\0'; \
-			(*log_fn)(msg); \
-			errno = tmp_err_no; \
-		} \
-	}while (0)
+		do{ \
+			if(log_fn){ \
+				int tmp_err_no = errno; \
+				char msg[2*PATH_MAX]; \
+				snprintf(msg, sizeof(msg), (format), __VA_ARGS__); \
+				msg[sizeof(msg)-1] = '\0'; \
+				(*log_fn)(msg); \
+				errno = tmp_err_no; \
+			} \
+		}while(0)
+
 
 int mosquitto_write_file(const char *target_path, bool restrict_read, int (*write_fn)(FILE *fptr, void *user_data), void *user_data, void (*log_fn)(const char *msg))
 {

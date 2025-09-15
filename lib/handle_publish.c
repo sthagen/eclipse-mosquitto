@@ -165,8 +165,8 @@ int handle__publish(struct mosquitto *mosq)
 	if(mosquitto_pub_topic_check(message->msg.topic) != MOSQ_ERR_SUCCESS){
 		message__cleanup(&message);
 		mosquitto_property_free_all(&properties);
-        return MOSQ_ERR_MALFORMED_PACKET;
-    }
+		return MOSQ_ERR_MALFORMED_PACKET;
+	}
 
 	message->msg.payloadlen = (int)(mosq->in_packet.remaining_length - mosq->in_packet.pos);
 	if(message->msg.payloadlen){

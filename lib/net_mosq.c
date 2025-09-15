@@ -994,7 +994,7 @@ static void net__handle_ssl(struct mosquitto *mosq, int ret)
 	}else if(err == SSL_ERROR_SSL){
 		net__print_ssl_error(mosq, "while trying to get the error");
 		errno = EPROTO;
-	/* else if SSL_ERROR_SYSCALL leave errno alone */
+		/* else if SSL_ERROR_SYSCALL leave errno alone */
 	}
 	ERR_clear_error();
 #ifdef WIN32

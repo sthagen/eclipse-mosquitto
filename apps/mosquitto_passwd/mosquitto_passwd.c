@@ -33,18 +33,18 @@ Contributors:
 #ifdef WIN32
 #  include <windows.h>
 #  include <process.h>
-#	ifndef __cplusplus
-#		if defined(_MSC_VER) && _MSC_VER < 1900
-#			define bool char
-#			define true 1
-#			define false 0
-#		else
-#			include <stdbool.h>
-#		endif
-#	endif
+#   ifndef __cplusplus
+#       if defined(_MSC_VER) && _MSC_VER < 1900
+#           define bool char
+#           define true 1
+#           define false 0
+#       else
+#           include <stdbool.h>
+#       endif
+#   endif
 #   define snprintf sprintf_s
-#	include <io.h>
-#	include <windows.h>
+#   include <io.h>
+#   include <windows.h>
 #else
 #  include <stdbool.h>
 #  include <unistd.h>
