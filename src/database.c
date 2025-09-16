@@ -1274,8 +1274,8 @@ static void db__client_messages_check_acl(struct mosquitto *context, struct mosq
 			access = MOSQ_ACL_WRITE;
 		}
 		if(mosquitto_acl_check(context, base_msg->data.topic,
-							   base_msg->data.payloadlen, base_msg->data.payload,
-							   base_msg->data.qos, base_msg->data.retain, access) != MOSQ_ERR_SUCCESS){
+				base_msg->data.payloadlen, base_msg->data.payload,
+				base_msg->data.qos, base_msg->data.retain, access) != MOSQ_ERR_SUCCESS){
 
 			DL_DELETE((*head), client_msg);
 			decrement_stats_fn(msg_data, client_msg);
@@ -1436,8 +1436,8 @@ int db__message_write_inflight_out_latest(struct mosquitto *context)
 	client_msg = context->msgs_out.inflight->prev;
 	while(client_msg != context->msgs_out.inflight &&
 			(client_msg->data.state == mosq_ms_publish_qos0
-			 || client_msg->data.state == mosq_ms_publish_qos1
-			 || client_msg->data.state == mosq_ms_publish_qos2)){
+			|| client_msg->data.state == mosq_ms_publish_qos1
+			|| client_msg->data.state == mosq_ms_publish_qos2)){
 
 		client_msg = client_msg->prev;
 	}

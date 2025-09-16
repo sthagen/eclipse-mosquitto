@@ -226,7 +226,7 @@ BROKER_EXPORT int mosquitto_callback_register(
 	own_callback->cb_func = cb_func;
 	DL_APPEND(identifier->own_callbacks, own_callback);
 
-	if(identifier->config.security_option_count == 0) {
+	if(identifier->config.security_option_count == 0){
 		log__printf(NULL, MOSQ_LOG_WARNING, "Plugin could not register callback '%s'",
 				get_event_name(event));
 		return MOSQ_ERR_INVAL;

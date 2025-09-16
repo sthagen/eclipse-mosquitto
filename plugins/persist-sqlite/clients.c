@@ -35,7 +35,7 @@ int persist_sqlite__client_add_cb(int event, void *event_data, void *userdata)
 	UNUSED(event);
 
 	if(sqlite3_bind_text(ms->client_add_stmt, 1,
-				ed->data.clientid, (int)strlen(ed->data.clientid), SQLITE_STATIC) == SQLITE_OK){
+			ed->data.clientid, (int)strlen(ed->data.clientid), SQLITE_STATIC) == SQLITE_OK){
 
 		if(ed->data.username){
 			sqlite3_bind_text(ms->client_add_stmt, 2,
@@ -81,7 +81,7 @@ int persist_sqlite__client_remove_cb(int event, void *event_data, void *userdata
 	UNUSED(event);
 
 	if(sqlite3_bind_text(ms->subscription_clear_stmt, 1,
-				ed->data.clientid, (int)strlen(ed->data.clientid), SQLITE_STATIC) == SQLITE_OK){
+			ed->data.clientid, (int)strlen(ed->data.clientid), SQLITE_STATIC) == SQLITE_OK){
 
 		ms->event_count++;
 		rc = sqlite3_step(ms->subscription_clear_stmt);
@@ -98,7 +98,7 @@ int persist_sqlite__client_remove_cb(int event, void *event_data, void *userdata
 	persist_sqlite__client_msg_clear(ms, ed->data.clientid);
 
 	if(sqlite3_bind_text(ms->client_remove_stmt, 1,
-				ed->data.clientid, (int)strlen(ed->data.clientid), SQLITE_STATIC) == SQLITE_OK){
+			ed->data.clientid, (int)strlen(ed->data.clientid), SQLITE_STATIC) == SQLITE_OK){
 
 		ms->event_count++;
 		rc = sqlite3_step(ms->client_remove_stmt);
@@ -125,7 +125,7 @@ int persist_sqlite__client_update_cb(int event, void *event_data, void *userdata
 	if(sqlite3_bind_int64(ms->client_update_stmt, 1, ed->data.session_expiry_time) == SQLITE_OK
 			&& sqlite3_bind_int64(ms->client_update_stmt, 2, ed->data.will_delay_time) == SQLITE_OK
 			&& sqlite3_bind_text(ms->client_update_stmt, 3, ed->data.clientid,
-				(int)strlen(ed->data.clientid), SQLITE_STATIC) == SQLITE_OK
+			(int)strlen(ed->data.clientid), SQLITE_STATIC) == SQLITE_OK
 			){
 
 		ms->event_count++;

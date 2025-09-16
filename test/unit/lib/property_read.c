@@ -352,11 +352,14 @@ static void varint_prop_read_helper(
 	CU_ASSERT_PTR_NULL(properties);
 }
 
+
 static void packet_helper_reason_string_user_property(int command)
 {
-	uint8_t payload[24] = {23,
+	uint8_t payload[24] = {
+		23,
 		MQTT_PROP_REASON_STRING, 0, 6, 'r', 'e', 'a', 's', 'o', 'n',
-		MQTT_PROP_USER_PROPERTY, 0, 4, 'n', 'a', 'm', 'e', 0, 5, 'v', 'a', 'l', 'u', 'e'};
+		MQTT_PROP_USER_PROPERTY, 0, 4, 'n', 'a', 'm', 'e', 0, 5, 'v', 'a', 'l', 'u', 'e'
+	};
 
 	struct mosquitto__packet_in packet;
 	mosquitto_property *properties, *p;
@@ -1303,7 +1306,8 @@ static void TEST_bad_subscription_identifier(void)
 
 static void TEST_packet_connect(void)
 {
-	uint8_t payload[] = {0,
+	uint8_t payload[] = {
+		0,
 		MQTT_PROP_SESSION_EXPIRY_INTERVAL, 0x12, 0x45, 0x00, 0x00,
 		MQTT_PROP_RECEIVE_MAXIMUM, 0x00, 0x05,
 		MQTT_PROP_MAXIMUM_PACKET_SIZE, 0x12, 0x45, 0x00, 0x00,
@@ -1312,7 +1316,8 @@ static void TEST_packet_connect(void)
 		MQTT_PROP_REQUEST_RESPONSE_INFORMATION, 1,
 		MQTT_PROP_USER_PROPERTY, 0, 4, 'n', 'a', 'm', 'e', 0, 5, 'v', 'a', 'l', 'u', 'e',
 		MQTT_PROP_AUTHENTICATION_METHOD, 0x00, 0x04, 'n', 'o', 'n', 'e',
-		MQTT_PROP_AUTHENTICATION_DATA, 0x00, 0x02, 1, 2};
+		MQTT_PROP_AUTHENTICATION_DATA, 0x00, 0x02, 1, 2
+	};
 
 	struct mosquitto__packet_in packet;
 	mosquitto_property *properties, *p;
@@ -1410,7 +1415,8 @@ static void TEST_packet_connect(void)
 
 static void TEST_packet_connack(void)
 {
-	uint8_t payload[] = {0,
+	uint8_t payload[] = {
+		0,
 		MQTT_PROP_SESSION_EXPIRY_INTERVAL, 0x12, 0x45, 0x00, 0x00,
 		MQTT_PROP_RECEIVE_MAXIMUM, 0x00, 0x05,
 		MQTT_PROP_MAXIMUM_QOS, 1,
@@ -1427,7 +1433,8 @@ static void TEST_packet_connack(void)
 		MQTT_PROP_RESPONSE_INFORMATION, 0x00, 0x03, 'r', 's', 'p',
 		MQTT_PROP_SERVER_REFERENCE, 0x00, 0x04, 's', 'e', 'r', 'v',
 		MQTT_PROP_AUTHENTICATION_METHOD, 0x00, 0x04, 'n', 'o', 'n', 'e',
-		MQTT_PROP_AUTHENTICATION_DATA, 0x00, 0x02, 1, 2};
+		MQTT_PROP_AUTHENTICATION_DATA, 0x00, 0x02, 1, 2
+	};
 
 	struct mosquitto__packet_in packet;
 	mosquitto_property *properties, *p;
@@ -1594,7 +1601,8 @@ static void TEST_packet_connack(void)
 
 static void TEST_packet_publish(void)
 {
-	uint8_t payload[] = {0,
+	uint8_t payload[] = {
+		0,
 		MQTT_PROP_PAYLOAD_FORMAT_INDICATOR, 1,
 		MQTT_PROP_MESSAGE_EXPIRY_INTERVAL, 0x12, 0x45, 0x00, 0x00,
 		MQTT_PROP_TOPIC_ALIAS, 0x00, 0x02,
@@ -1602,7 +1610,8 @@ static void TEST_packet_publish(void)
 		MQTT_PROP_CORRELATION_DATA, 0x00, 0x02, 1, 2,
 		MQTT_PROP_USER_PROPERTY, 0, 4, 'n', 'a', 'm', 'e', 0, 5, 'v', 'a', 'l', 'u', 'e',
 		MQTT_PROP_SUBSCRIPTION_IDENTIFIER, 0x04,
-		MQTT_PROP_CONTENT_TYPE, 0, 5, 'e', 'm', 'p', 't', 'y'};
+		MQTT_PROP_CONTENT_TYPE, 0, 5, 'e', 'm', 'p', 't', 'y'
+	};
 
 	struct mosquitto__packet_in packet;
 	mosquitto_property *properties, *p;
@@ -1718,9 +1727,11 @@ static void TEST_packet_pubcomp(void)
 
 static void TEST_packet_subscribe(void)
 {
-	uint8_t payload[] = {0,
+	uint8_t payload[] = {
+		0,
 		MQTT_PROP_USER_PROPERTY, 0, 4, 'n', 'a', 'm', 'e', 0, 5, 'v', 'a', 'l', 'u', 'e',
-		MQTT_PROP_SUBSCRIPTION_IDENTIFIER, 0x04};
+		MQTT_PROP_SUBSCRIPTION_IDENTIFIER, 0x04
+	};
 
 	struct mosquitto__packet_in packet;
 	mosquitto_property *properties, *p;
@@ -1766,8 +1777,10 @@ static void TEST_packet_suback(void)
 
 static void TEST_packet_unsubscribe(void)
 {
-	uint8_t payload[] = {0,
-		MQTT_PROP_USER_PROPERTY, 0, 4, 'n', 'a', 'm', 'e', 0, 5, 'v', 'a', 'l', 'u', 'e'};
+	uint8_t payload[] = {
+		0,
+		MQTT_PROP_USER_PROPERTY, 0, 4, 'n', 'a', 'm', 'e', 0, 5, 'v', 'a', 'l', 'u', 'e'
+	};
 
 	struct mosquitto__packet_in packet;
 	mosquitto_property *properties, *p;
@@ -1805,10 +1818,12 @@ static void TEST_packet_unsuback(void)
 
 static void TEST_packet_disconnect(void)
 {
-	uint8_t payload[] = {0,
+	uint8_t payload[] = {
+		0,
 		MQTT_PROP_SESSION_EXPIRY_INTERVAL, 0x12, 0x45, 0x00, 0x00,
 		MQTT_PROP_REASON_STRING, 0, 6, 'r', 'e', 'a', 's', 'o', 'n',
-		MQTT_PROP_USER_PROPERTY, 0, 4, 'n', 'a', 'm', 'e', 0, 5, 'v', 'a', 'l', 'u', 'e'};
+		MQTT_PROP_USER_PROPERTY, 0, 4, 'n', 'a', 'm', 'e', 0, 5, 'v', 'a', 'l', 'u', 'e'
+	};
 
 	struct mosquitto__packet_in packet;
 	mosquitto_property *properties, *p;
@@ -1857,11 +1872,13 @@ static void TEST_packet_disconnect(void)
 
 static void TEST_packet_auth(void)
 {
-	uint8_t payload[] = {0,
+	uint8_t payload[] = {
+		0,
 		MQTT_PROP_AUTHENTICATION_METHOD, 0x00, 0x04, 'n', 'o', 'n', 'e',
 		MQTT_PROP_AUTHENTICATION_DATA, 0x00, 0x02, 1, 2,
 		MQTT_PROP_REASON_STRING, 0, 6, 'r', 'e', 'a', 's', 'o', 'n',
-		MQTT_PROP_USER_PROPERTY, 0, 4, 'n', 'a', 'm', 'e', 0, 5, 'v', 'a', 'l', 'u', 'e'};
+		MQTT_PROP_USER_PROPERTY, 0, 4, 'n', 'a', 'm', 'e', 0, 5, 'v', 'a', 'l', 'u', 'e'
+	};
 
 	struct mosquitto__packet_in packet;
 	mosquitto_property *properties, *p;

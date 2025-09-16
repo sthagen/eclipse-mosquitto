@@ -56,26 +56,31 @@ static int create_tables_1_1(struct mosquitto_sqlite *ms)
 	rc = sqlite3_exec(ms->db,
 			"CREATE TABLE IF NOT EXISTS wills "
 			"("
-				"client_id TEXT PRIMARY KEY,"
-				"payload BLOB,"
-				"topic STRING NOT NULL,"
-				"payloadlen INTEGER,"
-				"qos INTEGER,"
-				"retain INTEGER,"
-				"properties STRING"
+			"client_id TEXT PRIMARY KEY,"
+			"payload BLOB,"
+			"topic STRING NOT NULL,"
+			"payloadlen INTEGER,"
+			"qos INTEGER,"
+			"retain INTEGER,"
+			"properties STRING"
 			");",
 			NULL, NULL, NULL);
-	if (rc) { return rc; }
+	if(rc){
+		return rc;
+	}
 
 	rc = sqlite3_exec((*ms).db,
-										"UPDATE version_info"
-										" SET major = 1, minor = 1, patch = 0"
-										" WHERE component = 'database_schema';",
+			"UPDATE version_info"
+			" SET major = 1, minor = 1, patch = 0"
+			" WHERE component = 'database_schema';",
 			NULL, NULL, NULL);
-	if (rc) { return rc; }
+	if(rc){
+		return rc;
+	}
 
 	return 0;
 }
+
 
 static int create_tables(struct mosquitto_sqlite *ms)
 {
@@ -85,18 +90,18 @@ static int create_tables(struct mosquitto_sqlite *ms)
 	rc = sqlite3_exec(ms->db,
 			"CREATE TABLE IF NOT EXISTS base_msgs "
 			"("
-				"store_id INT64 PRIMARY KEY,"
-				"expiry_time INT64,"
-				"topic STRING NOT NULL,"
-				"payload BLOB,"
-				"source_id STRING,"
-				"source_username STRING,"
-				"payloadlen INTEGER,"
-				"source_mid INTEGER,"
-				"source_port INTEGER,"
-				"qos INTEGER,"
-				"retain INTEGER,"
-				"properties STRING"
+			"store_id INT64 PRIMARY KEY,"
+			"expiry_time INT64,"
+			"topic STRING NOT NULL,"
+			"payload BLOB,"
+			"source_id STRING,"
+			"source_username STRING,"
+			"payloadlen INTEGER,"
+			"source_mid INTEGER,"
+			"source_port INTEGER,"
+			"qos INTEGER,"
+			"retain INTEGER,"
+			"properties STRING"
 			");",
 			NULL, NULL, NULL);
 	if(rc) goto fail;
@@ -104,10 +109,10 @@ static int create_tables(struct mosquitto_sqlite *ms)
 	rc = sqlite3_exec(ms->db,
 			"CREATE TABLE IF NOT EXISTS retains "
 			"("
-				"topic STRING PRIMARY KEY,"
-				"store_id INT64"
-				//"FOREIGN KEY (store_id) REFERENCES msg_store(store_id) "
-				//"ON DELETE CASCADE"
+			"topic STRING PRIMARY KEY,"
+			"store_id INT64"
+			//"FOREIGN KEY (store_id) REFERENCES msg_store(store_id) "
+			//"ON DELETE CASCADE"
 			");",
 			NULL, NULL, NULL);
 	if(rc) goto fail;
@@ -115,17 +120,17 @@ static int create_tables(struct mosquitto_sqlite *ms)
 	rc = sqlite3_exec(ms->db,
 			"CREATE TABLE IF NOT EXISTS clients "
 			"("
-				"client_id TEXT PRIMARY KEY,"
-				"username TEXT,"
-				"connection_time INT64,"
-				"will_delay_time INT64,"
-				"session_expiry_time INT64,"
-				"listener_port INT,"
-				"max_packet_size INT,"
-				"max_qos INT,"
-				"retain_available INT,"
-				"session_expiry_interval INT,"
-				"will_delay_interval INT"
+			"client_id TEXT PRIMARY KEY,"
+			"username TEXT,"
+			"connection_time INT64,"
+			"will_delay_time INT64,"
+			"session_expiry_time INT64,"
+			"listener_port INT,"
+			"max_packet_size INT,"
+			"max_qos INT,"
+			"retain_available INT,"
+			"session_expiry_interval INT,"
+			"will_delay_interval INT"
 			");",
 			NULL, NULL, NULL);
 	if(rc) goto fail;
@@ -133,11 +138,11 @@ static int create_tables(struct mosquitto_sqlite *ms)
 	rc = sqlite3_exec(ms->db,
 			"CREATE TABLE IF NOT EXISTS subscriptions "
 			"("
-				"client_id TEXT NOT NULL,"
-				"topic TEXT NOT NULL,"
-				"subscription_options INTEGER,"
-				"subscription_identifier INTEGER,"
-				"PRIMARY KEY (client_id, topic) "
+			"client_id TEXT NOT NULL,"
+			"topic TEXT NOT NULL,"
+			"subscription_options INTEGER,"
+			"subscription_identifier INTEGER,"
+			"PRIMARY KEY (client_id, topic) "
 			");",
 			NULL, NULL, NULL);
 	if(rc) goto fail;
@@ -145,21 +150,21 @@ static int create_tables(struct mosquitto_sqlite *ms)
 	rc = sqlite3_exec(ms->db,
 			"CREATE TABLE IF NOT EXISTS client_msgs "
 			"("
-				"client_id TEXT NOT NULL,"
-				"cmsg_id INT64,"
-				"store_id INT64,"
-				"dup INTEGER,"
-				"direction INTEGER,"
-				"mid INTEGER,"
-				"qos INTEGER,"
-				"retain INTEGER,"
-				"state INTEGER,"
-				"subscription_identifier INTEGER"
-				//"state INTEGER,"
-				//"FOREIGN KEY (client_id) REFERENCES clients(client_id) "
-				//"ON DELETE CASCADE,"
-				//"FOREIGN KEY (store_id) REFERENCES msg_store(store_id) "
-				//"ON DELETE CASCADE"
+			"client_id TEXT NOT NULL,"
+			"cmsg_id INT64,"
+			"store_id INT64,"
+			"dup INTEGER,"
+			"direction INTEGER,"
+			"mid INTEGER,"
+			"qos INTEGER,"
+			"retain INTEGER,"
+			"state INTEGER,"
+			"subscription_identifier INTEGER"
+			//"state INTEGER,"
+			//"FOREIGN KEY (client_id) REFERENCES clients(client_id) "
+			//"ON DELETE CASCADE,"
+			//"FOREIGN KEY (store_id) REFERENCES msg_store(store_id) "
+			//"ON DELETE CASCADE"
 			");",
 			NULL, NULL, NULL);
 	if(rc) goto fail;
@@ -190,10 +195,10 @@ static int create_tables(struct mosquitto_sqlite *ms)
 	rc = sqlite3_exec(ms->db,
 			"CREATE TABLE IF NOT EXISTS version_info "
 			"("
-				"component TEXT NOT NULL,"
-				"major INTEGER NOT NULL,"
-				"minor INTEGER NOT NULL,"
-				"patch INTEGER NOT NULL"
+			"component TEXT NOT NULL,"
+			"major INTEGER NOT NULL,"
+			"minor INTEGER NOT NULL,"
+			"patch INTEGER NOT NULL"
 			");",
 			NULL, NULL, NULL);
 	if(rc) goto fail;
@@ -207,9 +212,9 @@ static int create_tables(struct mosquitto_sqlite *ms)
 
 	if(db_schema_version[0] == 0){
 		rc = sqlite3_exec((*ms).db,
-		  "INSERT INTO version_info(component,major,minor,patch) "
-			"VALUES ('database_schema','1','0','0');",
-			NULL, NULL, NULL);
+				"INSERT INTO version_info(component,major,minor,patch) "
+				"VALUES ('database_schema','1','0','0');",
+				NULL, NULL, NULL);
 		if(rc) goto fail;
 		memcpy(db_schema_version, (int[3]){1, 0, 0}, sizeof(db_schema_version));
 	}
@@ -217,7 +222,9 @@ static int create_tables(struct mosquitto_sqlite *ms)
 		/* 1.0.x needs to be upgraded to 1.1 */
 		if(db_schema_version[1] == 0){
 			rc = create_tables_1_1(ms);
-			if (rc) { goto fail; }
+			if(rc){
+				goto fail;
+			}
 			memcpy(db_schema_version, (int[3]){1, 1, 0}, sizeof(db_schema_version));
 		}
 		/* 1.1.x  is the current DB-Schema version */
@@ -226,7 +233,7 @@ static int create_tables(struct mosquitto_sqlite *ms)
 		}
 	}
 	mosquitto_log_printf(MOSQ_LOG_ERR, "Sqlite persistence: Unknown database_schema version %d.%d.%d",
-	  db_schema_version[0], db_schema_version[1], db_schema_version[2]);
+			db_schema_version[0], db_schema_version[1], db_schema_version[2]);
 	rc = MOSQ_ERR_INVAL;
 	goto close_db;
 
@@ -246,8 +253,8 @@ static int prepare_statements(struct mosquitto_sqlite *ms)
 	/* Subscriptions */
 	rc = sqlite3_prepare_v3(ms->db,
 			"INSERT OR REPLACE INTO subscriptions "
-				"(client_id, topic, subscription_options, subscription_identifier) "
-				"VALUES (?,?,?,?)",
+			"(client_id, topic, subscription_options, subscription_identifier) "
+			"VALUES (?,?,?,?)",
 			-1, SQLITE_PREPARE_PERSISTENT,
 			&ms->subscription_add_stmt, NULL);
 	if(rc) goto fail;
@@ -268,10 +275,10 @@ static int prepare_statements(struct mosquitto_sqlite *ms)
 	/* Clients */
 	rc = sqlite3_prepare_v3(ms->db,
 			"INSERT OR REPLACE INTO clients "
-				"(client_id, username, connection_time, will_delay_time, session_expiry_time, "
-				"listener_port, max_packet_size, max_qos, retain_available, "
-				"session_expiry_interval, will_delay_interval) "
-				"VALUES(?,?,?,?,?,?,?,?,?,?,?)",
+			"(client_id, username, connection_time, will_delay_time, session_expiry_time, "
+			"listener_port, max_packet_size, max_qos, retain_available, "
+			"session_expiry_interval, will_delay_interval) "
+			"VALUES(?,?,?,?,?,?,?,?,?,?,?)",
 			-1, SQLITE_PREPARE_PERSISTENT,
 			&ms->client_add_stmt, NULL);
 	if(rc) goto fail;
@@ -292,8 +299,8 @@ static int prepare_statements(struct mosquitto_sqlite *ms)
 	/* Client messages */
 	rc = sqlite3_prepare_v3(ms->db,
 			"INSERT INTO client_msgs "
-				"(client_id,cmsg_id,store_id,dup,direction,mid,qos,retain,state,subscription_identifier) "
-				"VALUES(?,?,?,?,?,?,?,?,?,?)",
+			"(client_id,cmsg_id,store_id,dup,direction,mid,qos,retain,state,subscription_identifier) "
+			"VALUES(?,?,?,?,?,?,?,?,?,?)",
 			-1, SQLITE_PREPARE_PERSISTENT,
 			&ms->client_msg_add_stmt, NULL);
 	if(rc) goto fail;
@@ -340,12 +347,12 @@ static int prepare_statements(struct mosquitto_sqlite *ms)
 	if(rc) goto fail;
 
 	rc = sqlite3_prepare_v3(ms->db,
-			 "DELETE FROM base_msgs AS bm "
-			 "WHERE bm.store_id IN "
-			 "( SELECT cm.store_id FROM client_msgs AS cm"
-			 "  LEFT OUTER JOIN client_msgs AS oc ON oc.store_id = cm.store_id AND oc.client_id != cm.client_id"
-			 "  LEFT OUTER JOIN retains AS rm ON rm.store_id = cm.store_id"
-			 "  WHERE cm.client_id = ? AND oc.store_id IS NULL AND rm.store_id IS NULL)",
+			"DELETE FROM base_msgs AS bm "
+			"WHERE bm.store_id IN "
+			"( SELECT cm.store_id FROM client_msgs AS cm"
+			"  LEFT OUTER JOIN client_msgs AS oc ON oc.store_id = cm.store_id AND oc.client_id != cm.client_id"
+			"  LEFT OUTER JOIN retains AS rm ON rm.store_id = cm.store_id"
+			"  WHERE cm.client_id = ? AND oc.store_id IS NULL AND rm.store_id IS NULL)",
 			-1, SQLITE_PREPARE_PERSISTENT,
 			&ms->base_msg_remove_for_clientid_stmt, NULL);
 	if(rc) goto fail;

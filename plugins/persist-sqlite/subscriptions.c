@@ -33,16 +33,16 @@ int persist_sqlite__subscription_add_cb(int event, void *event_data, void *userd
 	UNUSED(event);
 
 	if(sqlite3_bind_text(ms->subscription_add_stmt, 1,
-				ed->data.clientid, (int)strlen(ed->data.clientid), SQLITE_STATIC) == SQLITE_OK){
+			ed->data.clientid, (int)strlen(ed->data.clientid), SQLITE_STATIC) == SQLITE_OK){
 
 		if(sqlite3_bind_text(ms->subscription_add_stmt, 2,
-					ed->data.topic_filter, (int)strlen(ed->data.topic_filter), SQLITE_STATIC) == SQLITE_OK){
+				ed->data.topic_filter, (int)strlen(ed->data.topic_filter), SQLITE_STATIC) == SQLITE_OK){
 
 			if(sqlite3_bind_int(ms->subscription_add_stmt, 3,
-						ed->data.options) == SQLITE_OK){
+					ed->data.options) == SQLITE_OK){
 
 				if(sqlite3_bind_int(ms->subscription_add_stmt, 4,
-							(int)ed->data.identifier) == SQLITE_OK){
+						(int)ed->data.identifier) == SQLITE_OK){
 
 					ms->event_count++;
 					rc = sqlite3_step(ms->subscription_add_stmt);
@@ -70,10 +70,10 @@ int persist_sqlite__subscription_remove_cb(int event, void *event_data, void *us
 	UNUSED(event);
 
 	if(sqlite3_bind_text(ms->subscription_remove_stmt, 1,
-				ed->data.clientid, (int)strlen(ed->data.clientid), SQLITE_STATIC) == SQLITE_OK){
+			ed->data.clientid, (int)strlen(ed->data.clientid), SQLITE_STATIC) == SQLITE_OK){
 
 		if(sqlite3_bind_text(ms->subscription_remove_stmt, 2,
-					ed->data.topic_filter, (int)strlen(ed->data.topic_filter), SQLITE_STATIC) == SQLITE_OK){
+				ed->data.topic_filter, (int)strlen(ed->data.topic_filter), SQLITE_STATIC) == SQLITE_OK){
 
 			ms->event_count++;
 			rc = sqlite3_step(ms->subscription_remove_stmt);

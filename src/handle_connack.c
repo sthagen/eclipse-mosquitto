@@ -44,14 +44,14 @@ static int handle__connack_properties(struct mosquitto *context)
 
 	/* maximum-qos */
 	mosquitto_property_read_byte(properties, MQTT_PROP_MAXIMUM_QOS,
-				&max_qos, false);
+			&max_qos, false);
 	if(max_qos != 255){
 		context->max_qos = max_qos;
 	}
 
 	/* maximum-packet-size */
 	if(mosquitto_property_read_int32(properties, MQTT_PROP_MAXIMUM_PACKET_SIZE,
-				&maximum_packet_size, false)){
+			&maximum_packet_size, false)){
 
 		if(context->maximum_packet_size == 0 || context->maximum_packet_size > maximum_packet_size){
 			context->maximum_packet_size = maximum_packet_size;
@@ -68,7 +68,7 @@ static int handle__connack_properties(struct mosquitto *context)
 
 	/* retain-available */
 	if(mosquitto_property_read_byte(properties, MQTT_PROP_RETAIN_AVAILABLE,
-				&retain_available, false)){
+			&retain_available, false)){
 
 		/* Only use broker provided value if the local config is set to available==true */
 		if(context->retain_available){
@@ -78,14 +78,14 @@ static int handle__connack_properties(struct mosquitto *context)
 
 	/* server-keepalive */
 	if(mosquitto_property_read_int16(properties, MQTT_PROP_SERVER_KEEP_ALIVE,
-				&server_keepalive, false)){
+			&server_keepalive, false)){
 
 		context->keepalive = server_keepalive;
 	}
 
 	/* topic-alias-maximum */
 	if(mosquitto_property_read_int16(properties, MQTT_PROP_TOPIC_ALIAS_MAXIMUM,
-				&max_topic_alias, false)){
+			&max_topic_alias, false)){
 
 		if(max_topic_alias < context->bridge->max_topic_alias){
 			context->alias_max_l2r = max_topic_alias;

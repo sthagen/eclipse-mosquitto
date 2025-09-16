@@ -83,12 +83,14 @@ static void TEST_string_to_property_info(void)
 static void TEST_mosquitto_strerror(void)
 {
 	const char *str;
-	int used[] = {-6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,
+	int used[] = {
+		-6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,
 		12, /* 13, */ 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 31, 32,
 		33,
 		128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142,
 		143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157,
-		158, 159, 160, 161, 162};
+		158, 159, 160, 161, 162
+	};
 
 	/* Iterate over all possible errors, checking we have a place holder for all
 	 * unused errors, and that all used errors do not have place holder text. */
@@ -162,10 +164,12 @@ static void TEST_mosquitto_connack_string(void)
 static void TEST_mosquitto_reason_string(void)
 {
 	const char *str;
-	uint8_t used[] = {0, 1, 2, 4, 16, 17, 24, 25, 128, 129, 130, 131, 132, 133,
+	uint8_t used[] = {
+		0, 1, 2, 4, 16, 17, 24, 25, 128, 129, 130, 131, 132, 133,
 		134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147,
 		148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161,
-		162};
+		162
+	};
 
 	/* Iterate over all possible codes, checking we have a place holder for all
 	 * unused codes, and that all used codes do not have place holder text. */
@@ -291,5 +295,3 @@ int init_strings_tests(void)
 
 	return 0;
 }
-
-

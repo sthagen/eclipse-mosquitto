@@ -132,6 +132,7 @@ static int pw__create_argon2id(struct mosquitto_pw *pw, const char *password)
 #endif
 }
 
+
 static int pw__verify_argon2id(struct mosquitto_pw *pw, const char *password)
 {
 #ifdef WITH_ARGON2
@@ -188,8 +189,8 @@ static int pw__hash_sha512_pbkdf2(const char *password, struct mosquitto_pw *pw,
 	}
 
 	PKCS5_PBKDF2_HMAC(password, (int)strlen(password),
-		pw->params.sha512.salt, (int)pw->params.sha512.salt_len, iterations,
-		digest, (int)hash_len, password_hash);
+			pw->params.sha512.salt, (int)pw->params.sha512.salt_len, iterations,
+			digest, (int)hash_len, password_hash);
 
 	return MOSQ_ERR_SUCCESS;
 }

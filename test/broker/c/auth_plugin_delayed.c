@@ -62,7 +62,7 @@ static int tick_callback(int event, void *event_data, void *user_data)
 
 	if(auth_delay == 0){
 		if(clientid && username && password
-			&& !strcmp(username, "delayed-username") && !strcmp(password, "good")){
+				&& !strcmp(username, "delayed-username") && !strcmp(password, "good")){
 
 			mosquitto_complete_basic_auth(clientid, MOSQ_ERR_SUCCESS);
 		}else{

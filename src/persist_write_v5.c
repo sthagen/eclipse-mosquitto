@@ -92,8 +92,9 @@ int persist__chunk_client_msg_write_v6(FILE *db_fptr, struct P_client_msg *chunk
 	uint16_t id_len = chunk->F.id_len;
 	uint32_t proplen = 0;
 	int rc;
-	mosquitto_property subscription_id_prop =
-			{.next = NULL, .identifier = MQTT_PROP_SUBSCRIPTION_IDENTIFIER, .client_generated = true, .property_type = MQTT_PROP_TYPE_VARINT};
+	mosquitto_property subscription_id_prop = {
+		.next = NULL, .identifier = MQTT_PROP_SUBSCRIPTION_IDENTIFIER, .client_generated = true, .property_type = MQTT_PROP_TYPE_VARINT
+	};
 
 	if(chunk->subscription_identifier){
 		subscription_id_prop.value.varint = chunk->subscription_identifier;

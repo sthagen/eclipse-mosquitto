@@ -371,15 +371,15 @@ static int add_role_with_full_permission(cJSON *j_roles, const char *role_name, 
 	cJSON_AddItemToArray(j_roles, j_role);
 
 	if(cJSON_AddStringToObject(j_role, "rolename", role_name) == NULL
-		   || cJSON_AddStringToObject(j_role, "textdescription", text_description) == NULL
-		   || (j_acls = cJSON_AddArrayToObject(j_role, "acls")) == NULL){
+			|| cJSON_AddStringToObject(j_role, "textdescription", text_description) == NULL
+			|| (j_acls = cJSON_AddArrayToObject(j_role, "acls")) == NULL){
 		return MOSQ_ERR_NOMEM;
 	}
 
 	if(acl_add(j_acls, "publishClientSend", topic_pattern, 0, true)
-		|| acl_add(j_acls, "publishClientReceive", topic_pattern, 0, true)
-		|| acl_add(j_acls, "subscribePattern", topic_pattern, 0, true)
-		|| acl_add(j_acls, "unsubscribePattern", topic_pattern, 0, true)){
+			|| acl_add(j_acls, "publishClientReceive", topic_pattern, 0, true)
+			|| acl_add(j_acls, "subscribePattern", topic_pattern, 0, true)
+			|| acl_add(j_acls, "unsubscribePattern", topic_pattern, 0, true)){
 		return MOSQ_ERR_NOMEM;
 	}
 	return MOSQ_ERR_SUCCESS;
@@ -398,7 +398,7 @@ static int role_add_sys_notify(cJSON *j_roles)
 
 	if(cJSON_AddStringToObject(j_role, "rolename", "sys-notify") == NULL
 			|| cJSON_AddStringToObject(j_role, "textdescription",
-				"Allow bridges to publish connection state messages.") == NULL
+			"Allow bridges to publish connection state messages.") == NULL
 			|| (j_acls = cJSON_AddArrayToObject(j_role, "acls")) == NULL
 			){
 
@@ -426,7 +426,7 @@ static int role_add_sys_observe(cJSON *j_roles)
 
 	if(cJSON_AddStringToObject(j_role, "rolename", "sys-observe") == NULL
 			|| cJSON_AddStringToObject(j_role, "textdescription",
-				"Observe the $SYS topic hierarchy.") == NULL
+			"Observe the $SYS topic hierarchy.") == NULL
 			|| (j_acls = cJSON_AddArrayToObject(j_role, "acls")) == NULL
 			){
 
@@ -455,7 +455,7 @@ static int role_add_topic_observe(cJSON *j_roles)
 
 	if(cJSON_AddStringToObject(j_role, "rolename", "topic-observe") == NULL
 			|| cJSON_AddStringToObject(j_role, "textdescription",
-				"Read only access to the full application topic hierarchy.") == NULL
+			"Read only access to the full application topic hierarchy.") == NULL
 			|| (j_acls = cJSON_AddArrayToObject(j_role, "acls")) == NULL
 			){
 
@@ -483,10 +483,10 @@ static int add_roles(cJSON *j_tree)
 	}
 
 	if(add_role_with_full_permission(j_roles, "client", "Read/write access to the full application topic hierarchy.", "#")
-		|| add_role_with_full_permission(j_roles, "broker-admin", "Grants access to administer general broker configuration.", "$CONTROL/broker/#")
-		|| add_role_with_full_permission(j_roles, "dynsec-admin", "Grants access to administer clients/groups/roles.", "$CONTROL/dynamic-security/#")
-		|| add_role_with_full_permission(j_roles, "super-admin", "Grants access to administer all kind of broker controls", "$CONTROL/#")
-		|| role_add_sys_notify(j_roles) || role_add_sys_observe(j_roles) || role_add_topic_observe(j_roles)){
+			|| add_role_with_full_permission(j_roles, "broker-admin", "Grants access to administer general broker configuration.", "$CONTROL/broker/#")
+			|| add_role_with_full_permission(j_roles, "dynsec-admin", "Grants access to administer clients/groups/roles.", "$CONTROL/dynamic-security/#")
+			|| add_role_with_full_permission(j_roles, "super-admin", "Grants access to administer all kind of broker controls", "$CONTROL/#")
+			|| role_add_sys_notify(j_roles) || role_add_sys_observe(j_roles) || role_add_topic_observe(j_roles)){
 		return MOSQ_ERR_NOMEM;
 	}
 

@@ -77,7 +77,7 @@ int handle__subscribe(struct mosquitto *context)
 		}
 
 		if(mosquitto_property_read_varint(properties, MQTT_PROP_SUBSCRIPTION_IDENTIFIER,
-					&subscription_identifier, false)){
+				&subscription_identifier, false)){
 
 			/* If the identifier was force set to 0, this is an error */
 			if(subscription_identifier == 0){

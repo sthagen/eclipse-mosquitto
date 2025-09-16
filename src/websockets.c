@@ -53,16 +53,16 @@ static int callback_mqtt(
 		size_t len);
 
 static int callback_http(
-	struct lws *wsi,
-	enum lws_callback_reasons reason,
-	void *user,
-	void *in,
-	size_t len);
+		struct lws *wsi,
+		enum lws_callback_reasons reason,
+		void *user,
+		void *in,
+		size_t len);
 
 enum mosq_ws_protocols {
 	PROTOCOL_HTTP = 0,
 	PROTOCOL_MQTT,
-	DEMO_PROTOCOL_COUNT
+	DEMO_PROTOCOL_COUNT,
 };
 
 struct libws_http_data {
@@ -493,8 +493,8 @@ static int callback_http(
 
 				/* FIXME - use header functions from lws 2.x */
 				buflen = (size_t)snprintf((char *)buf, 4096, "HTTP/1.0 302 OK\r\n"
-												"Location: %s/\r\n\r\n",
-												(char *)in);
+						"Location: %s/\r\n\r\n",
+						(char *)in);
 				return lws_write(wsi, buf, buflen, LWS_WRITE_HTTP);
 			}
 
@@ -510,9 +510,9 @@ static int callback_http(
 			SAFE_FREE(filename_canonical);
 			/* FIXME - use header functions from lws 2.x */
 			buflen = (size_t)snprintf((char *)buf, 4096, "HTTP/1.0 200 OK\r\n"
-												"Server: mosquitto\r\n"
-												"Content-Length: %u\r\n\r\n",
-												(unsigned int)filestat.st_size);
+					"Server: mosquitto\r\n"
+					"Content-Length: %u\r\n\r\n",
+					(unsigned int)filestat.st_size);
 			if(lws_write(wsi, buf, buflen, LWS_WRITE_HTTP) < 0){
 				fclose(u->fptr);
 				u->fptr = NULL;

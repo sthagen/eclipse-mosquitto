@@ -41,13 +41,13 @@ int persist_sqlite__will_add_cb(int event, void *event_data, void *userdata)
 		}
 	}
 
-	if(sqlite3_bind_text_from_c_str( ms->will_add_stmt, 1, ed->data.clientid) != SQLITE_OK
-		 || sqlite3_bind_blob_optional(ms->will_add_stmt, 2, ed->data.payload, (int)ed->data.payloadlen) != SQLITE_OK
-		 || sqlite3_bind_text_from_c_str(ms->will_add_stmt, 3, ed->data.topic) != SQLITE_OK
-		 || sqlite3_bind_int64(ms->will_add_stmt, 4, (int64_t)ed->data.payloadlen) != SQLITE_OK
-		 || sqlite3_bind_int(ms->will_add_stmt, 5, ed->data.qos) != SQLITE_OK
-		 || sqlite3_bind_int(ms->will_add_stmt, 6, ed->data.retain) != SQLITE_OK
-		 || sqlite3_bind_text_from_optional_c_str( ms->will_add_stmt, 7, propties_json_str) != SQLITE_OK) {
+	if(sqlite3_bind_text_from_c_str(ms->will_add_stmt, 1, ed->data.clientid) != SQLITE_OK
+			|| sqlite3_bind_blob_optional(ms->will_add_stmt, 2, ed->data.payload, (int)ed->data.payloadlen) != SQLITE_OK
+			|| sqlite3_bind_text_from_c_str(ms->will_add_stmt, 3, ed->data.topic) != SQLITE_OK
+			|| sqlite3_bind_int64(ms->will_add_stmt, 4, (int64_t)ed->data.payloadlen) != SQLITE_OK
+			|| sqlite3_bind_int(ms->will_add_stmt, 5, ed->data.qos) != SQLITE_OK
+			|| sqlite3_bind_int(ms->will_add_stmt, 6, ed->data.retain) != SQLITE_OK
+			|| sqlite3_bind_text_from_optional_c_str(ms->will_add_stmt, 7, propties_json_str) != SQLITE_OK){
 		rc = MOSQ_ERR_UNKNOWN;
 	}
 	rc = sqlite3_single_step_stmt(rc, ms, ms->will_add_stmt);

@@ -468,11 +468,11 @@ static int will_restore(struct mosquitto_sqlite *ms)
 	int payloadlen, qos, retain;
 
 	rc = sqlite3_prepare_v2(ms->db,
-	  "SELECT w.client_id,w.topic,w.payload,w.payloadlen,w.qos,w.retain,w.properties,"
-		" c.session_expiry_time,c.will_delay_interval"
-		" FROM wills w"
-		" LEFT OUTER JOIN clients c ON c.client_id = w.client_id",
-		-1, &stmt, NULL);
+			"SELECT w.client_id,w.topic,w.payload,w.payloadlen,w.qos,w.retain,w.properties,"
+			" c.session_expiry_time,c.will_delay_interval"
+			" FROM wills w"
+			" LEFT OUTER JOIN clients c ON c.client_id = w.client_id",
+			-1, &stmt, NULL);
 
 	if(rc != SQLITE_OK){
 		mosquitto_log_printf(MOSQ_LOG_ERR, "sqlite: Error restoring will messages: %s", sqlite3_errstr(rc));

@@ -53,9 +53,9 @@ cJSON *mosquitto_properties_to_json(const mosquitto_property *properties)
 		cJSON_AddItemToArray(array, obj);
 		/* identifier, (key), value */
 		if(cJSON_AddStringToObject(obj,
-					"identifier",
-					mosquitto_property_identifier_to_string(propid)) == NULL
-					){
+				"identifier",
+				mosquitto_property_identifier_to_string(propid)) == NULL
+				){
 			cJSON_Delete(array);
 			return NULL;
 		}

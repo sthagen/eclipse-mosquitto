@@ -43,8 +43,8 @@ int context__init_sock(struct mosquitto *context, mosq_sock_t sock, bool get_add
 			char address[1024];
 
 			if(!net__socket_get_address(context->sock,
-						address, sizeof(address),
-						&context->remote_port)){
+					address, sizeof(address),
+					&context->remote_port)){
 
 				context->address = mosquitto_strdup(address);
 			}
@@ -216,12 +216,12 @@ void context__send_will(struct mosquitto *ctxt)
 		}
 
 		if(mosquitto_acl_check(ctxt,
-					ctxt->will->msg.topic,
-					(uint32_t)ctxt->will->msg.payloadlen,
-					ctxt->will->msg.payload,
-					(uint8_t)ctxt->will->msg.qos,
-					ctxt->will->msg.retain,
-					MOSQ_ACL_WRITE) == MOSQ_ERR_SUCCESS){
+				ctxt->will->msg.topic,
+				(uint32_t)ctxt->will->msg.payloadlen,
+				ctxt->will->msg.payload,
+				(uint8_t)ctxt->will->msg.qos,
+				ctxt->will->msg.retain,
+				MOSQ_ACL_WRITE) == MOSQ_ERR_SUCCESS){
 
 			/* Unexpected disconnect, queue the client will. */
 			db__messages_easy_queue(ctxt,

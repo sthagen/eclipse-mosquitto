@@ -62,8 +62,8 @@ const char ANSI_MODULE_dark[] =  "\001\e[38;5;214m\002";
 const char ANSI_INPUT_dark[] =   "\001\e[38;5;80m\002";
 const char ANSI_ERROR_dark[] =   "\001\e[38;5;198m\002";
 const char *ANSI_LABEL_dark[] =  {
-								 "\001\e[38;5;207m\002",
-		                         "\001\e[38;5;219m\002",
+	"\001\e[38;5;207m\002",
+	"\001\e[38;5;219m\002",
 };
 const char ANSI_TOPIC_dark[] =    "\001\e[93m\002";
 const char ANSI_POSITIVE_dark[] =    "\001\e[92m\002";
@@ -74,8 +74,8 @@ const char ANSI_MODULE_light[] = "\001\e[38;5;130m\002";
 const char ANSI_INPUT_light[] =  "\001\e[38;5;27m\002";
 const char ANSI_ERROR_light[] =  "\001\e[38;5;196m\002";
 const char *ANSI_LABEL_light[] =  {
-								 "\001\e[38;5;165m\002",
-		                         "\001\e[38;5;171m\002",
+	"\001\e[38;5;165m\002",
+	"\001\e[38;5;171m\002",
 };
 const char ANSI_TOPIC_light[] =    "\001\e[33m\002";
 const char ANSI_POSITIVE_light[] =    "\001\e[32m\002";

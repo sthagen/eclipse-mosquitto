@@ -112,10 +112,10 @@ FILE *mosquitto_fopen(const char *path, const char *mode, bool restrict_read)
 			sec.lpSecurityDescriptor = &sd;
 
 			hfile = CreateFileA(buf, dwShareMode, FILE_SHARE_READ,
-				&sec,
-				dwCreationDisposition,
-				FILE_ATTRIBUTE_NORMAL,
-				NULL);
+					&sec,
+					dwCreationDisposition,
+					FILE_ATTRIBUTE_NORMAL,
+					NULL);
 
 			LocalFree(pacl);
 

@@ -37,7 +37,7 @@ static void plugin__handle_tick_single(struct mosquitto__security_options *opts)
 		mosquitto_time_ns(&event_data.now_s, &event_data.now_ns);
 
 		if(mosquitto_time_cmp(event_data.now_s, event_data.now_ns,
-					cb_base->data.next_tick.tv_sec, cb_base->data.next_tick.tv_nsec) > 0){
+				cb_base->data.next_tick.tv_sec, cb_base->data.next_tick.tv_nsec) > 0){
 
 			event_data.next_s = 0;
 			event_data.next_ms = 0;

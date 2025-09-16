@@ -131,8 +131,8 @@ void plugin_persist__handle_client_delete(struct mosquitto *context)
 	struct mosquitto__security_options *opts;
 
 	if(context->id == NULL
-		 || context->state == mosq_cs_duplicate
-		 || db.shutdown){
+			|| context->state == mosq_cs_duplicate
+			|| db.shutdown){
 		return;
 	}
 

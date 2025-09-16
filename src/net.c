@@ -702,8 +702,8 @@ static int net__bind_interface(struct mosquitto__listener *listener, struct addr
 				if(rp->ai_addr->sa_family == AF_INET){
 					if(listener->host &&
 							memcmp(&((struct sockaddr_in *)rp->ai_addr)->sin_addr,
-								&((struct sockaddr_in *)ifa->ifa_addr)->sin_addr,
-								sizeof(struct in_addr))){
+							&((struct sockaddr_in *)ifa->ifa_addr)->sin_addr,
+							sizeof(struct in_addr))){
 
 						log__printf(NULL, MOSQ_LOG_ERR, "Error: Interface address for %s does not match specified listener address (%s).",
 								listener->bind_interface, listener->host);
@@ -719,8 +719,8 @@ static int net__bind_interface(struct mosquitto__listener *listener, struct addr
 				}else if(rp->ai_addr->sa_family == AF_INET6){
 					if(listener->host &&
 							memcmp(&((struct sockaddr_in6 *)rp->ai_addr)->sin6_addr,
-								&((struct sockaddr_in6 *)ifa->ifa_addr)->sin6_addr,
-								sizeof(struct in6_addr))){
+							&((struct sockaddr_in6 *)ifa->ifa_addr)->sin6_addr,
+							sizeof(struct in6_addr))){
 
 						log__printf(NULL, MOSQ_LOG_ERR, "Error: Interface address for %s does not match specified listener address (%s).",
 								listener->bind_interface, listener->host);
@@ -742,7 +742,7 @@ static int net__bind_interface(struct mosquitto__listener *listener, struct addr
 	freeifaddrs(ifaddr);
 	if(have_interface){
 		log__printf(NULL, MOSQ_LOG_WARNING, "Warning: Interface %s does not support %s configuration.",
-					listener->bind_interface, rp->ai_addr->sa_family == AF_INET ? "IPv4" : "IPv6");
+				listener->bind_interface, rp->ai_addr->sa_family == AF_INET ? "IPv4" : "IPv6");
 		return MOSQ_ERR_NOT_SUPPORTED;
 	}else{
 		log__printf(NULL, MOSQ_LOG_ERR, "Error: Interface %s does not exist.", listener->bind_interface);

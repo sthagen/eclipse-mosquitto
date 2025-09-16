@@ -216,14 +216,14 @@ int connect__on_authorised(struct mosquitto *context, void *auth_data_out, uint1
 			}
 		}
 
-		if(context->will) {
+		if(context->will){
 			log__printf(NULL, MOSQ_LOG_DEBUG, "Will message specified (%ld bytes) (r%d, q%d).",
 					(long)context->will->msg.payloadlen,
 					context->will->msg.retain,
 					context->will->msg.qos);
 
 			log__printf(NULL, MOSQ_LOG_DEBUG, "\t%s", context->will->msg.topic);
-		} else {
+		}else{
 			log__printf(NULL, MOSQ_LOG_DEBUG, "No will message specified.");
 		}
 	}
@@ -476,7 +476,7 @@ static int read_protocol_name(struct mosquitto *context, char protocol_name[7])
 
 
 static int read_and_verify_protocol_version(struct mosquitto *context, const char *protocol_name,
-											uint8_t *protocol_version)
+		uint8_t *protocol_version)
 {
 	uint8_t tmp_protocol_version = 0;
 	if(packet__read_byte(&context->in_packet, &tmp_protocol_version)){
@@ -637,7 +637,7 @@ static int verify_will_options(struct mosquitto *context, uint8_t will, uint8_t 
 
 
 static int handle_zero_length_clientid(struct mosquitto *context, char **clientid, bool *allow_zero_length_clientid,
-								 uint8_t clean_start)
+		uint8_t clean_start)
 {
 	if(context->protocol == mosq_p_mqtt31){
 		send__connack(context, 0, CONNACK_REFUSED_IDENTIFIER_REJECTED, NULL);
@@ -659,7 +659,7 @@ static int handle_zero_length_clientid(struct mosquitto *context, char **clienti
 	}
 
 	*clientid = clientid_gen(&(uint16_t){0}, context->listener->security_options->auto_id_prefix,
-											 context->listener->security_options->auto_id_prefix_len);
+			context->listener->security_options->auto_id_prefix_len);
 	if(*clientid == NULL){
 		return MOSQ_ERR_NOMEM;
 	}
@@ -680,8 +680,9 @@ static int check_clientid_prefixes(struct mosquitto *context, const char *client
 	return MOSQ_ERR_SUCCESS;
 }
 
-static int read_and_verify_clientid_from_packet(struct mosquitto *context, char** clientid,
-												bool *allow_zero_length_clientid, uint8_t clean_start)
+
+static int read_and_verify_clientid_from_packet(struct mosquitto *context, char **clientid,
+		bool *allow_zero_length_clientid, uint8_t clean_start)
 {
 	int rc;
 	uint16_t slen;
@@ -755,9 +756,9 @@ static int set_password_from_packet(struct mosquitto *context, char **password)
 
 
 static int read_and_verify_client_credentials_from_packet(struct mosquitto *context,
-														  char **username, uint8_t username_flag,
-														  char **password, uint8_t password_flag,
-														  const char* clientid)
+		char **username, uint8_t username_flag,
+		char **password, uint8_t password_flag,
+		const char *clientid)
 {
 	int rc;
 
@@ -827,7 +828,7 @@ inline static int free_x509_and_send_connack_error(struct mosquitto *context, X5
 
 
 inline static int free_x509_and_BIO_and_send_connack_error(struct mosquitto *context, X509 *client_cert,
-														   BIO *subject_name, int rc)
+		BIO *subject_name, int rc)
 {
 	BIO_free(subject_name);
 	return free_x509_and_send_connack_error(context, client_cert, rc);
@@ -1031,7 +1032,7 @@ int handle__connect(struct mosquitto *context)
 
 	if(context->in_packet.command == 0x16 && context->listener->ssl_ctx == NULL){ /* 0x16 is TLS handshake client hello */
 		log__printf(NULL, MOSQ_LOG_NOTICE, "Client from %s:%d appears to be using TLS to connect to a non-TLS listener.",
-						context->address, context->remote_port);
+				context->address, context->remote_port);
 		rc = MOSQ_ERR_PROTOCOL;
 		goto handle_connect_error;
 	}

@@ -61,7 +61,7 @@ int handle__auth(struct mosquitto *context)
 
 		if((reason_code == MQTT_RC_REAUTHENTICATE && context->state != mosq_cs_active)
 				|| (reason_code == MQTT_RC_CONTINUE_AUTHENTICATION
-					&& context->state != mosq_cs_authenticating && context->state != mosq_cs_reauthenticating)){
+				&& context->state != mosq_cs_authenticating && context->state != mosq_cs_reauthenticating)){
 
 			send__disconnect(context, MQTT_RC_PROTOCOL_ERROR, NULL);
 			return MOSQ_ERR_PROTOCOL;

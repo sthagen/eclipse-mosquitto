@@ -268,7 +268,7 @@ void sys_tree__update(bool force)
 
 		for(int i=0; i<mosq_metric_max; i++){
 			if((metrics[i].is_max && metrics[i].next > metrics[i].current) ||
-						(!metrics[i].is_max && metrics[i].next != metrics[i].current)){
+					(!metrics[i].is_max && metrics[i].next != metrics[i].current)){
 
 				metrics[i].current = metrics[i].next;
 				len = (uint32_t)snprintf(buf, BUFLEN, "%lu", metrics[i].current);

@@ -90,7 +90,7 @@ int mosquitto__verify_ocsp_status_cb(SSL *ssl, void *arg)
 	ocsp_status = OCSP_response_status(rsp);
 	if(ocsp_status != OCSP_RESPONSE_STATUS_SUCCESSFUL){
 		log__printf(mosq, MOSQ_LOG_DEBUG, "OCSP: invalid status: %s (%d)",
-				   OCSP_response_status_str(ocsp_status), ocsp_status);
+				OCSP_response_status_str(ocsp_status), ocsp_status);
 		goto end;
 	}
 
@@ -144,7 +144,7 @@ int mosquitto__verify_ocsp_status_cb(SSL *ssl, void *arg)
 
 			case V_OCSP_CERTSTATUS_REVOKED:
 				log__printf(mosq, MOSQ_LOG_DEBUG, "OCSP: SSL certificate revocation reason: %s (%d)",
-					OCSP_crl_reason_str(crl_reason), crl_reason);
+						OCSP_crl_reason_str(crl_reason), crl_reason);
 				goto end;
 
 			case V_OCSP_CERTSTATUS_UNKNOWN:

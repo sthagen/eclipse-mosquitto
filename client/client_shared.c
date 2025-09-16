@@ -1424,8 +1424,8 @@ int client_opts_set(struct mosquitto *mosq, struct mosq_config *cfg)
 	mosquitto_int_option(mosq, MOSQ_OPT_TRANSPORT, cfg->transport);
 
 	if(cfg->will_topic && mosquitto_will_set_v5(mosq, cfg->will_topic,
-				cfg->will_payloadlen, cfg->will_payload, cfg->will_qos,
-				cfg->will_retain, cfg->will_props)){
+			cfg->will_payloadlen, cfg->will_payload, cfg->will_qos,
+			cfg->will_retain, cfg->will_props)){
 
 		err_printf(cfg, "Error: Problem setting will.\n");
 		return 1;

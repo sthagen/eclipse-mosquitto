@@ -198,19 +198,17 @@ static int bridge__set_tcp_keepalive(struct mosquitto *context)
 	if(idle == 0 || interval == 0 || counter == 0) return MOSQ_ERR_SUCCESS;
 
 #ifdef WIN32
-	ret =
-		setsockopt(context->sock, SOL_SOCKET, SO_KEEPALIVE, (char *)&enabled, sizeof(enabled)) ||
-		setsockopt(context->sock, IPPROTO_TCP, TCP_KEEPIDLE, (char *)&idle, sizeof(idle)) ||
-		setsockopt(context->sock, IPPROTO_TCP, TCP_KEEPINTVL, (char *)&interval, sizeof(interval)) ||
-		setsockopt(context->sock, IPPROTO_TCP, TCP_KEEPCNT, (char *)&counter, sizeof(counter));
+	ret = setsockopt(context->sock, SOL_SOCKET, SO_KEEPALIVE, (char *)&enabled, sizeof(enabled)) ||
+			setsockopt(context->sock, IPPROTO_TCP, TCP_KEEPIDLE, (char *)&idle, sizeof(idle)) ||
+			setsockopt(context->sock, IPPROTO_TCP, TCP_KEEPINTVL, (char *)&interval, sizeof(interval)) ||
+			setsockopt(context->sock, IPPROTO_TCP, TCP_KEEPCNT, (char *)&counter, sizeof(counter));
 #else
-	ret =
-		setsockopt(context->sock, SOL_SOCKET, SO_KEEPALIVE, (const void *)&enabled, sizeof(enabled)) ||
+	ret = setsockopt(context->sock, SOL_SOCKET, SO_KEEPALIVE, (const void *)&enabled, sizeof(enabled)) ||
 #ifndef __APPLE__
-		setsockopt(context->sock, IPPROTO_TCP, TCP_KEEPIDLE, (const void *)&idle, sizeof(idle)) ||
+			setsockopt(context->sock, IPPROTO_TCP, TCP_KEEPIDLE, (const void *)&idle, sizeof(idle)) ||
 #endif
-		setsockopt(context->sock, IPPROTO_TCP, TCP_KEEPINTVL, (const void *)&interval, sizeof(interval)) ||
-		setsockopt(context->sock, IPPROTO_TCP, TCP_KEEPCNT, (const void *)&counter, sizeof(counter));
+			setsockopt(context->sock, IPPROTO_TCP, TCP_KEEPINTVL, (const void *)&interval, sizeof(interval)) ||
+			setsockopt(context->sock, IPPROTO_TCP, TCP_KEEPCNT, (const void *)&counter, sizeof(counter));
 #endif
 
 	if(ret) return MOSQ_ERR_UNKNOWN;
@@ -690,9 +688,9 @@ int bridge__on_connect(struct mosquitto *context)
 			}
 			if(context->bridge->protocol_version == mosq_p_mqtt5){
 				sub_opts = sub_opts
-					| MQTT_SUB_OPT_NO_LOCAL
-					| MQTT_SUB_OPT_RETAIN_AS_PUBLISHED
-					| MQTT_SUB_OPT_SEND_RETAIN_ALWAYS;
+						| MQTT_SUB_OPT_NO_LOCAL
+						| MQTT_SUB_OPT_RETAIN_AS_PUBLISHED
+						| MQTT_SUB_OPT_SEND_RETAIN_ALWAYS;
 			}
 			if(send__subscribe(context, NULL, 1, &cur_topic->remote_topic, sub_opts, NULL)){
 				return 1;
