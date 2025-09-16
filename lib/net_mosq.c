@@ -1019,20 +1019,17 @@ ssize_t net__read(struct mosquitto *mosq, void *buf, size_t count)
 			net__handle_ssl(mosq, ret);
 		}
 		return (ssize_t )ret;
-	}else{
+	}else
+#endif
+	{
 		/* Call normal read/recv */
 
-#endif
-
 #ifndef WIN32
-	return read(mosq->sock, buf, count);
+		return read(mosq->sock, buf, count);
 #else
-	return recv(mosq->sock, buf, count, 0);
+		return recv(mosq->sock, buf, count, 0);
 #endif
-
-#ifdef WITH_TLS
 	}
-#endif
 }
 
 
@@ -1053,15 +1050,12 @@ ssize_t net__write(struct mosquitto *mosq, const void *buf, size_t count)
 			net__handle_ssl(mosq, ret);
 		}
 		return (ssize_t )ret;
-	}else{
-		/* Call normal write/send */
+	}else
+	/* Call normal write/send */
 #endif
-
-	return send(mosq->sock, buf, count, MSG_NOSIGNAL);
-
-#ifdef WITH_TLS
+	{
+		return send(mosq->sock, buf, count, MSG_NOSIGNAL);
 	}
-#endif
 }
 
 
