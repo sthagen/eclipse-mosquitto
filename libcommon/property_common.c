@@ -643,7 +643,7 @@ BROKER_EXPORT int mosquitto_property_check_all(int command, const mosquitto_prop
 				return MOSQ_ERR_PROTOCOL;
 			}
 		}else if(p->identifier == MQTT_PROP_MAXIMUM_PACKET_SIZE){
-			if( p->value.i32 == 0){
+			if(p->value.i32 == 0){
 				return MOSQ_ERR_PROTOCOL;
 			}
 		}else if(p->identifier == MQTT_PROP_RECEIVE_MAXIMUM

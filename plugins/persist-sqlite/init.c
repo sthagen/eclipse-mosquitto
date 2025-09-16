@@ -221,7 +221,7 @@ static int create_tables(struct mosquitto_sqlite *ms)
 			memcpy(db_schema_version, (int[3]){1, 1, 0}, sizeof(db_schema_version));
 		}
 		/* 1.1.x  is the current DB-Schema version */
-		if (db_schema_version[1] == 1){
+		if(db_schema_version[1] == 1){
 			return 0;
 		}
 	}

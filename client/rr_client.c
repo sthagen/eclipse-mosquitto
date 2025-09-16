@@ -43,7 +43,7 @@ enum rr__state {
 	rr_s_subscribed,
 	rr_s_ready_to_publish,
 	rr_s_wait_for_response,
-	rr_s_disconnect
+	rr_s_disconnect,
 };
 
 static enum rr__state client_state = rr_s_new;

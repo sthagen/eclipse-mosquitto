@@ -138,7 +138,7 @@ void plugin_persist__handle_client_delete(struct mosquitto *context)
 
 	plugin_persist__handle_will_delete(context);
 
-	if (context->is_persisted == false
+	if(context->is_persisted == false
 			|| context->session_expiry_interval > 0){
 		return;
 	}

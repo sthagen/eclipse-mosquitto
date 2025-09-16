@@ -10,7 +10,7 @@
 enum mosq_err_t {
 	MOSQ_ERR_SUCCESS = 0,
 	MOSQ_ERR_AUTH = 11,
-	MOSQ_ERR_ACL_DENIED = 12
+	MOSQ_ERR_ACL_DENIED = 12,
 };
 
 
