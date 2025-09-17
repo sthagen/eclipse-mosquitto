@@ -141,7 +141,7 @@ try:
         raise ValueError(f"/api/v1/version {response.status}")
     payload = response.read().decode('utf-8')
     if not re.match(r'^\d+\.\d+\.\d+$', payload):
-        raise ValueError(f"/api/v1/license\n{payload}")
+        raise ValueError(f"/api/v1/version\n{payload}")
 
 
     rc = 0
