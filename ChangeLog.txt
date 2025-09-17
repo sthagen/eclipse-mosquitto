@@ -1,3 +1,10 @@
+2.0.23 - 2025-xx-xx
+===================
+
+Broker:
+- Fix handling of disconnected sessions for `per_listener_settings true`
+
+
 2.0.22 - 2025-07-11
 ===================
 
