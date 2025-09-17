@@ -240,6 +240,9 @@ int net__socket_close(struct mosquitto *mosq)
 			mosquitto__set_state(mosq, mosq_cs_disconnect_ws);
 		}
 		lws_callback_on_writable(mosq->wsi);
+		if(mosq->listener){
+			mosq->listener->client_count--;
+		}
 	}else
 #endif
 	{
@@ -249,18 +252,14 @@ int net__socket_close(struct mosquitto *mosq)
 			if(mosq_found){
 				HASH_DELETE(hh_sock, db.contexts_by_sock, mosq_found);
 			}
+			if(mosq->listener && mosq->state != mosq_cs_disused){
+				mosq->listener->client_count--;
+			}
 #endif
 			rc = COMPAT_CLOSE(mosq->sock);
 			mosq->sock = INVALID_SOCKET;
 		}
 	}
-
-#ifdef WITH_BROKER
-	if(mosq->listener){
-		mosq->listener->client_count--;
-		mosq->listener = NULL;
-	}
-#endif
 
 	return rc;
 }
