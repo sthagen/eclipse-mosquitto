@@ -18,14 +18,17 @@ Contributors:
 
 #include "fuzz_packet_read_base.h"
 
+
 extern "C" int fuzz_packet_read_init(struct mosquitto *context)
 {
 	return 0;
 }
 
+
 extern "C" void fuzz_packet_read_cleanup(struct mosquitto *context)
 {
 }
+
 
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
 {

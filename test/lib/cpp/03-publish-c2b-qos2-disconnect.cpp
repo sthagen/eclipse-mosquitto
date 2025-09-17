@@ -10,17 +10,18 @@ static int sent_mid = -1;
 
 class mosquittopp_test : public mosqpp::mosquittopp
 {
-	public:
-		mosquittopp_test(const char *id);
+public:
+	mosquittopp_test(const char *id);
 
-		void on_connect(int rc);
-		void on_disconnect(int rc);
-		void on_publish(int mid);
+	void on_connect(int rc);
+	void on_disconnect(int rc);
+	void on_publish(int mid);
 };
 
 mosquittopp_test::mosquittopp_test(const char *id) : mosqpp::mosquittopp(id)
 {
 }
+
 
 void mosquittopp_test::on_connect(int rc)
 {
@@ -34,6 +35,7 @@ void mosquittopp_test::on_connect(int rc)
 	}
 }
 
+
 void mosquittopp_test::on_disconnect(int rc)
 {
 	if(rc){
@@ -43,11 +45,13 @@ void mosquittopp_test::on_disconnect(int rc)
 	}
 }
 
+
 void mosquittopp_test::on_publish(int mid)
 {
 	assert(mid == sent_mid);
 	disconnect();
 }
+
 
 int main(int argc, char *argv[])
 {

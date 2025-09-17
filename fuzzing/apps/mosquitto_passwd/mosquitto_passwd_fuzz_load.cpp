@@ -31,6 +31,7 @@ Contributors:
 /* The fuzz-only main function. */
 extern "C" int mosquitto_passwd_fuzz_main(int argc, char *argv[]);
 
+
 void run_mosquitto_passwd(char *filename)
 {
 	char *argv[5];
@@ -50,6 +51,7 @@ void run_mosquitto_passwd(char *filename)
 	free(argv[4]);
 }
 
+
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
 {
 	char filename[100];
@@ -59,7 +61,9 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
 
 	snprintf(filename, sizeof(filename), "mosquitto_passwd_%d", getpid());
 	fptr = fopen(filename, "wb");
-	if(!fptr) return 1;
+	if(!fptr){
+		return 1;
+	}
 	fwrite(data, 1, size, fptr);
 	fclose(fptr);
 

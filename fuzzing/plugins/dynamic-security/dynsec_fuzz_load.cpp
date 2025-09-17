@@ -40,6 +40,7 @@ extern "C" {
 
 extern struct mosquitto_db db;
 
+
 void run_dynsec(char *filename)
 {
 	struct mosquitto_plugin_id_t identifier;
@@ -63,6 +64,7 @@ void run_dynsec(char *filename)
 	db.config = NULL;
 }
 
+
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
 {
 	char filename[100];
@@ -72,7 +74,9 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
 
 	snprintf(filename, sizeof(filename), "/tmp/dynsec%d.conf", getpid());
 	fptr = fopen(filename, "wb");
-	if(!fptr) return 1;
+	if(!fptr){
+		return 1;
+	}
 	fwrite(data, 1, size, fptr);
 	fclose(fptr);
 

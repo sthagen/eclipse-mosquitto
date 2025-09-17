@@ -31,6 +31,7 @@ Contributors:
 /* The fuzz-only main function. */
 extern "C" int db_dump_fuzz_main(int argc, char *argv[]);
 
+
 void run_db_dump(char *filename)
 {
 	char *argv[2];
@@ -44,6 +45,7 @@ void run_db_dump(char *filename)
 	free(argv[0]);
 }
 
+
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
 {
 	char filename[100];
@@ -53,7 +55,9 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
 
 	snprintf(filename, sizeof(filename), "db_dump_%d.db", getpid());
 	fptr = fopen(filename, "wb");
-	if(!fptr) return 1;
+	if(!fptr){
+		return 1;
+	}
 	fwrite(data, 1, size, fptr);
 	fclose(fptr);
 

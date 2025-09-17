@@ -3,13 +3,14 @@
 
 class mosquittopp_test : public mosqpp::mosquittopp
 {
-	public:
-		mosquittopp_test(const char *id);
+public:
+	mosquittopp_test(const char *id);
 };
 
 mosquittopp_test::mosquittopp_test(const char *id) : mosqpp::mosquittopp(id)
 {
 }
+
 
 int main(int argc, char *argv[])
 {

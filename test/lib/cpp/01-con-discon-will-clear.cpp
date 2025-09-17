@@ -5,16 +5,17 @@ static int run = -1;
 
 class mosquittopp_test : public mosqpp::mosquittopp
 {
-	public:
-		mosquittopp_test(const char *id);
+public:
+	mosquittopp_test(const char *id);
 
-		void on_connect(int rc);
-		void on_disconnect(int rc);
+	void on_connect(int rc);
+	void on_disconnect(int rc);
 };
 
 mosquittopp_test::mosquittopp_test(const char *id) : mosqpp::mosquittopp(id)
 {
 }
+
 
 void mosquittopp_test::on_connect(int rc)
 {
@@ -24,6 +25,7 @@ void mosquittopp_test::on_connect(int rc)
 		disconnect();
 	}
 }
+
 
 void mosquittopp_test::on_disconnect(int rc)
 {
@@ -45,9 +47,9 @@ int main(int argc, char *argv[])
 
 	mosq = new mosquittopp_test("01-con-discon-will");
 
-	    /* Set twice, so it has to clear the old settings */
-    mosq->will_set("will/topic", strlen("will-payload"), "will-payload", 1, true);
-    mosq->will_clear();
+	/* Set twice, so it has to clear the old settings */
+	mosq->will_set("will/topic", strlen("will-payload"), "will-payload", 1, true);
+	mosq->will_clear();
 
 	mosq->connect("localhost", port, 60);
 

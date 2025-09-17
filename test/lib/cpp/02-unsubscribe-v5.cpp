@@ -5,17 +5,18 @@ static int run = -1;
 
 class mosquittopp_test : public mosqpp::mosquittopp
 {
-	public:
-		mosquittopp_test(const char *id);
+public:
+	mosquittopp_test(const char *id);
 
-		void on_connect(int rc);
-		void on_disconnect(int rc);
-		void on_unsubscribe_v5(int mid, const mosquitto_property *props);
+	void on_connect(int rc);
+	void on_disconnect(int rc);
+	void on_unsubscribe_v5(int mid, const mosquitto_property *props);
 };
 
 mosquittopp_test::mosquittopp_test(const char *id) : mosqpp::mosquittopp(id)
 {
 }
+
 
 void mosquittopp_test::on_connect(int rc)
 {
@@ -33,10 +34,12 @@ void mosquittopp_test::on_connect(int rc)
 	}
 }
 
+
 void mosquittopp_test::on_disconnect(int rc)
 {
 	run = rc;
 }
+
 
 void mosquittopp_test::on_unsubscribe_v5(int mid, const mosquitto_property *props)
 {
@@ -45,6 +48,7 @@ void mosquittopp_test::on_unsubscribe_v5(int mid, const mosquitto_property *prop
 
 	disconnect_v5(0, NULL);
 }
+
 
 int main(int argc, char *argv[])
 {

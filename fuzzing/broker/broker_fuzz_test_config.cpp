@@ -32,6 +32,7 @@ Contributors:
 /* The broker fuzz-only main function. */
 extern "C" int mosquitto_fuzz_main(int argc, char *argv[]);
 
+
 void run_broker(char *filename)
 {
 	char *argv[5];
@@ -51,7 +52,6 @@ void run_broker(char *filename)
 }
 
 
-
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
 {
 	char filename[100];
@@ -65,7 +65,9 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
 
 	snprintf(filename, sizeof(filename), "/tmp/mosquitto_%d.conf", getpid());
 	fptr = fopen(filename, "wb");
-	if(!fptr) return 1;
+	if(!fptr){
+		return 1;
+	}
 	fwrite(data, 1, size, fptr);
 	fclose(fptr);
 

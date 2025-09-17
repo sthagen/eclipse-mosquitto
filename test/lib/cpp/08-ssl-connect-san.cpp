@@ -7,16 +7,17 @@ static int run = -1;
 
 class mosquittopp_test : public mosqpp::mosquittopp
 {
-	public:
-		mosquittopp_test(const char *id);
+public:
+	mosquittopp_test(const char *id);
 
-		void on_connect(int rc);
-		void on_disconnect(int rc);
+	void on_connect(int rc);
+	void on_disconnect(int rc);
 };
 
 mosquittopp_test::mosquittopp_test(const char *id) : mosqpp::mosquittopp(id)
 {
 }
+
 
 void mosquittopp_test::on_connect(int rc)
 {
@@ -26,6 +27,7 @@ void mosquittopp_test::on_connect(int rc)
 		disconnect();
 	}
 }
+
 
 void mosquittopp_test::on_disconnect(int rc)
 {
@@ -46,10 +48,12 @@ int main(int argc, char *argv[])
 
 	mosq = new mosquittopp_test("08-ssl-connect-san");
 
-    cat_sourcedir_with_relpath(cafile, "/../../ssl/test-root-ca.crt");
+	cat_sourcedir_with_relpath(cafile, "/../../ssl/test-root-ca.crt");
 	mosq->tls_set(cafile);
 	rc = mosq->connect(host, port, 60);
-	if(rc != MOSQ_ERR_SUCCESS) return rc;
+	if(rc != MOSQ_ERR_SUCCESS){
+		return rc;
+	}
 
 	while(run == -1){
 		mosq->loop();

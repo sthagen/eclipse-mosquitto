@@ -45,7 +45,9 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
 
 	snprintf(filename, sizeof(filename), "/tmp/acl_file_%d", getpid());
 	fptr = fopen(filename, "wb");
-	if(!fptr) return 1;
+	if(!fptr){
+		return 1;
+	}
 	fwrite(data, 1, size, fptr);
 	fclose(fptr);
 

@@ -35,6 +35,7 @@ Contributors:
 /* The broker fuzz-only main function. */
 extern "C" int mosquitto_fuzz_main(int argc, char *argv[]);
 
+
 void *run_broker(void *args)
 {
 	char *argv[4];
@@ -64,6 +65,7 @@ void recv_timeout(int sock, void *buf, size_t len, int timeout_us)
 	(void)recv(sock, buf, len, 0);
 }
 
+
 int connect_retrying(int port)
 {
 	struct sockaddr_in addr;
@@ -91,6 +93,7 @@ int connect_retrying(int port)
 	return sock;
 }
 
+
 static bool initialise(pthread_t *thread)
 {
 	FILE *fptr;
@@ -112,6 +115,7 @@ static bool initialise(pthread_t *thread)
 
 	return true;
 }
+
 
 void deinitialise(pthread_t *thread)
 {

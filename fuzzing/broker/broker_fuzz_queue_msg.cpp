@@ -30,7 +30,9 @@ extern "C" {
 #include "mosquitto_broker_internal.h"
 }
 
+
 //int sub__messages_queue(const char *source_id, const char *topic, uint8_t qos, int retain, struct mosquitto__base_msg **stored)
+
 
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
 {

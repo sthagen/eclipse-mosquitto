@@ -2,6 +2,7 @@
 #include <cstring>
 #include <mosquitto/libmosquittopp.h>
 
+
 void print_error(const char *topic, char **topics, int topic_count)
 {
 	int i;
@@ -15,6 +16,7 @@ void print_error(const char *topic, char **topics, int topic_count)
 	}
 	printf("\n");
 }
+
 
 int main(int argc, char *argv[])
 {

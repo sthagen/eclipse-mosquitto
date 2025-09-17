@@ -1,5 +1,6 @@
 #include "libmosquitto_mock.hpp"
 
+
 int mosquitto_subscribe_simple(struct mosquitto_message **messages,
 		int msg_count, bool want_retained, const char *topic, int qos,
 		const char *host, int port, const char *clientid, int keepalive,
@@ -10,6 +11,7 @@ int mosquitto_subscribe_simple(struct mosquitto_message **messages,
 			msg_count, want_retained, topic, qos, host, port, clientid,
 			keepalive, clean_session, username, password, will, tls);
 }
+
 
 int mosquitto_subscribe_callback(int (*callback)(struct mosquitto *,
 		void *, const struct mosquitto_message *), void *userdata,

@@ -8,16 +8,17 @@ static int run = -1;
 
 class mosquittopp_test : public mosqpp::mosquittopp
 {
-	public:
-		mosquittopp_test(const char *id);
+public:
+	mosquittopp_test(const char *id);
 
-		void on_connect(int rc);
-		void on_publish_v5(int mid, int reason_code, const mosquitto_property *properties);
+	void on_connect(int rc);
+	void on_publish_v5(int mid, int reason_code, const mosquitto_property *properties);
 };
 
 mosquittopp_test::mosquittopp_test(const char *id) : mosqpp::mosquittopp(id)
 {
 }
+
 
 void mosquittopp_test::on_connect(int rc)
 {
@@ -29,6 +30,7 @@ void mosquittopp_test::on_connect(int rc)
 	}
 }
 
+
 void mosquittopp_test::on_publish_v5(int mid, int reason_code, const mosquitto_property *properties)
 {
 	assert(reason_code == 0);
@@ -38,6 +40,7 @@ void mosquittopp_test::on_publish_v5(int mid, int reason_code, const mosquitto_p
 		run = 0;
 	}
 }
+
 
 int main(int argc, char *argv[])
 {

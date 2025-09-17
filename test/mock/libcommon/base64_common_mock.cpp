@@ -1,5 +1,6 @@
 #include "libmosquitto_common_mock.hpp"
 
+
 int mosquitto_base64_encode(const unsigned char *in, size_t in_len, char **encoded)
 {
 	return LibMosquittoCommonMock::get_mock().mosquitto_base64_encode(

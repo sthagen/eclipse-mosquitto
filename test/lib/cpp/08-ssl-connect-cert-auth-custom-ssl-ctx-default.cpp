@@ -5,6 +5,7 @@
 
 static int run = -1;
 
+
 void handle_sigint(int signal)
 {
 	(void)signal;
@@ -13,16 +14,17 @@ void handle_sigint(int signal)
 
 class mosquittopp_test : public mosqpp::mosquittopp
 {
-	public:
-		mosquittopp_test(const char *id);
+public:
+	mosquittopp_test(const char *id);
 
-		void on_connect(int rc);
-		void on_disconnect(int rc);
+	void on_connect(int rc);
+	void on_disconnect(int rc);
 };
 
 mosquittopp_test::mosquittopp_test(const char *id) : mosqpp::mosquittopp(id)
 {
 }
+
 
 void mosquittopp_test::on_connect(int rc)
 {
@@ -32,6 +34,7 @@ void mosquittopp_test::on_connect(int rc)
 		disconnect();
 	}
 }
+
 
 void mosquittopp_test::on_disconnect(int rc)
 {
