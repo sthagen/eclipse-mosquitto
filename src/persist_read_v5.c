@@ -43,7 +43,9 @@ int persist__chunk_header_read_v56(FILE *db_fptr, uint32_t *chunk, uint32_t *len
 	struct PF_header header;
 
 	rlen = fread(&header, sizeof(struct PF_header), 1, db_fptr);
-	if(rlen != 1) return 1;
+	if(rlen != 1){
+		return 1;
+	}
 
 	*chunk = ntohl(header.chunk);
 	*length = ntohl(header.length);
@@ -117,10 +119,14 @@ int persist__chunk_client_msg_read_v56(FILE *db_fptr, struct P_client_msg *chunk
 	chunk->F.id_len = ntohs(chunk->F.id_len);
 
 	length -= (uint32_t)(sizeof(struct PF_client_msg) + chunk->F.id_len);
-	if(length > MQTT_MAX_PAYLOAD) goto error;
+	if(length > MQTT_MAX_PAYLOAD){
+		goto error;
+	}
 
 	rc = persist__read_string_len(db_fptr, &chunk->clientid, chunk->F.id_len);
-	if(rc) return rc;
+	if(rc){
+		return rc;
+	}
 
 	if(length > 0){
 		prop_packet.remaining_length = length;
@@ -179,18 +185,26 @@ int persist__chunk_base_msg_read_v56(FILE *db_fptr, struct P_base_msg *chunk, ui
 	chunk->F.source_port = ntohs(chunk->F.source_port);
 
 	length -= (uint32_t)(sizeof(struct PF_base_msg) + chunk->F.payloadlen + chunk->F.source_id_len + chunk->F.source_username_len + chunk->F.topic_len);
-	if(length > MQTT_MAX_PAYLOAD) goto error;
+	if(length > MQTT_MAX_PAYLOAD){
+		goto error;
+	}
 
 	if(chunk->F.source_id_len){
 		rc = persist__read_string_len(db_fptr, &chunk->source.id, chunk->F.source_id_len);
-		if(rc) goto error;
+		if(rc){
+			goto error;
+		}
 	}
 	if(chunk->F.source_username_len){
 		rc = persist__read_string_len(db_fptr, &chunk->source.username, chunk->F.source_username_len);
-		if(rc) goto error;
+		if(rc){
+			goto error;
+		}
 	}
 	rc = persist__read_string_len(db_fptr, &chunk->topic, chunk->F.topic_len);
-	if(rc) goto error;
+	if(rc){
+		goto error;
+	}
 
 	if(chunk->F.payloadlen > 0){
 		chunk->payload = mosquitto_malloc(chunk->F.payloadlen+1);
@@ -251,10 +265,14 @@ int persist__chunk_sub_read_v56(FILE *db_fptr, struct P_sub *chunk)
 	chunk->F.topic_len = ntohs(chunk->F.topic_len);
 
 	rc = persist__read_string_len(db_fptr, &chunk->clientid, chunk->F.id_len);
-	if(rc) goto error;
+	if(rc){
+		goto error;
+	}
 
 	rc = persist__read_string_len(db_fptr, &chunk->topic, chunk->F.topic_len);
-	if(rc) goto error;
+	if(rc){
+		goto error;
+	}
 
 	return MOSQ_ERR_SUCCESS;
 error:

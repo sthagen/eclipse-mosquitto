@@ -31,7 +31,9 @@ void completion_tree_arg_list_args_free(struct completion_tree_arg_list *arg_lis
 {
 	struct completion_tree_arg *arg, *next;
 
-	if(!arg_list) return;
+	if(!arg_list){
+		return;
+	}
 
 	arg = arg_list->args;
 	while(arg){
@@ -45,8 +47,12 @@ void completion_tree_arg_list_args_free(struct completion_tree_arg_list *arg_lis
 
 void completion_tree_arg_list_free(struct completion_tree_arg_list *arg_list)
 {
-	if(!arg_list) return;
-	if(arg_list->is_shared) return;
+	if(!arg_list){
+		return;
+	}
+	if(arg_list->is_shared){
+		return;
+	}
 
 	completion_tree_arg_list_args_free(arg_list);
 	free(arg_list);
@@ -55,7 +61,9 @@ void completion_tree_arg_list_free(struct completion_tree_arg_list *arg_list)
 
 void completion_tree_cmd_free(struct completion_tree_cmd *cmd)
 {
-	if(!cmd) return;
+	if(!cmd){
+		return;
+	}
 
 	for(int i=0; i<cmd->arg_list_count; i++){
 		completion_tree_arg_list_free(cmd->arg_lists[i]);
@@ -69,7 +77,9 @@ void completion_tree_free(struct completion_tree_root *tree)
 {
 	struct completion_tree_cmd *cmd, *next;
 
-	if(!tree) return;
+	if(!tree){
+		return;
+	}
 
 	cmd = tree->commands;
 	while(cmd){
@@ -85,7 +95,9 @@ struct completion_tree_cmd *completion_tree_cmd_add(struct completion_tree_root 
 	struct completion_tree_cmd *new_node;
 
 	new_node = calloc(1, sizeof(struct completion_tree_cmd) + strlen(name) + 1);
-	if(!new_node) return NULL;
+	if(!new_node){
+		return NULL;
+	}
 
 	strcpy(new_node->name, name);
 
@@ -108,7 +120,9 @@ void completion_tree_cmd_append_arg_list(struct completion_tree_cmd *cmd, struct
 	struct completion_tree_arg_list **arg_list;
 
 	arg_list = realloc(cmd->arg_lists, (size_t)(cmd->arg_list_count+1)*sizeof(struct completion_tree_arg_list *));
-	if(!arg_list) return;
+	if(!arg_list){
+		return;
+	}
 
 	cmd->arg_lists = arg_list;
 
@@ -118,11 +132,15 @@ void completion_tree_cmd_append_arg_list(struct completion_tree_cmd *cmd, struct
 
 struct completion_tree_arg_list *completion_tree_cmd_add_arg_list(struct completion_tree_cmd *cmd)
 {
-	if(!cmd) return NULL;
+	if(!cmd){
+		return NULL;
+	}
 
 	struct completion_tree_arg_list *new_list;
 	new_list = completion_tree_cmd_new_arg_list();
-	if(!new_list) return NULL;
+	if(!new_list){
+		return NULL;
+	}
 
 	completion_tree_cmd_append_arg_list(cmd, new_list);
 
@@ -132,12 +150,16 @@ struct completion_tree_arg_list *completion_tree_cmd_add_arg_list(struct complet
 
 void completion_tree_arg_list_add_arg(struct completion_tree_arg_list *arg_list, const char *name)
 {
-	if(!arg_list || !name) return;
+	if(!arg_list || !name){
+		return;
+	}
 
 	struct completion_tree_arg *new_node;
 
 	new_node = calloc(1, sizeof(struct completion_tree_arg) + strlen(name) + 1);
-	if(!new_node) return;
+	if(!new_node){
+		return;
+	}
 
 	strcpy(new_node->name, name);
 

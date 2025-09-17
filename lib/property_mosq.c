@@ -44,7 +44,9 @@ static int property__read(struct mosquitto__packet_in *packet, uint32_t *len, mo
 	char *str1, *str2;
 	uint16_t slen1, slen2;
 
-	if(!property) return MOSQ_ERR_INVAL;
+	if(!property){
+		return MOSQ_ERR_INVAL;
+	}
 
 	rc = packet__read_varint(packet, &property_identifier, NULL);
 	if(rc){
@@ -66,7 +68,9 @@ static int property__read(struct mosquitto__packet_in *packet, uint32_t *len, mo
 		case MQTT_PROP_SUBSCRIPTION_ID_AVAILABLE:
 		case MQTT_PROP_SHARED_SUB_AVAILABLE:
 			rc = packet__read_byte(packet, &byte);
-			if(rc) return rc;
+			if(rc){
+				return rc;
+			}
 			*len -= 1; /* byte */
 			property->value.i8 = byte;
 			property->property_type = MQTT_PROP_TYPE_BYTE;
@@ -77,7 +81,9 @@ static int property__read(struct mosquitto__packet_in *packet, uint32_t *len, mo
 		case MQTT_PROP_TOPIC_ALIAS_MAXIMUM:
 		case MQTT_PROP_TOPIC_ALIAS:
 			rc = packet__read_uint16(packet, &uint16);
-			if(rc) return rc;
+			if(rc){
+				return rc;
+			}
 			*len -= 2; /* uint16 */
 			property->value.i16 = uint16;
 			property->property_type = MQTT_PROP_TYPE_INT16;
@@ -88,7 +94,9 @@ static int property__read(struct mosquitto__packet_in *packet, uint32_t *len, mo
 		case MQTT_PROP_WILL_DELAY_INTERVAL:
 		case MQTT_PROP_MAXIMUM_PACKET_SIZE:
 			rc = packet__read_uint32(packet, &uint32);
-			if(rc) return rc;
+			if(rc){
+				return rc;
+			}
 			*len -= 4; /* uint32 */
 			property->value.i32 = uint32;
 			property->property_type = MQTT_PROP_TYPE_INT32;
@@ -96,7 +104,9 @@ static int property__read(struct mosquitto__packet_in *packet, uint32_t *len, mo
 
 		case MQTT_PROP_SUBSCRIPTION_IDENTIFIER:
 			rc = packet__read_varint(packet, &varint, &byte_count);
-			if(rc) return rc;
+			if(rc){
+				return rc;
+			}
 			*len -= byte_count;
 			property->value.varint = varint;
 			property->property_type = MQTT_PROP_TYPE_VARINT;
@@ -110,7 +120,9 @@ static int property__read(struct mosquitto__packet_in *packet, uint32_t *len, mo
 		case MQTT_PROP_SERVER_REFERENCE:
 		case MQTT_PROP_REASON_STRING:
 			rc = packet__read_string(packet, &str1, &slen1);
-			if(rc) return rc;
+			if(rc){
+				return rc;
+			}
 			*len = (*len) - 2 - slen1; /* uint16, string len */
 			property->value.s.v = str1;
 			property->value.s.len = slen1;
@@ -120,7 +132,9 @@ static int property__read(struct mosquitto__packet_in *packet, uint32_t *len, mo
 		case MQTT_PROP_AUTHENTICATION_DATA:
 		case MQTT_PROP_CORRELATION_DATA:
 			rc = packet__read_binary(packet, (uint8_t **)&str1, &slen1);
-			if(rc) return rc;
+			if(rc){
+				return rc;
+			}
 			*len = (*len) - 2 - slen1; /* uint16, binary len */
 			property->value.bin.v = str1;
 			property->value.bin.len = slen1;
@@ -129,7 +143,9 @@ static int property__read(struct mosquitto__packet_in *packet, uint32_t *len, mo
 
 		case MQTT_PROP_USER_PROPERTY:
 			rc = packet__read_string(packet, &str1, &slen1);
-			if(rc) return rc;
+			if(rc){
+				return rc;
+			}
 			*len = (*len) - 2 - slen1; /* uint16, string len */
 
 			rc = packet__read_string(packet, &str2, &slen2);
@@ -164,7 +180,9 @@ int property__read_all(int command, struct mosquitto__packet_in *packet, mosquit
 	mosquitto_property *p, *tail = NULL;
 
 	rc = packet__read_varint(packet, &proplen, NULL);
-	if(rc) return rc;
+	if(rc){
+		return rc;
+	}
 
 	*properties = NULL;
 
@@ -207,7 +225,9 @@ static int property__write(struct mosquitto__packet *packet, const mosquitto_pro
 	int rc;
 
 	rc = packet__write_varint(packet, (uint32_t)mosquitto_property_identifier(property));
-	if(rc) return rc;
+	if(rc){
+		return rc;
+	}
 
 	switch(property->property_type){
 		case MQTT_PROP_TYPE_BYTE:
@@ -257,13 +277,17 @@ int property__write_all(struct mosquitto__packet *packet, const mosquitto_proper
 
 	if(write_len){
 		rc = packet__write_varint(packet, mosquitto_property_get_length_all(properties));
-		if(rc) return rc;
+		if(rc){
+			return rc;
+		}
 	}
 
 	p = properties;
 	while(p){
 		rc = property__write(packet, p);
-		if(rc) return rc;
+		if(rc){
+			return rc;
+		}
 		p = p->next;
 	}
 

@@ -62,7 +62,9 @@ int handle__pubackcomp(struct mosquitto *mosq, const char *type)
 	COMPAT_pthread_mutex_unlock(&mosq->msgs_out.mutex);
 
 	rc = packet__read_uint16(&mosq->in_packet, &mid);
-	if(rc) return rc;
+	if(rc){
+		return rc;
+	}
 	if(type[3] == 'A'){ /* pubAck or pubComp */
 		if(mosq->in_packet.command != CMD_PUBACK){
 			return MOSQ_ERR_MALFORMED_PACKET;
@@ -86,7 +88,9 @@ int handle__pubackcomp(struct mosquitto *mosq, const char *type)
 
 		if(mosq->in_packet.remaining_length > 3){
 			rc = property__read_all(CMD_PUBACK, &mosq->in_packet, &properties);
-			if(rc) return rc;
+			if(rc){
+				return rc;
+			}
 		}
 		if(type[3] == 'A'){ /* pubAck or pubComp */
 			if(reason_code != MQTT_RC_SUCCESS

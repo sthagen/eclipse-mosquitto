@@ -75,7 +75,9 @@ cJSON *dynsec_grouplist__all_to_json(struct dynsec__grouplist *base_grouplist)
 	cJSON *j_groups, *j_group;
 
 	j_groups = cJSON_CreateArray();
-	if(j_groups == NULL) return NULL;
+	if(j_groups == NULL){
+		return NULL;
+	}
 
 	HASH_ITER(hh, base_grouplist, grouplist, grouplist_tmp){
 		j_group = cJSON_CreateObject();

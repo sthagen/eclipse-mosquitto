@@ -250,7 +250,9 @@ int broker__main(int argc, char *argv[], struct mosq_ctrl *ctrl)
 		return MOSQ_ERR_NOMEM;
 	}
 	j_tree = cJSON_CreateObject();
-	if(j_tree == NULL) return MOSQ_ERR_NOMEM;
+	if(j_tree == NULL){
+		return MOSQ_ERR_NOMEM;
+	}
 	j_commands = cJSON_AddArrayToObject(j_tree, "commands");
 	if(j_commands == NULL){
 		cJSON_Delete(j_tree);

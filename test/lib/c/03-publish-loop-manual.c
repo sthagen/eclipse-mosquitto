@@ -17,7 +17,9 @@ static void do_loop(struct mosquitto *mosq)
 
 	sock = mosquitto_socket(mosq);
 
-	if(sock < 0) exit(1);
+	if(sock < 0){
+		exit(1);
+	}
 
 	FD_ZERO(&readfds);
 	FD_ZERO(&writefds);
@@ -36,7 +38,9 @@ static void do_loop(struct mosquitto *mosq)
 		}
 
 		fdcount = select(sock+1, &readfds, &writefds, NULL, &tv);
-		if(fdcount < 0) exit(1);
+		if(fdcount < 0){
+			exit(1);
+		}
 		if(FD_ISSET(sock, &readfds)){
 			mosquitto_loop_read(mosq, 1);
 		}
@@ -121,7 +125,9 @@ int main(int argc, char *argv[])
 	mosquitto_message_v5_callback_set(mosq, on_message_v5);
 
 	rc = mosquitto_connect_bind_v5(mosq, "localhost", port, 60, NULL, NULL);
-	if(rc != MOSQ_ERR_SUCCESS) return rc;
+	if(rc != MOSQ_ERR_SUCCESS){
+		return rc;
+	}
 
 	do_loop(mosq);
 	mosquitto_destroy(mosq);

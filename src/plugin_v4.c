@@ -160,7 +160,9 @@ static int plugin_v4_reload(int event, void *event_data, void *userdata)
 			plugin->config.options,
 			plugin->config.option_count,
 			true);
-	if(rc) return rc;
+	if(rc){
+		return rc;
+	}
 
 	rc = plugin->lib.security_init_v4(
 			plugin->lib.user_data,

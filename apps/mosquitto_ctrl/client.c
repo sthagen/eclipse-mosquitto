@@ -140,7 +140,9 @@ int client_request_response(struct mosq_ctrl *ctrl)
 
 	mosq = mosquitto_new(ctrl->cfg.id, true, ctrl);
 	rc = client_opts_set(mosq, &ctrl->cfg);
-	if(rc) goto cleanup;
+	if(rc){
+		goto cleanup;
+	}
 
 	mosquitto_connect_v5_callback_set(mosq, on_connect);
 	mosquitto_subscribe_v5_callback_set(mosq, on_subscribe);
@@ -148,7 +150,9 @@ int client_request_response(struct mosq_ctrl *ctrl)
 	mosquitto_message_v5_callback_set(mosq, on_message);
 
 	rc = client_connect(mosq, &ctrl->cfg);
-	if(rc) goto cleanup;
+	if(rc){
+		goto cleanup;
+	}
 
 	start = time(NULL);
 	while(run && start+10 > time(NULL)){

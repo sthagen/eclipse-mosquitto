@@ -159,7 +159,9 @@ int mosquitto_plugin_init(mosquitto_plugin_id_t *identifier, void **user_data, s
 	mosquitto_plugin_set_info(identifier, PLUGIN_NAME, PLUGIN_VERSION);
 
 	rc = mosquitto_callback_register(mosq_pid, MOSQ_EVT_BASIC_AUTH, basic_auth_callback, NULL, NULL);
-	if(rc) return rc;
+	if(rc){
+		return rc;
+	}
 	rc = mosquitto_callback_register(mosq_pid, MOSQ_EVT_TICK, tick_callback, NULL, NULL);
 	return rc;
 }

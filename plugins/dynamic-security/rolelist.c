@@ -87,7 +87,9 @@ int dynsec_rolelist__client_remove(struct dynsec__client *client, struct dynsec_
 	struct dynsec__clientlist *found_clientlist;
 
 	rc = dynsec_rolelist__remove_role(&client->rolelist, role);
-	if(rc) return rc;
+	if(rc){
+		return rc;
+	}
 
 	HASH_FIND(hh, role->clientlist, client->username, strlen(client->username), found_clientlist);
 	if(found_clientlist){
@@ -112,16 +114,22 @@ static int dynsec_rolelist__add(struct dynsec__rolelist **base_rolelist, struct 
 	struct dynsec__rolelist *rolelist;
 	size_t rolename_len;
 
-	if(role == NULL) return MOSQ_ERR_INVAL;
+	if(role == NULL){
+		return MOSQ_ERR_INVAL;
+	}
 	rolename_len = strlen(role->rolename);
-	if(rolename_len == 0) return MOSQ_ERR_INVAL;
+	if(rolename_len == 0){
+		return MOSQ_ERR_INVAL;
+	}
 
 	HASH_FIND(hh, *base_rolelist, role->rolename, rolename_len, rolelist);
 	if(rolelist){
 		return MOSQ_ERR_ALREADY_EXISTS;
 	}else{
 		rolelist = mosquitto_calloc(1, sizeof(struct dynsec__rolelist) + rolename_len + 1);
-		if(rolelist == NULL) return MOSQ_ERR_NOMEM;
+		if(rolelist == NULL){
+			return MOSQ_ERR_NOMEM;
+		}
 
 		rolelist->role = role;
 		rolelist->priority = priority;
@@ -138,7 +146,9 @@ int dynsec_rolelist__client_add(struct dynsec__client *client, struct dynsec__ro
 	int rc;
 
 	rc = dynsec_rolelist__add(&client->rolelist, role, priority);
-	if(rc) return rc;
+	if(rc){
+		return rc;
+	}
 
 	HASH_FIND(hh, client->rolelist, role->rolename, strlen(role->rolename), rolelist);
 	if(rolelist == NULL){
@@ -160,7 +170,9 @@ int dynsec_rolelist__group_add(struct dynsec__group *group, struct dynsec__role 
 	int rc;
 
 	rc = dynsec_rolelist__add(&group->rolelist, role, priority);
-	if(rc) return rc;
+	if(rc){
+		return rc;
+	}
 
 	rc = dynsec_grouplist__add(&role->grouplist, group, priority);
 	if(rc){
@@ -183,7 +195,9 @@ int dynsec_rolelist__load_from_json(struct dynsec__data *data, cJSON *command, s
 			cJSON_ArrayForEach(j_role, j_roles){
 				if(json_get_string(j_role, "rolename", &rolename, false) == MOSQ_ERR_SUCCESS){
 					json_get_int(j_role, "priority", &priority, true, -1);
-					if(priority > PRIORITY_MAX) priority = PRIORITY_MAX;
+					if(priority > PRIORITY_MAX){
+						priority = PRIORITY_MAX;
+					}
 					role = dynsec_roles__find(data, rolename);
 					if(role){
 						dynsec_rolelist__add(rolelist, role, priority);
@@ -211,7 +225,9 @@ cJSON *dynsec_rolelist__all_to_json(struct dynsec__rolelist *base_rolelist)
 	cJSON *j_roles, *j_role;
 
 	j_roles = cJSON_CreateArray();
-	if(j_roles == NULL) return NULL;
+	if(j_roles == NULL){
+		return NULL;
+	}
 
 	HASH_ITER(hh, base_rolelist, rolelist, rolelist_tmp){
 		j_role = cJSON_CreateObject();

@@ -104,7 +104,9 @@ static int create_tables(struct mosquitto_sqlite *ms)
 			"properties STRING"
 			");",
 			NULL, NULL, NULL);
-	if(rc) goto fail;
+	if(rc){
+		goto fail;
+	}
 
 	rc = sqlite3_exec(ms->db,
 			"CREATE TABLE IF NOT EXISTS retains "
@@ -115,7 +117,9 @@ static int create_tables(struct mosquitto_sqlite *ms)
 			//"ON DELETE CASCADE"
 			");",
 			NULL, NULL, NULL);
-	if(rc) goto fail;
+	if(rc){
+		goto fail;
+	}
 
 	rc = sqlite3_exec(ms->db,
 			"CREATE TABLE IF NOT EXISTS clients "
@@ -133,7 +137,9 @@ static int create_tables(struct mosquitto_sqlite *ms)
 			"will_delay_interval INT"
 			");",
 			NULL, NULL, NULL);
-	if(rc) goto fail;
+	if(rc){
+		goto fail;
+	}
 
 	rc = sqlite3_exec(ms->db,
 			"CREATE TABLE IF NOT EXISTS subscriptions "
@@ -145,7 +151,9 @@ static int create_tables(struct mosquitto_sqlite *ms)
 			"PRIMARY KEY (client_id, topic) "
 			");",
 			NULL, NULL, NULL);
-	if(rc) goto fail;
+	if(rc){
+		goto fail;
+	}
 
 	rc = sqlite3_exec(ms->db,
 			"CREATE TABLE IF NOT EXISTS client_msgs "
@@ -167,27 +175,37 @@ static int create_tables(struct mosquitto_sqlite *ms)
 			//"ON DELETE CASCADE"
 			");",
 			NULL, NULL, NULL);
-	if(rc) goto fail;
+	if(rc){
+		goto fail;
+	}
 
 	rc = sqlite3_exec(ms->db,
 			"CREATE INDEX IF NOT EXISTS client_msgs_client_id ON client_msgs(client_id);",
 			NULL, NULL, NULL);
-	if(rc) goto fail;
+	if(rc){
+		goto fail;
+	}
 
 	rc = sqlite3_exec(ms->db,
 			"DROP INDEX IF EXISTS client_msgs_store_id;",
 			NULL, NULL, NULL);
-	if(rc) goto fail;
+	if(rc){
+		goto fail;
+	}
 
 	rc = sqlite3_exec(ms->db,
 			"CREATE INDEX IF NOT EXISTS client_msgs_store_id ON client_msgs(store_id,client_id);",
 			NULL, NULL, NULL);
-	if(rc) goto fail;
+	if(rc){
+		goto fail;
+	}
 
 	rc = sqlite3_exec(ms->db,
 			"CREATE INDEX IF NOT EXISTS retains_storeid ON retains(store_id);",
 			NULL, NULL, NULL);
-	if(rc) goto fail;
+	if(rc){
+		goto fail;
+	}
 
 	sqlite3_exec(ms->db, "ALTER TABLE client_msgs ADD COLUMN cmsg_id INT64", NULL, NULL, NULL);
 	sqlite3_exec(ms->db, "ALTER TABLE client_msgs ADD COLUMN subscription_identifier INT", NULL, NULL, NULL);
@@ -201,21 +219,27 @@ static int create_tables(struct mosquitto_sqlite *ms)
 			"patch INTEGER NOT NULL"
 			");",
 			NULL, NULL, NULL);
-	if(rc) goto fail;
+	if(rc){
+		goto fail;
+	}
 
 	rc = sqlite3_exec(ms->db,
 			"SELECT major,minor,patch"
 			"  FROM version_info "
 			"  WHERE component = 'database_schema';",
 			&extract_version_numbers, db_schema_version, NULL);
-	if(rc) goto fail;
+	if(rc){
+		goto fail;
+	}
 
 	if(db_schema_version[0] == 0){
 		rc = sqlite3_exec((*ms).db,
 				"INSERT INTO version_info(component,major,minor,patch) "
 				"VALUES ('database_schema','1','0','0');",
 				NULL, NULL, NULL);
-		if(rc) goto fail;
+		if(rc){
+			goto fail;
+		}
 		memcpy(db_schema_version, (int[3]){1, 0, 0}, sizeof(db_schema_version));
 	}
 	if(db_schema_version[0] == 1){
@@ -257,19 +281,25 @@ static int prepare_statements(struct mosquitto_sqlite *ms)
 			"VALUES (?,?,?,?)",
 			-1, SQLITE_PREPARE_PERSISTENT,
 			&ms->subscription_add_stmt, NULL);
-	if(rc) goto fail;
+	if(rc){
+		goto fail;
+	}
 
 	rc = sqlite3_prepare_v3(ms->db,
 			"DELETE FROM subscriptions WHERE client_id=? and topic=?",
 			-1, SQLITE_PREPARE_PERSISTENT,
 			&ms->subscription_remove_stmt, NULL);
-	if(rc) goto fail;
+	if(rc){
+		goto fail;
+	}
 
 	rc = sqlite3_prepare_v3(ms->db,
 			"DELETE FROM subscriptions WHERE client_id=?",
 			-1, SQLITE_PREPARE_PERSISTENT,
 			&ms->subscription_clear_stmt, NULL);
-	if(rc) goto fail;
+	if(rc){
+		goto fail;
+	}
 
 
 	/* Clients */
@@ -281,20 +311,26 @@ static int prepare_statements(struct mosquitto_sqlite *ms)
 			"VALUES(?,?,?,?,?,?,?,?,?,?,?)",
 			-1, SQLITE_PREPARE_PERSISTENT,
 			&ms->client_add_stmt, NULL);
-	if(rc) goto fail;
+	if(rc){
+		goto fail;
+	}
 
 	rc = sqlite3_prepare_v3(ms->db,
 			"DELETE FROM clients WHERE client_id=?",
 			-1, SQLITE_PREPARE_PERSISTENT,
 			&ms->client_remove_stmt, NULL);
-	if(rc) goto fail;
+	if(rc){
+		goto fail;
+	}
 
 	rc = sqlite3_prepare_v3(ms->db,
 			"UPDATE clients SET session_expiry_time=?, will_delay_time=? "
 			"WHERE client_id=?",
 			-1, SQLITE_PREPARE_PERSISTENT,
 			&ms->client_update_stmt, NULL);
-	if(rc) goto fail;
+	if(rc){
+		goto fail;
+	}
 
 	/* Client messages */
 	rc = sqlite3_prepare_v3(ms->db,
@@ -303,32 +339,42 @@ static int prepare_statements(struct mosquitto_sqlite *ms)
 			"VALUES(?,?,?,?,?,?,?,?,?,?)",
 			-1, SQLITE_PREPARE_PERSISTENT,
 			&ms->client_msg_add_stmt, NULL);
-	if(rc) goto fail;
+	if(rc){
+		goto fail;
+	}
 
 	rc = sqlite3_prepare_v3(ms->db,
 			"DELETE FROM client_msgs WHERE client_id=? AND store_id=? AND direction=?",
 			-1, SQLITE_PREPARE_PERSISTENT,
 			&ms->client_msg_remove_stmt, NULL);
-	if(rc) goto fail;
+	if(rc){
+		goto fail;
+	}
 
 
 	rc = sqlite3_prepare_v3(ms->db,
 			"UPDATE client_msgs SET state=?,dup=? WHERE client_id=? AND store_id=?",
 			-1, SQLITE_PREPARE_PERSISTENT,
 			&ms->client_msg_update_stmt, NULL);
-	if(rc) goto fail;
+	if(rc){
+		goto fail;
+	}
 
 	rc = sqlite3_prepare_v3(ms->db,
 			"DELETE FROM client_msgs WHERE client_id=? AND direction=?",
 			-1, SQLITE_PREPARE_PERSISTENT,
 			&ms->client_msg_clear_stmt, NULL);
-	if(rc) goto fail;
+	if(rc){
+		goto fail;
+	}
 
 	rc = sqlite3_prepare_v3(ms->db,
 			"DELETE FROM client_msgs WHERE client_id=?",
 			-1, SQLITE_PREPARE_PERSISTENT,
 			&ms->client_msg_clear_all_stmt, NULL);
-	if(rc) goto fail;
+	if(rc){
+		goto fail;
+	}
 
 	/* Message store */
 	rc = sqlite3_prepare_v3(ms->db,
@@ -338,13 +384,17 @@ static int prepare_statements(struct mosquitto_sqlite *ms)
 			"VALUES(?,?,?,?,?,?,?,?,?,?,?,?)",
 			-1, SQLITE_PREPARE_PERSISTENT,
 			&ms->base_msg_add_stmt, NULL);
-	if(rc) goto fail;
+	if(rc){
+		goto fail;
+	}
 
 	rc = sqlite3_prepare_v3(ms->db,
 			"DELETE FROM base_msgs WHERE store_id=?",
 			-1, SQLITE_PREPARE_PERSISTENT,
 			&ms->base_msg_remove_stmt, NULL);
-	if(rc) goto fail;
+	if(rc){
+		goto fail;
+	}
 
 	rc = sqlite3_prepare_v3(ms->db,
 			"DELETE FROM base_msgs AS bm "
@@ -355,7 +405,9 @@ static int prepare_statements(struct mosquitto_sqlite *ms)
 			"  WHERE cm.client_id = ? AND oc.store_id IS NULL AND rm.store_id IS NULL)",
 			-1, SQLITE_PREPARE_PERSISTENT,
 			&ms->base_msg_remove_for_clientid_stmt, NULL);
-	if(rc) goto fail;
+	if(rc){
+		goto fail;
+	}
 
 	rc = sqlite3_prepare_v3(ms->db,
 			"SELECT store_id, expiry_time, topic, payload, source_id, source_username, "
@@ -363,7 +415,9 @@ static int prepare_statements(struct mosquitto_sqlite *ms)
 			"FROM base_msgs WHERE store_id=?",
 			-1, SQLITE_PREPARE_PERSISTENT,
 			&ms->base_msg_load_stmt, NULL);
-	if(rc) goto fail;
+	if(rc){
+		goto fail;
+	}
 
 	/* Retains */
 	rc = sqlite3_prepare_v3(ms->db,
@@ -372,13 +426,17 @@ static int prepare_statements(struct mosquitto_sqlite *ms)
 			"VALUES(?,?)",
 			-1, SQLITE_PREPARE_PERSISTENT,
 			&ms->retain_msg_set_stmt, NULL);
-	if(rc) goto fail;
+	if(rc){
+		goto fail;
+	}
 
 	rc = sqlite3_prepare_v3(ms->db,
 			"DELETE FROM retains WHERE topic=?",
 			-1, SQLITE_PREPARE_PERSISTENT,
 			&ms->retain_msg_remove_stmt, NULL);
-	if(rc) goto fail;
+	if(rc){
+		goto fail;
+	}
 
 	/* Will messages */
 	rc = sqlite3_prepare_v3(ms->db,
@@ -387,13 +445,17 @@ static int prepare_statements(struct mosquitto_sqlite *ms)
 			"VALUES(?,?,?,?,?,?,?)",
 			-1, SQLITE_PREPARE_PERSISTENT,
 			&ms->will_add_stmt, NULL);
-	if(rc) goto fail;
+	if(rc){
+		goto fail;
+	}
 
 	rc = sqlite3_prepare_v3(ms->db,
 			"DELETE FROM wills WHERE client_id=?",
 			-1, SQLITE_PREPARE_PERSISTENT,
 			&ms->will_remove_stmt, NULL);
-	if(rc) goto fail;
+	if(rc){
+		goto fail;
+	}
 
 	return 0;
 fail:
@@ -417,20 +479,32 @@ int persist_sqlite__init(struct mosquitto_sqlite *ms)
 	}
 	snprintf(buf, sizeof(buf), "PRAGMA page_size=%u;", ms->page_size);
 	rc = sqlite3_exec(ms->db, buf, NULL, NULL, NULL);
-	if(rc) goto fail;
+	if(rc){
+		goto fail;
+	}
 	rc = sqlite3_exec(ms->db, "PRAGMA journal_mode=WAL;", NULL, NULL, NULL);
-	if(rc) goto fail;
+	if(rc){
+		goto fail;
+	}
 	rc = sqlite3_exec(ms->db, "PRAGMA foreign_keys = ON;", NULL, NULL, NULL);
-	if(rc) goto fail;
+	if(rc){
+		goto fail;
+	}
 	snprintf(buf, sizeof(buf), "PRAGMA synchronous=%d;", ms->synchronous);
 	rc = sqlite3_exec(ms->db, buf, NULL, NULL, NULL);
-	if(rc) goto fail;
+	if(rc){
+		goto fail;
+	}
 
 	rc = create_tables(ms);
-	if(rc) return rc;
+	if(rc){
+		return rc;
+	}
 
 	rc = prepare_statements(ms);
-	if(rc) return rc;
+	if(rc){
+		return rc;
+	}
 
 	sqlite3_exec(ms->db, "BEGIN;", NULL, NULL, NULL);
 	return MOSQ_ERR_SUCCESS;

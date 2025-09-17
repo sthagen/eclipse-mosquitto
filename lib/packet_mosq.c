@@ -68,11 +68,15 @@ int packet__alloc(struct mosquitto__packet **packet, uint8_t command, uint32_t r
 		remaining_bytes[remaining_count] = byte;
 		remaining_count++;
 	}while(remaining_length > 0 && remaining_count < 5);
-	if(remaining_count == 5) return MOSQ_ERR_PAYLOAD_SIZE;
+	if(remaining_count == 5){
+		return MOSQ_ERR_PAYLOAD_SIZE;
+	}
 
 	packet_length = remaining_length_stored + 1 + (uint8_t)remaining_count;
 	(*packet) = mosquitto_malloc(sizeof(struct mosquitto__packet) + packet_length + WS_PACKET_OFFSET);
-	if((*packet) == NULL) return MOSQ_ERR_NOMEM;
+	if((*packet) == NULL){
+		return MOSQ_ERR_NOMEM;
+	}
 
 	/* Clear memory for everything but the payload - that will be set to valid
 	 * values when the actual payload is copied in. */
@@ -94,7 +98,9 @@ int packet__alloc(struct mosquitto__packet **packet, uint8_t command, uint32_t r
 
 void packet__cleanup(struct mosquitto__packet_in *packet)
 {
-	if(!packet) return;
+	if(!packet){
+		return;
+	}
 
 	/* Free data and reset values */
 	packet->command = 0;
@@ -228,7 +234,9 @@ int packet__check_oversize(struct mosquitto *mosq, uint32_t remaining_length)
 {
 	uint32_t len;
 
-	if(mosq->maximum_packet_size == 0) return MOSQ_ERR_SUCCESS;
+	if(mosq->maximum_packet_size == 0){
+		return MOSQ_ERR_SUCCESS;
+	}
 
 	len = remaining_length + mosquitto_varint_bytes(remaining_length);
 	if(len > mosq->maximum_packet_size){
@@ -267,7 +275,9 @@ int packet__write(struct mosquitto *mosq)
 	struct mosquitto__packet *packet, *next_packet;
 	enum mosquitto_client_state state;
 
-	if(!mosq) return MOSQ_ERR_INVAL;
+	if(!mosq){
+		return MOSQ_ERR_INVAL;
+	}
 	if(!net__is_connected(mosq)){
 		return MOSQ_ERR_NO_CONN;
 	}
@@ -391,7 +401,9 @@ static int packet__read_single(struct mosquitto *mosq, enum mosquitto_client_sta
 	if(!mosq->in_packet.command){
 		if(mosq->in_packet.packet_buffer_to_process == 0){
 			rc = read_header(mosq, local__read);
-			if(rc) return rc;
+			if(rc){
+				return rc;
+			}
 		}
 
 		if(mosq->in_packet.packet_buffer_to_process > 0){
@@ -429,7 +441,9 @@ static int packet__read_single(struct mosquitto *mosq, enum mosquitto_client_sta
 		do{
 			if(mosq->in_packet.packet_buffer_to_process == 0){
 				rc = read_header(mosq, local__read);
-				if(rc) return rc;
+				if(rc){
+					return rc;
+				}
 			}
 
 			if(mosq->in_packet.packet_buffer_to_process > 0){
@@ -650,7 +664,9 @@ int packet__read(struct mosquitto *mosq)
 			return MOSQ_ERR_SUCCESS;
 		}
 		rc = packet__read_single(mosq, state, local__read);
-		if(rc) return rc;
+		if(rc){
+			return rc;
+		}
 	}while(mosq->in_packet.packet_buffer_to_process > 0);
 
 	return MOSQ_ERR_SUCCESS;

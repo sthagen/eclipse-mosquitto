@@ -289,7 +289,9 @@ static int add_clients(struct dynsec__data *data, cJSON *j_tree)
 
 	j_clients = cJSON_AddArrayToObject(j_tree, "clients");
 	if(j_clients == NULL){
-		if(fptr) fclose(fptr);
+		if(fptr){
+			fclose(fptr);
+		}
 		return MOSQ_ERR_NOMEM;
 	}
 
@@ -297,11 +299,15 @@ static int add_clients(struct dynsec__data *data, cJSON *j_tree)
 			|| client_add_user(data, fptr, j_clients)
 			){
 
-		if(fptr) fclose(fptr);
+		if(fptr){
+			fclose(fptr);
+		}
 		return MOSQ_ERR_NOMEM;
 	}
 
-	if(fptr) fclose(fptr);
+	if(fptr){
+		fclose(fptr);
+	}
 	return MOSQ_ERR_SUCCESS;
 }
 

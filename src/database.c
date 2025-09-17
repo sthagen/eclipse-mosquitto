@@ -183,7 +183,9 @@ static void db__msg_remove_from_queued_stats(struct mosquitto_msg_data *msg_data
 
 int db__open(struct mosquitto__config *config)
 {
-	if(!config) return MOSQ_ERR_INVAL;
+	if(!config){
+		return MOSQ_ERR_INVAL;
+	}
 
 	db.contexts_by_id = NULL;
 	db.contexts_by_sock = NULL;
@@ -205,7 +207,9 @@ int db__open(struct mosquitto__config *config)
 	db.config->security_options.unpwd = NULL;
 
 #ifdef WITH_PERSISTENCE
-	if(persist__restore()) return 1;
+	if(persist__restore()){
+		return 1;
+	}
 #endif
 
 	return MOSQ_ERR_SUCCESS;
@@ -278,7 +282,9 @@ void db__msg_store_free(struct mosquitto__base_msg *base_msg)
 
 void db__msg_store_remove(struct mosquitto__base_msg *base_msg, bool notify)
 {
-	if(base_msg == NULL) return;
+	if(base_msg == NULL){
+		return;
+	}
 	HASH_DELETE(hh, db.msg_store, base_msg);
 	db.msg_store_count--;
 	db.msg_store_bytes -= base_msg->data.payloadlen;
@@ -415,7 +421,9 @@ int db__message_delete_outgoing(struct mosquitto *context, uint16_t mid, enum mo
 	struct mosquitto__client_msg *client_msg, *tmp;
 	bool deleted = false;
 
-	if(!context) return MOSQ_ERR_INVAL;
+	if(!context){
+		return MOSQ_ERR_INVAL;
+	}
 
 	DL_FOREACH_SAFE(context->msgs_out.inflight, client_msg, tmp){
 		if(client_msg->data.mid == mid){
@@ -461,9 +469,14 @@ int db__message_insert_incoming(struct mosquitto *context, uint64_t cmsg_id, str
 	int rc = 0;
 
 	assert(base_msg);
-	if(!context) return MOSQ_ERR_INVAL;
-	if(!context->id) return MOSQ_ERR_SUCCESS; /* Protect against unlikely "client is disconnected but not entirely freed" scenario */
+	if(!context){
+		return MOSQ_ERR_INVAL;
+	}
+	if(!context->id){
+		/* Protect against unlikely "client is disconnected but not entirely freed" scenario */
+		return MOSQ_ERR_SUCCESS;
 
+	}
 	msg_data = &context->msgs_in;
 
 	if(db__ready_for_flight(context, mosq_md_in, base_msg->data.qos)){
@@ -494,7 +507,9 @@ int db__message_insert_incoming(struct mosquitto *context, uint64_t cmsg_id, str
 #endif
 
 	client_msg = mosquitto_malloc(sizeof(struct mosquitto__client_msg));
-	if(!client_msg) return MOSQ_ERR_NOMEM;
+	if(!client_msg){
+		return MOSQ_ERR_NOMEM;
+	}
 	client_msg->prev = NULL;
 	client_msg->next = NULL;
 	if(cmsg_id){
@@ -545,9 +560,14 @@ int db__message_insert_outgoing(struct mosquitto *context, uint64_t cmsg_id, uin
 	char **dest_ids;
 
 	assert(base_msg);
-	if(!context) return MOSQ_ERR_INVAL;
-	if(!context->id) return MOSQ_ERR_SUCCESS; /* Protect against unlikely "client is disconnected but not entirely freed" scenario */
+	if(!context){
+		return MOSQ_ERR_INVAL;
+	}
+	if(!context->id){
+		/* Protect against unlikely "client is disconnected but not entirely freed" scenario */
+		return MOSQ_ERR_SUCCESS;
 
+	}
 	context->stats.messages_sent++;
 
 	msg_data = &context->msgs_out;
@@ -636,7 +656,9 @@ int db__message_insert_outgoing(struct mosquitto *context, uint64_t cmsg_id, uin
 #endif
 
 	client_msg = mosquitto_malloc(sizeof(struct mosquitto__client_msg));
-	if(!client_msg) return MOSQ_ERR_NOMEM;
+	if(!client_msg){
+		return MOSQ_ERR_NOMEM;
+	}
 	client_msg->prev = NULL;
 	client_msg->next = NULL;
 	if(cmsg_id){
@@ -706,9 +728,13 @@ int db__message_insert_outgoing(struct mosquitto *context, uint64_t cmsg_id, uin
 
 	if(update){
 		rc = db__message_write_inflight_out_latest(context);
-		if(rc) return rc;
+		if(rc){
+			return rc;
+		}
 		rc = db__message_write_queued_out(context);
-		if(rc) return rc;
+		if(rc){
+			return rc;
+		}
 	}
 
 	return rc;
@@ -763,7 +789,9 @@ static void db__messages_delete_list(struct mosquitto__client_msg **head)
 
 int db__messages_delete_incoming(struct mosquitto *context)
 {
-	if(!context) return MOSQ_ERR_INVAL;
+	if(!context){
+		return MOSQ_ERR_INVAL;
+	}
 
 	db__messages_delete_list(&context->msgs_in.inflight);
 	db__messages_delete_list(&context->msgs_in.queued);
@@ -782,7 +810,9 @@ int db__messages_delete_incoming(struct mosquitto *context)
 
 int db__messages_delete_outgoing(struct mosquitto *context)
 {
-	if(!context) return MOSQ_ERR_INVAL;
+	if(!context){
+		return MOSQ_ERR_INVAL;
+	}
 
 	db__messages_delete_list(&context->msgs_out.inflight);
 	db__messages_delete_list(&context->msgs_out.queued);
@@ -801,7 +831,9 @@ int db__messages_delete_outgoing(struct mosquitto *context)
 
 int db__messages_delete(struct mosquitto *context, bool force_free)
 {
-	if(!context) return MOSQ_ERR_INVAL;
+	if(!context){
+		return MOSQ_ERR_INVAL;
+	}
 
 	if(force_free || context->clean_start || (context->bridge && context->bridge->clean_start)){
 		db__messages_delete_incoming(context);
@@ -823,10 +855,14 @@ int db__messages_easy_queue(struct mosquitto *context, const char *topic, uint8_
 	const char *source_id;
 	enum mosquitto_msg_origin origin;
 
-	if(!topic) return MOSQ_ERR_INVAL;
+	if(!topic){
+		return MOSQ_ERR_INVAL;
+	}
 
 	base_msg = mosquitto_calloc(1, sizeof(struct mosquitto__base_msg));
-	if(base_msg == NULL) return MOSQ_ERR_NOMEM;
+	if(base_msg == NULL){
+		return MOSQ_ERR_NOMEM;
+	}
 
 	base_msg->data.topic = mosquitto_strdup(topic);
 	if(base_msg->data.topic == NULL){
@@ -868,7 +904,9 @@ int db__messages_easy_queue(struct mosquitto *context, const char *topic, uint8_
 	}else{
 		origin = mosq_mo_broker;
 	}
-	if(db__message_store(context, base_msg, &message_expiry_interval, origin)) return 1;
+	if(db__message_store(context, base_msg, &message_expiry_interval, origin)){
+		return 1;
+	}
 
 	return sub__messages_queue(source_id, base_msg->data.topic, base_msg->data.qos, base_msg->data.retain, &base_msg);
 }
@@ -1000,7 +1038,9 @@ int db__message_store_find(struct mosquitto *context, uint16_t mid, struct mosqu
 
 	*client_msg = NULL;
 
-	if(!context) return MOSQ_ERR_INVAL;
+	if(!context){
+		return MOSQ_ERR_INVAL;
+	}
 
 	DL_FOREACH(context->msgs_in.inflight, cmsg){
 		if(cmsg->base_msg->data.source_mid == mid){
@@ -1141,7 +1181,9 @@ int db__message_reconnect_reset(struct mosquitto *context)
 	int rc;
 
 	rc = db__message_reconnect_reset_outgoing(context);
-	if(rc) return rc;
+	if(rc){
+		return rc;
+	}
 	return db__message_reconnect_reset_incoming(context);
 }
 
@@ -1150,7 +1192,9 @@ int db__message_remove_incoming(struct mosquitto *context, uint16_t mid)
 {
 	struct mosquitto__client_msg *client_msg, *tmp;
 
-	if(!context) return MOSQ_ERR_INVAL;
+	if(!context){
+		return MOSQ_ERR_INVAL;
+	}
 
 	DL_FOREACH_SAFE(context->msgs_in.inflight, client_msg, tmp){
 		if(client_msg->data.mid == mid){
@@ -1175,7 +1219,9 @@ int db__message_release_incoming(struct mosquitto *context, uint16_t mid)
 	bool deleted = false;
 	int rc;
 
-	if(!context) return MOSQ_ERR_INVAL;
+	if(!context){
+		return MOSQ_ERR_INVAL;
+	}
 
 	DL_FOREACH_SAFE(context->msgs_in.inflight, client_msg, tmp){
 		if(client_msg->data.mid == mid){
@@ -1408,7 +1454,9 @@ int db__message_write_inflight_out_all(struct mosquitto *context)
 
 	DL_FOREACH_SAFE(context->msgs_out.inflight, client_msg, tmp){
 		rc = db__message_write_inflight_out_single(context, client_msg);
-		if(rc) return rc;
+		if(rc){
+			return rc;
+		}
 	}
 	return MOSQ_ERR_SUCCESS;
 }
@@ -1452,7 +1500,9 @@ int db__message_write_inflight_out_latest(struct mosquitto *context)
 	while(client_msg){
 		next = client_msg->next;
 		rc = db__message_write_inflight_out_single(context, client_msg);
-		if(rc) return rc;
+		if(rc){
+			return rc;
+		}
 		client_msg = next;
 	}
 	return MOSQ_ERR_SUCCESS;

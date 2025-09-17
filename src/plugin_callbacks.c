@@ -212,7 +212,9 @@ BROKER_EXPORT int mosquitto_callback_register(
 	struct mosquitto__security_options *security_options;
 	struct plugin_own_callback *own_callback;
 
-	if(cb_func == NULL) return MOSQ_ERR_INVAL;
+	if(cb_func == NULL){
+		return MOSQ_ERR_INVAL;
+	}
 
 	if(event == MOSQ_EVT_CONTROL){
 		return control__register_callback(identifier, cb_func, event_data, userdata);

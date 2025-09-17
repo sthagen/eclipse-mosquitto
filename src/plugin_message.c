@@ -50,20 +50,26 @@ static int plugin__handle_message_single(struct mosquitto__callback *callbacks, 
 		}
 
 		if(stored->topic != event_data.topic){
-			if(to_free->topic) mosquitto_FREE(stored->topic);
+			if(to_free->topic){
+				mosquitto_FREE(stored->topic);
+			}
 			stored->topic = event_data.topic;
 			to_free->topic = true;
 		}
 
 		if(stored->payload != event_data.payload){
-			if(to_free->payload) mosquitto_FREE(stored->payload);
+			if(to_free->payload){
+				mosquitto_FREE(stored->payload);
+			}
 			stored->payload = event_data.payload;
 			stored->payloadlen = event_data.payloadlen;
 			to_free->payload = true;
 		}
 
 		if(stored->properties != event_data.properties){
-			if(to_free->properties) mosquitto_property_free_all(&stored->properties);
+			if(to_free->properties){
+				mosquitto_property_free_all(&stored->properties);
+			}
 			stored->properties = event_data.properties;
 			to_free->properties = true;
 		}
@@ -86,7 +92,9 @@ int plugin__handle_message_out(struct mosquitto *context, struct mosquitto_base_
 	/* Global plugins */
 	rc = plugin__handle_message_single(db.config->security_options.plugin_callbacks.message_out,
 			MOSQ_EVT_MESSAGE_OUT, &to_free, context, stored);
-	if(rc) return rc;
+	if(rc){
+		return rc;
+	}
 
 	if(db.config->per_listener_settings && context->listener){
 		rc = plugin__handle_message_single(context->listener->security_options->plugin_callbacks.message_out,
@@ -105,7 +113,9 @@ int plugin__handle_message_in(struct mosquitto *context, struct mosquitto_base_m
 	/* Global plugins */
 	rc = plugin__handle_message_single(db.config->security_options.plugin_callbacks.message_in,
 			MOSQ_EVT_MESSAGE_IN, &to_free, context, stored);
-	if(rc) return rc;
+	if(rc){
+		return rc;
+	}
 
 	if(db.config->per_listener_settings && context->listener){
 		rc = plugin__handle_message_single(context->listener->security_options->plugin_callbacks.message_in,

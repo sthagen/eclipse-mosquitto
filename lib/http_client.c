@@ -63,7 +63,9 @@ int http_c__context_init(struct mosquitto *context)
 	}
 
 	packet = mosquitto_calloc(1, sizeof(struct mosquitto__packet) + 1024 + WS_PACKET_OFFSET);
-	if(!packet) return MOSQ_ERR_NOMEM;
+	if(!packet){
+		return MOSQ_ERR_NOMEM;
+	}
 
 	path = context->wsd.http_path?context->wsd.http_path:"/mqtt";
 

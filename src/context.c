@@ -63,7 +63,9 @@ struct mosquitto *context__init(void)
 	struct mosquitto *context;
 
 	context = mosquitto_calloc(1, sizeof(struct mosquitto));
-	if(!context) return NULL;
+	if(!context){
+		return NULL;
+	}
 
 	context->in_packet.packet_buffer_size = db.config->packet_buffer_size;
 	context->in_packet.packet_buffer = mosquitto_calloc(1, context->in_packet.packet_buffer_size);
@@ -128,7 +130,9 @@ static void context__cleanup_out_packets(struct mosquitto *context)
 {
 	struct mosquitto__packet *packet;
 
-	if(!context) return;
+	if(!context){
+		return;
+	}
 
 	while(context->out_packet){
 		packet = context->out_packet;
@@ -150,7 +154,9 @@ static void context__cleanup_out_packets(struct mosquitto *context)
  */
 void context__cleanup(struct mosquitto *context, bool force_free)
 {
-	if(!context) return;
+	if(!context){
+		return;
+	}
 
 	if(force_free){
 		context->clean_start = true;
@@ -287,7 +293,9 @@ void context__disconnect(struct mosquitto *context, int reason)
 
 void context__add_to_disused(struct mosquitto *context)
 {
-	if(context->state == mosq_cs_disused) return;
+	if(context->state == mosq_cs_disused){
+		return;
+	}
 
 	mosquitto__set_state(context, mosq_cs_disused);
 

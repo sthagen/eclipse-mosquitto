@@ -40,7 +40,9 @@ int handle__unsubscribe(struct mosquitto *context)
 	bool allowed;
 	struct mosquitto_subscription sub;
 
-	if(!context) return MOSQ_ERR_INVAL;
+	if(!context){
+		return MOSQ_ERR_INVAL;
+	}
 
 	if(context->state != mosq_cs_active){
 		return MOSQ_ERR_PROTOCOL;
@@ -55,8 +57,12 @@ int handle__unsubscribe(struct mosquitto *context)
 			return MOSQ_ERR_MALFORMED_PACKET;
 		}
 	}
-	if(packet__read_uint16(&context->in_packet, &mid)) return MOSQ_ERR_MALFORMED_PACKET;
-	if(mid == 0) return MOSQ_ERR_MALFORMED_PACKET;
+	if(packet__read_uint16(&context->in_packet, &mid)){
+		return MOSQ_ERR_MALFORMED_PACKET;
+	}
+	if(mid == 0){
+		return MOSQ_ERR_MALFORMED_PACKET;
+	}
 
 	if(context->protocol == mosq_p_mqtt5){
 		rc = property__read_all(CMD_UNSUBSCRIBE, &context->in_packet, &properties);

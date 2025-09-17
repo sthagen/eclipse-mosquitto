@@ -76,7 +76,9 @@ int main(int argc, char *argv[])
 	mosquitto_message_v5_callback_set(mosq, on_message_v5);
 
 	rc = mosquitto_connect(mosq, "localhost", port, 60);
-	if(rc != MOSQ_ERR_SUCCESS) return rc;
+	if(rc != MOSQ_ERR_SUCCESS){
+		return rc;
+	}
 
 	while(run == -1){
 		rc = mosquitto_loop(mosq, -1, 1);

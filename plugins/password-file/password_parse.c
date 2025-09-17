@@ -50,8 +50,12 @@ int password_file__parse(struct password_file_data *data)
 
 	while(!feof(pwfile)){
 		if(mosquitto_fgets(&buf, &buflen, pwfile)){
-			if(buf[0] == '#') continue;
-			if(!strchr(buf, ':')) continue;
+			if(buf[0] == '#'){
+				continue;
+			}
+			if(!strchr(buf, ':')){
+				continue;
+			}
 
 			username = strtok_r(buf, ":", &saveptr);
 			if(username){
@@ -140,7 +144,9 @@ void password_file__cleanup(struct password_file_data *data)
 {
 	struct mosquitto__unpwd *u, *tmp = NULL;
 
-	if(!data) return;
+	if(!data){
+		return;
+	}
 
 	HASH_ITER(hh, data->unpwd, u, tmp){
 		HASH_DEL(data->unpwd, u);

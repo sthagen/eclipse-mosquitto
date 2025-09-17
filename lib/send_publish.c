@@ -55,7 +55,9 @@ int send__publish(struct mosquitto *mosq, uint16_t mid, const char *topic, uint3
 #endif
 	assert(mosq);
 
-	if(!net__is_connected(mosq)) return MOSQ_ERR_NO_CONN;
+	if(!net__is_connected(mosq)){
+		return MOSQ_ERR_NO_CONN;
+	}
 
 #ifdef WITH_BROKER
 	bool payload_changed = false;
@@ -73,9 +75,15 @@ int send__publish(struct mosquitto *mosq, uint16_t mid, const char *topic, uint3
 
 		rc = plugin__handle_message_out(mosq, &tmp_msg);
 
-		if(tmp_msg.payload != payload) payload_changed = true;
-		if(tmp_msg.topic != topic) topic_changed = true;
-		if(tmp_msg.properties != store_props) properties_changed = true;
+		if(tmp_msg.payload != payload){
+			payload_changed = true;
+		}
+		if(tmp_msg.topic != topic){
+			topic_changed = true;
+		}
+		if(tmp_msg.properties != store_props){
+			properties_changed = true;
+		}
 
 		topic = tmp_msg.topic;
 		payloadlen = tmp_msg.payloadlen;
@@ -95,9 +103,15 @@ int send__publish(struct mosquitto *mosq, uint16_t mid, const char *topic, uint3
 						"Rejected PUBLISH to %s, quota exceeded.", mosq->id);
 			}
 
-			if(payload_changed) mosquitto_free((void *)payload);
-			if(topic_changed) mosquitto_free((char *)topic);
-			if(properties_changed) mosquitto_property_free_all((mosquitto_property **)&store_props);
+			if(payload_changed){
+				mosquitto_free((void *)payload);
+			}
+			if(topic_changed){
+				mosquitto_free((void *)topic);
+			}
+			if(properties_changed){
+				mosquitto_property_free_all((mosquitto_property **)&store_props);
+			}
 
 			return MOSQ_ERR_SUCCESS;
 		}
@@ -131,7 +145,9 @@ int send__publish(struct mosquitto *mosq, uint16_t mid, const char *topic, uint3
 				}
 				if(match){
 					mapped_topic = mosquitto_strdup(topic);
-					if(!mapped_topic) return MOSQ_ERR_NOMEM;
+					if(!mapped_topic){
+						return MOSQ_ERR_NOMEM;
+					}
 					if(cur_topic->local_prefix){
 						/* This prefix needs removing. */
 						if(!strncmp(cur_topic->local_prefix, mapped_topic, strlen(cur_topic->local_prefix))){
@@ -175,9 +191,15 @@ int send__publish(struct mosquitto *mosq, uint16_t mid, const char *topic, uint3
 
 #ifdef WITH_BROKER
 	rc = send__real_publish(mosq, mid, topic, payloadlen, payload, qos, retain, dup, subscription_identifier, store_props, expiry_interval);
-	if(payload_changed) mosquitto_free((void *)payload);
-	if(topic_changed) mosquitto_free((char *)topic);
-	if(properties_changed) mosquitto_property_free_all((mosquitto_property **)&store_props);
+	if(payload_changed){
+		mosquitto_free((void *)payload);
+	}
+	if(topic_changed){
+		mosquitto_free((void *)topic);
+	}
+	if(properties_changed){
+		mosquitto_property_free_all((mosquitto_property **)&store_props);
+	}
 	return rc;
 #else
 	return send__real_publish(mosq, mid, topic, payloadlen, payload, qos, retain, dup, subscription_identifier, store_props, expiry_interval);
@@ -223,7 +245,9 @@ int send__real_publish(struct mosquitto *mosq, uint16_t mid, const char *topic, 
 	}else{
 		packetlen = 2 + payloadlen;
 	}
-	if(qos > 0) packetlen += 2; /* For message id */
+	if(qos > 0){
+		packetlen += 2;         /* For message id */
+	}
 	if(mosq->protocol == mosq_p_mqtt5){
 		proplen = 0;
 		proplen += mosquitto_property_get_length_all(store_props);

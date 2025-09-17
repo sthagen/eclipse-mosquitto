@@ -65,10 +65,14 @@ static mosquitto_property *json_to_properties(const char *json)
 	int propid, proptype;
 	size_t slen;
 
-	if(!json) return NULL;
+	if(!json){
+		return NULL;
+	}
 
 	array = cJSON_Parse(json);
-	if(!array) return NULL;
+	if(!array){
+		return NULL;
+	}
 	if(!cJSON_IsArray(array)){
 		cJSON_Delete(array);
 		return NULL;
@@ -520,12 +524,24 @@ int persist_sqlite__restore_cb(int event, void *event_data, void *userdata)
 	UNUSED(event);
 	UNUSED(event_data);
 
-	if(base_msg_restore(ms)) return MOSQ_ERR_UNKNOWN;
-	if(retain_restore(ms)) return MOSQ_ERR_UNKNOWN;
-	if(client_restore(ms)) return MOSQ_ERR_UNKNOWN;
-	if(subscription_restore(ms)) return MOSQ_ERR_UNKNOWN;
-	if(client_msg_restore(ms)) return MOSQ_ERR_UNKNOWN;
-	if(will_restore(ms)) return MOSQ_ERR_UNKNOWN;
+	if(base_msg_restore(ms)){
+		return MOSQ_ERR_UNKNOWN;
+	}
+	if(retain_restore(ms)){
+		return MOSQ_ERR_UNKNOWN;
+	}
+	if(client_restore(ms)){
+		return MOSQ_ERR_UNKNOWN;
+	}
+	if(subscription_restore(ms)){
+		return MOSQ_ERR_UNKNOWN;
+	}
+	if(client_msg_restore(ms)){
+		return MOSQ_ERR_UNKNOWN;
+	}
+	if(will_restore(ms)){
+		return MOSQ_ERR_UNKNOWN;
+	}
 
 	return 0;
 }

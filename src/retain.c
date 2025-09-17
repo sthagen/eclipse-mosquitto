@@ -56,10 +56,14 @@ int retain__init(void)
 	struct mosquitto__retainhier *retainhier;
 
 	retainhier = retain__add_hier_entry(NULL, &db.retains, "", 0);
-	if(!retainhier) return MOSQ_ERR_NOMEM;
+	if(!retainhier){
+		return MOSQ_ERR_NOMEM;
+	}
 
 	retainhier = retain__add_hier_entry(NULL, &db.retains, "$SYS", (uint16_t)strlen("$SYS"));
-	if(!retainhier) return MOSQ_ERR_NOMEM;
+	if(!retainhier){
+		return MOSQ_ERR_NOMEM;
+	}
 
 	return MOSQ_ERR_SUCCESS;
 }
@@ -72,11 +76,15 @@ BROKER_EXPORT int mosquitto_persist_retain_msg_set(const char *topic, uint64_t b
 	char **split_topics = NULL;
 	char *local_topic = NULL;
 
-	if(topic == NULL) return MOSQ_ERR_INVAL;
+	if(topic == NULL){
+		return MOSQ_ERR_INVAL;
+	}
 
 	HASH_FIND(hh, db.msg_store, &base_msg_id, sizeof(base_msg_id), base_msg);
 	if(base_msg){
-		if(sub__topic_tokenise(topic, &local_topic, &split_topics, NULL)) return MOSQ_ERR_NOMEM;
+		if(sub__topic_tokenise(topic, &local_topic, &split_topics, NULL)){
+			return MOSQ_ERR_NOMEM;
+		}
 
 		rc = retain__store(topic, base_msg, split_topics, false);
 		mosquitto_free(split_topics);
@@ -94,12 +102,16 @@ BROKER_EXPORT int mosquitto_persist_retain_msg_delete(const char *topic)
 	char **split_topics = NULL;
 	char *local_topic = NULL;
 
-	if(topic == NULL) return MOSQ_ERR_INVAL;
+	if(topic == NULL){
+		return MOSQ_ERR_INVAL;
+	}
 
 	memset(&base_msg, 0, sizeof(base_msg));
 	base_msg.ref_count = 10; /* Ensure this isn't freed */
 
-	if(sub__topic_tokenise(topic, &local_topic, &split_topics, NULL)) return MOSQ_ERR_NOMEM;
+	if(sub__topic_tokenise(topic, &local_topic, &split_topics, NULL)){
+		return MOSQ_ERR_NOMEM;
+	}
 
 	/* With stored->payloadlen == 0, this means the message will be removed */
 	rc = retain__store(topic, &base_msg, split_topics, false);
@@ -139,7 +151,9 @@ int retain__store(const char *topic, struct mosquitto__base_msg *base_msg, char 
 	HASH_FIND(hh, db.retains, split_topics[0], strlen(split_topics[0]), retainhier);
 	if(retainhier == NULL){
 		retainhier = retain__add_hier_entry(NULL, &db.retains, split_topics[0], (uint16_t)strlen(split_topics[0]));
-		if(!retainhier) return MOSQ_ERR_NOMEM;
+		if(!retainhier){
+			return MOSQ_ERR_NOMEM;
+		}
 	}
 
 	for(int i=0; split_topics[i] != NULL; i++){
@@ -253,7 +267,9 @@ static int retain__process(struct mosquitto__retainhier *branch, struct mosquitt
 		qos = sub_qos;
 	}else{
 		qos = retained->data.qos;
-		if(qos > sub_qos) qos = sub_qos;
+		if(qos > sub_qos){
+			qos = sub_qos;
+		}
 	}
 	if(qos > 0){
 		mid = mosquitto__mid_generate(context);
@@ -338,7 +354,9 @@ int retain__queue(struct mosquitto *context, const struct mosquitto_subscription
 	}
 
 	rc = sub__topic_tokenise(sub->topic_filter, &local_sub, &split_topics, NULL);
-	if(rc) return rc;
+	if(rc){
+		return rc;
+	}
 
 	HASH_FIND(hh, db.retains, split_topics[0], strlen(split_topics[0]), retainhier);
 

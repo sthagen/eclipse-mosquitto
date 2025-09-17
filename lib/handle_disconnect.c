@@ -49,11 +49,15 @@ int handle__disconnect(struct mosquitto *mosq)
 	}
 
 	rc = packet__read_byte(&mosq->in_packet, &reason_code);
-	if(rc) return rc;
+	if(rc){
+		return rc;
+	}
 
 	if(mosq->in_packet.remaining_length > 2){
 		rc = property__read_all(CMD_DISCONNECT, &mosq->in_packet, &properties);
-		if(rc) return rc;
+		if(rc){
+			return rc;
+		}
 		mosquitto_property_free_all(&properties);
 	}
 

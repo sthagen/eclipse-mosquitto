@@ -39,8 +39,10 @@ int acl_file__check(int event, void *event_data, void *userdata)
 	UNUSED(event);
 
 	// FIXME if(ed->client->bridge) return MOSQ_ERR_SUCCESS;
-	if(ed->access == MOSQ_ACL_SUBSCRIBE || ed->access == MOSQ_ACL_UNSUBSCRIBE) return MOSQ_ERR_SUCCESS; /* FIXME - implement ACL subscription strings. */
+	if(ed->access == MOSQ_ACL_SUBSCRIBE || ed->access == MOSQ_ACL_UNSUBSCRIBE){
+		return MOSQ_ERR_SUCCESS;                                                                        /* FIXME - implement ACL subscription strings. */
 
+	}
 	clientid = mosquitto_client_id(ed->client);
 	username = mosquitto_client_username(ed->client);
 
@@ -53,7 +55,9 @@ int acl_file__check(int event, void *event_data, void *userdata)
 	}else{
 		acl_user = &data->acl_anon;
 	}
-	if(!acl_user && !data->acl_patterns) return MOSQ_ERR_ACL_DENIED;
+	if(!acl_user && !data->acl_patterns){
+		return MOSQ_ERR_ACL_DENIED;
+	}
 
 	if(acl_user){
 		acl_root = acl_user->acl;
@@ -106,7 +110,9 @@ int acl_file__check(int event, void *event_data, void *userdata)
 	}
 
 	/* Loop through all pattern ACLs. ACL denial patterns are iterated over first. */
-	if(!clientid) return MOSQ_ERR_ACL_DENIED;
+	if(!clientid){
+		return MOSQ_ERR_ACL_DENIED;
+	}
 
 	while(acl_root){
 		if(acl_root->ucount && !username){

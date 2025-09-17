@@ -53,7 +53,9 @@ static char *clientid_gen(uint16_t *idlen, const char *auto_id_prefix, uint16_t 
 	uint8_t rnd[16];
 	int pos;
 
-	if(mosquitto_getrandom(rnd, 16)) return NULL;
+	if(mosquitto_getrandom(rnd, 16)){
+		return NULL;
+	}
 
 	*idlen = (uint16_t)(auto_id_prefix_len + 36);
 
@@ -302,10 +304,14 @@ int connect__on_authorised(struct mosquitto *context, void *auth_data_out, uint1
 	mosquitto__set_state(context, mosq_cs_active);
 	rc = send__connack(context, connect_ack, CONNACK_ACCEPTED, connack_props);
 	mosquitto_property_free_all(&connack_props);
-	if(rc) return rc;
+	if(rc){
+		return rc;
+	}
 	db__expire_all_messages(context);
 	rc = db__message_write_queued_out(context);
-	if(rc) return rc;
+	if(rc){
+		return rc;
+	}
 	rc = db__message_write_inflight_out_all(context);
 
 	if(rc == MOSQ_ERR_SUCCESS){
@@ -342,14 +348,20 @@ static int will__read(struct mosquitto *context, const char *clientid, struct mo
 	}
 	if(context->protocol == PROTOCOL_VERSION_v5){
 		rc = property__read_all(CMD_WILL, &context->in_packet, &properties);
-		if(rc) goto error_cleanup;
+		if(rc){
+			goto error_cleanup;
+		}
 
 		rc = property__process_will(context, will_struct, &properties);
 		mosquitto_property_free_all(&properties);
-		if(rc) goto error_cleanup;
+		if(rc){
+			goto error_cleanup;
+		}
 	}
 	rc = packet__read_string(&context->in_packet, &will_struct->msg.topic, &tlen);
-	if(rc) goto error_cleanup;
+	if(rc){
+		goto error_cleanup;
+	}
 	if(!tlen){
 		rc = MOSQ_ERR_PROTOCOL;
 		goto error_cleanup;
@@ -375,10 +387,14 @@ static int will__read(struct mosquitto *context, const char *clientid, struct mo
 		goto error_cleanup;
 	}
 	rc = mosquitto_pub_topic_check(will_struct->msg.topic);
-	if(rc) goto error_cleanup;
+	if(rc){
+		goto error_cleanup;
+	}
 
 	rc = packet__read_uint16(&context->in_packet, &payloadlen);
-	if(rc) goto error_cleanup;
+	if(rc){
+		goto error_cleanup;
+	}
 
 	will_struct->msg.payloadlen = payloadlen;
 	if(will_struct->msg.payloadlen > 0){
@@ -399,7 +415,9 @@ static int will__read(struct mosquitto *context, const char *clientid, struct mo
 		}
 
 		rc = packet__read_bytes(&context->in_packet, will_struct->msg.payload, (uint32_t)will_struct->msg.payloadlen);
-		if(rc) goto error_cleanup;
+		if(rc){
+			goto error_cleanup;
+		}
 	}
 
 	will_struct->msg.qos = will_qos;

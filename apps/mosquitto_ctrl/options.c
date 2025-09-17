@@ -93,11 +93,15 @@ int ctrl_config_parse(struct mosq_config *cfg, int *argc, char **argv[])
 
 	/* Deal with real argc/argv */
 	rc = client_config_line_proc(cfg, argc, argv);
-	if(rc) return rc;
+	if(rc){
+		return rc;
+	}
 
 	/* Load options from config file - this must be after `-o` has been processed */
 	rc = client_config_load(cfg);
-	if(rc) return rc;
+	if(rc){
+		return rc;
+	}
 
 #ifdef WITH_TLS
 	if((cfg->certfile && !cfg->keyfile) || (cfg->keyfile && !cfg->certfile)){
@@ -559,8 +563,10 @@ int client_config_load(struct mosq_config *cfg)
 			return 1;
 		}
 		while(fgets(line, sizeof(line), fptr)){
-			if(line[0] == '#') continue; /* Comments */
-
+			if(line[0] == '#'){
+				/* Comments */
+				continue;
+			}
 			while(line[strlen(line)-1] == 10 || line[strlen(line)-1] == 13){
 				line[strlen(line)-1] = 0;
 			}
@@ -727,9 +733,13 @@ static int mosquitto__urldecode(char *str)
 {
 	size_t i, j;
 	size_t len;
-	if(!str) return 0;
+	if(!str){
+		return 0;
+	}
 
-	if(!strchr(str, '%')) return 0;
+	if(!strchr(str, '%')){
+		return 0;
+	}
 
 	len = strlen(str);
 	for(i=0; i<len; i++){

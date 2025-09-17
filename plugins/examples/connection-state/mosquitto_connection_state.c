@@ -86,7 +86,9 @@ static int disconnect_callback(int event, void *event_data, void *userdata)
 	if(len < (int)sizeof(topic)){
 		/* Expire our "disconnected" message after a day. */
 		rc = mosquitto_property_add_int32(&proplist, MQTT_PROP_MESSAGE_EXPIRY_INTERVAL, 86400);
-		if(rc) return rc;
+		if(rc){
+			return rc;
+		}
 
 		rc = mosquitto_broker_publish_copy(NULL, topic, 1, "0", 0, true, proplist);
 		if(rc){
@@ -112,7 +114,9 @@ int mosquitto_plugin_init(mosquitto_plugin_id_t *identifier, void **user_data, s
 	mosquitto_plugin_set_info(identifier, PLUGIN_NAME, PLUGIN_VERSION);
 
 	rc = mosquitto_callback_register(mosq_pid, MOSQ_EVT_CONNECT, connect_callback, NULL, NULL);
-	if(rc) return rc;
+	if(rc){
+		return rc;
+	}
 	rc = mosquitto_callback_register(mosq_pid, MOSQ_EVT_DISCONNECT, disconnect_callback, NULL, NULL);
 	return rc;
 }

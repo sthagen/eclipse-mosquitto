@@ -77,10 +77,14 @@ int control__process(struct mosquitto *context, struct mosquitto__base_msg *base
 
 	if(base_msg->data.qos == 1){
 		rc2 = send__puback(context, base_msg->data.source_mid, MQTT_RC_SUCCESS, properties);
-		if(rc2) rc = rc2;
+		if(rc2){
+			rc = rc2;
+		}
 	}else if(base_msg->data.qos == 2){
 		rc2 = send__pubrec(context, base_msg->data.source_mid, MQTT_RC_SUCCESS, properties);
-		if(rc2) rc = rc2;
+		if(rc2){
+			rc = rc2;
+		}
 	}
 	mosquitto_property_free_all(&properties);
 
@@ -96,9 +100,13 @@ int control__register_callback(mosquitto_plugin_id_t *pid, MOSQ_FUNC_generic_cal
 	struct mosquitto__callback *cb_found, *cb_new;
 	size_t topic_len;
 
-	if(topic == NULL || cb_func == NULL) return MOSQ_ERR_INVAL;
+	if(topic == NULL || cb_func == NULL){
+		return MOSQ_ERR_INVAL;
+	}
 	topic_len = strlen(topic);
-	if(topic_len == 0 || topic_len > 65535) return MOSQ_ERR_INVAL;
+	if(topic_len == 0 || topic_len > 65535){
+		return MOSQ_ERR_INVAL;
+	}
 	if(strncmp(topic, "$CONTROL/", strlen("$CONTROL/")) || strlen(topic) < strlen("$CONTROL/A/v1")){
 		return MOSQ_ERR_INVAL;
 	}
@@ -156,10 +164,16 @@ int control__unregister_callback(mosquitto_plugin_id_t *identifier, MOSQ_FUNC_ge
 	size_t topic_len;
 	struct control_endpoint *ep;
 
-	if(topic == NULL) return MOSQ_ERR_INVAL;
+	if(topic == NULL){
+		return MOSQ_ERR_INVAL;
+	}
 	topic_len = strlen(topic);
-	if(topic_len == 0 || topic_len > 65535) return MOSQ_ERR_INVAL;
-	if(strncmp(topic, "$CONTROL/", strlen("$CONTROL/"))) return MOSQ_ERR_INVAL;
+	if(topic_len == 0 || topic_len > 65535){
+		return MOSQ_ERR_INVAL;
+	}
+	if(strncmp(topic, "$CONTROL/", strlen("$CONTROL/"))){
+		return MOSQ_ERR_INVAL;
+	}
 
 	opts = &db.config->security_options;
 

@@ -54,7 +54,9 @@ int mosquitto_loop(struct mosquitto *mosq, int timeout, int max_packets)
 	time_t now;
 	time_t timeout_ms;
 
-	if(!mosq || max_packets < 1) return MOSQ_ERR_INVAL;
+	if(!mosq || max_packets < 1){
+		return MOSQ_ERR_INVAL;
+	}
 #ifndef WIN32
 	if(mosq->sock >= FD_SETSIZE || mosq->sockpairR >= FD_SETSIZE){
 		return MOSQ_ERR_INVAL;
@@ -245,7 +247,9 @@ int mosquitto_loop_forever(struct mosquitto *mosq, int timeout, int max_packets)
 	int rc = MOSQ_ERR_SUCCESS;
 	unsigned long reconnect_delay;
 
-	if(!mosq) return MOSQ_ERR_INVAL;
+	if(!mosq){
+		return MOSQ_ERR_INVAL;
+	}
 
 	mosq->reconnects = 0;
 
@@ -302,7 +306,9 @@ int mosquitto_loop_forever(struct mosquitto *mosq, int timeout, int max_packets)
 				}
 
 				rc = interruptible_sleep(mosq, (time_t)reconnect_delay);
-				if(rc) return rc;
+				if(rc){
+					return rc;
+				}
 
 				if(mosquitto__get_request_disconnect(mosq)){
 					run = 0;
@@ -318,8 +324,12 @@ int mosquitto_loop_forever(struct mosquitto *mosq, int timeout, int max_packets)
 
 int mosquitto_loop_misc(struct mosquitto *mosq)
 {
-	if(!mosq) return MOSQ_ERR_INVAL;
-	if(!net__is_connected(mosq)) return MOSQ_ERR_NO_CONN;
+	if(!mosq){
+		return MOSQ_ERR_INVAL;
+	}
+	if(!net__is_connected(mosq)){
+		return MOSQ_ERR_NO_CONN;
+	}
 
 	return mosquitto__check_keepalive(mosq);
 }
@@ -345,7 +355,9 @@ int mosquitto_loop_read(struct mosquitto *mosq, int max_packets)
 {
 	int rc = MOSQ_ERR_SUCCESS;
 	int i;
-	if(max_packets < 1) return MOSQ_ERR_INVAL;
+	if(max_packets < 1){
+		return MOSQ_ERR_INVAL;
+	}
 
 	COMPAT_pthread_mutex_lock(&mosq->msgs_out.mutex);
 	max_packets = mosq->msgs_out.queue_len;
@@ -355,7 +367,9 @@ int mosquitto_loop_read(struct mosquitto *mosq, int max_packets)
 	max_packets += mosq->msgs_in.queue_len;
 	COMPAT_pthread_mutex_unlock(&mosq->msgs_in.mutex);
 
-	if(max_packets < 1) max_packets = 1;
+	if(max_packets < 1){
+		max_packets = 1;
+	}
 	/* Queue len here tells us how many messages are awaiting processing and
 	 * have QoS > 0. We should try to deal with that many in this loop in order
 	 * to keep up. */
@@ -392,7 +406,9 @@ int mosquitto_loop_write(struct mosquitto *mosq, int max_packets)
 {
 	int rc = MOSQ_ERR_SUCCESS;
 	int i;
-	if(max_packets < 1) return MOSQ_ERR_INVAL;
+	if(max_packets < 1){
+		return MOSQ_ERR_INVAL;
+	}
 
 	for(i=0; i<max_packets; i++){
 		rc = packet__write(mosq);

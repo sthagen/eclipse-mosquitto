@@ -74,7 +74,9 @@ int main(int argc, char *argv[])
 	mosquitto_log_callback_set(mosq, on_log);
 
 	rc = mosquitto_connect(mosq, "localhost", port, 60);
-	if(rc) return rc;
+	if(rc){
+		return rc;
+	}
 
 	while(run == -1){
 		mosquitto_loop(mosq, -1, 1);

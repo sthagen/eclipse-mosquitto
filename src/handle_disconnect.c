@@ -44,11 +44,15 @@ int handle__disconnect(struct mosquitto *context)
 	if(context->protocol == mosq_p_mqtt5 && context->in_packet.remaining_length > 0){
 		/* FIXME - must handle reason code */
 		rc = packet__read_byte(&context->in_packet, &reason_code);
-		if(rc) return rc;
+		if(rc){
+			return rc;
+		}
 
 		if(context->in_packet.remaining_length > 1){
 			rc = property__read_all(CMD_DISCONNECT, &context->in_packet, &properties);
-			if(rc) return rc;
+			if(rc){
+				return rc;
+			}
 		}
 	}
 	rc = property__process_disconnect(context, &properties);

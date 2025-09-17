@@ -248,11 +248,17 @@ int mosquitto_plugin_init(mosquitto_plugin_id_t *identifier, void **user_data, s
 	int rc;
 
 	rc = mosquitto_callback_register(mosq_pid, MOSQ_EVT_MESSAGE_IN, callback_message_in, NULL, NULL);
-	if(rc) return rc;
+	if(rc){
+		return rc;
+	}
 	rc = mosquitto_callback_register(mosq_pid, MOSQ_EVT_MESSAGE_OUT, callback_message_out, NULL, NULL);
-	if(rc) return rc;
+	if(rc){
+		return rc;
+	}
 	rc = mosquitto_callback_register(mosq_pid, MOSQ_EVT_SUBSCRIBE, callback_subscribe, NULL, NULL);
-	if(rc) return rc;
+	if(rc){
+		return rc;
+	}
 	rc = mosquitto_callback_register(mosq_pid, MOSQ_EVT_UNSUBSCRIBE, callback_unsubscribe, NULL, NULL);
 	return rc;
 }

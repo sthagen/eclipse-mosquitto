@@ -64,12 +64,18 @@ int handle__suback(struct mosquitto *mosq)
 	log__printf(mosq, MOSQ_LOG_DEBUG, "Client %s received SUBACK", SAFE_PRINT(mosq->id));
 #endif
 	rc = packet__read_uint16(&mosq->in_packet, &mid);
-	if(rc) return rc;
-	if(mid == 0) return MOSQ_ERR_PROTOCOL;
+	if(rc){
+		return rc;
+	}
+	if(mid == 0){
+		return MOSQ_ERR_PROTOCOL;
+	}
 
 	if(mosq->protocol == mosq_p_mqtt5){
 		rc = property__read_all(CMD_SUBACK, &mosq->in_packet, &properties);
-		if(rc) return rc;
+		if(rc){
+			return rc;
+		}
 	}
 
 	qos_count = (int)(mosq->in_packet.remaining_length - mosq->in_packet.pos);

@@ -46,7 +46,9 @@ static void command_tree_create(void)
 	completion_tree_arg_list_args_free(tree_groups);
 	completion_tree_arg_list_args_free(tree_roles);
 
-	if(commands_dynsec) return;
+	if(commands_dynsec){
+		return;
+	}
 
 	commands_dynsec = calloc(1, sizeof(struct completion_tree_root));
 

@@ -40,7 +40,9 @@ static int handle__connack_properties(struct mosquitto *context)
 	uint8_t retain_available;
 
 	rc = property__read_all(CMD_CONNACK, &context->in_packet, &properties);
-	if(rc) return rc;
+	if(rc){
+		return rc;
+	}
 
 	/* maximum-qos */
 	mosquitto_property_read_byte(properties, MQTT_PROP_MAXIMUM_QOS,
@@ -116,8 +118,12 @@ int handle__connack(struct mosquitto *context)
 		return MOSQ_ERR_MALFORMED_PACKET;
 	}
 	log__printf(NULL, MOSQ_LOG_DEBUG, "Received CONNACK on connection %s.", context->id);
-	if(packet__read_byte(&context->in_packet, &connect_acknowledge)) return MOSQ_ERR_MALFORMED_PACKET;
-	if(packet__read_byte(&context->in_packet, &reason_code)) return MOSQ_ERR_MALFORMED_PACKET;
+	if(packet__read_byte(&context->in_packet, &connect_acknowledge)){
+		return MOSQ_ERR_MALFORMED_PACKET;
+	}
+	if(packet__read_byte(&context->in_packet, &reason_code)){
+		return MOSQ_ERR_MALFORMED_PACKET;
+	}
 
 	if(context->protocol == mosq_p_mqtt5){
 		if(context->in_packet.remaining_length == 2 && reason_code == CONNACK_REFUSED_PROTOCOL_VERSION){
@@ -134,19 +140,25 @@ int handle__connack(struct mosquitto *context)
 		}
 
 		rc = handle__connack_properties(context);
-		if(rc) return rc;
+		if(rc){
+			return rc;
+		}
 	}
 
 	if(reason_code == MQTT_RC_SUCCESS){
 #ifdef WITH_BRIDGE
 		if(context->bridge){
 			rc = bridge__on_connect(context);
-			if(rc) return rc;
+			if(rc){
+				return rc;
+			}
 		}
 #endif
 		mosquitto__set_state(context, mosq_cs_active);
 		rc = db__message_write_queued_out(context);
-		if(rc) return rc;
+		if(rc){
+			return rc;
+		}
 		rc = db__message_write_inflight_out_all(context);
 		return rc;
 	}else{

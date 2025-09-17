@@ -55,8 +55,12 @@ BROKER_EXPORT int mosquitto_pub_topic_check(const char *str)
 		len++;
 		str = &str[1];
 	}
-	if(len == 0 || len > 65535) return MOSQ_ERR_INVAL;
-	if(hier_count > TOPIC_HIERARCHY_LIMIT) return MOSQ_ERR_INVAL;
+	if(len == 0 || len > 65535){
+		return MOSQ_ERR_INVAL;
+	}
+	if(hier_count > TOPIC_HIERARCHY_LIMIT){
+		return MOSQ_ERR_INVAL;
+	}
 
 	return MOSQ_ERR_SUCCESS;
 }
@@ -78,7 +82,9 @@ BROKER_EXPORT int mosquitto_pub_topic_check2(const char *str, size_t len)
 			hier_count++;
 		}
 	}
-	if(hier_count > TOPIC_HIERARCHY_LIMIT) return MOSQ_ERR_INVAL;
+	if(hier_count > TOPIC_HIERARCHY_LIMIT){
+		return MOSQ_ERR_INVAL;
+	}
 
 	return MOSQ_ERR_SUCCESS;
 }
@@ -117,8 +123,12 @@ BROKER_EXPORT int mosquitto_sub_topic_check(const char *str)
 		c = str[0];
 		str = &str[1];
 	}
-	if(len == 0 || len > 65535) return MOSQ_ERR_INVAL;
-	if(hier_count > TOPIC_HIERARCHY_LIMIT) return MOSQ_ERR_INVAL;
+	if(len == 0 || len > 65535){
+		return MOSQ_ERR_INVAL;
+	}
+	if(hier_count > TOPIC_HIERARCHY_LIMIT){
+		return MOSQ_ERR_INVAL;
+	}
 
 	return MOSQ_ERR_SUCCESS;
 }
@@ -148,7 +158,9 @@ BROKER_EXPORT int mosquitto_sub_topic_check2(const char *str, size_t len)
 		}
 		c = str[i];
 	}
-	if(hier_count > TOPIC_HIERARCHY_LIMIT) return MOSQ_ERR_INVAL;
+	if(hier_count > TOPIC_HIERARCHY_LIMIT){
+		return MOSQ_ERR_INVAL;
+	}
 
 	return MOSQ_ERR_SUCCESS;
 }
@@ -160,7 +172,9 @@ static int topic_matches_sub(const char *sub, const char *topic, const char *cli
 	const char *pattern_check;
 	const char *lastchar = NULL;
 
-	if(!result) return MOSQ_ERR_INVAL;
+	if(!result){
+		return MOSQ_ERR_INVAL;
+	}
 	*result = false;
 
 	if(!sub || !topic || sub[0] == 0 || topic[0] == 0){
@@ -526,7 +540,9 @@ BROKER_EXPORT int mosquitto_topic_matches_sub2(const char *sub, size_t sublen, c
 {
 	size_t spos, tpos;
 
-	if(!result) return MOSQ_ERR_INVAL;
+	if(!result){
+		return MOSQ_ERR_INVAL;
+	}
 	*result = false;
 
 	if(!sub || !topic || !sublen || !topiclen){
@@ -657,7 +673,9 @@ int mosquitto_sub_topic_tokenise(const char *subtopic, char ***topics, int *coun
 	size_t tlen;
 	size_t i, j;
 
-	if(!subtopic || !topics || !count) return MOSQ_ERR_INVAL;
+	if(!subtopic || !topics || !count){
+		return MOSQ_ERR_INVAL;
+	}
 
 	len = strlen(subtopic);
 
@@ -672,7 +690,9 @@ int mosquitto_sub_topic_tokenise(const char *subtopic, char ***topics, int *coun
 	}
 
 	(*topics) = mosquitto_calloc(hier_count, sizeof(char *));
-	if(!(*topics)) return MOSQ_ERR_NOMEM;
+	if(!(*topics)){
+		return MOSQ_ERR_NOMEM;
+	}
 
 	start = 0;
 	hier = 0;
@@ -709,7 +729,9 @@ int mosquitto_sub_topic_tokens_free(char ***topics, int count)
 {
 	int i;
 
-	if(!topics || !(*topics) || count<1) return MOSQ_ERR_INVAL;
+	if(!topics || !(*topics) || count<1){
+		return MOSQ_ERR_INVAL;
+	}
 
 	for(i=0; i<count; i++){
 		mosquitto_FREE((*topics)[i]);

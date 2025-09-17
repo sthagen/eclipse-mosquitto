@@ -111,9 +111,15 @@ static inline int socks5__connection_error(struct mosquitto *mosq)
 int mosquitto_socks5_set(struct mosquitto *mosq, const char *host, int port, const char *username, const char *password)
 {
 #ifdef WITH_SOCKS
-	if(!mosq) return MOSQ_ERR_INVAL;
-	if(!host || strlen(host) > 256) return MOSQ_ERR_INVAL;
-	if(port < 1 || port > UINT16_MAX) return MOSQ_ERR_INVAL;
+	if(!mosq){
+		return MOSQ_ERR_INVAL;
+	}
+	if(!host || strlen(host) > 256){
+		return MOSQ_ERR_INVAL;
+	}
+	if(port < 1 || port > UINT16_MAX){
+		return MOSQ_ERR_INVAL;
+	}
 
 	mosquitto_FREE(mosq->socks5_host);
 	mosq->socks5_host = mosquitto_strdup(host);
@@ -165,7 +171,9 @@ int mosquitto_socks5_set(struct mosquitto *mosq, const char *host, int port, con
 static void socks5__packet_alloc(struct mosquitto__packet **packet, uint32_t packet_length)
 {
 	*packet = mosquitto_calloc(1, sizeof(struct mosquitto__packet) + packet_length + WS_PACKET_OFFSET);
-	if(!(*packet)) return;
+	if(!(*packet)){
+		return;
+	}
 	(*packet)->pos = WS_PACKET_OFFSET;
 	(*packet)->packet_length = packet_length + WS_PACKET_OFFSET;
 	(*packet)->to_process = packet_length;
@@ -195,7 +203,9 @@ int socks5__send(struct mosquitto *mosq)
 		}
 
 		socks5__packet_alloc(&packet, packet_length);
-		if(!packet) return MOSQ_ERR_NOMEM;
+		if(!packet){
+			return MOSQ_ERR_NOMEM;
+		}
 
 		packet->payload[0 + WS_PACKET_OFFSET] = 0x05;
 		if(mosq->socks5_username){
@@ -227,7 +237,9 @@ int socks5__send(struct mosquitto *mosq)
 			packet_length = 10;
 
 			socks5__packet_alloc(&packet, packet_length);
-			if(!packet) return MOSQ_ERR_NOMEM;
+			if(!packet){
+				return MOSQ_ERR_NOMEM;
+			}
 
 			packet->payload[3 + WS_PACKET_OFFSET] = SOCKS_ATYPE_IP_V4;
 			memcpy(&(packet->payload[4 + WS_PACKET_OFFSET]), (const void *)&addr_ipv4, 4);
@@ -237,7 +249,9 @@ int socks5__send(struct mosquitto *mosq)
 			packet_length = 22;
 
 			socks5__packet_alloc(&packet, packet_length);
-			if(!packet) return MOSQ_ERR_NOMEM;
+			if(!packet){
+				return MOSQ_ERR_NOMEM;
+			}
 
 			packet->payload[3 + WS_PACKET_OFFSET] = SOCKS_ATYPE_IP_V6;
 			memcpy(&(packet->payload[4 + WS_PACKET_OFFSET]), (const void *)&addr_ipv6, 16);
@@ -251,7 +265,9 @@ int socks5__send(struct mosquitto *mosq)
 			packet_length = 7U + (uint32_t)slen;
 
 			socks5__packet_alloc(&packet, packet_length);
-			if(!packet) return MOSQ_ERR_NOMEM;
+			if(!packet){
+				return MOSQ_ERR_NOMEM;
+			}
 
 			packet->payload[3 + WS_PACKET_OFFSET] = SOCKS_ATYPE_DOMAINNAME;
 			packet->payload[4 + WS_PACKET_OFFSET] = (uint8_t)slen;
@@ -281,7 +297,9 @@ int socks5__send(struct mosquitto *mosq)
 		packet_length = 3U + ulen + plen;
 
 		socks5__packet_alloc(&packet, packet_length);
-		if(!packet) return MOSQ_ERR_NOMEM;
+		if(!packet){
+			return MOSQ_ERR_NOMEM;
+		}
 
 		packet->payload[0 + WS_PACKET_OFFSET] = 0x01;
 		packet->payload[1 + WS_PACKET_OFFSET] = ulen;
@@ -418,7 +436,9 @@ int socks5__read(struct mosquitto *mosq)
 			mosquitto__set_state(mosq, mosq_cs_new);
 			if(mosq->socks5_host){
 				int rc = net__socket_connect_step3(mosq, mosq->host);
-				if(rc) return rc;
+				if(rc){
+					return rc;
+				}
 			}
 			return send__connect(mosq, mosq->keepalive, mosq->clean_start, NULL);
 		}else{

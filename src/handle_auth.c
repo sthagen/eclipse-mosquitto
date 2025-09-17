@@ -41,7 +41,9 @@ int handle__auth(struct mosquitto *context)
 	void *auth_data_out = NULL;
 	uint16_t auth_data_out_len = 0;
 
-	if(!context) return MOSQ_ERR_INVAL;
+	if(!context){
+		return MOSQ_ERR_INVAL;
+	}
 
 	if(context->protocol != mosq_p_mqtt5 || context->auth_method == NULL){
 		return MOSQ_ERR_PROTOCOL;
@@ -51,7 +53,9 @@ int handle__auth(struct mosquitto *context)
 	}
 
 	if(context->in_packet.remaining_length > 0){
-		if(packet__read_byte(&context->in_packet, &reason_code)) return MOSQ_ERR_MALFORMED_PACKET;
+		if(packet__read_byte(&context->in_packet, &reason_code)){
+			return MOSQ_ERR_MALFORMED_PACKET;
+		}
 		if(reason_code != MQTT_RC_CONTINUE_AUTHENTICATION
 				&& reason_code != MQTT_RC_REAUTHENTICATE){
 

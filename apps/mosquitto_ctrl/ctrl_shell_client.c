@@ -75,7 +75,9 @@ int ctrl_shell__connect(void)
 
 void ctrl_shell__disconnect(void)
 {
-	if(!data.mosq) return;
+	if(!data.mosq){
+		return;
+	}
 
 	mosquitto_disconnect(data.mosq);
 	mosquitto_loop_stop(data.mosq, false);

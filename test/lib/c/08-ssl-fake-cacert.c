@@ -44,7 +44,9 @@ int main(int argc, char *argv[])
 	mosquitto_connect_callback_set(mosq, on_connect);
 
 	rc = mosquitto_connect(mosq, "localhost", port, 60);
-	if(rc != MOSQ_ERR_SUCCESS) return rc;
+	if(rc != MOSQ_ERR_SUCCESS){
+		return rc;
+	}
 
 	rc = mosquitto_loop_forever(mosq, -1, 1);
 	mosquitto_destroy(mosq);

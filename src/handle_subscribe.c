@@ -44,7 +44,9 @@ int handle__subscribe(struct mosquitto *context)
 	struct mosquitto_subscription sub;
 	uint32_t subscription_identifier = 0;
 
-	if(!context) return MOSQ_ERR_INVAL;
+	if(!context){
+		return MOSQ_ERR_INVAL;
+	}
 
 	if(context->state != mosq_cs_active){
 		return MOSQ_ERR_PROTOCOL;
@@ -60,8 +62,12 @@ int handle__subscribe(struct mosquitto *context)
 			return MOSQ_ERR_MALFORMED_PACKET;
 		}
 	}
-	if(packet__read_uint16(&context->in_packet, &mid)) return MOSQ_ERR_MALFORMED_PACKET;
-	if(mid == 0) return MOSQ_ERR_MALFORMED_PACKET;
+	if(packet__read_uint16(&context->in_packet, &mid)){
+		return MOSQ_ERR_MALFORMED_PACKET;
+	}
+	if(mid == 0){
+		return MOSQ_ERR_MALFORMED_PACKET;
+	}
 
 	if(context->protocol == mosq_p_mqtt5){
 		rc = property__read_all(CMD_SUBSCRIBE, &context->in_packet, &properties);
@@ -263,7 +269,9 @@ int handle__subscribe(struct mosquitto *context)
 			return MOSQ_ERR_MALFORMED_PACKET;
 		}
 	}
-	if(send__suback(context, mid, payloadlen, payload)) rc = 1;
+	if(send__suback(context, mid, payloadlen, payload)){
+		rc = 1;
+	}
 	mosquitto_FREE(payload);
 
 #ifdef WITH_PERSISTENCE
@@ -272,9 +280,13 @@ int handle__subscribe(struct mosquitto *context)
 
 	if(context->out_packet == NULL){
 		rc = db__message_write_queued_out(context);
-		if(rc) return rc;
+		if(rc){
+			return rc;
+		}
 		rc = db__message_write_inflight_out_latest(context);
-		if(rc) return rc;
+		if(rc){
+			return rc;
+		}
 	}
 
 	return rc;

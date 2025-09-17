@@ -103,7 +103,9 @@ int handle__publish(struct mosquitto *mosq)
 	}
 
 	message = mosquitto_calloc(1, sizeof(struct mosquitto_message_all));
-	if(!message) return MOSQ_ERR_NOMEM;
+	if(!message){
+		return MOSQ_ERR_NOMEM;
+	}
 
 	header = mosq->in_packet.command;
 

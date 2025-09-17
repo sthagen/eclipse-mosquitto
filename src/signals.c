@@ -111,17 +111,25 @@ int signal__flag_check(void)
 		config__read(db.config, true);
 		listeners__reload_all_certificates();
 		rc = plugin__handle_reload();
-		if(rc) return rc;
+		if(rc){
+			return rc;
+		}
 		mosquitto_security_cleanup(true);
 		rc = mosquitto_security_init(true);
-		if(rc) return rc;
+		if(rc){
+			return rc;
+		}
 		rc = mosquitto_security_apply_default();
-		if(rc) return rc;
+		if(rc){
+			return rc;
+		}
 		log__close(db.config);
 		log__init(db.config);
 		keepalive__cleanup();
 		rc = keepalive__init();
-		if(rc) return rc;
+		if(rc){
+			return rc;
+		}
 		broker_control__reload();
 #ifdef WITH_BRIDGE
 		bridge__reload();
@@ -212,7 +220,9 @@ DWORD WINAPI SigThreadProc(void *data)
 		}
 	}
 	for(int i=0; i<MOSQ_MAX_EVTS; i++){
-		if(evt[i]) CloseHandle(evt[i]);
+		if(evt[i]){
+			CloseHandle(evt[i]);
+		}
 	}
 	return 0;
 }

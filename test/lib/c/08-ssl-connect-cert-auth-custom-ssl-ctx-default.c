@@ -76,7 +76,9 @@ int main(int argc, char *argv[])
 	mosquitto_disconnect_callback_set(mosq, on_disconnect);
 
 	int rc = mosquitto_connect(mosq, "localhost", port, 60);
-	if(rc) return rc;
+	if(rc){
+		return rc;
+	}
 
 	signal(SIGINT, handle_sigint);
 	while(run == -1){

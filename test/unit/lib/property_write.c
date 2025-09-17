@@ -28,7 +28,9 @@ static void byte_prop_write_helper(
 
 	rc = packet__alloc(&packet, 0, mosquitto_property_get_length_all(&property)+11);
 	CU_ASSERT_EQUAL(rc, MOSQ_ERR_SUCCESS);
-	if(rc != MOSQ_ERR_SUCCESS) return;
+	if(rc != MOSQ_ERR_SUCCESS){
+		return;
+	}
 
 	packet->pos = 0; /* Make indexing easier */
 	property__write_all(packet, &property, true);
@@ -79,7 +81,9 @@ static void int32_prop_write_helper(
 
 	rc = packet__alloc(&packet, 0, mosquitto_property_get_length_all(&property)+11);
 	CU_ASSERT_EQUAL(rc, MOSQ_ERR_SUCCESS);
-	if(rc != MOSQ_ERR_SUCCESS) return;
+	if(rc != MOSQ_ERR_SUCCESS){
+		return;
+	}
 
 	packet->pos = 0; /* Make indexing easier */
 	property__write_all(packet, &property, true);
@@ -130,7 +134,9 @@ static void int16_prop_write_helper(
 
 	rc = packet__alloc(&packet, 0, mosquitto_property_get_length_all(&property)+11);
 	CU_ASSERT_EQUAL(rc, MOSQ_ERR_SUCCESS);
-	if(rc != MOSQ_ERR_SUCCESS) return;
+	if(rc != MOSQ_ERR_SUCCESS){
+		return;
+	}
 
 	packet->pos = 0; /* Make indexing easier */
 	property__write_all(packet, &property, true);
@@ -179,13 +185,17 @@ static void string_prop_write_helper(
 	property.property_type = MQTT_PROP_TYPE_STRING;
 	property.value.s.v = strdup(value_expected);
 	CU_ASSERT_PTR_NOT_NULL(property.value.s.v);
-	if(!property.value.s.v) return;
+	if(!property.value.s.v){
+		return;
+	}
 
 	property.value.s.len = (uint16_t)strlen(value_expected);
 
 	rc = packet__alloc(&packet, 0, mosquitto_property_get_length_all(&property)+11);
 	CU_ASSERT_EQUAL(rc, MOSQ_ERR_SUCCESS);
-	if(rc != MOSQ_ERR_SUCCESS) return;
+	if(rc != MOSQ_ERR_SUCCESS){
+		return;
+	}
 
 	packet->pos = 0; /* Make indexing easier */
 	property__write_all(packet, &property, true);
@@ -237,14 +247,18 @@ static void binary_prop_write_helper(
 	property.property_type = MQTT_PROP_TYPE_BINARY;
 	property.value.bin.v = malloc(len_expected);
 	CU_ASSERT_PTR_NOT_NULL(property.value.bin.v);
-	if(!property.value.bin.v) return;
+	if(!property.value.bin.v){
+		return;
+	}
 
 	memcpy(property.value.bin.v, value_expected, len_expected);
 	property.value.bin.len = len_expected;
 
 	rc = packet__alloc(&packet, 0, mosquitto_property_get_length_all(&property)+11);
 	CU_ASSERT_EQUAL(rc, MOSQ_ERR_SUCCESS);
-	if(rc != MOSQ_ERR_SUCCESS) return;
+	if(rc != MOSQ_ERR_SUCCESS){
+		return;
+	}
 
 	packet->pos = 0; /* Make indexing easier */
 	property__write_all(packet, &property, true);
@@ -296,18 +310,24 @@ static void string_pair_prop_write_helper(
 	property.property_type = MQTT_PROP_TYPE_STRING_PAIR;
 	property.value.s.v = strdup(value_expected);
 	CU_ASSERT_PTR_NOT_NULL(property.value.s.v);
-	if(!property.value.s.v) return;
+	if(!property.value.s.v){
+		return;
+	}
 	property.value.s.len = (uint16_t)strlen(value_expected);
 
 	property.name.v = strdup(name_expected);
 	CU_ASSERT_PTR_NOT_NULL(property.name.v);
-	if(!property.name.v) return;
+	if(!property.name.v){
+		return;
+	}
 
 	property.name.len = (uint16_t)strlen(name_expected);
 
 	rc = packet__alloc(&packet, 0, mosquitto_property_get_length_all(&property)+11);
 	CU_ASSERT_EQUAL(rc, MOSQ_ERR_SUCCESS);
-	if(rc != MOSQ_ERR_SUCCESS) return;
+	if(rc != MOSQ_ERR_SUCCESS){
+		return;
+	}
 
 	packet->pos = 0; /* Make indexing easier */
 	property__write_all(packet, &property, true);
@@ -369,7 +389,9 @@ static void varint_prop_write_helper(
 
 	rc = packet__alloc(&packet, 0, mosquitto_property_get_length_all(&property)+11);
 	CU_ASSERT_EQUAL(rc, MOSQ_ERR_SUCCESS);
-	if(rc != MOSQ_ERR_SUCCESS) return;
+	if(rc != MOSQ_ERR_SUCCESS){
+		return;
+	}
 
 	packet->pos = 0; /* Make indexing easier */
 	property__write_all(packet, &property, true);
@@ -422,7 +444,9 @@ static void TEST_bad_identifier(void)
 	memset(&property, 0, sizeof(property));
 	packet = calloc(1, sizeof(struct mosquitto__packet) + 10);
 	CU_ASSERT_PTR_NOT_NULL(packet);
-	if(packet == NULL) return;
+	if(packet == NULL){
+		return;
+	}
 
 	property.identifier = 0xFFFF;
 	property.property_type = MQTT_PROP_TYPE_BYTE;

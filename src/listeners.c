@@ -116,7 +116,9 @@ void listeners__add_websockets(struct lws_context *ws_context, mosq_sock_t fd)
 	struct mosquitto__listener_sock *listensock_new;
 
 	/* Don't add more listeners after we've started the main loop */
-	if(g_run || ws_context == NULL) return;
+	if(g_run || ws_context == NULL){
+		return;
+	}
 
 	/* Find context */
 	for(int i=0; i<db.config->listener_count; i++){
@@ -219,15 +221,23 @@ static int listeners__start_local_only(void)
 	log__printf(NULL, MOSQ_LOG_WARNING, "For more details see https://mosquitto.org/documentation/authentication-methods/");
 	if(db.config->cmd_port_count == 0){
 		rc = listeners__add_local("127.0.0.1", 1883);
-		if(rc == MOSQ_ERR_NOMEM) return MOSQ_ERR_NOMEM;
+		if(rc == MOSQ_ERR_NOMEM){
+			return MOSQ_ERR_NOMEM;
+		}
 		rc = listeners__add_local("::1", 1883);
-		if(rc == MOSQ_ERR_NOMEM) return MOSQ_ERR_NOMEM;
+		if(rc == MOSQ_ERR_NOMEM){
+			return MOSQ_ERR_NOMEM;
+		}
 	}else{
 		for(int i=0; i<db.config->cmd_port_count; i++){
 			rc = listeners__add_local("127.0.0.1", db.config->cmd_port[i]);
-			if(rc == MOSQ_ERR_NOMEM) return MOSQ_ERR_NOMEM;
+			if(rc == MOSQ_ERR_NOMEM){
+				return MOSQ_ERR_NOMEM;
+			}
 			rc = listeners__add_local("::1", db.config->cmd_port[i]);
-			if(rc == MOSQ_ERR_NOMEM) return MOSQ_ERR_NOMEM;
+			if(rc == MOSQ_ERR_NOMEM){
+				return MOSQ_ERR_NOMEM;
+			}
 		}
 	}
 

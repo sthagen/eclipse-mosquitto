@@ -34,7 +34,9 @@ int handle__packet(struct mosquitto *context)
 {
 	int rc = MOSQ_ERR_INVAL;
 
-	if(!context) return MOSQ_ERR_INVAL;
+	if(!context){
+		return MOSQ_ERR_INVAL;
+	}
 
 	switch((context->in_packet.command)&0xF0){
 		case CMD_PINGREQ:

@@ -275,7 +275,9 @@ int handle__publish(struct mosquitto *context)
 
 			dup = 0;
 			rc = db__message_store(context, base_msg, &message_expiry_interval, mosq_mo_client);
-			if(rc) return rc;
+			if(rc){
+				return rc;
+			}
 		}else{
 			/* Client isn't allowed any more incoming messages, so fail early */
 			reason_code = MQTT_RC_QUOTA_EXCEEDED;
@@ -295,7 +297,9 @@ int handle__publish(struct mosquitto *context)
 	switch(stored->data.qos){
 		case 0:
 			rc2 = sub__messages_queue(context->id, stored->data.topic, stored->data.qos, stored->data.retain, &stored);
-			if(rc2 > 0) rc = rc2;
+			if(rc2 > 0){
+				rc = rc2;
+			}
 			break;
 		case 1:
 			util__decrement_receive_quota(context);
@@ -303,10 +307,14 @@ int handle__publish(struct mosquitto *context)
 			/* stored may now be free, so don't refer to it */
 			if(rc2 == MOSQ_ERR_SUCCESS || context->protocol != mosq_p_mqtt5){
 				rc2 = send__puback(context, mid, 0, NULL);
-				if(rc2) rc = rc2;
+				if(rc2){
+					rc = rc2;
+				}
 			}else if(rc2 == MOSQ_ERR_NO_SUBSCRIBERS){
 				rc2 = send__puback(context, mid, MQTT_RC_NO_MATCHING_SUBSCRIBERS, NULL);
-				if(rc2) rc = rc2;
+				if(rc2){
+					rc = rc2;
+				}
 			}else{
 				rc = rc2;
 			}
@@ -324,7 +332,9 @@ int handle__publish(struct mosquitto *context)
 			if(!res){
 				if(dup == 0 || dup == 1){
 					rc2 = send__pubrec(context, stored->data.source_mid, 0, NULL);
-					if(rc2) rc = rc2;
+					if(rc2){
+						rc = rc2;
+					}
 				}else{
 					return MOSQ_ERR_PROTOCOL;
 				}

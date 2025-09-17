@@ -54,7 +54,9 @@ int handle__connack(struct mosquitto *mosq)
 	}
 
 	rc = packet__read_byte(&mosq->in_packet, &connect_flags);
-	if(rc) return rc;
+	if(rc){
+		return rc;
+	}
 	if((mosq->protocol == mosq_p_mqtt311 || mosq->protocol == mosq_p_mqtt5) && (connect_flags & 0xFE)){
 		log__printf(mosq, MOSQ_LOG_DEBUG, "Client %s received CONNACK with invalid connect flags (%d)", mosq->id, connect_flags);
 		return MOSQ_ERR_PROTOCOL;
@@ -65,7 +67,9 @@ int handle__connack(struct mosquitto *mosq)
 	}
 
 	rc = packet__read_byte(&mosq->in_packet, &reason_code);
-	if(rc) return rc;
+	if(rc){
+		return rc;
+	}
 
 	if(mosq->protocol == mosq_p_mqtt5){
 		rc = property__read_all(CMD_CONNACK, &mosq->in_packet, &properties);

@@ -66,8 +66,9 @@ time_t mosquitto_time(void)
 #elif _POSIX_TIMERS>0 && defined(_POSIX_MONOTONIC_CLOCK)
 	struct timespec tp;
 
-	if(clock_gettime(time_clock, &tp) == 0)
+	if(clock_gettime(time_clock, &tp) == 0){
 		return tp.tv_sec;
+	}
 
 	return (time_t)-1;
 #elif defined(__APPLE__)

@@ -100,7 +100,9 @@ static FILE *mpw_tmpfile(void)
 
 	umask(077);
 	fd = mkstemp((char *)tmpfile_path);
-	if(fd < 0) return NULL;
+	if(fd < 0){
+		return NULL;
+	}
 	unlink((char *)tmpfile_path);
 
 	return fdopen(fd, "w+");
@@ -336,7 +338,9 @@ static int copy_contents(FILE *src, FILE *dest)
 #ifdef WIN32
 	_chsize(fileno(dest), 0);
 #else
-	if(ftruncate(fileno(dest), 0)) return 1;
+	if(ftruncate(fileno(dest), 0)){
+		return 1;
+	}
 #endif
 
 	while(!feof(src)){

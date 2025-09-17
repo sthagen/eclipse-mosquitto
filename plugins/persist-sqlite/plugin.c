@@ -128,10 +128,14 @@ int mosquitto_plugin_init(mosquitto_plugin_id_t *identifier, void **user_data, s
 			}
 		}else if(!strcasecmp(options[i].key, "flush_period")){
 			rc = conf_parse_uint(options[i].value, "flush_period", &plg_data.flush_period, 0);
-			if(rc) return rc;
+			if(rc){
+				return rc;
+			}
 		}else if(!strcasecmp(options[i].key, "page_size")){
 			rc = conf_parse_uint(options[i].value, "page_size", &plg_data.page_size, 1);
-			if(rc) return rc;
+			if(rc){
+				return rc;
+			}
 		}
 	}
 	if(plg_data.db_file == NULL){
@@ -139,42 +143,76 @@ int mosquitto_plugin_init(mosquitto_plugin_id_t *identifier, void **user_data, s
 		return MOSQ_ERR_SUCCESS;
 	}
 	rc = persist_sqlite__init(&plg_data);
-	if(rc) return rc;
+	if(rc){
+		return rc;
+	}
 
 	plg_id = identifier;
 
 	rc = mosquitto_callback_register(plg_id, MOSQ_EVT_PERSIST_RESTORE, persist_sqlite__restore_cb, NULL, &plg_data);
-	if(rc) goto fail;
+	if(rc){
+		goto fail;
+	}
 	rc = mosquitto_callback_register(plg_id, MOSQ_EVT_PERSIST_BASE_MSG_ADD, persist_sqlite__base_msg_add_cb, NULL, &plg_data);
-	if(rc) goto fail;
+	if(rc){
+		goto fail;
+	}
 	rc = mosquitto_callback_register(plg_id, MOSQ_EVT_PERSIST_BASE_MSG_DELETE, persist_sqlite__base_msg_remove_cb, NULL, &plg_data);
-	if(rc) goto fail;
+	if(rc){
+		goto fail;
+	}
 	rc = mosquitto_callback_register(plg_id, MOSQ_EVT_PERSIST_RETAIN_MSG_SET, persist_sqlite__retain_msg_set_cb, NULL, &plg_data);
-	if(rc) goto fail;
+	if(rc){
+		goto fail;
+	}
 	rc = mosquitto_callback_register(plg_id, MOSQ_EVT_PERSIST_RETAIN_MSG_DELETE, persist_sqlite__retain_msg_remove_cb, NULL, &plg_data);
-	if(rc) goto fail;
+	if(rc){
+		goto fail;
+	}
 	rc = mosquitto_callback_register(plg_id, MOSQ_EVT_PERSIST_CLIENT_ADD, persist_sqlite__client_add_cb, NULL, &plg_data);
-	if(rc) goto fail;
+	if(rc){
+		goto fail;
+	}
 	rc = mosquitto_callback_register(plg_id, MOSQ_EVT_PERSIST_CLIENT_DELETE, persist_sqlite__client_remove_cb, NULL, &plg_data);
-	if(rc) goto fail;
+	if(rc){
+		goto fail;
+	}
 	rc = mosquitto_callback_register(plg_id, MOSQ_EVT_PERSIST_CLIENT_UPDATE, persist_sqlite__client_update_cb, NULL, &plg_data);
-	if(rc) goto fail;
+	if(rc){
+		goto fail;
+	}
 	rc = mosquitto_callback_register(plg_id, MOSQ_EVT_PERSIST_SUBSCRIPTION_ADD, persist_sqlite__subscription_add_cb, NULL, &plg_data);
-	if(rc) goto fail;
+	if(rc){
+		goto fail;
+	}
 	rc = mosquitto_callback_register(plg_id, MOSQ_EVT_PERSIST_SUBSCRIPTION_DELETE, persist_sqlite__subscription_remove_cb, NULL, &plg_data);
-	if(rc) goto fail;
+	if(rc){
+		goto fail;
+	}
 	rc = mosquitto_callback_register(plg_id, MOSQ_EVT_PERSIST_CLIENT_MSG_ADD, persist_sqlite__client_msg_add_cb, NULL, &plg_data);
-	if(rc) goto fail;
+	if(rc){
+		goto fail;
+	}
 	rc = mosquitto_callback_register(plg_id, MOSQ_EVT_PERSIST_CLIENT_MSG_DELETE, persist_sqlite__client_msg_remove_cb, NULL, &plg_data);
-	if(rc) goto fail;
+	if(rc){
+		goto fail;
+	}
 	rc = mosquitto_callback_register(plg_id, MOSQ_EVT_PERSIST_CLIENT_MSG_UPDATE, persist_sqlite__client_msg_update_cb, NULL, &plg_data);
-	if(rc) goto fail;
+	if(rc){
+		goto fail;
+	}
 	rc = mosquitto_callback_register(plg_id, MOSQ_EVT_PERSIST_WILL_ADD, persist_sqlite__will_add_cb, NULL, &plg_data);
-	if(rc) goto fail;
+	if(rc){
+		goto fail;
+	}
 	rc = mosquitto_callback_register(plg_id, MOSQ_EVT_PERSIST_WILL_DELETE, persist_sqlite__will_remove_cb, NULL, &plg_data);
-	if(rc) goto fail;
+	if(rc){
+		goto fail;
+	}
 	rc = mosquitto_callback_register(plg_id, MOSQ_EVT_TICK, persist_sqlite__tick_cb, NULL, &plg_data);
-	if(rc) goto fail;
+	if(rc){
+		goto fail;
+	}
 
 	return MOSQ_ERR_SUCCESS;
 fail:

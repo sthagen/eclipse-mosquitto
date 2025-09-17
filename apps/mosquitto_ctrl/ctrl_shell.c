@@ -345,7 +345,9 @@ bool ctrl_shell_callback_final(char *line)
 			return false;
 		}
 	}else if(!strcasecmp(line, "return")){
-		if(data.mod_cleanup) data.mod_cleanup();
+		if(data.mod_cleanup){
+			data.mod_cleanup();
+		}
 		ctrl_shell__post_connect_init();
 	}else{
 		return false;
@@ -387,7 +389,9 @@ static void calc_generator_arg(int start)
 	}
 
 	text_heap = strdup(rl_line_buffer);
-	if(!text_heap) return;
+	if(!text_heap){
+		return;
+	}
 	text_heap[start] = '\0';
 	text_arg = strtok_r(text_heap, " ", &saveptr);
 	while(text_arg){

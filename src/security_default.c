@@ -56,13 +56,19 @@ int mosquitto_security_init_default(void)
 	}
 
 	rc = broker_password_file__init();
-	if(rc) return rc;
+	if(rc){
+		return rc;
+	}
 
 	rc = broker_acl_file__init();
-	if(rc) return rc;
+	if(rc){
+		return rc;
+	}
 
 	rc = psk_file__init();
-	if(rc) return rc;
+	if(rc){
+		return rc;
+	}
 
 	return MOSQ_ERR_SUCCESS;
 }
@@ -76,7 +82,9 @@ int mosquitto_security_cleanup_default(void)
 	broker_acl_file__cleanup();
 
 	rc = psk_file__cleanup();
-	if(rc != MOSQ_ERR_SUCCESS) return rc;
+	if(rc != MOSQ_ERR_SUCCESS){
+		return rc;
+	}
 
 	if(db.config->per_listener_settings){
 		for(int i=0; i<db.config->listener_count; i++){

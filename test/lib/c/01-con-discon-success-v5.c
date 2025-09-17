@@ -59,7 +59,9 @@ int main(int argc, char *argv[])
 	mosquitto_property_add_int32(&props, MQTT_PROP_MAXIMUM_PACKET_SIZE, 1000);
 	rc = mosquitto_connect_bind_v5(mosq, "localhost", port, 60, NULL, props);
 	mosquitto_property_free_all(&props);
-	if(rc != MOSQ_ERR_SUCCESS) return rc;
+	if(rc != MOSQ_ERR_SUCCESS){
+		return rc;
+	}
 
 	while(run == -1){
 		mosquitto_loop(mosq, -1, 1);

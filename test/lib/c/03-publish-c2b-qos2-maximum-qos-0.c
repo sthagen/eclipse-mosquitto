@@ -15,11 +15,17 @@ static void on_connect(struct mosquitto *mosq, void *obj, int rc)
 		exit(1);
 	}else{
 		rc = mosquitto_publish(mosq, NULL, "maximum/qos/qos2", strlen("message"), "message", 2, false);
-		if(rc != MOSQ_ERR_QOS_NOT_SUPPORTED) run = 1;
+		if(rc != MOSQ_ERR_QOS_NOT_SUPPORTED){
+			run = 1;
+		}
 		rc = mosquitto_publish(mosq, NULL, "maximum/qos/qos1", strlen("message"), "message", 1, false);
-		if(rc != MOSQ_ERR_QOS_NOT_SUPPORTED) run = 1;
+		if(rc != MOSQ_ERR_QOS_NOT_SUPPORTED){
+			run = 1;
+		}
 		rc = mosquitto_publish(mosq, NULL, "maximum/qos/qos0", strlen("message"), "message", 0, false);
-		if(rc != MOSQ_ERR_SUCCESS) run = 1;
+		if(rc != MOSQ_ERR_SUCCESS){
+			run = 1;
+		}
 	}
 }
 
@@ -67,7 +73,9 @@ int main(int argc, char *argv[])
 	mosquitto_publish_callback_set(mosq, on_publish);
 
 	rc = mosquitto_connect(mosq, "localhost", port, 60);
-	if(rc != MOSQ_ERR_SUCCESS) return rc;
+	if(rc != MOSQ_ERR_SUCCESS){
+		return rc;
+	}
 
 	while(run == -1){
 		mosquitto_loop(mosq, 50, 1);

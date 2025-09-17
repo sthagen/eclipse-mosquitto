@@ -76,12 +76,16 @@ int psk_file__cleanup(void)
 	int rc;
 
 	rc = psk__cleanup(&db.config->security_options.psk_id);
-	if(rc != MOSQ_ERR_SUCCESS) return rc;
+	if(rc != MOSQ_ERR_SUCCESS){
+		return rc;
+	}
 
 	for(int i=0; i<db.config->listener_count; i++){
 		if(db.config->listeners[i].security_options->psk_id){
 			rc = psk__cleanup(&db.config->listeners[i].security_options->psk_id);
-			if(rc != MOSQ_ERR_SUCCESS) return rc;
+			if(rc != MOSQ_ERR_SUCCESS){
+				return rc;
+			}
 		}
 	}
 
@@ -113,8 +117,12 @@ static int pwfile__parse(const char *file, struct mosquitto__psk **root)
 
 	while(!feof(pwfile)){
 		if(mosquitto_fgets(&buf, &buflen, pwfile)){
-			if(buf[0] == '#') continue;
-			if(!strchr(buf, ':')) continue;
+			if(buf[0] == '#'){
+				continue;
+			}
+			if(!strchr(buf, ':')){
+				continue;
+			}
 
 			username = strtok_r(buf, ":", &saveptr);
 			if(username){
@@ -185,13 +193,19 @@ static int psk__file_parse(struct mosquitto__psk **psk_id, const char *psk_file)
 	int rc;
 	struct mosquitto__psk *psk, *tmp = NULL;
 
-	if(!db.config || !psk_id) return MOSQ_ERR_INVAL;
+	if(!db.config || !psk_id){
+		return MOSQ_ERR_INVAL;
+	}
 
 	/* We haven't been asked to parse a psk file. */
-	if(!psk_file) return MOSQ_ERR_SUCCESS;
+	if(!psk_file){
+		return MOSQ_ERR_SUCCESS;
+	}
 
 	rc = pwfile__parse(psk_file, psk_id);
-	if(rc) return rc;
+	if(rc){
+		return rc;
+	}
 
 	HASH_ITER(hh, (*psk_id), psk, tmp){
 		/* Check for hex only digits */
@@ -212,7 +226,9 @@ static int psk__cleanup(struct mosquitto__psk **root)
 {
 	struct mosquitto__psk *psk, *tmp = NULL;
 
-	if(!root) return MOSQ_ERR_INVAL;
+	if(!root){
+		return MOSQ_ERR_INVAL;
+	}
 
 	HASH_ITER(hh, *root, psk, tmp){
 		HASH_DEL(*root, psk);
@@ -230,15 +246,21 @@ int mosquitto_psk_key_get_default(struct mosquitto *context, const char *hint, c
 	struct mosquitto__psk *psk;
 	struct mosquitto__psk *psk_id_ref = NULL;
 
-	if(!hint || !identity || !key) return MOSQ_ERR_INVAL;
+	if(!hint || !identity || !key){
+		return MOSQ_ERR_INVAL;
+	}
 
 	if(db.config->per_listener_settings){
-		if(!context->listener) return MOSQ_ERR_INVAL;
+		if(!context->listener){
+			return MOSQ_ERR_INVAL;
+		}
 		psk_id_ref = context->listener->security_options->psk_id;
 	}else{
 		psk_id_ref = db.config->security_options.psk_id;
 	}
-	if(!psk_id_ref) return MOSQ_ERR_PLUGIN_IGNORE;
+	if(!psk_id_ref){
+		return MOSQ_ERR_PLUGIN_IGNORE;
+	}
 
 	HASH_FIND(hh, psk_id_ref, identity, strlen(identity), psk);
 	if(psk){

@@ -64,8 +64,12 @@ int mosquitto_security_auth_start(struct mosquitto *context, bool reauth, const 
 {
 	int rc;
 
-	if(!context || !context->listener || !context->auth_method) return MOSQ_ERR_INVAL;
-	if(!data_out || !data_out_len) return MOSQ_ERR_INVAL;
+	if(!context || !context->listener || !context->auth_method){
+		return MOSQ_ERR_INVAL;
+	}
+	if(!data_out || !data_out_len){
+		return MOSQ_ERR_INVAL;
+	}
 
 	/* Global plugins */
 	if(db.config->security_options.plugin_callbacks.ext_auth_start){
@@ -132,8 +136,12 @@ int mosquitto_security_auth_continue(struct mosquitto *context, const void *data
 {
 	int rc;
 
-	if(!context || !context->listener || !context->auth_method) return MOSQ_ERR_INVAL;
-	if(!data_out || !data_out_len) return MOSQ_ERR_INVAL;
+	if(!context || !context->listener || !context->auth_method){
+		return MOSQ_ERR_INVAL;
+	}
+	if(!data_out || !data_out_len){
+		return MOSQ_ERR_INVAL;
+	}
 
 	/* Global plugins */
 	if(db.config->security_options.plugin_callbacks.ext_auth_continue){

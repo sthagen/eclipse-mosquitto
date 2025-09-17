@@ -119,7 +119,9 @@ static ssize_t read_ws_opcode(struct mosquitto *mosq)
 	mosq->wsd.payloadlen_bytes = UINT8_MAX;
 
 	len = net__read(mosq, &hbuf, 1);
-	if(len <= 0) return len;
+	if(len <= 0){
+		return len;
+	}
 
 	if((hbuf & 0x70) != 0x00){
 		mosq->wsd.disconnect_reason = 0xEA;
@@ -166,7 +168,9 @@ static ssize_t read_ws_payloadlen_short(struct mosquitto *mosq)
 	uint8_t plen;
 
 	len = net__read(mosq, &hbuf, 1);
-	if(len <= 0) return len;
+	if(len <= 0){
+		return len;
+	}
 
 	mosq->wsd.mask = (hbuf & 0x80) >> 7;
 	plen = hbuf & 0x7F;
@@ -192,7 +196,9 @@ static ssize_t read_ws_payloadlen_extended(struct mosquitto *mosq)
 	ssize_t len;
 
 	len = net__read(mosq, hbuf, mosq->wsd.payloadlen_bytes);
-	if(len <= 0) return len;
+	if(len <= 0){
+		return len;
+	}
 	for(ssize_t i=0; i<len; i++){
 		mosq->wsd.payloadlen = (mosq->wsd.payloadlen << 8) + hbuf[i];
 	}
@@ -207,7 +213,9 @@ static ssize_t read_ws_mask(struct mosquitto *mosq)
 	ssize_t len;
 
 	len = net__read(mosq, &mosq->wsd.maskingkey[4-mosq->wsd.mask_bytes], mosq->wsd.mask_bytes);
-	if(len <= 0) return len;
+	if(len <= 0){
+		return len;
+	}
 	mosq->wsd.mask_bytes -= (uint8_t)len;
 	if(mosq->wsd.mask_bytes > 0){
 		errno = EAGAIN;
@@ -225,22 +233,30 @@ ssize_t net__read_ws(struct mosquitto *mosq, void *buf, size_t count)
 	if(mosq->wsd.payloadlen == 0){
 		if(mosq->wsd.opcode == UINT8_MAX){
 			len = read_ws_opcode(mosq);
-			if(len <= 0) return len;
+			if(len <= 0){
+				return len;
+			}
 		}
 
 		if(mosq->wsd.mask == UINT8_MAX){
 			len = read_ws_payloadlen_short(mosq);
-			if(len <= 0) return len;
+			if(len <= 0){
+				return len;
+			}
 		}
 
 		if(mosq->wsd.payloadlen_bytes > 0){
 			len = read_ws_payloadlen_extended(mosq);
-			if(len <= 0) return len;
+			if(len <= 0){
+				return len;
+			}
 		}
 
 		if(mosq->wsd.mask == 1 && mosq->wsd.mask_bytes > 0){
 			len = read_ws_mask(mosq);
-			if(len <= 0) return len;
+			if(len <= 0){
+				return len;
+			}
 		}
 
 		if(mosq->wsd.opcode == WS_CLOSE && mosq->wsd.payloadlen == 1){

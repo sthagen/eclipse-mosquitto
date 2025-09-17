@@ -110,7 +110,9 @@ static int plugin_v2_reload(int event, void *event_data, void *userdata)
 			(struct mosquitto_auth_opt *)plugin->config.options,
 			plugin->config.option_count,
 			true);
-	if(rc) return rc;
+	if(rc){
+		return rc;
+	}
 
 	rc = plugin->lib.security_init_v2(
 			plugin->lib.user_data,

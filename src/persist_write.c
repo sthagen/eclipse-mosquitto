@@ -200,10 +200,18 @@ static int persist__client_save(FILE *db_fptr)
 				return rc;
 			}
 
-			if(persist__client_messages_save(db_fptr, context, context->msgs_in.inflight)) return 1;
-			if(persist__client_messages_save(db_fptr, context, context->msgs_in.queued)) return 1;
-			if(persist__client_messages_save(db_fptr, context, context->msgs_out.inflight)) return 1;
-			if(persist__client_messages_save(db_fptr, context, context->msgs_out.queued)) return 1;
+			if(persist__client_messages_save(db_fptr, context, context->msgs_in.inflight)){
+				return 1;
+			}
+			if(persist__client_messages_save(db_fptr, context, context->msgs_in.queued)){
+				return 1;
+			}
+			if(persist__client_messages_save(db_fptr, context, context->msgs_out.inflight)){
+				return 1;
+			}
+			if(persist__client_messages_save(db_fptr, context, context->msgs_out.queued)){
+				return 1;
+			}
 		}
 	}
 
@@ -222,7 +230,9 @@ static int persist__subs_save(FILE *db_fptr, struct mosquitto__subhier *node, co
 
 	slen = strlen(topic) + node->topic_len + 2;
 	thistopic = mosquitto_malloc(sizeof(char)*slen);
-	if(!thistopic) return MOSQ_ERR_NOMEM;
+	if(!thistopic){
+		return MOSQ_ERR_NOMEM;
+	}
 	if(level > 1 || strlen(topic)){
 		snprintf(thistopic, slen, "%s/%s", topic, node->topic);
 	}else{
@@ -327,9 +337,15 @@ static void persist__log_write_error(const char *msg)
 
 int persist__backup(bool shutdown)
 {
-	if(db.config == NULL) return MOSQ_ERR_INVAL;
-	if(db.config->persistence == false) return MOSQ_ERR_SUCCESS;
-	if(db.config->persistence_filepath == NULL) return MOSQ_ERR_INVAL;
+	if(db.config == NULL){
+		return MOSQ_ERR_INVAL;
+	}
+	if(db.config->persistence == false){
+		return MOSQ_ERR_SUCCESS;
+	}
+	if(db.config->persistence_filepath == NULL){
+		return MOSQ_ERR_INVAL;
+	}
 
 	log__printf(NULL, MOSQ_LOG_INFO, "Saving in-memory database to %s.", db.config->persistence_filepath);
 
@@ -373,7 +389,9 @@ static int persist__write_data(FILE *db_fptr, void *user_data)
 error:
 	err = strerror(errno);
 	log__printf(NULL, MOSQ_LOG_ERR, "Error during saving in-memory database %s: %s.", db.config->persistence_filepath, err);
-	if(db_fptr) fclose(db_fptr);
+	if(db_fptr){
+		fclose(db_fptr);
+	}
 	return rc;
 }
 

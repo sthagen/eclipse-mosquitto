@@ -54,15 +54,23 @@ int mosquitto_plugin_init(mosquitto_plugin_id_t *identifier, void **user_data, s
 	mosquitto_plugin_set_info(identifier, PLUGIN_NAME, NULL);
 
 	rc = handle_options(data, options, option_count);
-	if(rc) return rc;
+	if(rc){
+		return rc;
+	}
 
 	rc = acl_file__parse(data);
-	if(rc) return rc;
+	if(rc){
+		return rc;
+	}
 
 	rc = mosquitto_callback_register(mosq_pid, MOSQ_EVT_ACL_CHECK, acl_file__check, NULL, data);
-	if(rc) return rc;
+	if(rc){
+		return rc;
+	}
 	rc = mosquitto_callback_register(mosq_pid, MOSQ_EVT_RELOAD, acl_file__reload, NULL, data);
-	if(rc) return rc;
+	if(rc){
+		return rc;
+	}
 
 	return MOSQ_ERR_SUCCESS;
 }

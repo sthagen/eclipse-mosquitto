@@ -165,14 +165,18 @@ FILE *mosquitto_fopen(const char *path, const char *mode, bool restrict_read)
 			}
 		}
 		int fd = open(path, open_flags, 0600);
-		if(fd < 0) return NULL;
+		if(fd < 0){
+			return NULL;
+		}
 		fptr = fdopen(fd, mode);
 
 		umask(old_mask);
 	}else{
 		fptr = fopen(path, mode);
 	}
-	if(!fptr) return NULL;
+	if(!fptr){
+		return NULL;
+	}
 
 	if(fstat(fileno(fptr), &statbuf) < 0){
 		fclose(fptr);
@@ -235,7 +239,9 @@ char *mosquitto_trimblanks(char *str)
 {
 	char *endptr;
 
-	if(str == NULL) return NULL;
+	if(str == NULL){
+		return NULL;
+	}
 
 	while(isspace(str[0])){
 		str++;

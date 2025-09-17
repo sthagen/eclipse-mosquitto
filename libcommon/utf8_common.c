@@ -30,8 +30,12 @@ BROKER_EXPORT int mosquitto_validate_utf8(const char *str, int len)
 	int codepoint;
 	const unsigned char *ustr = (const unsigned char *)str;
 
-	if(!str) return MOSQ_ERR_INVAL;
-	if(len < 0 || len > 65536) return MOSQ_ERR_INVAL;
+	if(!str){
+		return MOSQ_ERR_INVAL;
+	}
+	if(len < 0 || len > 65536){
+		return MOSQ_ERR_INVAL;
+	}
 
 	for(i=0; i<len; i++){
 		if(ustr[i] == 0){

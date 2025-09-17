@@ -72,7 +72,9 @@ static int acl__check_dollar(const char *topic, int access)
 	int rc;
 	bool match = false;
 
-	if(topic[0] != '$') return MOSQ_ERR_SUCCESS;
+	if(topic[0] != '$'){
+		return MOSQ_ERR_SUCCESS;
+	}
 
 	if(!strncmp(topic, "$SYS", 4)){
 		if(access == MOSQ_ACL_WRITE){
@@ -149,7 +151,9 @@ int mosquitto_acl_check(struct mosquitto *context, const char *topic, uint32_t p
 	}
 
 	rc = acl__check_dollar(topic, access);
-	if(rc) return rc;
+	if(rc){
+		return rc;
+	}
 
 	/*
 	 * If no plugins exist we should accept at this point so set rc to success.

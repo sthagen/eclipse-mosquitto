@@ -51,9 +51,15 @@ static int mosquitto__connect_init(struct mosquitto *mosq, const char *host, int
 	int i;
 	int rc;
 
-	if(!mosq) return MOSQ_ERR_INVAL;
-	if(!host || port < 0 || port > UINT16_MAX) return MOSQ_ERR_INVAL;
-	if(keepalive != 0 && (keepalive < 5 || keepalive > UINT16_MAX)) return MOSQ_ERR_INVAL;
+	if(!mosq){
+		return MOSQ_ERR_INVAL;
+	}
+	if(!host || port < 0 || port > UINT16_MAX){
+		return MOSQ_ERR_INVAL;
+	}
+	if(keepalive != 0 && (keepalive < 5 || keepalive > UINT16_MAX)){
+		return MOSQ_ERR_INVAL;
+	}
 
 	/* Only MQTT v3.1 requires a client id to be sent */
 	if(mosq->id == NULL && (mosq->protocol == mosq_p_mqtt31)){
@@ -68,7 +74,9 @@ static int mosquitto__connect_init(struct mosquitto *mosq, const char *host, int
 		mosq->id[4] = '-';
 
 		rc = mosquitto_getrandom(&mosq->id[5], 18);
-		if(rc) return rc;
+		if(rc){
+			return rc;
+		}
 
 		for(i=5; i<23; i++){
 			mosq->id[i] = alphanum[(mosq->id[i]&0x7F)%(sizeof(alphanum)-1)];
@@ -77,7 +85,9 @@ static int mosquitto__connect_init(struct mosquitto *mosq, const char *host, int
 
 	mosquitto_FREE(mosq->host);
 	mosq->host = mosquitto_strdup(host);
-	if(!mosq->host) return MOSQ_ERR_NOMEM;
+	if(!mosq->host){
+		return MOSQ_ERR_NOMEM;
+	}
 	mosq->port = (uint16_t)port;
 
 	mosq->keepalive = (uint16_t)keepalive;
@@ -108,21 +118,29 @@ int mosquitto_connect_bind_v5(struct mosquitto *mosq, const char *host, int port
 
 	if(bind_address){
 		rc = mosquitto_string_option(mosq, MOSQ_OPT_BIND_ADDRESS, bind_address);
-		if(rc) return rc;
+		if(rc){
+			return rc;
+		}
 	}
 
 	mosquitto_property_free_all(&mosq->connect_properties);
 	if(properties){
 		rc = mosquitto_property_check_all(CMD_CONNECT, properties);
-		if(rc) return rc;
+		if(rc){
+			return rc;
+		}
 
 		rc = mosquitto_property_copy_all(&mosq->connect_properties, properties);
-		if(rc) return rc;
+		if(rc){
+			return rc;
+		}
 		mosq->connect_properties->client_generated = true;
 	}
 
 	rc = mosquitto__connect_init(mosq, host, port, keepalive);
-	if(rc) return rc;
+	if(rc){
+		return rc;
+	}
 
 	mosquitto__set_state(mosq, mosq_cs_new);
 
@@ -142,11 +160,15 @@ int mosquitto_connect_bind_async(struct mosquitto *mosq, const char *host, int p
 
 	if(bind_address){
 		rc = mosquitto_string_option(mosq, MOSQ_OPT_BIND_ADDRESS, bind_address);
-		if(rc) return rc;
+		if(rc){
+			return rc;
+		}
 	}
 
 	rc = mosquitto__connect_init(mosq, host, port, keepalive);
-	if(rc) return rc;
+	if(rc){
+		return rc;
+	}
 
 	return mosquitto__reconnect(mosq, false);
 }
@@ -198,11 +220,17 @@ static int mosquitto__reconnect(struct mosquitto *mosq, bool blocking)
 	mosquitto_property local_property;
 	int rc;
 
-	if(!mosq) return MOSQ_ERR_INVAL;
-	if(!mosq->host) return MOSQ_ERR_INVAL;
+	if(!mosq){
+		return MOSQ_ERR_INVAL;
+	}
+	if(!mosq->host){
+		return MOSQ_ERR_INVAL;
+	}
 
 	if(mosq->connect_properties){
-		if(mosq->protocol != mosq_p_mqtt5) return MOSQ_ERR_NOT_SUPPORTED;
+		if(mosq->protocol != mosq_p_mqtt5){
+			return MOSQ_ERR_NOT_SUPPORTED;
+		}
 
 		if(mosq->connect_properties->client_generated){
 			outgoing_properties = mosq->connect_properties;
@@ -213,7 +241,9 @@ static int mosquitto__reconnect(struct mosquitto *mosq, bool blocking)
 			outgoing_properties = &local_property;
 		}
 		rc = mosquitto_property_check_all(CMD_CONNECT, outgoing_properties);
-		if(rc) return rc;
+		if(rc){
+			return rc;
+		}
 	}
 
 	COMPAT_pthread_mutex_lock(&mosq->msgtime_mutex);
@@ -287,9 +317,15 @@ int mosquitto_disconnect_v5(struct mosquitto *mosq, int reason_code, const mosqu
 	const mosquitto_property *outgoing_properties = NULL;
 	mosquitto_property local_property;
 	int rc;
-	if(!mosq) return MOSQ_ERR_INVAL;
-	if(mosq->protocol != mosq_p_mqtt5 && properties) return MOSQ_ERR_NOT_SUPPORTED;
-	if(reason_code < 0 || reason_code > UINT8_MAX) return MOSQ_ERR_INVAL;
+	if(!mosq){
+		return MOSQ_ERR_INVAL;
+	}
+	if(mosq->protocol != mosq_p_mqtt5 && properties){
+		return MOSQ_ERR_NOT_SUPPORTED;
+	}
+	if(reason_code < 0 || reason_code > UINT8_MAX){
+		return MOSQ_ERR_INVAL;
+	}
 
 	if(properties){
 		if(properties->client_generated){
@@ -301,7 +337,9 @@ int mosquitto_disconnect_v5(struct mosquitto *mosq, int reason_code, const mosqu
 			outgoing_properties = &local_property;
 		}
 		rc = mosquitto_property_check_all(CMD_DISCONNECT, outgoing_properties);
-		if(rc) return rc;
+		if(rc){
+			return rc;
+		}
 	}
 
 	mosquitto__set_state(mosq, mosq_cs_disconnected);

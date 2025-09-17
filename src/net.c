@@ -309,20 +309,28 @@ static unsigned int psk_server_callback(SSL *ssl, const char *identity, unsigned
 	int len;
 	const char *psk_hint;
 
-	if(!identity) return 0;
+	if(!identity){
+		return 0;
+	}
 
 	context = SSL_get_ex_data(ssl, tls_ex_index_context);
-	if(!context) return 0;
+	if(!context){
+		return 0;
+	}
 
 	listener = SSL_get_ex_data(ssl, tls_ex_index_listener);
-	if(!listener) return 0;
+	if(!listener){
+		return 0;
+	}
 
 	psk_hint = listener->psk_hint;
 
 	/* The hex to BN conversion results in the length halving, so we can pass
 	 * max_psk_len*2 as the max hex key here. */
 	psk_key = mosquitto_calloc(1, (size_t)max_psk_len*2 + 1);
-	if(!psk_key) return 0;
+	if(!psk_key){
+		return 0;
+	}
 
 	if(mosquitto_psk_key_get(context, psk_hint, identity, psk_key, (int)max_psk_len*2) != MOSQ_ERR_SUCCESS){
 		mosquitto_FREE(psk_key);
@@ -764,7 +772,9 @@ static int net__socket_listen_tcp(struct mosquitto__listener *listener)
 	bool interface_bound = false;
 #endif
 
-	if(!listener) return MOSQ_ERR_INVAL;
+	if(!listener){
+		return MOSQ_ERR_INVAL;
+	}
 
 	snprintf(service, 10, "%d", listener->port);
 	memset(&hints, 0, sizeof(struct addrinfo));
@@ -949,7 +959,9 @@ int net__socket_listen(struct mosquitto__listener *listener)
 {
 	int rc;
 
-	if(!listener) return MOSQ_ERR_INVAL;
+	if(!listener){
+		return MOSQ_ERR_INVAL;
+	}
 
 #ifdef WITH_UNIX_SOCKETS
 	if(listener->port == 0 && listener->unix_socket_path != NULL){
@@ -959,7 +971,9 @@ int net__socket_listen(struct mosquitto__listener *listener)
 	{
 		rc = net__socket_listen_tcp(listener);
 	}
-	if(rc) return rc;
+	if(rc){
+		return rc;
+	}
 
 	/* We need to have at least one working socket. */
 	if(listener->sock_count > 0){

@@ -43,7 +43,9 @@ Contributors:
 int packet__read_byte(struct mosquitto__packet_in *packet, uint8_t *byte)
 {
 	assert(packet);
-	if(packet->pos+1 > packet->remaining_length) return MOSQ_ERR_MALFORMED_PACKET;
+	if(packet->pos+1 > packet->remaining_length){
+		return MOSQ_ERR_MALFORMED_PACKET;
+	}
 
 	*byte = packet->payload[packet->pos];
 	packet->pos++;
@@ -65,7 +67,9 @@ void packet__write_byte(struct mosquitto__packet *packet, uint8_t byte)
 int packet__read_bytes(struct mosquitto__packet_in *packet, void *bytes, uint32_t count)
 {
 	assert(packet);
-	if(packet->pos+count > packet->remaining_length) return MOSQ_ERR_MALFORMED_PACKET;
+	if(packet->pos+count > packet->remaining_length){
+		return MOSQ_ERR_MALFORMED_PACKET;
+	}
 
 	memcpy(bytes, &(packet->payload[packet->pos]), count);
 	packet->pos += count;
@@ -93,7 +97,9 @@ int packet__read_binary(struct mosquitto__packet_in *packet, uint8_t **data, uin
 
 	assert(packet);
 	rc = packet__read_uint16(packet, &slen);
-	if(rc) return rc;
+	if(rc){
+		return rc;
+	}
 
 	if(slen == 0){
 		*data = NULL;
@@ -101,7 +107,9 @@ int packet__read_binary(struct mosquitto__packet_in *packet, uint8_t **data, uin
 		return MOSQ_ERR_SUCCESS;
 	}
 
-	if(packet->pos+slen > packet->remaining_length) return MOSQ_ERR_MALFORMED_PACKET;
+	if(packet->pos+slen > packet->remaining_length){
+		return MOSQ_ERR_MALFORMED_PACKET;
+	}
 
 	*data = mosquitto_malloc(slen+1U);
 	if(*data){
@@ -122,8 +130,12 @@ int packet__read_string(struct mosquitto__packet_in *packet, char **str, uint16_
 	int rc;
 
 	rc = packet__read_binary(packet, (uint8_t **)str, length);
-	if(rc) return rc;
-	if(*length == 0) return MOSQ_ERR_SUCCESS;
+	if(rc){
+		return rc;
+	}
+	if(*length == 0){
+		return MOSQ_ERR_SUCCESS;
+	}
 
 	if(mosquitto_validate_utf8(*str, *length)){
 		mosquitto_FREE(*str);
@@ -148,7 +160,9 @@ int packet__read_uint16(struct mosquitto__packet_in *packet, uint16_t *word)
 	uint16_t val;
 
 	assert(packet);
-	if(packet->pos+2 > packet->remaining_length) return MOSQ_ERR_MALFORMED_PACKET;
+	if(packet->pos+2 > packet->remaining_length){
+		return MOSQ_ERR_MALFORMED_PACKET;
+	}
 
 	memcpy(&val, &packet->payload[packet->pos], sizeof(uint16_t));
 	packet->pos += sizeof(uint16_t);
@@ -176,7 +190,9 @@ int packet__read_uint32(struct mosquitto__packet_in *packet, uint32_t *word)
 	uint32_t val = 0;
 
 	assert(packet);
-	if(packet->pos+4 > packet->remaining_length) return MOSQ_ERR_MALFORMED_PACKET;
+	if(packet->pos+4 > packet->remaining_length){
+		return MOSQ_ERR_MALFORMED_PACKET;
+	}
 
 	memcpy(&val, &packet->payload[packet->pos], sizeof(uint32_t));
 	packet->pos += sizeof(uint32_t);
@@ -220,7 +236,9 @@ int packet__read_varint(struct mosquitto__packet_in *packet, uint32_t *word, uin
 					return MOSQ_ERR_MALFORMED_PACKET;
 				}else{
 					*word = lword;
-					if(bytes) (*bytes) = lbytes;
+					if(bytes){
+						(*bytes) = lbytes;
+					}
 					return MOSQ_ERR_SUCCESS;
 				}
 			}

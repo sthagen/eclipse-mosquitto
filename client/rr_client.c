@@ -88,8 +88,12 @@ static void my_message_callback(struct mosquitto *mosq, void *obj, const struct 
 	UNUSED(obj);
 	UNUSED(properties);
 
-	if(process_messages == false) return;
-	if(message->retain && cfg.no_retain) return;
+	if(process_messages == false){
+		return;
+	}
+	if(message->retain && cfg.no_retain){
+		return;
+	}
 
 	mosquitto_time_ns(&publish_recv_time.tv_sec, &publish_recv_time.tv_nsec);
 

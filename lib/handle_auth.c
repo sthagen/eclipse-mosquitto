@@ -39,7 +39,9 @@ int handle__auth(struct mosquitto *mosq)
 	uint16_t auth_data_len = 0;
 	mosquitto_property *properties = NULL;
 
-	if(!mosq) return MOSQ_ERR_INVAL;
+	if(!mosq){
+		return MOSQ_ERR_INVAL;
+	}
 	log__printf(mosq, MOSQ_LOG_DEBUG, "Client %s received AUTH", SAFE_PRINT(mosq->id));
 
 	if(mosq->protocol != mosq_p_mqtt5){
@@ -49,10 +51,14 @@ int handle__auth(struct mosquitto *mosq)
 		return MOSQ_ERR_MALFORMED_PACKET;
 	}
 
-	if(packet__read_byte(&mosq->in_packet, &reason_code)) return 1;
+	if(packet__read_byte(&mosq->in_packet, &reason_code)){
+		return 1;
+	}
 
 	rc = property__read_all(CMD_AUTH, &mosq->in_packet, &properties);
-	if(rc) return rc;
+	if(rc){
+		return rc;
+	}
 
 	mosquitto_property_read_string(properties, MQTT_PROP_AUTHENTICATION_METHOD, &auth_method, false);
 	mosquitto_property_read_binary(properties, MQTT_PROP_AUTHENTICATION_DATA, &auth_data, &auth_data_len, false);

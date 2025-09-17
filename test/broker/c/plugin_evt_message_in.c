@@ -25,7 +25,9 @@ int callback_message_in(int event, void *event_data, void *user_data)
 	ed->payloadlen = (uint32_t)strlen(ed->payload);
 
 	ed->properties = NULL;
-	if(mosquitto_property_add_string_pair(&ed->properties, MQTT_PROP_USER_PROPERTY, "key", "value")) abort();
+	if(mosquitto_property_add_string_pair(&ed->properties, MQTT_PROP_USER_PROPERTY, "key", "value")){
+		abort();
+	}
 	return MOSQ_ERR_SUCCESS;
 }
 

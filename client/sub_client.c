@@ -100,7 +100,9 @@ static void my_message_callback(struct mosquitto *mosq, void *obj, const struct 
 
 	message_rate_msg_count++;
 
-	if(process_messages == false) return;
+	if(process_messages == false){
+		return;
+	}
 
 	if(cfg.retained_only && !message->retain && process_messages){
 		process_messages = false;
@@ -110,11 +112,15 @@ static void my_message_callback(struct mosquitto *mosq, void *obj, const struct 
 		return;
 	}
 
-	if(message->retain && cfg.no_retain) return;
+	if(message->retain && cfg.no_retain){
+		return;
+	}
 	if(cfg.filter_outs){
 		for(i=0; i<cfg.filter_out_count; i++){
 			mosquitto_topic_matches_sub(cfg.filter_outs[i], message->topic, &res);
-			if(res) return;
+			if(res){
+				return;
+			}
 		}
 	}
 
@@ -180,12 +186,18 @@ static void my_subscribe_callback(struct mosquitto *mosq, void *obj, int mid, in
 	bool should_print = cfg.debug && !cfg.quiet;
 	UNUSED(obj);
 
-	if(should_print) printf("Subscribed (mid: %d): %d", mid, granted_qos[0]);
+	if(should_print){
+		printf("Subscribed (mid: %d): %d", mid, granted_qos[0]);
+	}
 	for(i=1; i<qos_count; i++){
-		if(should_print) printf(", %d", granted_qos[i]);
+		if(should_print){
+			printf(", %d", granted_qos[i]);
+		}
 		some_sub_allowed |= (granted_qos[i] < 128);
 	}
-	if(should_print) printf("\n");
+	if(should_print){
+		printf("\n");
+	}
 
 	if(some_sub_allowed == false){
 		mosquitto_disconnect_v5(mosq, 0, cfg.disconnect_props);

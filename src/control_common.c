@@ -16,7 +16,9 @@ void mosquitto_control_command_reply(struct mosquitto_control_cmd *cmd, const ch
 	cJSON *j_response;
 
 	j_response = cJSON_CreateObject();
-	if(j_response == NULL) return;
+	if(j_response == NULL){
+		return;
+	}
 
 	if(cJSON_AddStringToObject(j_response, "command", cmd->command_name) == NULL
 			|| (error && cJSON_AddStringToObject(j_response, "error", error) == NULL)
@@ -38,7 +40,9 @@ void mosquitto_control_send_response(cJSON *tree, const char *topic)
 
 	payload = cJSON_PrintUnformatted(tree);
 	cJSON_Delete(tree);
-	if(payload == NULL) return;
+	if(payload == NULL){
+		return;
+	}
 
 	payload_len = strlen(payload);
 	if(payload_len > MQTT_MAX_PAYLOAD){

@@ -143,7 +143,9 @@ uint16_t mosquitto__mid_generate(struct mosquitto *mosq)
 
 	COMPAT_pthread_mutex_lock(&mosq->mid_mutex);
 	mosq->last_mid++;
-	if(mosq->last_mid == 0) mosq->last_mid++;
+	if(mosq->last_mid == 0){
+		mosq->last_mid++;
+	}
 	mid = mosq->last_mid;
 	COMPAT_pthread_mutex_unlock(&mosq->mid_mutex);
 
@@ -194,7 +196,9 @@ int mosquitto__hex2bin(const char *hex, unsigned char *bin, int bin_max_len)
 	}
 
 	if(BN_hex2bn(&bn, hex) == 0){
-		if(bn) BN_free(bn);
+		if(bn){
+			BN_free(bn);
+		}
 		return 0;
 	}
 	if(BN_num_bytes(bn) + leading_zero > bin_max_len){

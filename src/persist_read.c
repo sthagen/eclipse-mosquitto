@@ -51,13 +51,17 @@ static struct mosquitto *persist__find_or_add_context(const char *clientid, uint
 {
 	struct mosquitto *context;
 
-	if(!clientid) return NULL;
+	if(!clientid){
+		return NULL;
+	}
 
 	context = NULL;
 	HASH_FIND(hh_id, db.contexts_by_id, clientid, strlen(clientid), context);
 	if(!context){
 		context = context__init();
-		if(!context) return NULL;
+		if(!context){
+			return NULL;
+		}
 		context->id = mosquitto_strdup(clientid);
 		if(!context->id){
 			mosquitto_FREE(context);
@@ -217,7 +221,9 @@ static int persist__client_chunk_restore(FILE *db_fptr)
 
 	mosquitto_FREE(chunk.clientid);
 	mosquitto_FREE(chunk.username);
-	if(rc == 0) client_count++;
+	if(rc == 0){
+		client_count++;
+	}
 	return rc;
 }
 
@@ -241,7 +247,9 @@ static int persist__client_msg_chunk_restore(FILE *db_fptr, uint32_t length)
 	rc = persist__client_msg_restore(&chunk);
 	mosquitto_FREE(chunk.clientid);
 
-	if(rc == 0) client_msg_count++;
+	if(rc == 0){
+		client_msg_count++;
+	}
 	return rc;
 }
 
@@ -262,7 +270,9 @@ static int persist__base_msg_chunk_restore(FILE *db_fptr, uint32_t length)
 	}else{
 		rc = persist__chunk_base_msg_read_v234(db_fptr, &chunk, db_version);
 	}
-	if(rc) return rc;
+	if(rc){
+		return rc;
+	}
 
 	if(chunk.F.source_port){
 		for(int i=0; i<db.config->listener_count; i++){
@@ -344,7 +354,9 @@ static int persist__retain_chunk_restore(FILE *db_fptr)
 
 	HASH_FIND(hh, db.msg_store, &chunk.F.store_id, sizeof(chunk.F.store_id), base_msg);
 	if(base_msg){
-		if(sub__topic_tokenise(base_msg->data.topic, &local_topic, &split_topics, NULL)) return 1;
+		if(sub__topic_tokenise(base_msg->data.topic, &local_topic, &split_topics, NULL)){
+			return 1;
+		}
 		retain__store(base_msg->data.topic, base_msg, split_topics, true);
 		mosquitto_FREE(local_topic);
 		mosquitto_FREE(split_topics);
@@ -381,7 +393,9 @@ static int persist__sub_chunk_restore(FILE *db_fptr)
 
 	mosquitto_FREE(chunk.clientid);
 	mosquitto_FREE(chunk.topic);
-	if(rc == 0) subscription_count++;
+	if(rc == 0){
+		subscription_count++;
+	}
 
 	return rc;
 }
@@ -423,7 +437,9 @@ int persist__restore(void)
 	client_msg_count = 0;
 
 	fptr = mosquitto_fopen(db.config->persistence_filepath, "rb", true);
-	if(fptr == NULL) return MOSQ_ERR_SUCCESS;
+	if(fptr == NULL){
+		return MOSQ_ERR_SUCCESS;
+	}
 	rlen = fread(&header, 1, 15, fptr);
 	if(rlen == 0){
 		fclose(fptr);
@@ -539,7 +555,9 @@ int persist__restore(void)
 error:
 	err = strerror(errno);
 	log__printf(NULL, MOSQ_LOG_ERR, "Error: %s.", err);
-	if(fptr) fclose(fptr);
+	if(fptr){
+		fclose(fptr);
+	}
 	return 1;
 }
 
@@ -558,7 +576,9 @@ static int persist__restore_sub(const struct mosquitto_subscription *sub)
 	}
 
 	context = persist__find_or_add_context(sub->clientid, 0);
-	if(!context) return 1;
+	if(!context){
+		return 1;
+	}
 	return sub__add(context, sub);
 }
 

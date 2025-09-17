@@ -125,8 +125,9 @@ int mosquitto__verify_ocsp_status_cb(SSL *ssl, void *arg)
 		ASN1_GENERALIZEDTIME *rev, *thisupd, *nextupd;
 
 		single = OCSP_resp_get0(br, i);
-		if(!single)
+		if(!single){
 			continue;
+		}
 
 		cert_status = OCSP_single_get0_status(single, &crl_reason, &rev, &thisupd, &nextupd);
 
@@ -156,13 +157,21 @@ int mosquitto__verify_ocsp_status_cb(SSL *ssl, void *arg)
 		}
 	}
 
-	if(br!=NULL)   OCSP_BASICRESP_free(br);
-	if(rsp!=NULL)  OCSP_RESPONSE_free(rsp);
+	if(br!=NULL){
+		OCSP_BASICRESP_free(br);
+	}
+	if(rsp!=NULL){
+		OCSP_RESPONSE_free(rsp);
+	}
 	return 1; /* OK */
 
 end:
-	if(br!=NULL)   OCSP_BASICRESP_free(br);
-	if(rsp!=NULL)  OCSP_RESPONSE_free(rsp);
+	if(br!=NULL){
+		OCSP_BASICRESP_free(br);
+	}
+	if(rsp!=NULL){
+		OCSP_RESPONSE_free(rsp);
+	}
 	return 0; /* Not OK */
 }
 #endif

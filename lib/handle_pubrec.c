@@ -55,12 +55,18 @@ int handle__pubrec(struct mosquitto *mosq)
 	}
 
 	rc = packet__read_uint16(&mosq->in_packet, &mid);
-	if(rc) return rc;
-	if(mid == 0) return MOSQ_ERR_PROTOCOL;
+	if(rc){
+		return rc;
+	}
+	if(mid == 0){
+		return MOSQ_ERR_PROTOCOL;
+	}
 
 	if(mosq->protocol == mosq_p_mqtt5 && mosq->in_packet.remaining_length > 2){
 		rc = packet__read_byte(&mosq->in_packet, &reason_code);
-		if(rc) return rc;
+		if(rc){
+			return rc;
+		}
 
 		if(reason_code != MQTT_RC_SUCCESS
 				&& reason_code != MQTT_RC_NO_MATCHING_SUBSCRIBERS
@@ -77,7 +83,9 @@ int handle__pubrec(struct mosquitto *mosq)
 
 		if(mosq->in_packet.remaining_length > 3){
 			rc = property__read_all(CMD_PUBREC, &mosq->in_packet, &properties);
-			if(rc) return rc;
+			if(rc){
+				return rc;
+			}
 
 			/* Immediately free, we don't do anything with Reason String or User Property at the moment */
 			mosquitto_property_free_all(&properties);
@@ -123,7 +131,9 @@ int handle__pubrec(struct mosquitto *mosq)
 		return rc;
 	}
 	rc = send__pubrel(mosq, mid, NULL);
-	if(rc) return rc;
+	if(rc){
+		return rc;
+	}
 
 	return MOSQ_ERR_SUCCESS;
 }

@@ -520,7 +520,9 @@ static cJSON *init_add_acl_to_role(cJSON *j_acls, const char *type, const char *
 	cJSON *j_acl;
 
 	j_acl = cJSON_CreateObject();
-	if(j_acl == NULL) return NULL;
+	if(j_acl == NULL){
+		return NULL;
+	}
 
 	if(cJSON_AddStringToObject(j_acl, "acltype", type) == NULL
 			|| cJSON_AddStringToObject(j_acl, "topic", topic) == NULL
@@ -631,7 +633,9 @@ static cJSON *init_create(const char *username, const char *password, const char
 	cJSON *j_default_access;
 
 	tree = cJSON_CreateObject();
-	if(tree == NULL) return NULL;
+	if(tree == NULL){
+		return NULL;
+	}
 
 	if((j_clients = cJSON_AddArrayToObject(tree, "clients")) == NULL
 			|| (j_roles = cJSON_AddArrayToObject(tree, "roles")) == NULL
@@ -789,7 +793,9 @@ int dynsec__main(int argc, char *argv[], struct mosq_ctrl *ctrl)
 		return MOSQ_ERR_NOMEM;
 	}
 	j_tree = cJSON_CreateObject();
-	if(j_tree == NULL) return MOSQ_ERR_NOMEM;
+	if(j_tree == NULL){
+		return MOSQ_ERR_NOMEM;
+	}
 	j_commands = cJSON_AddArrayToObject(j_tree, "commands");
 	if(j_commands == NULL){
 		cJSON_Delete(j_tree);

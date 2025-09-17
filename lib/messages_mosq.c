@@ -34,7 +34,9 @@ void message__cleanup(struct mosquitto_message_all **message)
 {
 	struct mosquitto_message_all *msg;
 
-	if(!message || !*message) return;
+	if(!message || !*message){
+		return;
+	}
 
 	msg = *message;
 
@@ -64,11 +66,15 @@ void message__cleanup_all(struct mosquitto *mosq)
 
 int mosquitto_message_copy(struct mosquitto_message *dst, const struct mosquitto_message *src)
 {
-	if(!dst || !src) return MOSQ_ERR_INVAL;
+	if(!dst || !src){
+		return MOSQ_ERR_INVAL;
+	}
 
 	dst->mid = src->mid;
 	dst->topic = mosquitto_strdup(src->topic);
-	if(!dst->topic) return MOSQ_ERR_NOMEM;
+	if(!dst->topic){
+		return MOSQ_ERR_NOMEM;
+	}
 	dst->qos = src->qos;
 	dst->retain = src->retain;
 	if(src->payloadlen){
@@ -105,7 +111,9 @@ void mosquitto_message_free(struct mosquitto_message **message)
 {
 	struct mosquitto_message *msg;
 
-	if(!message || !*message) return;
+	if(!message || !*message){
+		return;
+	}
 
 	msg = *message;
 
@@ -117,7 +125,9 @@ void mosquitto_message_free(struct mosquitto_message **message)
 
 void mosquitto_message_free_contents(struct mosquitto_message *message)
 {
-	if(!message) return;
+	if(!message){
+		return;
+	}
 
 	mosquitto_FREE(message->topic);
 	mosquitto_FREE(message->payload);

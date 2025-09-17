@@ -158,7 +158,9 @@ char *dynsec__config_to_json(struct dynsec__data *data)
 	char *json_str;
 
 	tree = cJSON_CreateObject();
-	if(tree == NULL) return NULL;
+	if(tree == NULL){
+		return NULL;
+	}
 
 	if(dynsec__general_config_save(data, tree)
 			|| dynsec_clients__config_save(data, tree)

@@ -38,7 +38,9 @@ int mosquitto_base64_encode(const unsigned char *in, size_t in_len, char **encod
 	int rc = 1;
 
 	b64 = BIO_new(BIO_f_base64());
-	if(b64 == NULL) return 1;
+	if(b64 == NULL){
+		return 1;
+	}
 
 	BIO_set_flags(b64, BIO_FLAGS_BASE64_NO_NL);
 	bmem = BIO_new(BIO_s_mem());
@@ -72,7 +74,9 @@ int mosquitto_base64_decode(const char *in, unsigned char **decoded, unsigned in
 	slen = strlen(in);
 
 	b64 = BIO_new(BIO_f_base64());
-	if(!b64) return 1;
+	if(!b64){
+		return 1;
+	}
 
 	BIO_set_flags(b64, BIO_FLAGS_BASE64_NO_NL);
 	bmem = BIO_new(BIO_s_mem());

@@ -38,10 +38,14 @@ cJSON *mosquitto_properties_to_json(const mosquitto_property *properties)
 	uint16_t len;
 	int propid;
 
-	if(!properties) return NULL;
+	if(!properties){
+		return NULL;
+	}
 
 	array = cJSON_CreateArray();
-	if(!array) return NULL;
+	if(!array){
+		return NULL;
+	}
 
 	do{
 		propid = mosquitto_property_identifier(properties);

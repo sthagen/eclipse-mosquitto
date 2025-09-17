@@ -195,7 +195,9 @@ static int bridge__set_tcp_keepalive(struct mosquitto *context)
 	unsigned int enabled = 1;
 	bool ret;
 
-	if(idle == 0 || interval == 0 || counter == 0) return MOSQ_ERR_SUCCESS;
+	if(idle == 0 || interval == 0 || counter == 0){
+		return MOSQ_ERR_SUCCESS;
+	}
 
 #ifdef WIN32
 	ret = setsockopt(context->sock, SOL_SOCKET, SO_KEEPALIVE, (char *)&enabled, sizeof(enabled)) ||
@@ -211,7 +213,9 @@ static int bridge__set_tcp_keepalive(struct mosquitto *context)
 			setsockopt(context->sock, IPPROTO_TCP, TCP_KEEPCNT, (const void *)&counter, sizeof(counter));
 #endif
 
-	if(ret) return MOSQ_ERR_UNKNOWN;
+	if(ret){
+		return MOSQ_ERR_UNKNOWN;
+	}
 
 	return MOSQ_ERR_SUCCESS;
 }
@@ -244,7 +248,9 @@ static int bridge__connect_step1(struct mosquitto *context)
 	struct mosquitto__bridge_topic *cur_topic;
 	uint8_t qos;
 
-	if(!context || !context->bridge) return MOSQ_ERR_INVAL;
+	if(!context || !context->bridge){
+		return MOSQ_ERR_INVAL;
+	}
 
 	mosquitto__set_state(context, mosq_cs_new);
 	context->sock = INVALID_SOCKET;
@@ -306,7 +312,9 @@ static int bridge__connect_step1(struct mosquitto *context)
 		}else{
 			notification_topic_len = strlen(context->bridge->remote_clientid)+strlen("$SYS/broker/connection//state");
 			notification_topic = mosquitto_malloc(sizeof(char)*(notification_topic_len+1));
-			if(!notification_topic) return MOSQ_ERR_NOMEM;
+			if(!notification_topic){
+				return MOSQ_ERR_NOMEM;
+			}
 
 			snprintf(notification_topic, notification_topic_len+1, "$SYS/broker/connection/%s/state", context->bridge->remote_clientid);
 
@@ -349,7 +357,9 @@ static int bridge__connect_step2(struct mosquitto *context)
 {
 	int rc;
 
-	if(!context || !context->bridge) return MOSQ_ERR_INVAL;
+	if(!context || !context->bridge){
+		return MOSQ_ERR_INVAL;
+	}
 
 	log__printf(NULL, MOSQ_LOG_NOTICE, "Connecting bridge (step 2) %s (%s:%d)", context->bridge->name, context->bridge->addresses[context->bridge->cur_address].address, context->bridge->addresses[context->bridge->cur_address].port);
 	rc = net__try_connect_step2(context, context->bridge->addresses[context->bridge->cur_address].port, &context->sock);
@@ -405,9 +415,13 @@ int bridge__connect_step3(struct mosquitto *context)
 		loop__update_next_event(5000);
 	}
 
-	if(bridge__set_tcp_keepalive(context) != MOSQ_ERR_SUCCESS) return MOSQ_ERR_UNKNOWN;
+	if(bridge__set_tcp_keepalive(context) != MOSQ_ERR_SUCCESS){
+		return MOSQ_ERR_UNKNOWN;
+	}
 #ifdef WITH_TCP_USER_TIMEOUT
-	if(bridge__set_tcp_user_timeout(context)) return MOSQ_ERR_UNKNOWN;
+	if(bridge__set_tcp_user_timeout(context)){
+		return MOSQ_ERR_UNKNOWN;
+	}
 #endif
 
 	if(context->bridge->receive_maximum != 0){
@@ -470,7 +484,9 @@ int bridge__connect(struct mosquitto *context)
 	mosquitto_property topic_alias_max;
 	mosquitto_property *properties = NULL;
 
-	if(!context || !context->bridge) return MOSQ_ERR_INVAL;
+	if(!context || !context->bridge){
+		return MOSQ_ERR_INVAL;
+	}
 
 	mosquitto__set_state(context, mosq_cs_new);
 	context->sock = INVALID_SOCKET;
@@ -534,7 +550,9 @@ int bridge__connect(struct mosquitto *context)
 		}else{
 			notification_topic_len = strlen(context->bridge->remote_clientid)+strlen("$SYS/broker/connection//state");
 			notification_topic = mosquitto_malloc(sizeof(char)*(notification_topic_len+1));
-			if(!notification_topic) return MOSQ_ERR_NOMEM;
+			if(!notification_topic){
+				return MOSQ_ERR_NOMEM;
+			}
 
 			snprintf(notification_topic, notification_topic_len+1, "$SYS/broker/connection/%s/state", context->bridge->remote_clientid);
 
@@ -580,9 +598,13 @@ int bridge__connect(struct mosquitto *context)
 
 	HASH_ADD(hh_sock, db.contexts_by_sock, sock, sizeof(context->sock), context);
 
-	if(bridge__set_tcp_keepalive(context) != MOSQ_ERR_SUCCESS)  return MOSQ_ERR_UNKNOWN;
+	if(bridge__set_tcp_keepalive(context) != MOSQ_ERR_SUCCESS){
+		return MOSQ_ERR_UNKNOWN;
+	}
 #ifdef WITH_TCP_USER_TIMEOUT
-	if(bridge__set_tcp_user_timeout(context)) return MOSQ_ERR_UNKNOWN;
+	if(bridge__set_tcp_user_timeout(context)){
+		return MOSQ_ERR_UNKNOWN;
+	}
 #endif
 
 	if(context->bridge->receive_maximum != 0){
@@ -662,7 +684,9 @@ int bridge__on_connect(struct mosquitto *context)
 		}else{
 			notification_topic_len = strlen(context->bridge->remote_clientid)+strlen("$SYS/broker/connection//state");
 			notification_topic = mosquitto_malloc(sizeof(char)*(notification_topic_len+1));
-			if(!notification_topic) return MOSQ_ERR_NOMEM;
+			if(!notification_topic){
+				return MOSQ_ERR_NOMEM;
+			}
 
 			snprintf(notification_topic, notification_topic_len+1, "$SYS/broker/connection/%s/state", context->bridge->remote_clientid);
 			notification_payload = '1';
@@ -751,7 +775,9 @@ void bridge__reload(void)
 	// destroy old bridges that dissappeared
 	for(i=0; i<db.bridge_count; i++){
 		for(j=0; j<db.config->bridge_count; j++){
-			if(!strcmp(db.bridges[i]->bridge->name, db.config->bridges[j]->name)) break;
+			if(!strcmp(db.bridges[i]->bridge->name, db.config->bridges[j]->name)){
+				break;
+			}
 		}
 
 		if(j==db.config->bridge_count){
@@ -761,7 +787,9 @@ void bridge__reload(void)
 
 	for(i=0; i<db.config->bridge_count; i++){
 		for(j=0; j<db.bridge_count; j++){
-			if(!strcmp(db.config->bridges[i]->name, db.bridges[j]->bridge->name)) break;
+			if(!strcmp(db.config->bridges[i]->name, db.bridges[j]->bridge->name)){
+				break;
+			}
 		}
 
 		if(j==db.bridge_count){
@@ -774,7 +802,9 @@ void bridge__reload(void)
 		if(db.config->bridges[i]->reload_type == brt_immediate){
 			// in this case, an existing bridge should match
 			for(j=0; j<db.bridge_count; j++){
-				if(!strcmp(db.config->bridges[i]->name, db.bridges[j]->bridge->name)) break;
+				if(!strcmp(db.config->bridges[i]->name, db.bridges[j]->bridge->name)){
+					break;
+				}
 			}
 
 			assert(j<db.bridge_count);
@@ -862,7 +892,9 @@ void bridge__cleanup(struct mosquitto *context)
 static void bridge__packet_cleanup(struct mosquitto *context)
 {
 	struct mosquitto__packet *packet;
-	if(!context) return;
+	if(!context){
+		return;
+	}
 
 	while(context->out_packet){
 		packet = context->out_packet;
@@ -910,9 +942,14 @@ static void bridge__backoff_reset(struct mosquitto__bridge *bridge)
 
 static void bridge__update_backoff(struct mosquitto__bridge *bridge)
 {
-	if(!bridge) return;
-	if(!bridge->backoff_cap) return; /* skip if not using jitter */
+	if(!bridge){
+		return;
+	}
+	if(!bridge->backoff_cap){
+		/* skip if not using jitter */
+		return;
 
+	}
 	if(bridge->connected_at && db.now_s - bridge->connected_at >= bridge->stable_connection_period){
 		log__printf(NULL, MOSQ_LOG_INFO, "Bridge %s connection was stable enough, resetting backoff", bridge->name);
 		bridge__backoff_reset(bridge);
@@ -980,10 +1017,14 @@ void bridge_check(void)
 	int rc;
 	int err;
 
-	if(db.now_s <= last_check) return;
+	if(db.now_s <= last_check){
+		return;
+	}
 
 	for(i=0; i<db.bridge_count; i++){
-		if(!db.bridges[i]) continue;
+		if(!db.bridges[i]){
+			continue;
+		}
 
 		context = db.bridges[i];
 
@@ -1037,7 +1078,9 @@ void bridge_check(void)
 				}
 			}
 		}else{
-			if(reload_if_needed(context)) continue;
+			if(reload_if_needed(context)){
+				continue;
+			}
 
 			/* Want to try to restart the bridge connection */
 			if(!context->bridge->restart_t){

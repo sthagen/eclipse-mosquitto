@@ -72,7 +72,9 @@ static int single_publish(struct mosquitto *context, struct mosquitto__message_v
 	uint16_t mid;
 
 	base_msg = mosquitto_calloc(1, sizeof(struct mosquitto__base_msg));
-	if(base_msg == NULL) return MOSQ_ERR_NOMEM;
+	if(base_msg == NULL){
+		return MOSQ_ERR_NOMEM;
+	}
 
 	base_msg->data.topic = pub_msg->topic;
 	pub_msg->topic = NULL;
@@ -92,7 +94,9 @@ static int single_publish(struct mosquitto *context, struct mosquitto__message_v
 		pub_msg->properties = NULL;
 	}
 
-	if(db__message_store(context, base_msg, &message_expiry, mosq_mo_broker)) return 1;
+	if(db__message_store(context, base_msg, &message_expiry, mosq_mo_broker)){
+		return 1;
+	}
 
 	if(pub_msg->qos){
 		mid = mosquitto__mid_generate(context);
@@ -109,7 +113,9 @@ static void read_message_expiry_interval(mosquitto_property **proplist, uint32_t
 
 	*message_expiry = MSG_EXPIRY_INFINITE;
 
-	if(!proplist) return;
+	if(!proplist){
+		return;
+	}
 
 	p = *proplist;
 	while(p){
@@ -184,7 +190,9 @@ int mosquitto_main_loop(struct mosquitto__listener_sock *listensock, int listens
 
 #ifdef WITH_BRIDGE
 	rc = bridge__register_local_connections();
-	if(rc) return rc;
+	if(rc){
+		return rc;
+	}
 #endif
 
 	while(g_run){
@@ -210,7 +218,9 @@ int mosquitto_main_loop(struct mosquitto__listener_sock *listensock, int listens
 		will_delay__check();
 
 		rc = mux__handle(listensock, listensock_count);
-		if(rc) return rc;
+		if(rc){
+			return rc;
+		}
 
 #ifdef WITH_PERSISTENCE
 		if(db.config->persistence && db.config->autosave_interval){
@@ -229,7 +239,9 @@ int mosquitto_main_loop(struct mosquitto__listener_sock *listensock, int listens
 #endif
 
 		rc = signal__flag_check();
-		if(rc) return rc;
+		if(rc){
+			return rc;
+		}
 
 #if defined(WITH_WEBSOCKETS) && WITH_WEBSOCKETS == WS_IS_LWS
 		for(int i=0; i<db.config->listener_count; i++){

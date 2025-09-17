@@ -126,16 +126,26 @@ static int dump__cfg_chunk_process(FILE *db_fd, uint32_t length)
 		return rc;
 	}
 
-	if(do_print) printf("DB_CHUNK_CFG:\n");
-	if(do_print) printf("\tLength: %d\n", length);
-	if(do_print) printf("\tShutdown: %d\n", chunk.shutdown);
-	if(do_print) printf("\tDB ID size: %d\n", chunk.dbid_size);
+	if(do_print){
+		printf("DB_CHUNK_CFG:\n");
+	}
+	if(do_print){
+		printf("\tLength: %d\n", length);
+	}
+	if(do_print){
+		printf("\tShutdown: %d\n", chunk.shutdown);
+	}
+	if(do_print){
+		printf("\tDB ID size: %d\n", chunk.dbid_size);
+	}
 	if(chunk.dbid_size != sizeof(dbid_t)){
 		fprintf(stderr, "Error: Incompatible database configuration (dbid size is %d bytes, expected %zu)",
 				chunk.dbid_size, sizeof(dbid_t));
 		return MOSQ_ERR_INVAL;
 	}
-	if(do_print) printf("\tLast DB ID: %" PRIu64 "\n", chunk.last_db_id);
+	if(do_print){
+		printf("\tLast DB ID: %" PRIu64 "\n", chunk.last_db_id);
+	}
 
 	return 0;
 }
@@ -327,8 +337,12 @@ static int dump__retain_chunk_process(FILE *db_fd, uint32_t length)
 	int rc;
 
 	retain_count++;
-	if(do_print) printf("DB_CHUNK_RETAIN:\n");
-	if(do_print) printf("\tLength: %d\n", length);
+	if(do_print){
+		printf("DB_CHUNK_RETAIN:\n");
+	}
+	if(do_print){
+		printf("\tLength: %d\n", length);
+	}
 
 	if(db_version == 6 || db_version == 5){
 		rc = persist__chunk_retain_read_v56(db_fd, &chunk);
@@ -344,7 +358,9 @@ static int dump__retain_chunk_process(FILE *db_fd, uint32_t length)
 		json_add_retained_msg(&chunk);
 	}
 
-	if(do_print) printf("\tStore ID: %" PRIu64 "\n", chunk.F.store_id);
+	if(do_print){
+		printf("\tStore ID: %" PRIu64 "\n", chunk.F.store_id);
+	}
 	return 0;
 }
 
@@ -479,42 +495,62 @@ int main(int argc, char *argv[])
 	}
 	read_e(fd, &header, 15);
 	if(!memcmp(header, magic, 15)){
-		if(do_print) printf("Mosquitto DB dump\n");
+		if(do_print){
+			printf("Mosquitto DB dump\n");
+		}
 		/* Restore DB as normal */
 		read_e(fd, &crc, sizeof(uint32_t));
-		if(do_print) printf("CRC: %d\n", crc);
+		if(do_print){
+			printf("CRC: %d\n", crc);
+		}
 		read_e(fd, &i32temp, sizeof(uint32_t));
 		db_version = ntohl(i32temp);
-		if(do_print) printf("DB version: %d\n", db_version);
+		if(do_print){
+			printf("DB version: %d\n", db_version);
+		}
 
 		if(db_version > MOSQ_DB_VERSION){
-			if(do_print) printf("Warning: mosquitto_db_dump does not support this DB version, continuing but expecting errors.\n");
+			if(do_print){
+				printf("Warning: mosquitto_db_dump does not support this DB version, continuing but expecting errors.\n");
+			}
 		}
 
 		while(persist__chunk_header_read(fd, &chunk, &length) == MOSQ_ERR_SUCCESS){
 			switch(chunk){
 				case DB_CHUNK_CFG:
-					if(dump__cfg_chunk_process(fd, length)) goto error;
+					if(dump__cfg_chunk_process(fd, length)){
+						goto error;
+					}
 					break;
 
 				case DB_CHUNK_BASE_MSG:
-					if(dump__base_msg_chunk_process(fd, length)) goto error;
+					if(dump__base_msg_chunk_process(fd, length)){
+						goto error;
+					}
 					break;
 
 				case DB_CHUNK_CLIENT_MSG:
-					if(dump__client_msg_chunk_process(fd, length)) goto error;
+					if(dump__client_msg_chunk_process(fd, length)){
+						goto error;
+					}
 					break;
 
 				case DB_CHUNK_RETAIN:
-					if(dump__retain_chunk_process(fd, length)) goto error;
+					if(dump__retain_chunk_process(fd, length)){
+						goto error;
+					}
 					break;
 
 				case DB_CHUNK_SUB:
-					if(dump__sub_chunk_process(fd, length)) goto error;
+					if(dump__sub_chunk_process(fd, length)){
+						goto error;
+					}
 					break;
 
 				case DB_CHUNK_CLIENT:
-					if(dump__client_chunk_process(fd, length)) goto error;
+					if(dump__client_chunk_process(fd, length)){
+						goto error;
+					}
 					break;
 
 				default:
@@ -553,6 +589,8 @@ int main(int argc, char *argv[])
 	return rc;
 error:
 	cleanup_msg_store();
-	if(fd) fclose(fd);
+	if(fd){
+		fclose(fd);
+	}
 	return 1;
 }

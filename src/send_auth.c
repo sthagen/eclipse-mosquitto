@@ -33,28 +33,40 @@ int send__auth(struct mosquitto *context, uint8_t reason_code, const void *auth_
 	mosquitto_property *properties = NULL;
 	uint32_t remaining_length;
 
-	if(context->auth_method == NULL) return MOSQ_ERR_INVAL;
-	if(context->protocol != mosq_p_mqtt5) return MOSQ_ERR_PROTOCOL;
+	if(context->auth_method == NULL){
+		return MOSQ_ERR_INVAL;
+	}
+	if(context->protocol != mosq_p_mqtt5){
+		return MOSQ_ERR_PROTOCOL;
+	}
 
 	log__printf(NULL, MOSQ_LOG_DEBUG, "Sending AUTH to %s (rc%d, %s)", context->id, reason_code, context->auth_method);
 
 	remaining_length = 1;
 
 	rc = mosquitto_property_add_string(&properties, MQTT_PROP_AUTHENTICATION_METHOD, context->auth_method);
-	if(rc) goto error;
+	if(rc){
+		goto error;
+	}
 
 	if(auth_data != NULL && auth_data_len > 0){
 		rc = mosquitto_property_add_binary(&properties, MQTT_PROP_AUTHENTICATION_DATA, auth_data, auth_data_len);
-		if(rc) goto error;
+		if(rc){
+			goto error;
+		}
 	}
 
 	remaining_length += mosquitto_property_get_remaining_length(properties);
 
 	rc = packet__check_oversize(context, remaining_length);
-	if(rc) goto error;
+	if(rc){
+		goto error;
+	}
 
 	rc = packet__alloc(&packet, CMD_AUTH, remaining_length);
-	if(rc) goto error;
+	if(rc){
+		goto error;
+	}
 
 	packet__write_byte(packet, reason_code);
 	property__write_all(packet, properties, true);

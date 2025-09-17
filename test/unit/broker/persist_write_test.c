@@ -42,7 +42,9 @@ static int file_read(const char *filename, uint8_t **data, size_t *len)
 	long llen;
 
 	fptr = fopen(filename, "rb");
-	if(!fptr) return 1;
+	if(!fptr){
+		return 1;
+	}
 
 	fseek(fptr, 0, SEEK_END);
 	llen = ftell(fptr);

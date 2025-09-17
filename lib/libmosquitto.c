@@ -46,9 +46,15 @@ void mosquitto__destroy(struct mosquitto *mosq);
 
 int mosquitto_lib_version(int *major, int *minor, int *revision)
 {
-	if(major) *major = LIBMOSQUITTO_MAJOR;
-	if(minor) *minor = LIBMOSQUITTO_MINOR;
-	if(revision) *revision = LIBMOSQUITTO_REVISION;
+	if(major){
+		*major = LIBMOSQUITTO_MAJOR;
+	}
+	if(minor){
+		*minor = LIBMOSQUITTO_MINOR;
+	}
+	if(revision){
+		*revision = LIBMOSQUITTO_REVISION;
+	}
 	return LIBMOSQUITTO_VERSION_NUMBER;
 }
 
@@ -152,7 +158,9 @@ struct mosquitto *mosquitto_new(const char *id, bool clean_start, void *userdata
 
 int mosquitto_reinitialise(struct mosquitto *mosq, const char *id, bool clean_start, void *userdata)
 {
-	if(!mosq) return MOSQ_ERR_INVAL;
+	if(!mosq){
+		return MOSQ_ERR_INVAL;
+	}
 
 	if(clean_start == false && id == NULL){
 		return MOSQ_ERR_INVAL;
@@ -260,7 +268,9 @@ int mosquitto_reinitialise(struct mosquitto *mosq, const char *id, bool clean_st
 
 void mosquitto__destroy(struct mosquitto *mosq)
 {
-	if(!mosq) return;
+	if(!mosq){
+		return;
+	}
 
 #ifdef WITH_THREADING
 #  ifdef HAVE_PTHREAD_CANCEL
@@ -347,7 +357,9 @@ void mosquitto__destroy(struct mosquitto *mosq)
 
 void mosquitto_destroy(struct mosquitto *mosq)
 {
-	if(!mosq) return;
+	if(!mosq){
+		return;
+	}
 
 	mosquitto__destroy(mosq);
 	mosquitto_FREE(mosq);
@@ -356,7 +368,9 @@ void mosquitto_destroy(struct mosquitto *mosq)
 
 int mosquitto_socket(struct mosquitto *mosq)
 {
-	if(!mosq) return INVALID_SOCKET;
+	if(!mosq){
+		return INVALID_SOCKET;
+	}
 	return mosq->sock;
 }
 

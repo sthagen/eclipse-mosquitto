@@ -88,7 +88,9 @@ static int acl__add(struct acl_file_data *data, const char *user, unsigned user_
 {
 	struct acl__user *acl_user=NULL;
 
-	if(!data || !topic) return MOSQ_ERR_INVAL;
+	if(!data || !topic){
+		return MOSQ_ERR_INVAL;
+	}
 
 	acl_user = acl__find_or_create_user(data, user, user_hashv);
 	if(!acl_user){
@@ -105,7 +107,9 @@ static int acl__add_pattern(struct acl_file_data *data, const char *topic, int a
 	char *local_topic;
 	char *s;
 
-	if(!data| !topic) return MOSQ_ERR_INVAL;
+	if(!data| !topic){
+		return MOSQ_ERR_INVAL;
+	}
 
 	local_topic = mosquitto_strdup(topic);
 	if(!local_topic){
@@ -183,8 +187,12 @@ int acl_file__parse(struct acl_file_data *data)
 	int buflen = 256;
 	unsigned user_hashv = 0;
 
-	if(!data) return MOSQ_ERR_INVAL;
-	if(!data->acl_file) return MOSQ_ERR_SUCCESS;
+	if(!data){
+		return MOSQ_ERR_INVAL;
+	}
+	if(!data->acl_file){
+		return MOSQ_ERR_SUCCESS;
+	}
 
 	buf = mosquitto_calloc((size_t)buflen, 1);
 	if(buf == NULL){

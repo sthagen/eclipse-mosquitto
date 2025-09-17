@@ -30,7 +30,9 @@ static void print__properties(mosquitto_property *properties)
 {
 	int i;
 
-	if(properties == NULL) return;
+	if(properties == NULL){
+		return;
+	}
 
 	printf("\tProperties:\n");
 

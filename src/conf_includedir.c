@@ -164,11 +164,15 @@ int config__get_dir_files(const char *include_dir, char ***files, int *file_coun
 
 				l_file_count++;
 				files_tmp = mosquitto_realloc(l_files, (size_t)l_file_count*sizeof(char *));
-				if(!files_tmp) goto error;
+				if(!files_tmp){
+					goto error;
+				}
 				l_files = files_tmp;
 
 				l_files[l_file_count-1] = mosquitto_malloc(len+1);
-				if(!l_files[l_file_count-1]) goto error;
+				if(!l_files[l_file_count-1]){
+					goto error;
+				}
 				snprintf(l_files[l_file_count-1], len, "%s/%s", include_dir, de->d_name);
 				l_files[l_file_count-1][len] = '\0';
 			}

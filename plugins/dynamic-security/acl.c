@@ -223,7 +223,9 @@ static int acl_check(struct dynsec__data *data, struct mosquitto_evt_acl_check *
 
 	if(username){
 		client = dynsec_clients__find(data, username);
-		if(client == NULL) return MOSQ_ERR_PLUGIN_DEFER;
+		if(client == NULL){
+			return MOSQ_ERR_PLUGIN_DEFER;
+		}
 
 		/* Client roles */
 		rc = check(data, ed, client->rolelist);

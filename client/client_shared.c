@@ -413,8 +413,10 @@ int client_config_load(struct mosq_config *cfg, int pub_or_sub, int argc, char *
 	}
 	if(fptr){
 		while(fgets(line, 1024, fptr)){
-			if(line[0] == '#') continue; /* Comments */
-
+			if(line[0] == '#'){
+				/* Comments */
+				continue;
+			}
 			while(line[strlen(line)-1] == 10 || line[strlen(line)-1] == 13){
 				line[strlen(line)-1] = 0;
 			}
@@ -441,7 +443,9 @@ int client_config_load(struct mosq_config *cfg, int pub_or_sub, int argc, char *
 
 	/* Deal with real argc/argv */
 	rc = client_config_line_proc(cfg, pub_or_sub, argc, argv);
-	if(rc) return rc;
+	if(rc){
+		return rc;
+	}
 
 	if(cfg->will_payload && !cfg->will_topic){
 		fprintf(stderr, "Error: Will payload given, but no will topic given.\n");
@@ -799,8 +803,9 @@ int client_config_line_proc(struct mosq_config *cfg, int pub_or_sub, int argc, c
 				}
 				*topic++ = 0;
 
-				if(cfg_add_topic(cfg, pub_or_sub, topic, "-L topic"))
+				if(cfg_add_topic(cfg, pub_or_sub, topic, "-L topic")){
 					return 1;
+				}
 
 				tmp = strchr(url, '@');
 				if(tmp){
@@ -1088,8 +1093,9 @@ int client_config_line_proc(struct mosq_config *cfg, int pub_or_sub, int argc, c
 				fprintf(stderr, "Error: -t argument given but no topic specified.\n\n");
 				return 1;
 			}else{
-				if(cfg_add_topic(cfg, pub_or_sub, argv[i + 1], "-t"))
+				if(cfg_add_topic(cfg, pub_or_sub, argv[i + 1], "-t")){
 					return 1;
+				}
 				i++;
 			}
 		}else if(!strcmp(argv[i], "-T") || !strcmp(argv[i], "--filter-out")){
@@ -1543,9 +1549,13 @@ static int mosquitto__urldecode(char *str)
 {
 	size_t i, j;
 	size_t len;
-	if(!str) return 0;
+	if(!str){
+		return 0;
+	}
 
-	if(!strchr(str, '%')) return 0;
+	if(!strchr(str, '%')){
+		return 0;
+	}
 
 	len = strlen(str);
 	for(i=0; i<len; i++){
@@ -1774,7 +1784,9 @@ void err_printf(const struct mosq_config *cfg, const char *fmt, ...)
 {
 	va_list va;
 
-	if(cfg->quiet) return;
+	if(cfg->quiet){
+		return;
+	}
 
 	va_start(va, fmt);
 	vfprintf(stderr, fmt, va);

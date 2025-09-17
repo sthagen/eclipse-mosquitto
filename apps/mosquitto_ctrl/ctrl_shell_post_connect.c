@@ -34,7 +34,9 @@ static void command_tree_create(void)
 	struct completion_tree_cmd *cmd;
 	struct completion_tree_arg_list *help_arg_list;
 
-	if(commands_post_connect) return;
+	if(commands_post_connect){
+		return;
+	}
 
 	commands_post_connect = calloc(1, sizeof(struct completion_tree_root));
 

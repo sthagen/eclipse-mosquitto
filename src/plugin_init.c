@@ -87,16 +87,24 @@ static int plugin__load_single(mosquitto_plugin_id_t *plugin)
 	plugin->lib.version = version;
 	if(version == 5){
 		rc = plugin__load_v5(plugin, lib);
-		if(rc) return rc;
+		if(rc){
+			return rc;
+		}
 	}else if(version == 4){
 		rc = plugin__load_v4(plugin, lib);
-		if(rc) return rc;
+		if(rc){
+			return rc;
+		}
 	}else if(version == 3){
 		rc = plugin__load_v3(plugin, lib);
-		if(rc) return rc;
+		if(rc){
+			return rc;
+		}
 	}else if(version == 2){
 		rc = plugin__load_v2(plugin, lib);
-		if(rc) return rc;
+		if(rc){
+			return rc;
+		}
 	}else{
 		log__printf(NULL, MOSQ_LOG_ERR,
 				"Error: Unsupported auth plugin version (got %d, expected %d).",
@@ -116,7 +124,9 @@ int plugin__load_all(void)
 
 	for(int i=0; i<db.plugin_count; i++){
 		rc = plugin__load_single(db.plugins[i]);
-		if(rc) return rc;
+		if(rc){
+			return rc;
+		}
 	}
 	return MOSQ_ERR_SUCCESS;
 }
@@ -162,7 +172,9 @@ int mosquitto_security_init(bool reload)
 
 	for(int i=0; i<db.plugin_count; i++){
 		rc = plugin__security_init_single(db.plugins[i], reload);
-		if(rc != MOSQ_ERR_SUCCESS) return rc;
+		if(rc != MOSQ_ERR_SUCCESS){
+			return rc;
+		}
 	}
 	rc = mosquitto_security_init_default();
 	return rc;

@@ -76,7 +76,9 @@ cJSON *dynsec_clientlist__all_to_json(struct dynsec__clientlist *base_clientlist
 	cJSON *j_clients, *j_client;
 
 	j_clients = cJSON_CreateArray();
-	if(j_clients == NULL) return NULL;
+	if(j_clients == NULL){
+		return NULL;
+	}
 
 	HASH_ITER(hh, base_clientlist, clientlist, clientlist_tmp){
 		j_client = cJSON_CreateObject();

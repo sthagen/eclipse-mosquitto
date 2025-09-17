@@ -119,7 +119,9 @@ void xtreport(void)
 	snprintf(filename, 40, "/tmp/xtmosquitto.kcg.%d.%d", pid, iter);
 	iter++;
 	fptr = fopen(filename, "wt");
-	if(fptr == NULL) return;
+	if(fptr == NULL){
+		return;
+	}
 
 	fprintf(fptr, "# callgrind format\n");
 	fprintf(fptr, "version: 1\n");

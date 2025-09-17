@@ -51,7 +51,9 @@ int main(int argc, char *argv[])
 	mosquitto_will_set(mosq, "will-topic", strlen("will message"), "will message", 2, false);
 
 	rc = mosquitto_connect(mosq, "localhost", port, 60);
-	if(rc != MOSQ_ERR_SUCCESS) return rc;
+	if(rc != MOSQ_ERR_SUCCESS){
+		return rc;
+	}
 
 	while(run == -1){
 		mosquitto_loop(mosq, -1, 1);

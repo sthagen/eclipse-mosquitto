@@ -44,7 +44,9 @@ void *mosquitto__thread_main(void *obj);
 int mosquitto_loop_start(struct mosquitto *mosq)
 {
 #if defined(WITH_THREADING)
-	if(!mosq || mosq->threaded != mosq_ts_none) return MOSQ_ERR_INVAL;
+	if(!mosq || mosq->threaded != mosq_ts_none){
+		return MOSQ_ERR_INVAL;
+	}
 
 	mosq->threaded = mosq_ts_self;
 	if(!COMPAT_pthread_create(&mosq->thread_id, NULL, mosquitto__thread_main, mosq)){
@@ -73,7 +75,9 @@ int mosquitto_loop_stop(struct mosquitto *mosq, bool force)
 	char sockpair_data = 0;
 #  endif
 
-	if(!mosq || mosq->threaded != mosq_ts_self) return MOSQ_ERR_INVAL;
+	if(!mosq || mosq->threaded != mosq_ts_self){
+		return MOSQ_ERR_INVAL;
+	}
 
 
 	/* Write a single byte to sockpairW (connected to sockpairR) to break out
@@ -116,7 +120,9 @@ void *mosquitto__thread_main(void *obj)
 	ts.tv_nsec = 10000000;
 #endif
 
-	if(!mosq) return NULL;
+	if(!mosq){
+		return NULL;
+	}
 
 	do{
 		if(mosquitto__get_state(mosq) == mosq_cs_new){
@@ -148,7 +154,9 @@ void *mosquitto__thread_main(void *obj)
 
 int mosquitto_threaded_set(struct mosquitto *mosq, bool threaded)
 {
-	if(!mosq) return MOSQ_ERR_INVAL;
+	if(!mosq){
+		return MOSQ_ERR_INVAL;
+	}
 
 	if(threaded){
 		mosq->threaded = mosq_ts_external;

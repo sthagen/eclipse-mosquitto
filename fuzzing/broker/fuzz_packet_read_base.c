@@ -48,7 +48,9 @@ int fuzz_packet_read_base(const uint8_t *data, size_t size, int (*packet_func)(s
 	memset(&secopts, 0, sizeof(secopts));
 
 	context = context__init();
-	if(!context) return 1;
+	if(!context){
+		return 1;
+	}
 	listener.security_options = &secopts;
 	context->listener = &listener;
 	context->bridge = &bridge;
@@ -58,7 +60,9 @@ int fuzz_packet_read_base(const uint8_t *data, size_t size, int (*packet_func)(s
 	size -= 2;
 
 	data_heap = (uint8_t *)malloc(size);
-	if(!data_heap) return 1;
+	if(!data_heap){
+		return 1;
+	}
 
 	memcpy(data_heap, &data[2], size);
 

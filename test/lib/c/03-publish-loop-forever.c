@@ -78,7 +78,9 @@ int main(int argc, char *argv[])
 	mosquitto_message_v5_callback_set(mosq, on_message_v5);
 
 	rc = mosquitto_connect_bind_v5(mosq, "localhost", port, 60, NULL, NULL);
-	if(rc != MOSQ_ERR_SUCCESS) return rc;
+	if(rc != MOSQ_ERR_SUCCESS){
+		return rc;
+	}
 
 	mosquitto_loop_forever(mosq, -1, 1);
 	mosquitto_destroy(mosq);

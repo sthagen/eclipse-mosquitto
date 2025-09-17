@@ -215,9 +215,13 @@ static int callback_mqtt(
 			}
 
 			rc = db__message_write_inflight_out_latest(mosq);
-			if(rc) return -1;
+			if(rc){
+				return -1;
+			}
 			rc = db__message_write_queued_out(mosq);
-			if(rc) return -1;
+			if(rc){
+				return -1;
+			}
 
 			while(mosq->out_packet && !lws_send_pipe_choked(mosq->wsi)){
 				packet = mosq->out_packet;
@@ -469,7 +473,9 @@ static int callback_http(
 			}
 
 			filename_canonical = http__canonical_filename(wsi, (char *)in, http_dir);
-			if(!filename_canonical) return -1;
+			if(!filename_canonical){
+				return -1;
+			}
 
 			u->fptr = fopen(filename_canonical, "rb");
 			if(!u->fptr){
@@ -670,7 +676,9 @@ void mosq_websockets_init(struct mosquitto__listener *listener, const struct mos
 	struct libws_mqtt_hack *user;
 
 	/* Count valid protocols */
-	for(protocol_count=0; protocols[protocol_count].name; protocol_count++);
+	for(protocol_count=0; protocols[protocol_count].name; protocol_count++){
+		;
+	}
 
 	p = mosquitto_calloc(protocol_count+1, sizeof(struct lws_protocols));
 	if(!p){

@@ -42,10 +42,14 @@ int persist__chunk_header_read_v234(FILE *db_fptr, uint32_t *chunk, uint32_t *le
 	uint32_t i32temp;
 
 	rlen = fread(&i16temp, sizeof(uint16_t), 1, db_fptr);
-	if(rlen != 1) return 1;
+	if(rlen != 1){
+		return 1;
+	}
 
 	rlen = fread(&i32temp, sizeof(uint32_t), 1, db_fptr);
-	if(rlen != 1) return 1;
+	if(rlen != 1){
+		return 1;
+	}
 
 	*chunk = ntohs(i16temp);
 	*length = ntohl(i32temp);
@@ -135,11 +139,15 @@ int persist__chunk_base_msg_read_v234(FILE *db_fptr, struct P_base_msg *chunk, u
 	read_e(db_fptr, &chunk->F.store_id, sizeof(dbid_t));
 
 	rc = persist__read_string(db_fptr, &chunk->source.id);
-	if(rc) return rc;
+	if(rc){
+		return rc;
+	}
 
 	if(db_version == 4){
 		rc = persist__read_string(db_fptr, &chunk->source.username);
-		if(rc) goto error;
+		if(rc){
+			goto error;
+		}
 		read_e(db_fptr, &i16temp, sizeof(uint16_t));
 		chunk->F.source_port = ntohs(i16temp);
 	}
@@ -151,7 +159,9 @@ int persist__chunk_base_msg_read_v234(FILE *db_fptr, struct P_base_msg *chunk, u
 	read_e(db_fptr, &i16temp, sizeof(uint16_t));
 
 	rc = persist__read_string(db_fptr, &chunk->topic);
-	if(rc) goto error;
+	if(rc){
+		goto error;
+	}
 
 	read_e(db_fptr, &chunk->F.qos, sizeof(uint8_t));
 	read_e(db_fptr, &chunk->F.retain, sizeof(uint8_t));
@@ -203,10 +213,14 @@ int persist__chunk_sub_read_v234(FILE *db_fptr, struct P_sub *chunk)
 	int rc;
 
 	rc = persist__read_string(db_fptr, &chunk->clientid);
-	if(rc) goto error;
+	if(rc){
+		goto error;
+	}
 
 	rc = persist__read_string(db_fptr, &chunk->topic);
-	if(rc) goto error;
+	if(rc){
+		goto error;
+	}
 
 	read_e(db_fptr, &chunk->F.qos, sizeof(uint8_t));
 

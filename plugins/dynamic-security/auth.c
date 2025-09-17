@@ -43,7 +43,9 @@ int dynsec_auth__basic_auth_callback(int event, void *event_data, void *userdata
 	UNUSED(event);
 	UNUSED(userdata);
 
-	if(ed->username == NULL || ed->password == NULL) return MOSQ_ERR_PLUGIN_DEFER;
+	if(ed->username == NULL || ed->password == NULL){
+		return MOSQ_ERR_PLUGIN_DEFER;
+	}
 
 	client = dynsec_clients__find(data, ed->username);
 	if(client){

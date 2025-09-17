@@ -32,27 +32,39 @@ int mosquitto_ext_auth_continue(struct mosquitto *context, const char *auth_meth
 	mosquitto_property *properties = NULL;
 
 	rc = mosquitto_property_copy_all(&properties, input_props);
-	if(rc) return rc;
+	if(rc){
+		return rc;
+	}
 
-	if(!context || context->protocol != mosq_p_mqtt5 || !auth_method) return MOSQ_ERR_PROTOCOL;
+	if(!context || context->protocol != mosq_p_mqtt5 || !auth_method){
+		return MOSQ_ERR_PROTOCOL;
+	}
 
 	remaining_length = 1;
 
 	rc = mosquitto_property_add_string(&properties, MQTT_PROP_AUTHENTICATION_METHOD, auth_method);
-	if(rc) goto error;
+	if(rc){
+		goto error;
+	}
 
 	if(auth_data != NULL && auth_data_len > 0){
 		rc = mosquitto_property_add_binary(&properties, MQTT_PROP_AUTHENTICATION_DATA, auth_data, auth_data_len);
-		if(rc) goto error;
+		if(rc){
+			goto error;
+		}
 	}
 
 	remaining_length += mosquitto_property_get_remaining_length(properties);
 
 	rc = packet__check_oversize(context, remaining_length);
-	if(rc) goto error;
+	if(rc){
+		goto error;
+	}
 
 	rc = packet__alloc(&packet, CMD_AUTH, remaining_length);
-	if(rc) goto error;
+	if(rc){
+		goto error;
+	}
 
 	packet__write_byte(packet, MQTT_RC_CONTINUE_AUTHENTICATION);
 	property__write_all(packet, properties, true);

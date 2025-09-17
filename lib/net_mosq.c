@@ -181,7 +181,9 @@ void net__cleanup(void)
 
 void net__init_tls(void)
 {
-	if(is_tls_initialized) return;
+	if(is_tls_initialized){
+		return;
+	}
 
 #if !defined(OPENSSL_NO_ENGINE) && OPENSSL_API_LEVEL < 30000
 	ENGINE_load_builtin_engines();
@@ -295,12 +297,16 @@ static unsigned int psk_client_callback(SSL *ssl, const char *hint,
 	UNUSED(hint);
 
 	mosq = SSL_get_ex_data(ssl, tls_ex_index_mosq);
-	if(!mosq) return 0;
+	if(!mosq){
+		return 0;
+	}
 
 	snprintf(identity, max_identity_len, "%s", mosq->tls_psk_identity);
 
 	len = mosquitto__hex2bin(mosq->tls_psk, psk, (int)max_psk_len);
-	if(len < 0)  return 0;
+	if(len < 0){
+		return 0;
+	}
 	return (unsigned int)len;
 }
 #endif
@@ -366,7 +372,9 @@ int net__try_connect_step2(struct mosquitto *mosq, uint16_t port, mosq_sock_t *s
 
 	for(rp = ainfo; rp != NULL; rp = rp->ai_next){
 		*sock = socket(rp->ai_family, rp->ai_socktype, rp->ai_protocol);
-		if(*sock == INVALID_SOCKET) continue;
+		if(*sock == INVALID_SOCKET){
+			continue;
+		}
 
 		if(rp->ai_family == AF_INET){
 			((struct sockaddr_in *)rp->ai_addr)->sin_port = htons(port);
@@ -449,7 +457,9 @@ static int net__try_connect_tcp(const char *host, uint16_t port, mosq_sock_t *so
 
 	for(rp = ainfo; rp != NULL; rp = rp->ai_next){
 		*sock = socket(rp->ai_family, rp->ai_socktype, rp->ai_protocol);
-		if(*sock == INVALID_SOCKET) continue;
+		if(*sock == INVALID_SOCKET){
+			continue;
+		}
 
 		if(rp->ai_family == AF_INET){
 			((struct sockaddr_in *)rp->ai_addr)->sin_port = htons(port);
@@ -533,7 +543,9 @@ static int net__try_connect_unix(const char *host, mosq_sock_t *sock)
 		return MOSQ_ERR_ERRNO;
 	}
 	rc = net__socket_nonblock(&s);
-	if(rc) return rc;
+	if(rc){
+		return rc;
+	}
 
 	rc = connect(s, (struct sockaddr *)&addr, sizeof(struct sockaddr_un));
 	if(rc < 0){
@@ -950,10 +962,14 @@ int net__socket_connect(struct mosquitto *mosq, const char *host, uint16_t port,
 {
 	int rc, rc2;
 
-	if(!mosq || !host) return MOSQ_ERR_INVAL;
+	if(!mosq || !host){
+		return MOSQ_ERR_INVAL;
+	}
 
 	rc = net__try_connect(host, port, &mosq->sock, bind_address, blocking);
-	if(rc > 0) return rc;
+	if(rc > 0){
+		return rc;
+	}
 
 	if(mosq->tcp_nodelay && port){
 		int flag = 1;
@@ -967,7 +983,9 @@ int net__socket_connect(struct mosquitto *mosq, const char *host, uint16_t port,
 #endif
 	{
 		rc2 = net__socket_connect_step3(mosq, host);
-		if(rc2) return rc2;
+		if(rc2){
+			return rc2;
+		}
 	}
 
 	return rc;

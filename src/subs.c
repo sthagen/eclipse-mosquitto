@@ -121,7 +121,9 @@ static int subs__shared_process(struct mosquitto__subhier *hier, const char *top
 		DL_DELETE(shared->subs, leaf);
 		DL_APPEND(shared->subs, leaf);
 
-		if(rc2) rc = 1;
+		if(rc2){
+			rc = 1;
+		}
 	}
 
 	return rc;
@@ -175,7 +177,9 @@ static int sub__add_leaf(struct mosquitto *context, const struct mosquitto_subsc
 		leaf = leaf->next;
 	}
 	leaf = mosquitto_calloc(1, sizeof(struct mosquitto__subleaf) + strlen(sub->topic_filter) + 1);
-	if(!leaf) return MOSQ_ERR_NOMEM;
+	if(!leaf){
+		return MOSQ_ERR_NOMEM;
+	}
 	leaf->context = context;
 	leaf->identifier = sub->identifier;
 	leaf->subscription_options = sub->options;
@@ -338,7 +342,9 @@ static int sub__add_context(struct mosquitto *context, const struct mosquitto_su
 		if(!branch){
 			/* Not found */
 			branch = sub__add_hier_entry(subhier, &subhier->children, topics[topic_index], (uint16_t)topiclen);
-			if(!branch) return MOSQ_ERR_NOMEM;
+			if(!branch){
+				return MOSQ_ERR_NOMEM;
+			}
 		}
 		subhier = branch;
 		topic_index++;
@@ -569,7 +575,9 @@ int sub__add(struct mosquitto *context, const struct mosquitto_subscription *sub
 	assert(sub->topic_filter);
 
 	rc = sub__topic_tokenise(sub->topic_filter, &local_sub, &topics, &sharename);
-	if(rc) return rc;
+	if(rc){
+		return rc;
+	}
 
 	topiclen = strlen(topics[0]);
 	if(topiclen > UINT16_MAX){
@@ -621,7 +629,9 @@ int sub__remove(struct mosquitto *context, const char *sub, uint8_t *reason)
 	assert(sub);
 
 	rc = sub__topic_tokenise(sub, &local_sub, &topics, &sharename);
-	if(rc) return rc;
+	if(rc){
+		return rc;
+	}
 
 	if(sharename){
 		HASH_FIND(hh, db.shared_subs, topics[0], strlen(topics[0]), subhier);
@@ -652,7 +662,9 @@ int sub__messages_queue(const char *source_id, const char *topic, uint8_t qos, i
 
 	assert(topic);
 
-	if(sub__topic_tokenise(topic, &local_topic, &split_topics, NULL)) return 1;
+	if(sub__topic_tokenise(topic, &local_topic, &split_topics, NULL)){
+		return 1;
+	}
 
 	/* Protect this message until we have sent it to all
 	clients - this is required because websockets client calls
@@ -686,7 +698,9 @@ int sub__messages_queue(const char *source_id, const char *topic, uint8_t qos, i
 
 	if(retain){
 		rc2 = retain__store(topic, *stored, split_topics, true);
-		if(rc2) rc = rc2;
+		if(rc2){
+			rc = rc2;
+		}
 	}
 
 end:

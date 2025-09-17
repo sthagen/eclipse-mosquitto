@@ -68,7 +68,9 @@ int sub__topic_tokenise(const char *subtopic, char **local_sub, char ***topics, 
 	}
 
 	*local_sub = mosquitto_strdup(subtopic);
-	if((*local_sub) == NULL) return MOSQ_ERR_NOMEM;
+	if((*local_sub) == NULL){
+		return MOSQ_ERR_NOMEM;
+	}
 
 	count = 0;
 	saveptr = *local_sub;

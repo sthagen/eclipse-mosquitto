@@ -154,7 +154,9 @@ static int read_tlv(struct mosquitto *context, bool *have_certificate)
 			case PP2_TYPE_SSL:
 				{
 					int rc = read_tlv_ssl(context, tlv_len, have_certificate);
-					if(rc) return rc;
+					if(rc){
+						return rc;
+					}
 				}
 				break;
 			default:

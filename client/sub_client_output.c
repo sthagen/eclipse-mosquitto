@@ -211,7 +211,9 @@ static int json_print_properties(cJSON *root, const mosquitto_property *properti
 			case MQTT_PROP_CONTENT_TYPE:
 			case MQTT_PROP_RESPONSE_TOPIC:
 				mosquitto_property_read_string(prop, identifier, &strvalue, false);
-				if(strvalue == NULL) return MOSQ_ERR_NOMEM;
+				if(strvalue == NULL){
+					return MOSQ_ERR_NOMEM;
+				}
 				tmp = cJSON_CreateString(strvalue);
 				free(strvalue);
 				strvalue = NULL;
@@ -219,7 +221,9 @@ static int json_print_properties(cJSON *root, const mosquitto_property *properti
 
 			case MQTT_PROP_CORRELATION_DATA:
 				mosquitto_property_read_binary(prop, MQTT_PROP_CORRELATION_DATA, (void **)&binvalue, &i16value, false);
-				if(binvalue == NULL) return MOSQ_ERR_NOMEM;
+				if(binvalue == NULL){
+					return MOSQ_ERR_NOMEM;
+				}
 				tmp = cJSON_CreateString(binvalue);
 				free(binvalue);
 				binvalue = NULL;
