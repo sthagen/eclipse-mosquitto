@@ -38,7 +38,7 @@ int send__disconnect(struct mosquitto *mosq, uint8_t reason_code, const mosquitt
 {
 	struct mosquitto__packet *packet = NULL;
 	int rc;
-	uint32_t remaining_length;
+	uint32_t remaining_length = 0;
 
 	assert(mosq);
 #ifdef WITH_BROKER
