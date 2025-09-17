@@ -50,7 +50,7 @@ Contributors:
 
 MOSQUITTO_PLUGIN_DECLARE_VERSION(5);
 
-struct plugin_data{
+struct plugin_data {
 	mosquitto_plugin_id_t *pid;
 	char *input_topic_filter;
 	char *output_topic;
@@ -94,6 +94,7 @@ static int callback_message_in(int event, void *event_data, void *userdata)
 
 	return MOSQ_ERR_SUCCESS;
 }
+
 
 int mosquitto_plugin_init(mosquitto_plugin_id_t *identifier, void **userdata, struct mosquitto_opt *opts, int opt_count)
 {
@@ -141,6 +142,7 @@ int mosquitto_plugin_init(mosquitto_plugin_id_t *identifier, void **userdata, st
 	data->pid = identifier;
 	return mosquitto_callback_register(data->pid, MOSQ_EVT_MESSAGE_IN, callback_message_in, NULL, data);
 }
+
 
 /* mosquitto_plugin_cleanup() is optional in 2.1 and later. Use it only if you have your own cleanup to do */
 int mosquitto_plugin_cleanup(void *userdata, struct mosquitto_opt *opts, int opt_count)
