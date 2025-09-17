@@ -56,6 +56,7 @@ extern struct metric metrics[mosq_metric_max];
 
 #ifdef WIN32
 #define DIR_SEP '\\'
+#define PATH_MAX MAX_PATH
 #else
 #define DIR_SEP '/'
 #endif
@@ -92,17 +93,23 @@ static char *http__canonical_filename(
 
 
 	/* Get canonical path and check it is within our http_dir */
-#ifdef WIN32
-	filename_canonical = _fullpath(NULL, filename, 0);
-	mosquitto_FREE(filename);
+	filename_canonical = mosquitto_calloc(1, PATH_MAX);
 	if(!filename_canonical){
 		*error_code = MHD_HTTP_INTERNAL_SERVER_ERROR;
 		return NULL;
 	}
-#else
-	filename_canonical = realpath(filename, NULL);
+#ifdef WIN32
+	char *resolved = _fullpath(filename_canonical, filename, 0);
 	mosquitto_FREE(filename);
-	if(!filename_canonical){
+	if(!resolved){
+		*error_code = MHD_HTTP_INTERNAL_SERVER_ERROR;
+		mosquitto_FREE(filename_canonical);
+		return NULL;
+	}
+#else
+	char *resolved = realpath(filename, filename_canonical);
+	mosquitto_FREE(filename);
+	if(!resolved){
 		if(errno == EACCES){
 			*error_code = MHD_HTTP_FORBIDDEN;
 		}else if(errno == EINVAL || errno == EIO || errno == ELOOP){
@@ -112,12 +119,13 @@ static char *http__canonical_filename(
 		}else if(errno == ENOENT || errno == ENOTDIR){
 			*error_code = MHD_HTTP_NOT_FOUND;
 		}
+		mosquitto_FREE(filename_canonical);
 		return NULL;
 	}
 #endif
 	if(strncmp(http_dir, filename_canonical, strlen(http_dir))){
 		/* Requested file isn't within http_dir, deny access because it's not found. */
-		SAFE_FREE(filename_canonical);
+		mosquitto_FREE(filename_canonical);
 		*error_code = MHD_HTTP_NOT_FOUND;
 		return NULL;
 	}
@@ -284,6 +292,7 @@ static enum MHD_Result http_api__process_file(struct mosquitto__listener *listen
 	}
 
 	FILE *fptr = fopen(canonical_filename, "rb");
+	mosquitto_FREE(canonical_filename);
 	if(!fptr){
 		http_api__send_error_response(connection, "Not found.\n", 404);
 		return MHD_YES;
