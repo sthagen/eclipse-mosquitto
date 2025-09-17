@@ -63,91 +63,91 @@ extern SERVICE_STATUS_HANDLE service_handle;
 
 
 #define REQUIRE_LISTENER(A) \
-	do{ \
-		if(cur_listener == NULL){ \
-			log__printf(NULL, MOSQ_LOG_ERR, "Error: The '%s' option requires a listener to be defined first.", (A)); \
-			return MOSQ_ERR_INVAL; \
-		} \
-	}while(0)
+		do{ \
+			if(cur_listener == NULL){ \
+				log__printf(NULL, MOSQ_LOG_ERR, "Error: The '%s' option requires a listener to be defined first.", (A)); \
+				return MOSQ_ERR_INVAL; \
+			} \
+		}while(0)
 
 #define REQUIRE_LISTENER_OR_DEFAULT_LISTENER(A) \
-	do{ \
-		if(cur_listener == NULL){ \
-			if(config__create_default_listener(config, (A))){ \
-				return MOSQ_ERR_NOMEM; \
+		do{ \
+			if(cur_listener == NULL){ \
+				if(config__create_default_listener(config, (A))){ \
+					return MOSQ_ERR_NOMEM; \
+				} \
+				cur_listener = config->default_listener; \
 			} \
-			cur_listener = config->default_listener; \
-		} \
-	}while(0)
+		}while(0)
 
 #define REQUIRE_LISTENER_IF_PER_LISTENER(A) \
-	do{ \
-		if(config->per_listener_settings == true && cur_listener == NULL){ \
-			log__printf(NULL, MOSQ_LOG_ERR, "Error: The '%s' option requires a listener to be defined first.", (A)); \
-			return MOSQ_ERR_INVAL; \
-		} \
-	}while(0)
+		do{ \
+			if(config->per_listener_settings == true && cur_listener == NULL){ \
+				log__printf(NULL, MOSQ_LOG_ERR, "Error: The '%s' option requires a listener to be defined first.", (A)); \
+				return MOSQ_ERR_INVAL; \
+			} \
+		}while(0)
 
 #define REQUIRE_NON_DEFAULT_LISTENER(A) \
-	do{ \
-		if(cur_listener == config->default_listener || cur_listener == NULL){ \
-			log__printf(NULL, MOSQ_LOG_ERR, "Error: The '%s' option requires a listener to be defined first.", (A)); \
-			return MOSQ_ERR_INVAL; \
-		} \
-	}while(0)
+		do{ \
+			if(cur_listener == config->default_listener || cur_listener == NULL){ \
+				log__printf(NULL, MOSQ_LOG_ERR, "Error: The '%s' option requires a listener to be defined first.", (A)); \
+				return MOSQ_ERR_INVAL; \
+			} \
+		}while(0)
 
 #define REQUIRE_BRIDGE(A) \
-	do{ \
-		if(cur_bridge == NULL){ \
-			log__printf(NULL, MOSQ_LOG_ERR, "Error: The '%s' option requires a bridge to be defined first.", (A)); \
-			return MOSQ_ERR_INVAL; \
-		} \
-	}while(0)
+		do{ \
+			if(cur_bridge == NULL){ \
+				log__printf(NULL, MOSQ_LOG_ERR, "Error: The '%s' option requires a bridge to be defined first.", (A)); \
+				return MOSQ_ERR_INVAL; \
+			} \
+		}while(0)
 
 #define REQUIRE_PLUGIN(A) \
-	do{ \
-		if(cur_plugin == NULL){ \
-			log__printf(NULL, MOSQ_LOG_ERR, "Error: The '%s' option requires plugin/global_plugin/plugin_load to be defined first.", (A)); \
-			return MOSQ_ERR_INVAL; \
-		} \
-	}while(0)
+		do{ \
+			if(cur_plugin == NULL){ \
+				log__printf(NULL, MOSQ_LOG_ERR, "Error: The '%s' option requires plugin/global_plugin/plugin_load to be defined first.", (A)); \
+				return MOSQ_ERR_INVAL; \
+			} \
+		}while(0)
 
 #define OPTION_DEPRECATED(A, B) \
-	log__printf(NULL, MOSQ_LOG_NOTICE, "The '%s' option is now deprecated and will be removed in version 3.0. %s", (A), (B))
+		log__printf(NULL, MOSQ_LOG_NOTICE, "The '%s' option is now deprecated and will be removed in version 3.0. %s", (A), (B))
 
 #define OPTION_UNAVAILABLE(A) \
-	log__printf(NULL, MOSQ_LOG_WARNING, "Warning: The '%s' option is no longer available.", (A));
+		log__printf(NULL, MOSQ_LOG_WARNING, "Warning: The '%s' option is no longer available.", (A));
 
 #define REQUIRE_NON_EMPTY_OPTION(A, B) \
-	do{ \
-		if(!(A)){ \
-			log__printf(NULL, MOSQ_LOG_ERR, "Error: Empty '%s' value in configuration.", (B)); \
-			return MOSQ_ERR_INVAL; \
-		} \
-	}while(0)
+		do{ \
+			if(!(A)){ \
+				log__printf(NULL, MOSQ_LOG_ERR, "Error: Empty '%s' value in configuration.", (B)); \
+				return MOSQ_ERR_INVAL; \
+			} \
+		}while(0)
 
 #define PER_LISTENER_ALTERNATIVE(A, B) \
-	if(config->per_listener_settings){ \
-		log__printf(NULL, MOSQ_LOG_NOTICE, "You are using the '%s' option with 'per_listener_settings true'. Please replace this with '%s'.", A, B); \
-	} \
+		if(config->per_listener_settings){ \
+			log__printf(NULL, MOSQ_LOG_NOTICE, "You are using the '%s' option with 'per_listener_settings true'. Please replace this with '%s'.", A, B); \
+		} \
 
 
 #ifdef FINAL_WITH_TLS_PSK
 #  define REQUIRE_BRIDGE_NO_TLS_PSK(A) \
-	do{ \
-		if(cur_bridge->tls_psk_identity || cur_bridge->tls_psk){ \
-			log__printf(NULL, MOSQ_LOG_ERR, "Error: '%s': Cannot use both certificate and psk encryption in a single bridge.", (A)); \
-			return MOSQ_ERR_INVAL; \
-		} \
-	}while(0)
+		do{ \
+			if(cur_bridge->tls_psk_identity || cur_bridge->tls_psk){ \
+				log__printf(NULL, MOSQ_LOG_ERR, "Error: '%s': Cannot use both certificate and psk encryption in a single bridge.", (A)); \
+				return MOSQ_ERR_INVAL; \
+			} \
+		}while(0)
 
 #  define REQUIRE_BRIDGE_NO_X509(A) \
-	do{ \
-		if(cur_bridge->tls_cafile || cur_bridge->tls_capath || cur_bridge->tls_certfile || cur_bridge->tls_keyfile){ \
-			log__printf(NULL, MOSQ_LOG_ERR, "Error: '%s': Cannot use both certificate and identity encryption in a single bridge.", (A)); \
-			return MOSQ_ERR_INVAL; \
-		} \
-	}while(0)
+		do{ \
+			if(cur_bridge->tls_cafile || cur_bridge->tls_capath || cur_bridge->tls_certfile || cur_bridge->tls_keyfile){ \
+				log__printf(NULL, MOSQ_LOG_ERR, "Error: '%s': Cannot use both certificate and identity encryption in a single bridge.", (A)); \
+				return MOSQ_ERR_INVAL; \
+			} \
+		}while(0)
 
 #else
 #  define REQUIRE_BRIDGE_NO_TLS_PSK(A)
@@ -2183,10 +2183,10 @@ static int config__read_file_core(struct mosquitto__config *config, bool reload,
 
 					if(!strcmp(token, "mqtt")){
 						cur_listener->protocol = mp_mqtt;
-					/*
-					}else if(!strcmp(token, "mqttsn")){
-						cur_listener->protocol = mp_mqttsn;
-					*/
+						/*
+						}else if(!strcmp(token, "mqttsn")){
+						    cur_listener->protocol = mp_mqttsn;
+						*/
 					}else if(!strcmp(token, "websockets")){
 #ifdef WITH_WEBSOCKETS
 						cur_listener->protocol = mp_websockets;

@@ -25,7 +25,7 @@ Contributors:
 #include "dynamic_security.h"
 #include "json_help.h"
 
-struct connection_array_context{
+struct connection_array_context {
 	const char *username;
 	cJSON *j_connections;
 };

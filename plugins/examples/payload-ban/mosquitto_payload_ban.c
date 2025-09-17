@@ -46,7 +46,7 @@ Contributors:
 #define PLUGIN_NAME "payload-ban"
 #define PLUGIN_VERSION "1.0"
 
-struct banlist{
+struct banlist {
 	UT_hash_handle hh_by_address;
 	UT_hash_handle hh_by_id;
 	char ip_address[50];

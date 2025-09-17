@@ -78,7 +78,7 @@ static void print_help(char **saveptr)
 	}
 }
 
-struct module_data{
+struct module_data {
 	const char *name;
 	void (*mod_init)(struct ctrl_shell__module *mod);
 };

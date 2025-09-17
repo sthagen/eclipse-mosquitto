@@ -259,7 +259,7 @@ static int broker__handle_control(struct mosquitto_control_cmd *cmd, void *userd
 	}else if(!strcasecmp(cmd->command_name, "listListeners")){
 		rc = broker__process_list_listeners(cmd);
 
-	/* Unknown */
+		/* Unknown */
 	}else{
 		mosquitto_control_command_reply(cmd, "Unknown command");
 		rc = MOSQ_ERR_INVAL;

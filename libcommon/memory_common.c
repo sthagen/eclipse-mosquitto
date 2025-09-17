@@ -138,7 +138,11 @@ void free(void *ptr)
 
 #define ALLOC_MARKER_SIZE 0
 
-static void set_alloc_marker(char* mem, size_t size) { UNUSED(mem); UNUSED(size); }
+
+static void set_alloc_marker(char *mem, size_t size)
+{
+	UNUSED(mem); UNUSED(size);
+}
 
 #endif /* defined(ALLOC_MISMATCH_INVALID_READ) */
 

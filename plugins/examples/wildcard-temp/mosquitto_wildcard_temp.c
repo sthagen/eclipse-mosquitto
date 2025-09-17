@@ -64,7 +64,7 @@ Contributors:
 
 MOSQUITTO_PLUGIN_DECLARE_VERSION(5);
 
-struct client_list{
+struct client_list {
 	UT_hash_handle hh;
 	struct client_list *next, *prev;
 	time_t sub_end;

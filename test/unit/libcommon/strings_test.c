@@ -5,7 +5,7 @@
 
 #include "mosquitto.h"
 
-struct prop_id{
+struct prop_id {
 	const char *name;
 	int proptype;
 };

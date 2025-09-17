@@ -19,7 +19,7 @@ Contributors:
 #include "config.h"
 
 #ifdef WIN32
-   /* For rand_s on Windows */
+/* For rand_s on Windows */
 #  define _CRT_RAND_S
 #  include <fcntl.h>
 #  include <io.h>
@@ -55,7 +55,7 @@ Contributors:
 
 extern struct mosq_config cfg;
 
-struct fieldoptions{
+struct fieldoptions {
 	int field_width;
 	int precision;
 	char hexsepchar;
@@ -63,7 +63,7 @@ struct fieldoptions{
 	char pad;
 };
 
-struct watch_topic{
+struct watch_topic {
 	UT_hash_handle hh;
 	char *topic;
 	int line;

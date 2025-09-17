@@ -36,8 +36,7 @@ Contributors:
 #include "mosquitto.h"
 #include "client_shared.h"
 
-enum prop_type
-{
+enum prop_type {
 	PROP_TYPE_BYTE,
 	PROP_TYPE_INT16,
 	PROP_TYPE_INT32,

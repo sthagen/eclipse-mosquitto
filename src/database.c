@@ -716,7 +716,7 @@ int db__message_insert_outgoing(struct mosquitto *context, uint64_t cmsg_id, uin
 
 
 static inline int db__message_update_outgoing_state(struct mosquitto *context, struct mosquitto__client_msg *head,
-  uint16_t mid,	enum mosquitto_msg_state state, int qos, bool persist)
+		uint16_t mid, enum mosquitto_msg_state state, int qos, bool persist)
 {
 	struct mosquitto__client_msg *client_msg;
 
@@ -1260,7 +1260,7 @@ void db__expire_all_messages(struct mosquitto *context)
 
 
 static void db__client_messages_check_acl(struct mosquitto *context, struct mosquitto_msg_data *msg_data, struct mosquitto__client_msg **head,
-	void (*decrement_stats_fn)(struct mosquitto_msg_data *msg_data, struct mosquitto__client_msg *client_msg))
+		void (*decrement_stats_fn)(struct mosquitto_msg_data *msg_data, struct mosquitto__client_msg *client_msg))
 {
 	struct mosquitto__client_msg *client_msg, *tmp;
 	struct mosquitto__base_msg *base_msg;

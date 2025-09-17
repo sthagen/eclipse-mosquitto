@@ -33,7 +33,7 @@ Contributors:
 #ifdef WITH_TLS
 #  define HASH_LEN EVP_MAX_MD_SIZE
 #else
-   /* 64 bytes big enough for SHA512 */
+/* 64 bytes big enough for SHA512 */
 #  define HASH_LEN 64
 #endif
 
@@ -47,7 +47,7 @@ Contributors:
 #define PW_DEFAULT_ITERATIONS 1000
 static int pw__encode(struct mosquitto_pw *pw);
 
-struct mosquitto_pw{
+struct mosquitto_pw {
 	union {
 		struct {
 			unsigned char password_hash[HASH_LEN]; /* For SHA512 */

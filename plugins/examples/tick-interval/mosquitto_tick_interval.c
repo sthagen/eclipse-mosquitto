@@ -55,7 +55,7 @@ Contributors:
 
 MOSQUITTO_PLUGIN_DECLARE_VERSION(5);
 
-struct plugin_data{
+struct plugin_data {
 	mosquitto_plugin_id_t *pid;
 	int interval;
 };

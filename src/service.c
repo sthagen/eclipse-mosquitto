@@ -68,7 +68,7 @@ void __stdcall service_handler(DWORD fdwControl)
 			/* Pause service. */
 			break;
 		case SERVICE_CONTROL_SHUTDOWN:
-			/* System is shutting down. */
+		/* System is shutting down. */
 		case SERVICE_CONTROL_STOP:
 			/* Service should stop. */
 			service_status.dwCurrentState = SERVICE_STOP_PENDING;

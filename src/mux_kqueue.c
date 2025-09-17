@@ -174,32 +174,32 @@ int mux_kqueue__handle(void)
 	db.now_real_s = time(NULL);
 
 	switch(event_count){
-	case -1:
-		if(errno != EINTR){
-			log__printf(NULL, MOSQ_LOG_ERR, "Error in kqueue waiting: %s.", strerror(errno));
-		}
-		break;
-	case 0:
-		break;
-	default:
-		for(int i=0; i<event_count; i++){
-			context = event_list[i].udata;
-			if(context->ident == id_client){
-				loop_handle_reads_writes(context, event_list[i].filter);
-			}else if(context->ident == id_listener){
-				listensock = event_list[i].udata;
-
-				if(event_list[i].filter == EVFILT_READ){
-					while((context = net__socket_accept(listensock)) != NULL){
-					}
-				}
-#ifdef WITH_WEBSOCKETS
-			}else if(context->ident == id_listener_ws){
-				/* Nothing needs to happen here, because we always call lws_service in the loop.
-				 * The important point is we've been woken up for this listener. */
-#endif
+		case -1:
+			if(errno != EINTR){
+				log__printf(NULL, MOSQ_LOG_ERR, "Error in kqueue waiting: %s.", strerror(errno));
 			}
-		}
+			break;
+		case 0:
+			break;
+		default:
+			for(int i=0; i<event_count; i++){
+				context = event_list[i].udata;
+				if(context->ident == id_client){
+					loop_handle_reads_writes(context, event_list[i].filter);
+				}else if(context->ident == id_listener){
+					listensock = event_list[i].udata;
+
+					if(event_list[i].filter == EVFILT_READ){
+						while((context = net__socket_accept(listensock)) != NULL){
+						}
+					}
+#ifdef WITH_WEBSOCKETS
+				}else if(context->ident == id_listener_ws){
+					/* Nothing needs to happen here, because we always call lws_service in the loop.
+					 * The important point is we've been woken up for this listener. */
+#endif
+				}
+			}
 	}
 	return MOSQ_ERR_SUCCESS;
 }

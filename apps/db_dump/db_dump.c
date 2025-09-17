@@ -42,8 +42,7 @@ Contributors:
 #include <sys/endian.h>
 #endif
 
-struct client_data
-{
+struct client_data {
 	UT_hash_handle hh_id;
 	char *id;
 	uint32_t subscriptions;
@@ -52,8 +51,7 @@ struct client_data
 	long message_size;
 };
 
-struct base_msg_chunk
-{
+struct base_msg_chunk {
 	UT_hash_handle hh;
 	dbid_t store_id;
 	uint32_t length;

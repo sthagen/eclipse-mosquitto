@@ -5,7 +5,7 @@
 
 int tls_ex_index_mosq;
 
-struct mosquitto_db{
+struct mosquitto_db {
 
 };
 

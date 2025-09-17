@@ -263,8 +263,7 @@ static int topic_matches_sub(const char *sub, const char *topic, const char *cli
 						&& spos > 0
 						&& sub[-1] == '+'
 						&& sub[0] == '/'
-						&& sub[1] == '#')
-				{
+						&& sub[1] == '#'){
 					*result = true;
 					return MOSQ_ERR_SUCCESS;
 				}
@@ -361,10 +360,11 @@ static int sub_matches_acl(const char *acl, const char *sub, const char *clienti
 				/* no match */
 				return MOSQ_ERR_SUCCESS;
 			}
-			if(pattern_check[1] == '\0' && (
-					pattern_check[0] == '+' ||
-					pattern_check[0] == '#' ||
-					pattern_check[0] == '/')
+			if(pattern_check[1] == '\0' &&
+					(
+						pattern_check[0] == '+' ||
+						pattern_check[0] == '#' ||
+						pattern_check[0] == '/')
 					){
 
 				/* username/client id of just + / # not allowed */
@@ -435,8 +435,7 @@ static int sub_matches_acl(const char *acl, const char *sub, const char *clienti
 						&& apos > 0
 						&& acl[-1] == '+'
 						&& acl[0] == '/'
-						&& acl[1] == '#')
-				{
+						&& acl[1] == '#'){
 					*result = true;
 					return MOSQ_ERR_SUCCESS;
 				}
@@ -593,8 +592,7 @@ BROKER_EXPORT int mosquitto_topic_matches_sub2(const char *sub, size_t sublen, c
 						&& sub[spos-1] == '+'
 						&& sub[spos] == '/'
 						&& spos+1 < sublen
-						&& sub[spos+1] == '#')
-				{
+						&& sub[spos+1] == '#'){
 					*result = true;
 					return MOSQ_ERR_SUCCESS;
 				}

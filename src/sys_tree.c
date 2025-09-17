@@ -37,14 +37,14 @@ Contributors:
 #define METRIC_LOAD_5MIN 2
 #define METRIC_LOAD_15MIN 3
 
-struct metric{
+struct metric {
 	int64_t current;
 	int64_t next;
 	const char *topic, *topic_alias;
 	bool is_max;
 };
 
-struct metric_load{
+struct metric_load {
 	double current;
 	const char *topic;
 	int load_ref;

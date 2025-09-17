@@ -54,7 +54,6 @@ int send__disconnect(struct mosquitto *mosq, uint8_t reason_code, const mosquitt
 #else
 	log__printf(mosq, MOSQ_LOG_DEBUG, "Client %s sending DISCONNECT", SAFE_PRINT(mosq->id));
 #endif
-	assert(mosq);
 
 	if(mosq->protocol == mosq_p_mqtt5 && (reason_code != 0 || properties)){
 		remaining_length = 1;

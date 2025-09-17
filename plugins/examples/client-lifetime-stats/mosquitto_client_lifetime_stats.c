@@ -42,7 +42,7 @@ MOSQUITTO_PLUGIN_DECLARE_VERSION(5);
 
 static mosquitto_plugin_id_t *mosq_pid = NULL;
 
-struct lifetime_s{
+struct lifetime_s {
 	UT_hash_handle hh;
 	char *id;
 	time_t connect;

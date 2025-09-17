@@ -44,7 +44,7 @@ static int dynsec__handle_command(struct mosquitto_control_cmd *cmd, void *userd
 	}else if(!strcasecmp(cmd->command_name, "getDetails")){
 		rc = dynsec_details__process_get(data, cmd);
 
-	/* Clients */
+		/* Clients */
 	}else if(!strcasecmp(cmd->command_name, "createClient")){
 		rc = dynsec_clients__process_create(data, cmd);
 	}else if(!strcasecmp(cmd->command_name, "deleteClient")){
@@ -68,7 +68,7 @@ static int dynsec__handle_command(struct mosquitto_control_cmd *cmd, void *userd
 	}else if(!strcasecmp(cmd->command_name, "disableClient")){
 		rc = dynsec_clients__process_disable(data, cmd);
 
-	/* Groups */
+		/* Groups */
 	}else if(!strcasecmp(cmd->command_name, "addGroupClient")){
 		rc = dynsec_groups__process_add_client(data, cmd);
 	}else if(!strcasecmp(cmd->command_name, "createGroup")){
@@ -92,7 +92,7 @@ static int dynsec__handle_command(struct mosquitto_control_cmd *cmd, void *userd
 	}else if(!strcasecmp(cmd->command_name, "getAnonymousGroup")){
 		rc = dynsec_groups__process_get_anonymous_group(data, cmd);
 
-	/* Roles */
+		/* Roles */
 	}else if(!strcasecmp(cmd->command_name, "createRole")){
 		rc = dynsec_roles__process_create(data, cmd);
 	}else if(!strcasecmp(cmd->command_name, "getRole")){
@@ -108,7 +108,7 @@ static int dynsec__handle_command(struct mosquitto_control_cmd *cmd, void *userd
 	}else if(!strcasecmp(cmd->command_name, "removeRoleACL")){
 		rc = dynsec_roles__process_remove_acl(data, cmd);
 
-	/* Unknown */
+		/* Unknown */
 	}else{
 		mosquitto_control_command_reply(cmd, "Unknown command");
 		rc = MOSQ_ERR_INVAL;

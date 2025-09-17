@@ -50,7 +50,7 @@ Contributors:
 
 MOSQUITTO_PLUGIN_DECLARE_VERSION(5);
 
-struct client_list{
+struct client_list {
 	UT_hash_handle hh;
 	char *id;
 	time_t request_time;

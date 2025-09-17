@@ -72,40 +72,40 @@ struct libws_http_data {
 static struct lws_protocols protocols[] = {
 	/* first protocol must always be HTTP handler */
 	{
-		"http-only",						/* name */
-		callback_http,						/* lws_callback_function */
-		sizeof (struct libws_http_data),	/* per_session_data_size */
-		0,									/* rx_buffer_size */
-		0,									/* id */
-		NULL,								/* user v1.4 on */
-		WS_TX_BUF_SIZE						/* tx_packet_size v2.3.0 */
+		"http-only",                        /* name */
+		callback_http,                      /* lws_callback_function */
+		sizeof (struct libws_http_data),    /* per_session_data_size */
+		0,                                  /* rx_buffer_size */
+		0,                                  /* id */
+		NULL,                               /* user v1.4 on */
+		WS_TX_BUF_SIZE                      /* tx_packet_size v2.3.0 */
 	},
 	{
 		"mqtt",
 		callback_mqtt,
 		sizeof(struct libws_mqtt_data),
-		0,									/* rx_buffer_size */
-		1,									/* id */
-		NULL,								/* user v1.4 on */
-		WS_TX_BUF_SIZE						/* tx_packet_size v2.3.0 */
+		0,                                  /* rx_buffer_size */
+		1,                                  /* id */
+		NULL,                               /* user v1.4 on */
+		WS_TX_BUF_SIZE                      /* tx_packet_size v2.3.0 */
 	},
 	{
 		"mqttv3.1",
 		callback_mqtt,
 		sizeof(struct libws_mqtt_data),
-		0,									/* rx_buffer_size */
-		2,									/* id */
-		NULL,								/* user v1.4 on */
-		WS_TX_BUF_SIZE						/* tx_packet_size v2.3.0 */
+		0,                                  /* rx_buffer_size */
+		2,                                  /* id */
+		NULL,                               /* user v1.4 on */
+		WS_TX_BUF_SIZE                      /* tx_packet_size v2.3.0 */
 	},
 	{
 		NULL,
 		NULL,
 		0,
-		0,									/* rx_buffer_size */
-		0,									/* id */
-		NULL,								/* user v1.4 on */
-		0									/* tx_packet_size v2.3.0 */
+		0,                                  /* rx_buffer_size */
+		0,                                  /* id */
+		NULL,                               /* user v1.4 on */
+		0                                   /* tx_packet_size v2.3.0 */
 	}
 };
 

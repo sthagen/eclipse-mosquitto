@@ -171,32 +171,32 @@ int mux_epoll__handle(void)
 	db.now_real_s = time(NULL);
 
 	switch(event_count){
-	case -1:
-		if(errno != EINTR){
-			log__printf(NULL, MOSQ_LOG_ERR, "Error in epoll waiting: %s.", strerror(errno));
-		}
-		break;
-	case 0:
-		break;
-	default:
-		for(int i=0; i<event_count; i++){
-			context = ep_events[i].data.ptr;
-			if(context->ident == id_client){
-				loop_handle_reads_writes(context, ep_events[i].events);
-			}else if(context->ident == id_listener){
-				listensock = ep_events[i].data.ptr;
-
-				if (ep_events[i].events & (EPOLLIN | EPOLLPRI)){
-					while((context = net__socket_accept(listensock)) != NULL){
-					}
-				}
-#if defined(WITH_WEBSOCKETS) && WITH_WEBSOCKETS == WS_IS_LWS
-			}else if(context->ident == id_listener_ws){
-				/* Nothing needs to happen here, because we always call lws_service in the loop.
-				 * The important point is we've been woken up for this listener. */
-#endif
+		case -1:
+			if(errno != EINTR){
+				log__printf(NULL, MOSQ_LOG_ERR, "Error in epoll waiting: %s.", strerror(errno));
 			}
-		}
+			break;
+		case 0:
+			break;
+		default:
+			for(int i=0; i<event_count; i++){
+				context = ep_events[i].data.ptr;
+				if(context->ident == id_client){
+					loop_handle_reads_writes(context, ep_events[i].events);
+				}else if(context->ident == id_listener){
+					listensock = ep_events[i].data.ptr;
+
+					if(ep_events[i].events & (EPOLLIN | EPOLLPRI)){
+						while((context = net__socket_accept(listensock)) != NULL){
+						}
+					}
+#if defined(WITH_WEBSOCKETS) && WITH_WEBSOCKETS == WS_IS_LWS
+				}else if(context->ident == id_listener_ws){
+					/* Nothing needs to happen here, because we always call lws_service in the loop.
+					 * The important point is we've been woken up for this listener. */
+#endif
+				}
+			}
 	}
 	return MOSQ_ERR_SUCCESS;
 }

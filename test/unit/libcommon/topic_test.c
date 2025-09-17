@@ -3,7 +3,7 @@
 
 #include <mosquitto.h>
 
-struct topic_test{
+struct topic_test {
 	const char *topic_filter;
 	const char *topic;
 	const char *clientid;

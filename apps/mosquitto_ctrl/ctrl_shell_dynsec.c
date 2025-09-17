@@ -360,20 +360,22 @@ static int send_set_default_acl_access(char **saveptr)
 	const char *acltype, *allow_s;
 
 	acltype = strtok_r(NULL, " ", saveptr);
-	if(!acltype || (
-			strcasecmp(acltype, "publishClientReceive")
-			&& strcasecmp(acltype, "publishClientSend")
-			&& strcasecmp(acltype, "subscribe")
-			&& strcasecmp(acltype, "unsubscribe")
+	if(!acltype ||
+			(
+				strcasecmp(acltype, "publishClientReceive")
+				&& strcasecmp(acltype, "publishClientSend")
+				&& strcasecmp(acltype, "subscribe")
+				&& strcasecmp(acltype, "unsubscribe")
 			)){
 		ctrl_shell_printf("setDefaultACLAccess acltype allow|deny\n");
 		return MOSQ_ERR_INVAL;
 	}
 
 	allow_s = strtok_r(NULL, " ", saveptr);
-	if(!allow_s || (
-			strcasecmp(allow_s, "allow")
-			&& strcasecmp(allow_s, "deny")
+	if(!allow_s ||
+			(
+				strcasecmp(allow_s, "allow")
+				&& strcasecmp(allow_s, "deny")
 			)){
 		ctrl_shell_printf("setDefaultACLAccess acltype allow|deny\n");
 		return MOSQ_ERR_INVAL;

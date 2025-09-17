@@ -38,7 +38,7 @@ static const char *get_event_name(enum mosquitto_plugin_event event)
 			return "auth-start";
 		case MOSQ_EVT_EXT_AUTH_CONTINUE:
 			return "auth-continue";
-	  case MOSQ_EVT_CONTROL:
+		case MOSQ_EVT_CONTROL:
 			return "control";
 		case MOSQ_EVT_MESSAGE_IN:
 			return "message-in";
@@ -82,9 +82,9 @@ static const char *get_event_name(enum mosquitto_plugin_event event)
 			return "persist-client-msg-delete";
 		case MOSQ_EVT_PERSIST_CLIENT_MSG_UPDATE:
 			return "persist-client-msg-update";
-	  case MOSQ_EVT_PERSIST_WILL_ADD:
+		case MOSQ_EVT_PERSIST_WILL_ADD:
 			return "persist-will-add";
-	  case MOSQ_EVT_PERSIST_WILL_DELETE:
+		case MOSQ_EVT_PERSIST_WILL_DELETE:
 			return "persist-will-delete";
 	}
 	return "";
@@ -162,9 +162,9 @@ static struct mosquitto__callback **plugin__get_callback_base(struct mosquitto__
 			return &security_options->plugin_callbacks.persist_retain_msg_delete;
 		case MOSQ_EVT_MESSAGE_OUT:
 			return &security_options->plugin_callbacks.message_out;
-  	case MOSQ_EVT_PERSIST_WILL_ADD:
+		case MOSQ_EVT_PERSIST_WILL_ADD:
 			return &security_options->plugin_callbacks.persist_will_add;
-  	case MOSQ_EVT_PERSIST_WILL_DELETE:
+		case MOSQ_EVT_PERSIST_WILL_DELETE:
 			return &security_options->plugin_callbacks.persist_will_delete;
 	}
 	return NULL;

@@ -7,11 +7,11 @@
 #include "read_handle.h"
 #include "send_mosq.h"
 
-struct mosquitto_db{
+struct mosquitto_db {
 
 };
 
-struct mosquitto__base_msg{
+struct mosquitto__base_msg {
 
 };
 

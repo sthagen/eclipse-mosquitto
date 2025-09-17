@@ -44,32 +44,32 @@ struct proxy_hdr_v2 {
 	uint16_t len; /* number of following bytes part of the header */
 };
 
-union proxy_addr{
-	struct{ /* for TCP/UDP over IPv4, len = 12 */
+union proxy_addr {
+	struct { /* for TCP/UDP over IPv4, len = 12 */
 		uint32_t src_addr;
 		uint32_t dst_addr;
 		uint16_t src_port;
 		uint16_t dst_port;
 	} ipv4_addr;
-	struct{ /* for TCP/UDP over IPv6, len = 36 */
+	struct { /* for TCP/UDP over IPv6, len = 36 */
 		uint8_t src_addr[16];
 		uint8_t dst_addr[16];
 		uint16_t src_port;
 		uint16_t dst_port;
 	} ipv6_addr;
-	struct{ /* for AF_UNIX sockets, len = 216 */
+	struct { /* for AF_UNIX sockets, len = 216 */
 		uint8_t src_addr[108];
 		uint8_t dst_addr[108];
 	} unix_addr;
 };
 
-struct pp2_tlv{
+struct pp2_tlv {
 	uint8_t type;
 	uint8_t length_h;
 	uint8_t length_l;
 };
 
-struct pp2_tlv_ssl{
+struct pp2_tlv_ssl {
 	uint8_t client;
 	uint32_t verify;
 };

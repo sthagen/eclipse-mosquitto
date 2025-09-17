@@ -38,7 +38,7 @@ Contributors:
 #  define HTTP_API_DIR ""
 #endif
 
-struct metric{
+struct metric {
 	int64_t current;
 	int64_t next;
 	const char *topic, *topic_alias;
