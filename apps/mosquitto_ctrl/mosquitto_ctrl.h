@@ -74,7 +74,7 @@ struct mosq_ctrl {
 	char *request_topic;
 	char *response_topic;
 	char *payload;
-	void (*payload_callback)(struct mosq_ctrl *, long , const void *);
+	void (*payload_callback)(struct mosq_ctrl *, long, const void *);
 	void *userdata;
 };
 

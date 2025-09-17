@@ -18,25 +18,25 @@ Contributors:
 #define MOSQUITTO_LIBMOSQUITTOPP_H
 
 #if defined(_WIN32) && !defined(LIBMOSQUITTO_STATIC)
-#	ifdef mosquittopp_EXPORTS
-#		define mosqpp_EXPORT  __declspec(dllexport)
-#	else
-#		define mosqpp_EXPORT  __declspec(dllimport)
-#	endif
+#   ifdef mosquittopp_EXPORTS
+#       define mosqpp_EXPORT  __declspec(dllexport)
+#   else
+#       define mosqpp_EXPORT  __declspec(dllimport)
+#   endif
 #else
-#	define mosqpp_EXPORT
+#   define mosqpp_EXPORT
 #endif
 
 #include <cstdlib>
 #include <mosquitto.h>
 #include <time.h>
 
-namespace mosqpp {
+namespace mosqpp{
 
 
-mosqpp_EXPORT const char * strerror(int mosq_errno);
-mosqpp_EXPORT const char * connack_string(int connack_code);
-mosqpp_EXPORT const char * reason_string(int reason_code);
+mosqpp_EXPORT const char *strerror(int mosq_errno);
+mosqpp_EXPORT const char *connack_string(int connack_code);
+mosqpp_EXPORT const char *reason_string(int reason_code);
 mosqpp_EXPORT int sub_topic_tokenise(const char *subtopic, char ***topics, int *count);
 mosqpp_EXPORT int sub_topic_tokens_free(char ***topics, int count);
 mosqpp_EXPORT int lib_version(int *major, int *minor, int *revision);

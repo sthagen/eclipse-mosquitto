@@ -21,7 +21,7 @@ Contributors:
 #define kMinInputLength 5
 #define kMaxInputLength 10000
 
-struct fuzz_data{
+struct fuzz_data {
 	uint8_t *data;
 	size_t size;
 	uint16_t port;

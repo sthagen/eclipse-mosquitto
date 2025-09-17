@@ -20,7 +20,7 @@ Contributors:
 
 #include <uthash.h>
 
-struct acl__entry{
+struct acl__entry {
 	struct acl__entry *next, *prev;
 	char *topic;
 	int access;
@@ -29,14 +29,14 @@ struct acl__entry{
 };
 
 
-struct acl__user{
+struct acl__user {
 	UT_hash_handle hh;
 	char *username;
 	struct acl__entry *acl;
 };
 
 
-struct acl_file_data{
+struct acl_file_data {
 	char *acl_file;
 	struct acl__user *acl_users;
 	struct acl__user acl_anon;

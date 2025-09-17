@@ -60,7 +60,7 @@ void persist_sqlite__cleanup(struct mosquitto_sqlite *ms);
 
 int persist_sqlite__restore_cb(int event, void *event_data, void *userdata);
 
-int persist_sqlite__client_msg_remove(struct mosquitto_sqlite *ms, const char* clientid, int64_t store_id, int direction);
+int persist_sqlite__client_msg_remove(struct mosquitto_sqlite *ms, const char *clientid, int64_t store_id, int direction);
 
 int persist_sqlite__client_add_cb(int event, void *event_data, void *userdata);
 int persist_sqlite__client_update_cb(int event, void *event_data, void *userdata);

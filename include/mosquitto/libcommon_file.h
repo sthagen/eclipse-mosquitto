@@ -45,7 +45,7 @@ libmosqcommon_EXPORT char *mosquitto_fgets(char **buf, int *buflen, FILE *stream
 /*
  * Function: mosquitto_write_file
  */
-libmosqcommon_EXPORT int mosquitto_write_file(const char* target_path, bool restrict_read, int (*write_fn)(FILE* fptr, void* user_data), void* user_data, void (*log_fn)(const char* msg));
+libmosqcommon_EXPORT int mosquitto_write_file(const char *target_path, bool restrict_read, int (*write_fn)(FILE *fptr, void *user_data), void *user_data, void (*log_fn)(const char *msg));
 
 
 /*

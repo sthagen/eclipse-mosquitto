@@ -135,16 +135,16 @@ struct mosquitto_acl_msg {
 mosq_plugin_EXPORT int mosquitto_plugin_version(int supported_version_count, const int *supported_versions);
 
 #define MOSQUITTO_PLUGIN_DECLARE_VERSION(A) \
-	int mosquitto_plugin_version(int supported_version_count, const int *supported_versions) \
-	{ \
-		int i; \
-		for(i=0; i<supported_version_count; i++){ \
-			if(supported_versions[i] == (A)){ \
-				return (A); \
+		int mosquitto_plugin_version(int supported_version_count, const int *supported_versions) \
+		{ \
+			int i; \
+			for(i=0; i<supported_version_count; i++){ \
+				if(supported_versions[i] == (A)){ \
+					return (A); \
+				} \
 			} \
-		} \
-		return -1; \
-	}
+			return -1; \
+		}
 
 /*
  * Function: mosquitto_plugin_init

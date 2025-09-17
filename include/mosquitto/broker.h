@@ -29,9 +29,9 @@ extern "C" {
 #endif
 
 #if defined(WIN32) && defined(mosquitto_EXPORTS)
-#	define mosq_EXPORT  __declspec(dllexport)
+#   define mosq_EXPORT  __declspec(dllexport)
 #else
-#	define mosq_EXPORT
+#   define mosq_EXPORT
 #endif
 
 #include <stdbool.h>
@@ -52,7 +52,7 @@ enum mosquitto_protocol {
 enum mosquitto_broker_msg_direction {
 	mosq_bmd_in = 0,
 	mosq_bmd_out = 1,
-	mosq_bmd_all = 2
+	mosq_bmd_all = 2,
 };
 
 
@@ -907,7 +907,7 @@ mosq_EXPORT int mosquitto_broker_publish_copy(
  * the call to `mosquitto_complete_basic_auth()` must happen in the main
  * mosquitto thread. Using the MOSQ_EVT_TICK event for this is suggested.
  */
-mosq_EXPORT void mosquitto_complete_basic_auth(const char* clientid, int result);
+mosq_EXPORT void mosquitto_complete_basic_auth(const char *clientid, int result);
 
 
 /* Function: mosquitto_broker_node_id_set
@@ -1276,7 +1276,7 @@ mosq_EXPORT const char *mosquitto_persistence_location(void);
  *     MOSQ_ERR_PAYLOAD_SIZE -   if payloadlen is too large.
  *     MOSQ_ERR_MALFORMED_UTF8 - if the topic is not valid UTF-8.
  */
-mosq_EXPORT int mosquitto_client_will_set(const char* clientid, const char *topic, int payloadlen, const void *payload, int qos, bool retain, mosquitto_property *properties);
+mosq_EXPORT int mosquitto_client_will_set(const char *clientid, const char *topic, int payloadlen, const void *payload, int qos, bool retain, mosquitto_property *properties);
 
 
 #ifdef __cplusplus

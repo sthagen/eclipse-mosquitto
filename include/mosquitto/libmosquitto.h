@@ -44,15 +44,15 @@ extern "C" {
 #endif
 
 #if defined(_MSC_VER) && _MSC_VER < 1900 && !defined(bool)
-#	ifndef __cplusplus
-#		define bool char
-#		define true 1
-#		define false 0
-#	endif
+#   ifndef __cplusplus
+#       define bool char
+#       define true 1
+#       define false 0
+#   endif
 #else
-#	ifndef __cplusplus
-#		include <stdbool.h>
-#	endif
+#   ifndef __cplusplus
+#       include <stdbool.h>
+#   endif
 #endif
 
 #include <stddef.h>
@@ -111,7 +111,7 @@ enum mosq_opt_t {
  *
  * bool retain - set to true for stale retained messages.
  */
-struct mosquitto_message{
+struct mosquitto_message {
 	int mid;
 	char *topic;
 	void *payload;
@@ -120,7 +120,7 @@ struct mosquitto_message{
 	bool retain;
 };
 
-struct mosquitto_message_v5{
+struct mosquitto_message_v5 {
 	void *payload;
 	char *topic;
 	mosquitto_property *properties;

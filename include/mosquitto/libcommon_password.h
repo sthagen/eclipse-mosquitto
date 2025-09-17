@@ -26,14 +26,14 @@ Contributors:
 extern "C" {
 #endif
 
-enum mosquitto_pwhash_type{
+enum mosquitto_pwhash_type {
 	MOSQ_PW_DEFAULT,
 	MOSQ_PW_SHA512 = 6,
 	MOSQ_PW_SHA512_PBKDF2 = 7,
 	MOSQ_PW_ARGON2ID = 8,
 };
 
-enum mosquitto_pw_params{
+enum mosquitto_pw_params {
 	MOSQ_PW_PARAM_ITERATIONS = 1,
 };
 

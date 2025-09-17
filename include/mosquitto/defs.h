@@ -32,17 +32,17 @@ extern "C" {
 #include <mosquitto/mqtt_protocol.h>
 
 /* Log types */
-#define MOSQ_LOG_NONE			0
-#define MOSQ_LOG_INFO			(1<<0)
-#define MOSQ_LOG_NOTICE			(1<<1)
-#define MOSQ_LOG_WARNING		(1<<2)
-#define MOSQ_LOG_ERR			(1<<3)
-#define MOSQ_LOG_DEBUG			(1<<4)
-#define MOSQ_LOG_SUBSCRIBE		(1<<5)
-#define MOSQ_LOG_UNSUBSCRIBE	(1<<6)
-#define MOSQ_LOG_WEBSOCKETS		(1<<7)
-#define MOSQ_LOG_INTERNAL		0x80000000U
-#define MOSQ_LOG_ALL			0xFFFFFFFFU
+#define MOSQ_LOG_NONE           0
+#define MOSQ_LOG_INFO           (1<<0)
+#define MOSQ_LOG_NOTICE         (1<<1)
+#define MOSQ_LOG_WARNING        (1<<2)
+#define MOSQ_LOG_ERR            (1<<3)
+#define MOSQ_LOG_DEBUG          (1<<4)
+#define MOSQ_LOG_SUBSCRIBE      (1<<5)
+#define MOSQ_LOG_UNSUBSCRIBE    (1<<6)
+#define MOSQ_LOG_WEBSOCKETS     (1<<7)
+#define MOSQ_LOG_INTERNAL       0x80000000U
+#define MOSQ_LOG_ALL            0xFFFFFFFFU
 
 /* Enum: mosq_err_t
  * Integer values returned from many libmosquitto functions. */

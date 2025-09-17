@@ -99,12 +99,12 @@ typedef int (*FUNC_auth_plugin_unpwd_check_v2)(void *, const char *, const char 
 typedef int (*FUNC_auth_plugin_psk_key_get_v2)(void *, const char *, const char *, char *, int);
 
 
-enum mosquitto_msg_origin{
+enum mosquitto_msg_origin {
 	mosq_mo_client = 0,
-	mosq_mo_broker = 1
+	mosq_mo_broker = 1,
 };
 
-struct mosquitto__plugin_lib{
+struct mosquitto__plugin_lib {
 	void *lib;
 	void *user_data;
 	int (*plugin_version)(void);
@@ -141,8 +141,7 @@ struct mosquitto__plugin_lib{
 	int version;
 };
 
-struct mosquitto__plugin_config
-{
+struct mosquitto__plugin_config {
 	char *path;
 	char *name;
 	struct mosquitto_opt *options;
@@ -152,19 +151,19 @@ struct mosquitto__plugin_config
 	bool deny_special_chars;
 };
 
-struct mosquitto__callback{
+struct mosquitto__callback {
 	UT_hash_handle hh; /* For callbacks that register for e.g. a specific topic */
 	struct mosquitto__callback *next, *prev; /* For typical callbacks */
 	MOSQ_FUNC_generic_callback cb;
 	void *userdata;
-	union{
+	union {
 		char *topic;
 		struct timespec next_tick;
 	} data;
 	mosquitto_plugin_id_t *identifier;
 };
 
-struct plugin__callbacks{
+struct plugin__callbacks {
 	struct mosquitto__callback *tick;
 	struct mosquitto__callback *acl_check;
 	struct mosquitto__callback *basic_auth;
@@ -220,7 +219,7 @@ struct mosquitto__security_options {
 };
 
 #if defined(WITH_EPOLL) || defined(WITH_KQUEUE)
-enum struct_ident{
+enum struct_ident {
 	id_invalid = 0,
 	id_listener = 1,
 	id_client = 2,
@@ -289,7 +288,7 @@ struct mosquitto__listener {
 };
 
 
-struct mosquitto__listener_sock{
+struct mosquitto__listener_sock {
 #if defined(WITH_EPOLL) || defined(WITH_KQUEUE)
 	/* This *must* be the first element in the struct. */
 	int ident;
@@ -302,13 +301,13 @@ struct mosquitto__listener_sock{
 /* Callbacks belonging to a specific plugin
  * Doesn't include MOSQ_EVT_CONTROL events.
  */
-struct plugin_own_callback{
+struct plugin_own_callback {
 	struct plugin_own_callback *next, *prev;
 	MOSQ_FUNC_generic_callback cb_func;
 	enum mosquitto_plugin_event event;
 };
 
-struct mosquitto_plugin_id_t{
+struct mosquitto_plugin_id_t {
 	struct mosquitto__plugin_config config;
 	struct mosquitto__plugin_lib lib;
 	struct mosquitto__listener *listener;
@@ -424,7 +423,7 @@ struct mosquitto__retainhier {
 	char topic[];
 };
 
-struct mosquitto__base_msg{
+struct mosquitto__base_msg {
 	UT_hash_handle hh;
 	struct mosquitto_base_msg data;
 	struct mosquitto__listener *source_listener;
@@ -435,7 +434,7 @@ struct mosquitto__base_msg{
 	bool stored;
 };
 
-struct mosquitto__client_msg{
+struct mosquitto__client_msg {
 	struct mosquitto_client_msg data;
 	struct mosquitto__client_msg *prev;
 	struct mosquitto__client_msg *next;
@@ -443,25 +442,26 @@ struct mosquitto__client_msg{
 };
 
 
-struct mosquitto__psk{
+struct mosquitto__psk {
 	UT_hash_handle hh;
 	char *username;
 	char *password;
 };
 
-struct mosquitto__message_v5{
+struct mosquitto__message_v5 {
 	struct mosquitto__message_v5 *next, *prev;
 	char *topic;
 	void *payload;
 	mosquitto_property *properties;
-	char *clientid; /* Used only by mosquitto_broker_publish*() to indicate
-					   this message is for a specific client. */
+	/* clientid is used only by mosquitto_broker_publish*() to indicate
+	   this message is for a specific client. */
+	char *clientid;
 	int payloadlen;
 	int qos;
 	bool retain;
 };
 
-struct mosquitto_db{
+struct mosquitto_db {
 	dbid_t last_db_id;
 	uint64_t node_id_shifted;
 	struct mosquitto__subhier *normal_subs;
@@ -504,32 +504,33 @@ struct mosquitto_db{
 #endif
 	struct mosquitto__message_v5 *plugin_msgs;
 #ifdef WITH_TLS
-	char *tls_keylog; /* This can't be in the config struct because it is used
-						 before the config is allocated. Config probably
-						 shouldn't be separately allocated. */
+	/* tls_keylog can't be in the config struct because it is used
+	   before the config is allocated. Config probably
+	   shouldn't be separately allocated. */
+	char *tls_keylog;
 #endif
 	bool shutdown;
 };
 
-enum mosquitto__bridge_direction{
+enum mosquitto__bridge_direction {
 	bd_out = 0,
 	bd_in = 1,
-	bd_both = 2
+	bd_both = 2,
 };
 
-enum mosquitto_bridge_start_type{
+enum mosquitto_bridge_start_type {
 	bst_automatic = 0,
 	bst_lazy = 1,
 	bst_manual = 2,
-	bst_once = 3
+	bst_once = 3,
 };
 
-enum mosquitto_bridge_reload_type{
+enum mosquitto_bridge_reload_type {
 	brt_lazy = 0,
 	brt_immediate = 1,
 };
 
-struct mosquitto__bridge_topic{
+struct mosquitto__bridge_topic {
 	struct mosquitto__bridge_topic *next;
 	char *topic;
 	char *local_prefix;
@@ -540,12 +541,12 @@ struct mosquitto__bridge_topic{
 	uint8_t qos;
 };
 
-struct bridge_address{
+struct bridge_address {
 	char *address;
 	uint16_t port;
 };
 
-struct mosquitto__bridge{
+struct mosquitto__bridge {
 	char *name;
 	struct bridge_address *addresses;
 	int cur_address;
@@ -707,7 +708,7 @@ int db__message_count(int *count);
 int db__message_delete_outgoing(struct mosquitto *context, uint16_t mid, enum mosquitto_msg_state expect_state, int qos);
 int db__message_insert_outgoing(struct mosquitto *context, uint64_t cmsg_id, uint16_t mid, uint8_t qos, bool retain, struct mosquitto__base_msg *base_msg, uint32_t subscription_identifier, bool update, bool persist);
 int db__message_insert_incoming(struct mosquitto *context, uint64_t cmsg_id, struct mosquitto__base_msg *base_msg, bool persist);
-int db__message_remove_incoming(struct mosquitto* context, uint16_t mid);
+int db__message_remove_incoming(struct mosquitto *context, uint16_t mid);
 int db__message_release_incoming(struct mosquitto *context, uint16_t mid);
 int db__message_update_outgoing(struct mosquitto *context, uint16_t mid, enum mosquitto_msg_state state, int qos, bool persist);
 void db__message_dequeue_first(struct mosquitto *context, struct mosquitto_msg_data *msg_data);
@@ -910,7 +911,7 @@ int config__plugin_add_secopt(mosquitto_plugin_id_t *plugin, struct mosquitto__s
 
 int mosquitto_security_init(bool reload);
 int mosquitto_security_cleanup(bool reload);
-int mosquitto_acl_check(struct mosquitto *context, const char *topic, uint32_t payloadlen, void* payload, uint8_t qos, bool retain, int access);
+int mosquitto_acl_check(struct mosquitto *context, const char *topic, uint32_t payloadlen, void *payload, uint8_t qos, bool retain, int access);
 int mosquitto_basic_auth(struct mosquitto *context);
 int mosquitto_psk_key_get(struct mosquitto *context, const char *hint, const char *identity, char *key, int max_key_len);
 
@@ -954,7 +955,7 @@ void service_install(char *name);
 void service_uninstall(char *name);
 void service_run(char *name);
 
-DWORD WINAPI SigThreadProc(void* data);
+DWORD WINAPI SigThreadProc(void *data);
 #endif
 
 /* ============================================================

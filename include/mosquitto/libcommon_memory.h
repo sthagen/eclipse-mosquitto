@@ -72,7 +72,7 @@ libmosqcommon_EXPORT void mosquitto_memory_set_limit(size_t lim);
 libmosqcommon_EXPORT unsigned long mosquitto_memory_used(void);
 libmosqcommon_EXPORT unsigned long mosquitto_max_memory_used(void);
 
-#define mosquitto_FREE(A) do { mosquitto_free(A); (A) = NULL;} while(0)
+#define mosquitto_FREE(A) do{ mosquitto_free(A); (A) = NULL;}while(0)
 
 #ifdef __cplusplus
 }

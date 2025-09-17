@@ -30,7 +30,7 @@ extern "C" {
 #include "ctrl_shell.h"
 #include "mosquitto_ctrl.h"
 
-struct ctrl_shell{
+struct ctrl_shell {
 	char **subscription_list;
 	int subscription_list_count;
 	int run;
@@ -59,7 +59,7 @@ struct ctrl_shell{
 	int transport;
 };
 
-struct ctrl_shell__module{
+struct ctrl_shell__module {
 	struct completion_tree_root *completion_commands;
 	const char *request_topic;
 	const char *response_topic;

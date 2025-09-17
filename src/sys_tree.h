@@ -22,7 +22,7 @@ Contributors:
 #if defined(WITH_SYS_TREE) && defined(WITH_BROKER)
 
 /* This ordering *must* match the metrics array in sys_tree.c. */
-enum mosq_metric_type{
+enum mosq_metric_type {
 	mosq_gauge_clients_total = 0,
 	mosq_counter_clients_maximum = 1,
 	mosq_gauge_clients_disconnected = 2,
@@ -80,7 +80,7 @@ enum mosq_metric_type{
 };
 
 /* This ordering *must* match the metrics_load array in sys_tree.c. */
-enum mosq_metric_load_type{
+enum mosq_metric_load_type {
 	mosq_load_messages_received_1min = 0,
 	mosq_load_messages_received_5min = 1,
 	mosq_load_messages_received_15min = 2,

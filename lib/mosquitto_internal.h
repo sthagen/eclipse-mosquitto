@@ -40,16 +40,16 @@ Contributors:
 #endif
 
 #ifdef WIN32
-#	if _MSC_VER < 1600
-		typedef unsigned char uint8_t;
-		typedef unsigned short uint16_t;
-		typedef unsigned int uint32_t;
-		typedef unsigned long long uint64_t;
-#	else
-#		include <stdint.h>
-#	endif
+#   if _MSC_VER < 1600
+typedef unsigned char uint8_t;
+typedef unsigned short uint16_t;
+typedef unsigned int uint32_t;
+typedef unsigned long long uint64_t;
+#   else
+#       include <stdint.h>
+#   endif
 #else
-#	include <stdint.h>
+#   include <stdint.h>
 #endif
 
 #include "mosquitto.h"
@@ -77,21 +77,21 @@ typedef int mosq_sock_t;
 
 #ifdef WIN32
 #  define WINDOWS_SET_ERRNO() \
-	if(errno != EAGAIN){ \
-		errno = WSAGetLastError(); \
-	}
+		if(errno != EAGAIN){ \
+			errno = WSAGetLastError(); \
+		}
 #else
 #  define WINDOWS_SET_ERRNO()
 #endif
 
 #define SAFE_PRINT(A) (A)?(A):"null"
-#define SAFE_FREE(A) do { free(A); (A) = NULL;} while(0)
+#define SAFE_FREE(A) do{ free(A); (A) = NULL;}while(0)
 
 #define MSG_EXPIRY_INFINITE UINT32_MAX
 
 enum mosquitto_msg_direction {
 	mosq_md_in = 0,
-	mosq_md_out = 1
+	mosq_md_out = 1,
 };
 
 enum mosquitto_msg_state {
@@ -107,7 +107,7 @@ enum mosquitto_msg_state {
 	mosq_ms_resend_pubcomp = 8,
 	mosq_ms_wait_for_pubcomp = 9,
 	mosq_ms_send_pubrec = 10,
-	mosq_ms_queued = 11
+	mosq_ms_queued = 11,
 };
 
 enum mosquitto_client_state {
@@ -144,9 +144,9 @@ enum mosquitto__protocol {
 };
 
 enum mosquitto__threaded_state {
-	mosq_ts_none,		/* No threads in use */
-	mosq_ts_self,		/* Threads started by libmosquitto */
-	mosq_ts_external	/* Threads started by external code */
+	mosq_ts_none,       /* No threads in use */
+	mosq_ts_self,       /* Threads started by libmosquitto */
+	mosq_ts_external,   /* Threads started by external code */
 };
 
 enum mosquitto__transport {
@@ -163,7 +163,7 @@ enum mosquitto__transport {
 #define ALIAS_DIR_L2R 1
 #define ALIAS_DIR_R2L 2
 
-struct mosquitto__alias{
+struct mosquitto__alias {
 	char *topic;
 	uint16_t alias;
 };
@@ -174,7 +174,7 @@ struct session_expiry_list {
 	struct session_expiry_list *next;
 };
 
-struct mosquitto__packet{
+struct mosquitto__packet {
 	struct mosquitto__packet *next;
 	uint32_t remaining_length;
 	uint32_t packet_length;
@@ -186,7 +186,7 @@ struct mosquitto__packet{
 	uint8_t payload[];
 };
 
-struct mosquitto__packet_in{
+struct mosquitto__packet_in {
 	uint8_t *payload;
 	uint32_t remaining_mult;
 	uint32_t remaining_length;
@@ -201,7 +201,7 @@ struct mosquitto__packet_in{
 	int8_t remaining_count;
 };
 
-struct mosquitto_message_all{
+struct mosquitto_message_all {
 	struct mosquitto_message_all *next;
 	struct mosquitto_message_all *prev;
 	mosquitto_property *properties;
@@ -224,7 +224,7 @@ struct will_delay_list {
 	struct will_delay_list *next;
 };
 
-struct mosquitto_msg_data{
+struct mosquitto_msg_data {
 #ifdef WITH_BROKER
 	struct mosquitto__client_msg *inflight;
 	struct mosquitto__client_msg *queued;
@@ -256,7 +256,7 @@ struct mosquitto_msg_data{
 #define WS_PONG 0x0A
 
 #if defined(WITH_WEBSOCKETS) && WITH_WEBSOCKETS == WS_IS_BUILTIN
-struct ws_data{
+struct ws_data {
 	struct mosquitto__packet *out_packet;
 	char *http_path;
 	char *accept_key;
@@ -273,7 +273,7 @@ struct ws_data{
 };
 #endif
 
-struct proxy_data{
+struct proxy_data {
 	uint8_t *buf;
 	char *cipher;
 	char *tls_version;
@@ -284,7 +284,7 @@ struct proxy_data{
 	bool have_tls;
 };
 
-struct client_stats{
+struct client_stats {
 	uint64_t messages_received;
 	uint64_t messages_sent;
 	uint64_t messages_dropped;

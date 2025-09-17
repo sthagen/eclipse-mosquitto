@@ -20,14 +20,14 @@ Contributors:
 
 #include <uthash.h>
 
-struct mosquitto__unpwd{
+struct mosquitto__unpwd {
 	UT_hash_handle hh;
 	char *username;
 	char *clientid;
 	struct mosquitto_pw *pw;
 };
 
-struct password_file_data{
+struct password_file_data {
 	struct mosquitto__unpwd *unpwd;
 	char *password_file;
 };

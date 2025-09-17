@@ -49,7 +49,7 @@ typedef SSIZE_T ssize_t;
 
 
 #define uthash_malloc(sz) mosquitto_malloc(sz)
-#define uthash_free(ptr,sz) mosquitto_free(ptr)
+#define uthash_free(ptr, sz) mosquitto_free(ptr)
 
 
 #ifdef WITH_TLS

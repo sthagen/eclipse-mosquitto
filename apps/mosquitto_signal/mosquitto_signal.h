@@ -1,7 +1,7 @@
 #ifndef MOSQUITTO_SIGNAL_H
 #define MOSQUITTO_SIGNAL_H
 
-enum mosq_signal{
+enum mosq_signal {
 	MSIG_CONFIG_RELOAD,
 	MSIG_LOG_ROTATE,
 	MSIG_SHUTDOWN,

@@ -32,4 +32,4 @@ int http_c__read(struct mosquitto *mosq);
 
 #endif
 
-#endif 
+#endif
