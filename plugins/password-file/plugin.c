@@ -88,5 +88,8 @@ int mosquitto_plugin_cleanup(void *user_data, struct mosquitto_opt *options, int
 	mosquitto_callback_unregister(mosq_pid, MOSQ_EVT_RELOAD, password_file__reload, NULL);
 	password_file__cleanup(data);
 
+	mosquitto_FREE(data->password_file);
+	mosquitto_FREE(data);
+
 	return MOSQ_ERR_SUCCESS;
 }
