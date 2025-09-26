@@ -20,8 +20,11 @@ provides certain advantages such as carrying out TLS termination in the proxy
 to reduce load on the broker. It does have one disadvantage which is that only
 the proxy IP address is found in the broker logs - the client IP addresses are
 not seen. Since Mosquitto 2.1, this can be fixed using the PROXY protocol v2
-support, which can be enabled using the `enable_proxy_protocol_v2` option. This
-is the recommended mode when using HAProxy.
+support, which can be enabled using the `enable_proxy_protocol 2` option. This
+is the recommended mode when using HAProxy. The PROXY protocol v1 is also
+supported with `enable_proxy_protocol 1`. This version of the protocol has a
+reduced feature set, particularly around sending on TLS related information,
+however it is more widely supported than v2.
 
 This document describes some different ways you can combine Mosquitto and
 HAProxy. It is not a complete guide to HAProxy.
@@ -172,7 +175,7 @@ listener 1883
 # Further listener settings
 ```
 
-## Direct pass through, with PROXY protocol
+## Direct pass through, with PROXY protocol v2
 
 To enable PROXY protocol v2 on HAProxy, add the `send-proxy-v2` option to the backend.
 ```
@@ -189,12 +192,34 @@ PROXY protocol v2 support. It is not possible to have direct pass through
 with encrypted connections on the broker.
 ```
 listener 1883
-enable_proxy_protocol_v2 true
+enable_proxy_protocol 2
 # Further listener settings
 ```
 
 
-## TLS termination with server certificate only, with PROXY protocol
+## Direct pass through, with PROXY protocol v1
+
+To enable PROXY protocol v1 on HAProxy, add the `send-proxy` option to the backend.
+```
+frontend mqtt_frontend
+         bind *:1883
+         default_backend mqtt_backend
+
+backend mqtt_backend
+        server server1 127.0.0.1:1884 check on-marked-down shutdown-sessions send-proxy
+```
+
+The broker configuration should declare an unencrypted listener and enable
+PROXY protocol v1 support. It is not possible to have direct pass through
+with encrypted connections on the broker.
+```
+listener 1883
+enable_proxy_protocol 1
+# Further listener settings
+```
+
+
+## TLS termination with server certificate only, with PROXY protocol v2
 
 For TLS connections, use `send-proxy-v2-ssl` instead of `send-proxy-v2`. This
 ensures that TLS information is added to the PROXY header.
@@ -212,11 +237,11 @@ only connections that were made using TLS are accepted on the broker. No other
 TLS configuration is required.
 ```
 listener 1883
-enable_proxy_protocol_v2 true
+enable_proxy_protocol 2
 proxy_protocol_v2_require_tls true
 ```
 
-## TLS termination with mutual TLS - client and server certificate, with PROXY protocol
+## TLS termination with mutual TLS - client and server certificate, with PROXY protocol v2
 
 For TLS connections, use `send-proxy-v2-ssl` instead of `send-proxy-v2`. This
 ensures that TLS information is added to the PROXY header.
@@ -235,13 +260,13 @@ the broker should check the PROXY protocol header for the valid certificate
 result. No other TLS configuration is required.
 ```
 listener 1883
-enable_proxy_protocol_v2 true
+enable_proxy_protocol 2
 proxy_protocol_v2_require_tls true
 require_certificate true
 ```
 
 
-## TLS termination with mutual TLS - client and server certificate, with username and PROXY protocol
+## TLS termination with mutual TLS - client and server certificate, with username and PROXY protocol v2
 
 The Mosquitto option `use_identity_as_username true` can be used with the PROXY
 protocol support. This requires that the `send-proxy-v2-ssl-cn` option is used
@@ -262,7 +287,7 @@ The broker configuration uses `require_certificate` and
 `use_identity_as_username`. No other TLS configuration is required.
 ```
 listener 1883
-enable_proxy_protocol_v2 true
+enable_proxy_protocol 2
 proxy_protocol_v2_require_tls true
 require_certificate true
 use_identity_as_username true
