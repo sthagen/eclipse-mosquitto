@@ -289,11 +289,9 @@ static void report_latency(void)
 		time_t s = publish_recv_time.tv_sec - publish_send_time.tv_sec;
 		long ns = publish_recv_time.tv_nsec - publish_send_time.tv_nsec;
 
-		if(s < 0){
-			if(ns < 0){
-				s++;
-				ns -= 1000000000;
-			}
+		if(ns < 0){
+			s--;
+			ns += 1000000000;
 		}
 
 		if(s > 0){
