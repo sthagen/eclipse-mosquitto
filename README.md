@@ -2,9 +2,10 @@ Eclipse Mosquitto
 =================
 
 Mosquitto is an open source implementation of a server for version 5.0, 3.1.1,
-and 3.1 of the MQTT protocol. It also includes a C and C++ client library, and
-the `mosquitto_pub` and `mosquitto_sub` utilities for publishing and
-subscribing.
+and 3.1 of the MQTT protocol. It also includes a C and C++ client library,
+the `mosquitto_pub` `mosquitto_rr`, and `mosquitto_sub` utilities for
+publishing and subscribing, and the `mosquitto_ctrl`, `mosquitto_signal`, and
+`mosquitto_passwd` applications for helping administer the broker.
 
 ## Links
 
@@ -17,8 +18,8 @@ See the following links for more information on MQTT:
 Mosquitto project information is available at the following locations:
 
 - Main homepage: <https://mosquitto.org/>
-- Find existing bugs or submit a new bug: <https://github.com/eclipse/mosquitto/issues>
-- Source code repository: <https://github.com/eclipse/mosquitto>
+- Find existing bugs or submit a new bug: <https://github.com/eclipse-mosquitto/mosquitto/issues>
+- Source code repository: <https://github.com/eclipse-mosquitto/mosquitto>
 
 There is also a public test server available at <https://test.mosquitto.org/>
 
@@ -83,17 +84,28 @@ already be built. Use `make binary` to skip building the man pages, or install
 
 ### Build Dependencies
 
-* c-ares (libc-ares-dev on Debian based systems) - only when compiled with `make WITH_SRV=yes`
-* cJSON - required for dynsec plugin, broker control plugin, and for client JSON output support.
-* libwebsockets (libwebsockets-dev) - enable with `make WITH_WEBSOCKETS=lws`
-* openssl (libssl-dev on Debian based systems) - disable with `make WITH_TLS=no`
+* cJSON - required
+* c-ares (libc-ares-dev on Debian based systems) - optional, enable with
+  `WITH_SRV=yes`
+* libedit - for mosquitto_ctrl interactive shell - optional, disable with
+  `WITH_EDITLINE=no`
+* libmicrohttpd - for broker http api support - optional, disable with
+  `WITH_HTTP_API=no`
+* openssl (libssl-dev on Debian based systems) - optional, disable with
+  `WITH_TLS=no`
 * pthreads - for client library thread support. This is required to support the
   `mosquitto_loop_start()` and `mosquitto_loop_stop()` functions. If compiled
   without pthread support, the library isn't guaranteed to be thread safe.
-* uthash / utlist - bundled versions of these headers are provided, disable their use with `make WITH_BUNDLED_DEPS=no`
-* xsltproc (xsltproc and docbook-xsl on Debian based systems) - only needed when building from git sources - disable with `make WITH_DOCS=no`
+* sqlite3 - for persistence support in the broker - optional, disable with
+  `WITH_SQLITE=no`
+* uthash / utlist - bundled versions of these headers are provided, disable
+  their use with `WITH_BUNDLED_DEPS=no`
+* xsltproc (xsltproc and docbook-xsl on Debian based systems) - only needed
+  when building from git sources - disable with `WITH_DOCS=no`
 
-Equivalent options for enabling/disabling features are available when using the CMake build.
+Equivalent options for enabling/disabling features are available when using the
+CMake build. It is also possible to enable/disable building of specific plugins
+in the CMake build.
 
 ### Building mosquitto - Using vcpkg
 
@@ -105,8 +117,12 @@ You can download and install mosquitto using the [vcpkg](https://github.com/Micr
     ./vcpkg integrate install
     ./vcpkg install mosquitto
 
-The mosquitto port in vcpkg is kept up to date by Microsoft team members and community contributors. If the version is out of date, please [create an issue or pull request](https://github.com/Microsoft/vcpkg) on the vcpkg repository.
+The mosquitto port in vcpkg is kept up to date by Microsoft team members and
+community contributors. If the version is out of date, please [create an issue
+or pull request](https://github.com/Microsoft/vcpkg) on the vcpkg repository.
 
 ## Credits
 
-Mosquitto was written by Roger Light <roger@atchoo.org>
+Mosquitto was written by Roger Light <roger@atchoo.org>. There have been
+substantial contributions by other people in the community both in terms of
+code and other help.
