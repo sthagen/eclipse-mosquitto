@@ -129,6 +129,49 @@ class MsgSequence(object):
             self._connected_check(sock)
 
 
+def parse_message(message):
+    b = bytes()
+    parts = message.split(" ")
+    for i in range(0, len(parts)):
+        if len(parts[i]) == 0:
+            continue
+        elif parts[i][0] in ['i']:
+            # General 8-bit unsigned decimal
+            b += int(parts[i][1:]).to_bytes(1)
+        elif parts[i][0] in ['H', 'k', 'm', 's']:
+            # General 16-bit unsigned decimal
+            # Or 'k' keepalive specific
+            # Or 'm' mid specific
+            # Or 's' string specific
+            b += int(parts[i][1:]).to_bytes(2)
+        elif parts[i][0] == "L":
+            # 32-bit unsigned decimal
+            b += int(parts[i][1:]).to_bytes(4)
+        elif parts[i][0] == "'":
+            s = parts[i][1:]
+            while s[-1] != "'" and i < len(parts)-1:
+                i += 1
+                s += " " + parts[i]
+            if s[-1] != "'":
+                raise ValueError(f"message {message} has incomplete string type")
+            b += bytes(s[0:-1].encode('utf-8'))
+        elif parts[i][0] in ['v', 'r']:
+            # General variable length integer
+            # Or 'r' remaining length
+            v = int(parts[i][1:])
+            if v > 255:
+                raise ValueError("Variable length > 255 needs implementing")
+            b += v.to_bytes(1)
+        else:
+            # hex
+            try:
+                b += bytes.fromhex(parts[i])
+            except ValueError:
+                raise ValueError(f"message {message} has invalid hex bytes")
+
+    return b
+
+
 def do_test(hostname, port, protocol):
     data_path=Path(__file__).resolve().parent/"data"
     rc = 0
@@ -198,9 +241,9 @@ def do_test(hostname, port, protocol):
                     except KeyError:
                         c = ""
                     if m["type"] == "send":
-                        this_test.add_send(bytes.fromhex(m["payload"].replace(" ", "")))
+                        this_test.add_send(parse_message(m["payload"]))
                     elif m["type"] == "recv":
-                        this_test.add_recv(bytes.fromhex(m["payload"].replace(" ", "")), c)
+                        this_test.add_recv(parse_message(m["payload"]), c)
                     elif m["type"] == "publish":
                         this_test.add_publish(m, c)
 
