@@ -169,26 +169,26 @@ static int drop_privileges(struct mosquitto__config *config)
 			if(pgid_s){
 				pgid = check_uid(pgid_s, "PGID");
 				if(pgid < 0){
-					return 1;
+					return MOSQ_ERR_INVAL;
 				}else if(pgid > 0){
 					rc = setgid((gid_t)pgid);
 					if(rc == -1){
 						err = strerror(errno);
 						log__printf(NULL, MOSQ_LOG_ERR, "Error setting gid whilst dropping privileges: %s.", err);
-						return 1;
+						return MOSQ_ERR_ERRNO;
 					}
 				}
 			}
 			if(puid_s){
 				puid = check_uid(puid_s, "PUID");
 				if(puid < 0){
-					return 1;
+					return MOSQ_ERR_INVAL;
 				}else if(puid > 0){
 					rc = setuid((uid_t)puid);
 					if(rc == -1){
 						err = strerror(errno);
 						log__printf(NULL, MOSQ_LOG_ERR, "Error setting uid whilst dropping privileges: %s.", err);
-						return 1;
+						return MOSQ_ERR_ERRNO;
 					}
 				}
 			}
@@ -197,32 +197,32 @@ static int drop_privileges(struct mosquitto__config *config)
 			if(!pwd){
 				if(strcmp(config->user, "mosquitto")){
 					log__printf(NULL, MOSQ_LOG_ERR, "Error: Unable to drop privileges to '%s' because this user does not exist.", config->user);
-					return 1;
+					return MOSQ_ERR_INVAL;
 				}else{
 					log__printf(NULL, MOSQ_LOG_ERR, "Warning: Unable to drop privileges to '%s' because this user does not exist. Trying 'nobody' instead.", config->user);
 					pwd = getpwnam("nobody");
 					if(!pwd){
 						log__printf(NULL, MOSQ_LOG_ERR, "Error: Unable to drop privileges to 'nobody'.");
-						return 1;
+						return MOSQ_ERR_ERRNO;
 					}
 				}
 			}
 			if(initgroups(config->user, pwd->pw_gid) == -1){
 				err = strerror(errno);
 				log__printf(NULL, MOSQ_LOG_ERR, "Error setting groups whilst dropping privileges: %s.", err);
-				return 1;
+				return MOSQ_ERR_ERRNO;
 			}
 			rc = setgid(pwd->pw_gid);
 			if(rc == -1){
 				err = strerror(errno);
 				log__printf(NULL, MOSQ_LOG_ERR, "Error setting gid whilst dropping privileges: %s.", err);
-				return 1;
+				return MOSQ_ERR_ERRNO;
 			}
 			rc = setuid(pwd->pw_uid);
 			if(rc == -1){
 				err = strerror(errno);
 				log__printf(NULL, MOSQ_LOG_ERR, "Error setting uid whilst dropping privileges: %s.", err);
-				return 1;
+				return MOSQ_ERR_ERRNO;
 			}
 		}
 		print_pwname();
@@ -290,7 +290,7 @@ static int pid__write(void)
 			fclose(pid);
 		}else{
 			log__printf(NULL, MOSQ_LOG_ERR, "Error: Unable to write pid file.");
-			return 1;
+			return MOSQ_ERR_ERRNO;
 		}
 	}
 	return MOSQ_ERR_SUCCESS;
@@ -418,7 +418,6 @@ int main(int argc, char *argv[])
 	mosquitto_time_init();
 	cjson_init();
 
-	mosquitto_time_init();
 #if defined(WIN32) || defined(__CYGWIN__)
 	if(argc == 2){
 		if(!strcmp(argv[1], "run")){
