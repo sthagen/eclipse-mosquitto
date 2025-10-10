@@ -137,16 +137,16 @@ def parse_message(message):
             continue
         elif parts[i][0] in ['i']:
             # General 8-bit unsigned decimal
-            b += int(parts[i][1:]).to_bytes(1)
+            b += int(parts[i][1:]).to_bytes(length=1, byteorder='big', signed=False)
         elif parts[i][0] in ['H', 'k', 'm', 's']:
             # General 16-bit unsigned decimal
             # Or 'k' keepalive specific
             # Or 'm' mid specific
             # Or 's' string specific
-            b += int(parts[i][1:]).to_bytes(2)
+            b += int(parts[i][1:]).to_bytes(length=2, byteorder='big', signed=False)
         elif parts[i][0] == "L":
             # 32-bit unsigned decimal
-            b += int(parts[i][1:]).to_bytes(4)
+            b += int(parts[i][1:]).to_bytes(length=4, byteorder='big', signed=False)
         elif parts[i][0] == "'":
             s = parts[i][1:]
             while s[-1] != "'" and i < len(parts)-1:
@@ -161,7 +161,7 @@ def parse_message(message):
             v = int(parts[i][1:])
             if v > 255:
                 raise ValueError("Variable length > 255 needs implementing")
-            b += v.to_bytes(1)
+            b += v.to_bytes(length=1, byteorder='big', signed=False)
         else:
             # hex
             try:
