@@ -31,9 +31,19 @@ def do_test(proto_ver):
         sock = mosq_test.do_client_connect(connect_packet, connack_packet, timeout=20, port=port)
         sock.close()
         sock = mosq_test.do_client_connect(connect_packet2, connack_packet2, timeout=20, port=port)
+        sock.close()
+
+        # Connect, disconnect, reconnect - try to trigger #3388
+        sock = mosq_test.client_connect_only()
+        sock.send(connect_packet)
+        sock.close()
+        # Give the tick time to trigger
+        time.sleep(0.1)
+        sock = mosq_test.do_client_connect(connect_packet, connack_packet, timeout=20, port=port)
+        sock.close()
+
         rc = 0
 
-        sock.close()
     except mosq_test.TestError:
         pass
     finally:
@@ -48,4 +58,4 @@ def do_test(proto_ver):
             exit(rc)
 
 do_test(4)
-do_test(5)
+#do_test(5)

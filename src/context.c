@@ -240,7 +240,6 @@ void context__send_will(struct mosquitto *ctxt)
 					&ctxt->will->properties);
 		}
 	}
-
 	will__clear(ctxt);
 }
 
@@ -259,6 +258,15 @@ void context__disconnect(struct mosquitto *context, int reason)
 		}
 	}
 #endif
+	if(context->id){
+		struct mosquitto *context_found;
+		HASH_FIND(hh_id, db.contexts_by_id_delayed_auth, context->id, strlen(context->id), context_found);
+		if(context_found == context){
+			net__socket_close(context);
+			context__add_to_disused(context);
+			return;
+		}
+	}
 
 	if(context->session_expiry_interval == 0){
 		plugin__handle_disconnect(context, reason);
@@ -353,17 +361,22 @@ void context__remove_from_by_id(struct mosquitto *context)
 {
 	struct mosquitto *context_found;
 
-	if(context->in_by_id == true && context->id){
-		HASH_FIND(hh_id, db.contexts_by_id_delayed_auth, context->id, strlen(context->id), context_found);
-		if(context_found){
-			HASH_DELETE(hh_id, db.contexts_by_id_delayed_auth, context_found);
-		}
+	if(!context->id){
+		return;
+	}
 
+	if(context->in_by_id){
 		HASH_FIND(hh_id, db.contexts_by_id, context->id, strlen(context->id), context_found);
-		if(context_found){
+		if(context_found == context){
 			HASH_DELETE(hh_id, db.contexts_by_id, context_found);
 		}
 		context->id_hashv = 0;
 		context->in_by_id = false;
+		return;
+	}
+
+	HASH_FIND(hh_id, db.contexts_by_id_delayed_auth, context->id, strlen(context->id), context_found);
+	if(context_found == context){
+		HASH_DELETE(hh_id, db.contexts_by_id_delayed_auth, context_found);
 	}
 }
