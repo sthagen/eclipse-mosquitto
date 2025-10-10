@@ -87,7 +87,7 @@ def start_broker(filename, cmd=None, port=0, use_conf=False, expect_fail=False, 
         elif os.environ.get('MOSQ_USE_VALGRIND') == 'failgrind':
             cmd = ['fg-helper'] + cmd
         else:
-            cmd = ['valgrind', '-q', '--track-fds=yes', '--trace-children=yes', '--leak-check=full', '--show-leak-kinds=all', '--log-file='+logfile] + cmd
+            cmd = ['valgrind', '-q', '--gen-suppressions=all', '--suppressions=test.supp', '--track-fds=yes', '--trace-children=yes', '--leak-check=full', '--show-leak-kinds=all', '--log-file='+logfile] + cmd
         vg_logfiles.append(logfile)
         vg_index += 1
         timeout = 1
