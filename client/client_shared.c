@@ -1361,7 +1361,10 @@ static int client_tls_opts_set(struct mosquitto *mosq, struct mosq_config *cfg)
 			err_printf(cfg, "Error: Unable to create SSL_CTX.\n");
 			return 1;
 		}
-		SSL_CTX_set_ex_data(cfg->ssl_ctx, tls_ex_index_cfg, cfg);
+		if(!SSL_CTX_set_ex_data(cfg->ssl_ctx, tls_ex_index_cfg, cfg)){
+			err_printf(cfg, "Error: Unable to set SSL_CTX ex data.\n");
+			return 1;
+		}
 		mosquitto_void_option(mosq, MOSQ_OPT_SSL_CTX, cfg->ssl_ctx);
 		mosquitto_int_option(mosq, MOSQ_OPT_SSL_CTX_WITH_DEFAULTS, 1);
 		SSL_CTX_set_keylog_callback(cfg->ssl_ctx, tls_keylog_callback);

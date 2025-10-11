@@ -689,6 +689,8 @@ static int net__init_ssl_ctx(struct mosquitto *mosq)
 	uint8_t tls_alpn_wire[256];
 	uint8_t tls_alpn_len;
 
+	net__init_tls();
+
 #ifndef WITH_BROKER
 	if(mosq->user_ssl_ctx){
 		mosq->ssl_ctx = mosq->user_ssl_ctx;
@@ -705,7 +707,6 @@ static int net__init_ssl_ctx(struct mosquitto *mosq)
 	 * has not been set, or if both of MOSQ_OPT_SSL_CTX and
 	 * MOSQ_OPT_SSL_CTX_WITH_DEFAULTS are set. */
 	if(mosq->tls_cafile || mosq->tls_capath || mosq->tls_psk || mosq->tls_use_os_certs){
-		net__init_tls();
 		if(!mosq->ssl_ctx){
 
 			mosq->ssl_ctx = SSL_CTX_new(TLS_client_method());
@@ -922,7 +923,11 @@ int net__socket_connect_step3(struct mosquitto *mosq, const char *host)
 			return MOSQ_ERR_TLS;
 		}
 
-		SSL_set_ex_data(mosq->ssl, tls_ex_index_mosq, mosq);
+		if(!SSL_set_ex_data(mosq->ssl, tls_ex_index_mosq, mosq)){
+			net__socket_close(mosq);
+			net__print_ssl_error(mosq, "while setting SSL ex data");
+			return MOSQ_ERR_TLS;
+		}
 		bio = BIO_new_socket(mosq->sock, BIO_NOCLOSE);
 		if(!bio){
 			net__socket_close(mosq);

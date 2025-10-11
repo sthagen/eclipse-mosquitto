@@ -250,8 +250,11 @@ struct mosquitto *net__socket_accept(struct mosquitto__listener_sock *listensock
 			context__cleanup(new_context, true);
 			return NULL;
 		}
-		SSL_set_ex_data(new_context->ssl, tls_ex_index_context, new_context);
-		SSL_set_ex_data(new_context->ssl, tls_ex_index_listener, new_context->listener);
+		if(!SSL_set_ex_data(new_context->ssl, tls_ex_index_context, new_context)
+				|| !SSL_set_ex_data(new_context->ssl, tls_ex_index_listener, new_context->listener)){
+			context__cleanup(new_context, true);
+			return NULL;
+		}
 		new_context->want_write = true;
 		bio = BIO_new_socket(new_sock, BIO_NOCLOSE);
 		SSL_set_bio(new_context->ssl, bio, bio);
