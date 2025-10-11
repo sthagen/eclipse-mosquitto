@@ -230,7 +230,13 @@ int mosquitto_security_apply_default(void)
 							security__disconnect_auth(context);
 							continue;
 						}
-						context->username = mosquitto_strdup((char *)ASN1_STRING_get0_data(name_asn1));
+						const char *username = (const char *)ASN1_STRING_get0_data(name_asn1);
+						if(!username){
+							X509_free(client_cert);
+							security__disconnect_auth(context);
+							continue;
+						}
+						context->username = mosquitto_strdup(username);
 						if(!context->username){
 							X509_free(client_cert);
 							security__disconnect_auth(context);

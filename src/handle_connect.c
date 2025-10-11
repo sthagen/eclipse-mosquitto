@@ -879,9 +879,8 @@ static int set_username_from_cert_identity(struct mosquitto *context)
 	if(name_asn1 == NULL){
 		return free_x509_and_send_connack_error(context, client_cert, MOSQ_ERR_AUTH);
 	}
-	const char *cert_identity = NULL;
-	cert_identity = (char *)ASN1_STRING_get0_data(name_asn1);
-	if(mosquitto_validate_utf8(cert_identity, (int)strlen(cert_identity))){
+	const char *cert_identity = (const char *)ASN1_STRING_get0_data(name_asn1);
+	if(!cert_identity || mosquitto_validate_utf8(cert_identity, (int)strlen(cert_identity))){
 		return free_x509_and_send_connack_error(context, client_cert, MOSQ_ERR_AUTH);
 	}
 	mosquitto_free(context->username);
