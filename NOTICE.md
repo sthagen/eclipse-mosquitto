@@ -27,30 +27,49 @@ SPDX-License-Identifier: EPL-2.0 or BSD-3-Clause
 
 The project maintains the following source code repositories:
 
- * https://github.com/eclipse/mosquitto
+ * https://github.com/eclipse-mosquitto/mosquitto
 
 ## Third-party Content
 
 This project makes use of the follow third party projects.
 
-cJSON (1.7.x)
+c-ares
+* License: MIT
+* Project: https://c-ares.org/
+* Source: https://github.com/c-ares/c-ares
 
+cJSON (1.7.x)
 * License: MIT
 * Project: https://github.com/DaveGamble/cJSON
 
-libwebsockets (4.x)
+googletest
+* License: BSD-3-Clause
+* Project: https://github.com/google/googletest
 
+libedit (3.1)
+* License: BSD-3-Clause
+* Project: https://thrysoee.dk/editline/
+* Source: https://thrysoee.dk/editline/libedit-20250104-3.1.tar.gz
+
+libwebsockets (4.x)
 * License: MIT
 * Project: https://github.com/warmcat/libwebsockets
 
-openssl (1.1.1)
+microhttpd
+* License: GNU LGPL v2.1+
+* Project: https://www.gnu.org/software/libmicrohttpd/
+* Source: git://git.gnunet.org/libmicrohttpd2.git
 
-* License: OpenSSL License and SSLeay License
+openssl (3.x.x)
+* License: Apache 2.0
 * Project: https://openssl.org
 * Source: https://github.com/openssl/openssl
 
-uthash (2.1.0)
+picohttpparser
+* License: MIT
+* Project: github.com/h2o/picohttpparser
 
+uthash (2.3.0)
 * License: BSD revised (https://troydhanson.github.io/uthash/license.html)
 * Project: https://github.com/troydhanson/uthash
 
