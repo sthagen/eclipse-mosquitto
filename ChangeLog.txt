@@ -7,6 +7,9 @@ Broker:
   prevent possible crash. This could occur only in extremely unlikely
   situations. See https://github.com/eclipse-mosquitto/mosquitto/issues/3389
   Closes #3389.
+- Check return value of openssl ASN1_string_[get0_]data() functions for NULL.
+  This prevents a crash in case of incorrect certificate handling in openssl.
+  Closes #3390.
 
 
 2.0.22 - 2025-07-11

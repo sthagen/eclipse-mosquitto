@@ -805,7 +805,7 @@ int handle__connect(struct mosquitto *context)
 #else
 					new_username = (const char *) ASN1_STRING_get0_data(name_asn1);
 #endif
-					if(mosquitto_validate_utf8(new_username, (int)strlen(new_username))){
+					if(!new_username || mosquitto_validate_utf8(new_username, (int)strlen(new_username))){
 						if(context->protocol == mosq_p_mqtt5){
 							send__connack(context, 0, MQTT_RC_BAD_USERNAME_OR_PASSWORD, NULL);
 						}else{
