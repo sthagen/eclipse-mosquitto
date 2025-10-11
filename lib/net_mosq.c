@@ -650,6 +650,8 @@ static int net__init_ssl_ctx(struct mosquitto *mosq)
 	EVP_PKEY *pkey;
 #endif
 
+	net__init_tls();
+
 #ifndef WITH_BROKER
 	if(mosq->user_ssl_ctx){
 		mosq->ssl_ctx = mosq->user_ssl_ctx;
@@ -666,7 +668,6 @@ static int net__init_ssl_ctx(struct mosquitto *mosq)
 	 * has not been set, or if both of MOSQ_OPT_SSL_CTX and
 	 * MOSQ_OPT_SSL_CTX_WITH_DEFAULTS are set. */
 	if(mosq->tls_cafile || mosq->tls_capath || mosq->tls_psk || mosq->tls_use_os_certs){
-		net__init_tls();
 		if(!mosq->ssl_ctx){
 
 #if OPENSSL_VERSION_NUMBER < 0x10100000L
@@ -881,7 +882,11 @@ int net__socket_connect_step3(struct mosquitto *mosq, const char *host)
 			return MOSQ_ERR_TLS;
 		}
 
-		SSL_set_ex_data(mosq->ssl, tls_ex_index_mosq, mosq);
+		if(!SSL_set_ex_data(mosq->ssl, tls_ex_index_mosq, mosq)){
+			net__socket_close(mosq);
+			net__print_ssl_error(mosq);
+			return MOSQ_ERR_TLS;
+		}
 		bio = BIO_new_socket(mosq->sock, BIO_NOCLOSE);
 		if(!bio){
 			net__socket_close(mosq);

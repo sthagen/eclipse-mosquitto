@@ -211,8 +211,11 @@ struct mosquitto *net__socket_accept(struct mosquitto__listener_sock *listensock
 			context__cleanup(new_context, true);
 			return NULL;
 		}
-		SSL_set_ex_data(new_context->ssl, tls_ex_index_context, new_context);
-		SSL_set_ex_data(new_context->ssl, tls_ex_index_listener, new_context->listener);
+		if(!SSL_set_ex_data(new_context->ssl, tls_ex_index_context, new_context)
+				|| !SSL_set_ex_data(new_context->ssl, tls_ex_index_listener, new_context->listener)){
+			context__cleanup(new_context, true);
+			return NULL;
+		}
 		new_context->want_write = true;
 		bio = BIO_new_socket(new_sock, BIO_NOCLOSE);
 		SSL_set_bio(new_context->ssl, bio, bio);
@@ -320,6 +323,13 @@ int net__tls_server_ctx(struct mosquitto__listener *listener)
 	int rc;
 	FILE *dhparamfile;
 	DH *dhparam = NULL;
+
+	if(tls_ex_index_context == -1){
+		tls_ex_index_context = SSL_get_ex_new_index(0, "client context", NULL, NULL, NULL);
+	}
+	if(tls_ex_index_listener == -1){
+		tls_ex_index_listener = SSL_get_ex_new_index(0, "listener", NULL, NULL, NULL);
+	}
 
 	if(listener->ssl_ctx){
 		SSL_CTX_free(listener->ssl_ctx);
@@ -918,13 +928,6 @@ int net__socket_listen(struct mosquitto__listener *listener)
 		}
 #  ifdef FINAL_WITH_TLS_PSK
 		if(listener->psk_hint){
-			if(tls_ex_index_context == -1){
-				tls_ex_index_context = SSL_get_ex_new_index(0, "client context", NULL, NULL, NULL);
-			}
-			if(tls_ex_index_listener == -1){
-				tls_ex_index_listener = SSL_get_ex_new_index(0, "listener", NULL, NULL, NULL);
-			}
-
 			if(listener->certfile == NULL || listener->keyfile == NULL){
 				if(net__tls_server_ctx(listener)){
 					return 1;

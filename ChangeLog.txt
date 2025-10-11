@@ -3,6 +3,10 @@
 
 Broker:
 - Fix handling of disconnected sessions for `per_listener_settings true`
+- Check return values of openssl *_get_ex_data() and *_set_ex_data() to
+  prevent possible crash. This could occur only in extremely unlikely
+  situations. See https://github.com/eclipse-mosquitto/mosquitto/issues/3389
+  Closes #3389.
 
 
 2.0.22 - 2025-07-11
