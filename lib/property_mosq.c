@@ -52,7 +52,7 @@ static int property__read(struct mosquitto__packet_in *packet, uint32_t *len, mo
 	if(rc){
 		return rc;
 	}
-	*len -= 1;
+	*len -= mosquitto_varint_bytes(property_identifier);
 
 	memset(property, 0, sizeof(mosquitto_property));
 
