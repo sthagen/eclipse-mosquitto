@@ -1818,18 +1818,24 @@ static int config__read_file_core(struct mosquitto__config *config, bool reload,
 					}
 #ifdef WIN32
 					char *http_dir_canonical = _fullpath(NULL, cur_listener->http_dir, 0);
+					const char sep = '\\';
 #else
 					char *http_dir_canonical = realpath(cur_listener->http_dir, NULL);
+					const char sep = '/';
 #endif
 					if(!http_dir_canonical){
 						return MOSQ_ERR_NOMEM;
 					}
-					mosquitto_FREE(cur_listener->http_dir);
-					cur_listener->http_dir = mosquitto_strdup(http_dir_canonical);
-					mosquitto_FREE(http_dir_canonical);
-					if(!cur_listener->http_dir){
+					size_t http_dir_len = strlen(http_dir_canonical) + sizeof(sep) + 1;
+					char *http_dir_canonical_sep = mosquitto_calloc(http_dir_len, sizeof(char));
+					if(!http_dir_canonical_sep){
+						free(http_dir_canonical);
 						return MOSQ_ERR_NOMEM;
 					}
+					snprintf(http_dir_canonical_sep, http_dir_len, "%s%c", http_dir_canonical, sep);
+					free(http_dir_canonical);
+					mosquitto_FREE(cur_listener->http_dir);
+					cur_listener->http_dir = http_dir_canonical_sep;
 #else
 					log__printf(NULL, MOSQ_LOG_WARNING, "Warning: http_dir support not available.");
 #endif
