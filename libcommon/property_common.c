@@ -503,7 +503,7 @@ BROKER_EXPORT int mosquitto_property_add_varint(mosquitto_property **proplist, i
 {
 	mosquitto_property *prop;
 
-	if(!proplist || value > 268435455){
+	if(!proplist || value > MQTT_MAX_PAYLOAD){
 		return MOSQ_ERR_INVAL;
 	}
 	if(identifier != MQTT_PROP_SUBSCRIPTION_IDENTIFIER){
