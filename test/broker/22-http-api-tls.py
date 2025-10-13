@@ -7,6 +7,7 @@ import ssl
 
 def write_config(filename, mqtt_port, http_port):
     with open(filename, 'w') as f:
+        f.write("allow_anonymous true\n")
         f.write(f"listener {mqtt_port}\n")
         f.write(f"listener 0 {mqtt_port}.sock\n")
         f.write(f"certfile {ssl_dir}/server.crt\n")
@@ -35,19 +36,19 @@ try:
     http_conn.request("POST", "/api/badrequest")
     response = http_conn.getresponse()
     if response.status != 405:
-        raise ValueError(f"/api/badrequest {response.status}")
+        raise ValueError(f"Error: /api/badrequest {response.status}")
 
     # Missing API
     http_conn.request("GET", "/api/missing")
     response = http_conn.getresponse()
     if response.status != 404:
-        raise ValueError(f"/api/missing {response.status}")
+        raise ValueError(f"Error: /api/missing {response.status}")
 
     # Listeners API
     http_conn.request("GET", "/api/v1/listeners")
     response = http_conn.getresponse()
     if response.status != 200:
-        raise ValueError(f"/api/v1/listeners {response.status}")
+        raise ValueError(f"Error: /api/v1/listeners {response.status}")
     payload = json.loads(response.read().decode('utf-8'))
     expected_payload = {
         "listeners": [{
@@ -71,13 +72,13 @@ try:
        }]
     }
     if payload != expected_payload:
-        raise ValueError(f"/api/v1/listeners payload {payload}")
+        raise ValueError(f"Error: /api/v1/listeners payload {payload}")
 
     # systree API
     http_conn.request("GET", "/api/v1/systree")
     response = http_conn.getresponse()
     if response.status != 200:
-        raise ValueError(f"/api/v1/systree {response.status}")
+        raise ValueError(f"Error: /api/v1/systree {response.status}")
     payload = json.loads(response.read().decode('utf-8'))
 
     for topic in [
@@ -127,7 +128,7 @@ try:
         '$SYS/broker/uptime': -1
     }
     if payload != expected_payload:
-        raise ValueError(f"/api/v1/systree payload\n{payload}\n{expected_payload}")
+        raise ValueError(f"Error: /api/v1/systree payload\n{payload}\n{expected_payload}")
 
     rc = 0
 except mosq_test.TestError:

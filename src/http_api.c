@@ -340,6 +340,21 @@ static enum MHD_Result http_api__process_api(struct MHD_Connection *connection, 
 }
 
 
+static int check_basic_auth(struct mosquitto__listener *listener, struct MHD_Connection *connection)
+{
+	struct mosquitto context = {0};
+	int rc;
+
+	context.listener = listener;
+
+	context.username = MHD_basic_auth_get_username_password (connection, &context.password);
+	rc = mosquitto_basic_auth(&context);
+	MHD_free(context.username);
+	MHD_free(context.password);
+
+	return rc;
+}
+
 static enum MHD_Result http_api_handler(void *cls, struct MHD_Connection
 		*connection, const char *url, const char *method, const char *version,
 		const char *upload_data, size_t *upload_data_size, void **con_cls)
@@ -358,6 +373,13 @@ static enum MHD_Result http_api_handler(void *cls, struct MHD_Connection
 		MHD_destroy_response(response);
 		return ret;
 	}
+
+	if(check_basic_auth(listener, connection) != MOSQ_ERR_SUCCESS){
+		char *buf = "Not authorised\n";
+		struct MHD_Response *response = MHD_create_response_from_buffer(strlen(buf), (void *)buf, MHD_RESPMEM_MUST_COPY);
+		return MHD_queue_basic_auth_fail_response(connection, "Mosquitto API", response);
+	}
+
 	if(!strncasecmp(url, "/api/", strlen("/api/"))){
 		return http_api__process_api(connection, url);
 	}else{
@@ -406,7 +428,6 @@ int http_api__start(struct mosquitto__listener *listener)
 			return MOSQ_ERR_NOMEM;
 		}
 	}
-	listener->security_options->allow_anonymous = true;
 	listener->protocol = mp_http_api;
 
 	bind_address = listener->host;

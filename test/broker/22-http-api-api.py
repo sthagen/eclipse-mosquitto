@@ -7,6 +7,7 @@ import re
 
 def write_config(filename, mqtt_port, ws_port, http_port):
     with open(filename, 'w') as f:
+        f.write(f"allow_anonymous true\n")
         f.write(f"listener {mqtt_port}\n")
 
         f.write(f"listener 0 {mqtt_port}.sock\n")
@@ -138,10 +139,10 @@ try:
     http_conn.request("GET", "/api/v1/version")
     response = http_conn.getresponse()
     if response.status != 200:
-        raise ValueError(f"/api/v1/version {response.status}")
+        raise ValueError(f"Error: /api/v1/version {response.status}")
     payload = response.read().decode('utf-8')
     if not re.match(r'^\d+\.\d+\.\d+$', payload):
-        raise ValueError(f"/api/v1/version\n{payload}")
+        raise ValueError(f"Error: /api/v1/version\n{payload}")
 
 
     rc = 0

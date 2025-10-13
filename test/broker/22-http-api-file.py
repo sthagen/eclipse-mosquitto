@@ -6,6 +6,7 @@ import json
 
 def write_config(filename, mqtt_port, http_port):
     with open(filename, 'w') as f:
+        f.write("allow_anonymous true\n")
         f.write(f"listener {mqtt_port}\n")
         f.write(f"listener {http_port} 127.0.0.1\n")
         f.write("protocol http_api\n")
@@ -31,40 +32,40 @@ try:
     http_conn.request("POST", "/post")
     response = http_conn.getresponse()
     if response.status != 405:
-        raise ValueError(f"/post {response.status}")
+        raise ValueError(f"Error: /post {response.status}")
 
     # Bad request
     http_conn.request("PUT", "/put")
     response = http_conn.getresponse()
     if response.status != 405:
-        raise ValueError(f"/put {response.status}")
+        raise ValueError(f"Error: /put {response.status}")
 
     # Missing file
     http_conn.request("GET", "/missing")
     response = http_conn.getresponse()
     if response.status != 404:
-        raise ValueError(f"/api/missing {response.status}")
+        raise ValueError(f"Error: /api/missing {response.status}")
 
     # File not in dir
     http_conn.request("GET", "../../../../../../../../etc/passwd")
     response = http_conn.getresponse()
     if response.status != 404:
-        raise ValueError(f"../../../../../../../../etc/passwd {response.status}")
+        raise ValueError(f"Error: ../../../../../../../../etc/passwd {response.status}")
 
     # Present file
     http_conn.request("GET", "/index.html")
     response = http_conn.getresponse()
     if response.status != 200:
-        raise ValueError(f"/index.html {response.status}")
+        raise ValueError(f"Error: /index.html {response.status}")
 
     # Root
     http_conn.request("GET", "/")
     response = http_conn.getresponse()
     if response.status != 200:
-        raise ValueError(f"/ {response.status}")
+        raise ValueError(f"Error: / {response.status}")
     payload = response.read().decode('utf-8')
     if payload != "<html></html>":
-        raise ValueError(f"/ {payload}")
+        raise ValueError(f"Error: / {payload}")
 
 
     rc = 0

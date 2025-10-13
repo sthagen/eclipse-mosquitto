@@ -352,6 +352,7 @@ endif
 
 22:
 	./22-http-api-api.py
+	./22-http-api-auth.py
 	./22-http-api-file.py
 	./22-http-api-tls.py
 
