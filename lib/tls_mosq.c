@@ -58,7 +58,7 @@ int tls__set_verify_hostname(struct mosquitto *mosq, const char *hostname)
 	int ipv4_ok;
 	int rc;
 
-	if(mosq->tls_cafile == NULL && mosq->tls_capath == NULL){
+	if(mosq->tls_cafile == NULL && mosq->tls_capath == NULL && mosq->tls_use_os_certs == false){
 		return MOSQ_ERR_SUCCESS;
 	}
 #ifndef WITH_BROKER
