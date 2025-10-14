@@ -294,6 +294,7 @@ tests = [
     (1, './21-proxy-v2-ssl-require-tls-failure.py'),
     (1, './21-proxy-v2-ssl-require-tls-success.py'),
 
+    (2, './22-http-api-acl.py'),
     (3, './22-http-api-api.py'),
     (2, './22-http-api-auth.py'),
     (2, './22-http-api-file.py'),

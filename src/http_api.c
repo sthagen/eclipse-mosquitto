@@ -340,19 +340,33 @@ static enum MHD_Result http_api__process_api(struct MHD_Connection *connection, 
 }
 
 
-static int check_basic_auth(struct mosquitto__listener *listener, struct MHD_Connection *connection)
+static int check_access(struct mosquitto__listener *listener, struct MHD_Connection *connection, const char *url)
 {
 	struct mosquitto context = {0};
-	int rc;
+	int auth_rc, acl_rc = MOSQ_ERR_SUCCESS;
 
 	context.listener = listener;
 
+	context.id = (char *)"http-api";
 	context.username = MHD_basic_auth_get_username_password (connection, &context.password);
-	rc = mosquitto_basic_auth(&context);
+
+	/* Authentication */
+	auth_rc = mosquitto_basic_auth(&context);
+	if(auth_rc == MOSQ_ERR_SUCCESS){
+		acl_rc = mosquitto_acl_check(&context, url, 0, NULL, 0, false, MOSQ_ACL_READ);
+	}
 	MHD_free(context.username);
 	MHD_free(context.password);
 
-	return rc;
+	if(auth_rc || acl_rc){
+		char *buf = "Not authorised\n";
+		struct MHD_Response *response = MHD_create_response_from_buffer(strlen(buf), (void *)buf, MHD_RESPMEM_MUST_COPY);
+		MHD_queue_basic_auth_fail_response(connection, "Mosquitto API", response);
+
+		return MOSQ_ERR_AUTH;
+	}
+
+	return MOSQ_ERR_SUCCESS;
 }
 
 static enum MHD_Result http_api_handler(void *cls, struct MHD_Connection
@@ -374,10 +388,8 @@ static enum MHD_Result http_api_handler(void *cls, struct MHD_Connection
 		return ret;
 	}
 
-	if(check_basic_auth(listener, connection) != MOSQ_ERR_SUCCESS){
-		char *buf = "Not authorised\n";
-		struct MHD_Response *response = MHD_create_response_from_buffer(strlen(buf), (void *)buf, MHD_RESPMEM_MUST_COPY);
-		return MHD_queue_basic_auth_fail_response(connection, "Mosquitto API", response);
+	if(check_access(listener, connection, url) != MOSQ_ERR_SUCCESS){
+		return MHD_YES;
 	}
 
 	if(!strncasecmp(url, "/api/", strlen("/api/"))){

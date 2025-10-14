@@ -351,6 +351,7 @@ endif
 	./21-proxy-v2-ssl-require-tls-success.py
 
 22:
+	./22-http-api-acl.py
 	./22-http-api-api.py
 	./22-http-api-auth.py
 	./22-http-api-file.py
