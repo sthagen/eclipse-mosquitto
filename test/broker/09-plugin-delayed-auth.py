@@ -38,7 +38,7 @@ def do_test(proto_ver):
         sock.send(connect_packet)
         sock.close()
         # Give the tick time to trigger
-        time.sleep(0.1)
+        time.sleep(0.5)
         sock = mosq_test.do_client_connect(connect_packet, connack_packet, timeout=20, port=port)
         sock.close()
 
@@ -58,4 +58,4 @@ def do_test(proto_ver):
             exit(rc)
 
 do_test(4)
-#do_test(5)
+do_test(5)
