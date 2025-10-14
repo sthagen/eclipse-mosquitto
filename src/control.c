@@ -27,6 +27,23 @@ Contributors:
 
 #ifdef WITH_CONTROL
 
+static void control__negative_reply(const char *clientid, const char *request_topic)
+{
+	size_t response_topic_len;
+	char *response_topic;
+	const char payload[] = "{\"error\": \"endpoint not available\"}";
+
+	response_topic_len = strlen(request_topic) + sizeof("/response") + 1;
+	response_topic = mosquitto_calloc(1, response_topic_len);
+	if(!response_topic){
+		return;
+	}
+	snprintf(response_topic, response_topic_len, "%s/response", request_topic);
+
+	mosquitto_broker_publish_copy(clientid, response_topic, strlen(payload), payload, 0, false, NULL);
+	mosquitto_FREE(response_topic);
+}
+
 
 /* Process messages coming in on $CONTROL/<feature>. These messages aren't
  * passed on to other clients. */
@@ -73,6 +90,8 @@ int control__process(struct mosquitto *context, struct mosquitto__base_msg *base
 			}
 		}
 		SAFE_FREE(event_data.reason_string);
+	}else{
+		control__negative_reply(context->id, base_msg->data.topic);
 	}
 
 	if(base_msg->data.qos == 1){

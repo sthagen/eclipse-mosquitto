@@ -38,3 +38,34 @@
    fun:MHD_start_daemon
    ...
 }
+{
+   openssl_LH_new
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:CRYPTO_zalloc
+   fun:OPENSSL_LH_new
+   ...
+   fun:__pthread_once_slow
+}
+{
+   openssl_THREAD_lock_new
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:CRYPTO_zalloc
+   fun:CRYPTO_THREAD_lock_new
+   ...
+   fun:__pthread_once_slow
+}
+{
+   openssl_CRYPTO_set_ex_data
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:CRYPTO_zalloc
+   ...
+   fun:CRYPTO_set_ex_data
+   ...
+   fun:__pthread_once_slow
+}

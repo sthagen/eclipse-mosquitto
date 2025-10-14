@@ -324,6 +324,7 @@ endif
 17 :
 	./17-control-list-listeners.py
 	./17-control-list-plugins.py
+	./17-control-missing-endpoint.py
 
 20 :
 	./20-sparkplug-compliance.py

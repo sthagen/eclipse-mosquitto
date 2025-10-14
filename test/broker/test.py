@@ -270,6 +270,7 @@ tests = [
 
     (4, './17-control-list-listeners.py'),
     (1, './17-control-list-plugins.py'),
+    (1, './17-control-missing-endpoint.py'),
 
     (1, './20-sparkplug-compliance.py'),
     (1, './20-sparkplug-aware.py'),
