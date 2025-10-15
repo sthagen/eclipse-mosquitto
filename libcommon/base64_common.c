@@ -21,7 +21,6 @@ Contributors:
 #ifdef WITH_TLS
 #  include <openssl/opensslv.h>
 #  include <openssl/evp.h>
-#  include <openssl/rand.h>
 #  include <openssl/buffer.h>
 #endif
 #include <string.h>

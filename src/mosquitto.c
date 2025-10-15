@@ -435,14 +435,6 @@ int main(int argc, char *argv[])
 
 
 #ifdef WIN32
-	GetSystemTime(&st);
-	srand(st.wSecond + st.wMilliseconds);
-#else
-	gettimeofday(&tv, NULL);
-	srand((unsigned int)(tv.tv_sec + tv.tv_usec));
-#endif
-
-#ifdef WIN32
 	if(_setmaxstdio(8192) != 8192){
 		/* Old limit was 2048 */
 		if(_setmaxstdio(2048) != 2048){

@@ -65,26 +65,6 @@ int mosquitto_lib_init(void)
 
 	if(init_refcount == 0){
 		mosquitto_time_init();
-#ifdef WIN32
-		srand((unsigned int)GetTickCount64());
-#elif _POSIX_TIMERS>0 && defined(_POSIX_MONOTONIC_CLOCK)
-		struct timespec tp;
-#ifdef CLOCK_BOOTTIME
-		if(clock_gettime(CLOCK_BOOTTIME, &tp) != 0)
-#endif
-		clock_gettime(CLOCK_MONOTONIC, &tp);
-		srand((unsigned int)tp.tv_nsec);
-#elif defined(__APPLE__)
-		uint64_t ticks;
-
-		ticks = mach_absolute_time();
-		srand((unsigned int)ticks);
-#else
-		struct timeval tv;
-
-		gettimeofday(&tv, NULL);
-		srand(tv.tv_sec*1000 + tv.tv_usec/1000);
-#endif
 
 		rc = net__init();
 		if(rc != MOSQ_ERR_SUCCESS){

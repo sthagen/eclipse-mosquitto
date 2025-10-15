@@ -31,16 +31,8 @@ Contributors:
 #  include <sys/stat.h>
 #endif
 
-#if !defined(WITH_TLS) && defined(__linux__) && defined(__GLIBC__)
-#  if __GLIBC_PREREQ(2, 25)
-#    include <sys/random.h>
-#    define HAVE_GETRANDOM 1
-#  endif
-#endif
-
 #ifdef WITH_TLS
 #  include <openssl/bn.h>
-#  include <openssl/rand.h>
 #endif
 
 #ifdef WITH_BROKER

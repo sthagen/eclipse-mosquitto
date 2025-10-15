@@ -111,10 +111,6 @@ static int get_password_from_init_file(struct dynsec__data *data, char **pw)
 static int generate_password(struct dynsec__data *data, cJSON *j_client, char **password)
 {
 	struct mosquitto_pw *pw;
-	int i;
-	unsigned char vb;
-	unsigned long v;
-	size_t len;
 	char *pwenv;
 
 	if(data->init_mode == dpwim_file){
@@ -132,12 +128,16 @@ static int generate_password(struct dynsec__data *data, cJSON *j_client, char **
 			return MOSQ_ERR_NOMEM;
 		}
 	}else{
-		*password = malloc(21);
+		unsigned char vb;
+		unsigned long v;
+		size_t len;
+		const size_t pwlen = 20;
+		*password = malloc(pwlen+1);
 		if(*password == NULL){
 			return MOSQ_ERR_NOMEM;
 		}
 		len = sizeof(pw_chars)-1;
-		for(i=0; i<20; i++){
+		for(size_t i=0; i<pwlen; i++){
 			do{
 				if(RAND_bytes(&vb, 1) != 1){
 					free(*password);
@@ -147,7 +147,7 @@ static int generate_password(struct dynsec__data *data, cJSON *j_client, char **
 			}while(v >= (RAND_MAX - (RAND_MAX % len)));
 			(*password)[i] = pw_chars[v%len];
 		}
-		(*password)[20] = '\0';
+		(*password)[pwlen] = '\0';
 	}
 
 	if(mosquitto_pw_new(&pw, MOSQ_PW_DEFAULT) != MOSQ_ERR_SUCCESS
