@@ -540,20 +540,26 @@ void ctrl_shell__on_message(struct mosquitto *mosq, void *userdata, const struct
 	UNUSED(userdata);
 
 	cJSON *j_tree = cJSON_Parse((char *)msg->payload);
-	cJSON *j_responses = cJSON_GetObjectItem(j_tree, "responses");
-	cJSON *j_command_obj = cJSON_GetArrayItem(j_responses, 0);
-	cJSON *j_command = cJSON_GetObjectItem(j_command_obj, "command");
-	cJSON *j_error = cJSON_GetObjectItem(j_command_obj, "error");
-	cJSON *j_data = cJSON_GetObjectItem(j_command_obj, "data");
-	if(j_error){
-		ctrl_shell_printf("%s%s%s\n", ANSI_ERROR, j_error->valuestring, ANSI_RESET);
-	}else if(j_data && data.response_callback){
-		data.response_callback(j_command->valuestring, j_data, msg->payload);
-	}else if(j_command){
-		ctrl_shell_printf("OK\n");
+	cJSON *j_endpoint_error = cJSON_GetObjectItem(j_tree, "error");
+	if(j_endpoint_error && !strcmp(j_endpoint_error->valuestring, "endpoint not available")){
+		ctrl_shell_printf("%s$CONTROL endpoint for this module not available.%s\n", ANSI_ERROR, ANSI_RESET);
 	}else{
-		ctrl_shell_printf("Invalid response from broker.\n");
+		cJSON *j_responses = cJSON_GetObjectItem(j_tree, "responses");
+		cJSON *j_command_obj = cJSON_GetArrayItem(j_responses, 0);
+		cJSON *j_command = cJSON_GetObjectItem(j_command_obj, "command");
+		cJSON *j_error = cJSON_GetObjectItem(j_command_obj, "error");
+		cJSON *j_data = cJSON_GetObjectItem(j_command_obj, "data");
+		if(j_error){
+			ctrl_shell_printf("%s%s%s\n", ANSI_ERROR, j_error->valuestring, ANSI_RESET);
+		}else if(j_data && data.response_callback){
+			data.response_callback(j_command->valuestring, j_data, msg->payload);
+		}else if(j_command){
+			ctrl_shell_printf("OK\n");
+		}else{
+			ctrl_shell_printf("Invalid response from broker.\n");
+		}
 	}
+
 	cJSON_Delete(j_tree);
 
 	data.response_received = true;
