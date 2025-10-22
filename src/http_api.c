@@ -366,6 +366,7 @@ static int check_access(struct mosquitto__listener *listener, struct MHD_Connect
 		char *buf = "Not authorised\n";
 		struct MHD_Response *response = MHD_create_response_from_buffer(strlen(buf), (void *)buf, MHD_RESPMEM_MUST_COPY);
 		MHD_queue_basic_auth_fail_response(connection, "Mosquitto API", response);
+		MHD_destroy_response(response);
 
 		return MOSQ_ERR_AUTH;
 	}
