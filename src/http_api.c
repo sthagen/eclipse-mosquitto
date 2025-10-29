@@ -352,7 +352,7 @@ static int check_access(struct mosquitto__listener *listener, struct MHD_Connect
 	context.listener = listener;
 
 	context.id = (char *)"http-api";
-	context.username = MHD_basic_auth_get_username_password (connection, &context.password);
+	context.username = MHD_basic_auth_get_username_password(connection, &context.password);
 
 	/* Authentication */
 	auth_rc = mosquitto_basic_auth(&context);

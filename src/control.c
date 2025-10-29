@@ -27,6 +27,7 @@ Contributors:
 
 #ifdef WITH_CONTROL
 
+
 static void control__negative_reply(const char *clientid, const char *request_topic)
 {
 	size_t response_topic_len;
