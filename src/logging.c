@@ -50,6 +50,7 @@ static const char *LOG_TAG = "mosquitto";
 #endif
 
 static char log_fptr_buffer[BUFSIZ];
+static void libcommon__vprintf(const char *fmt, va_list va);
 
 /* Options for logging should be:
  *
@@ -113,6 +114,8 @@ static int get_time(struct tm **ti)
 int log__init(struct mosquitto__config *config)
 {
 	int rc = 0;
+
+	libcommon_vprintf = libcommon__vprintf;
 
 	log_priorities = config->log_type;
 	log_destinations = config->log_dest;
@@ -437,4 +440,10 @@ BROKER_EXPORT void mosquitto_log_printf(int level, const char *fmt, ...)
 	va_start(va, fmt);
 	log__vprintf((unsigned int)level, fmt, va);
 	va_end(va);
+}
+
+
+static void libcommon__vprintf(const char *fmt, va_list va)
+{
+	log__vprintf(MOSQ_LOG_INFO, fmt, va);
 }

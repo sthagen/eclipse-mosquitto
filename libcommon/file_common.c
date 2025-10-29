@@ -24,6 +24,7 @@ Contributors:
 #include <ctype.h>
 #include <errno.h>
 #include <limits.h>
+#include <stdarg.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -45,6 +46,24 @@ Contributors:
 #endif
 
 #include "mosquitto.h"
+
+void (*libcommon_vprintf)(const char *fmt, va_list va) = NULL;
+
+
+void libcommon_printf(const char *fmt, ...)
+{
+	va_list va;
+
+	va_start(va, fmt);
+
+	if(libcommon_vprintf){
+		libcommon_vprintf(fmt, va);
+	}else{
+		vfprintf(stderr, fmt, va);
+	}
+
+	va_end(va);
+}
 
 
 FILE *mosquitto_fopen(const char *path, const char *mode, bool restrict_read)
@@ -185,7 +204,7 @@ FILE *mosquitto_fopen(const char *path, const char *mode, bool restrict_read)
 
 	if(restrict_read){
 		if(statbuf.st_mode & S_IRWXO){
-			fprintf(stderr,
+			libcommon_printf(
 					"Warning: File %s has world readable permissions. Future versions will refuse to load this file.\n"
 					"To fix this, use `chmod 0700 %s`.\n",
 					path, path);
@@ -199,7 +218,7 @@ FILE *mosquitto_fopen(const char *path, const char *mode, bool restrict_read)
 
 			getpwuid_r(getuid(), &pw, buf, sizeof(buf), &result);
 			if(result){
-				fprintf(stderr,
+				libcommon_printf(
 						"Warning: File %s owner is not %s. Future versions will refuse to load this file."
 						"To fix this, use `chown %s %s`.\n",
 						path, result->pw_name, result->pw_name, path);
@@ -214,7 +233,7 @@ FILE *mosquitto_fopen(const char *path, const char *mode, bool restrict_read)
 			struct group grp, *result;
 
 			if(getgrgid_r(getgid(), &grp, buf, sizeof(buf), &result) == 0){
-				fprintf(stderr,
+				libcommon_printf(
 						"Warning: File %s group is not %s. Future versions will refuse to load this file.\n",
 						path, result->gr_name);
 			}
@@ -226,7 +245,7 @@ FILE *mosquitto_fopen(const char *path, const char *mode, bool restrict_read)
 	}
 
 	if(!S_ISREG(statbuf.st_mode)){
-		fprintf(stderr, "Error: %s is not a file.", path);
+		libcommon_printf("Error: %s is not a file.", path);
 		fclose(fptr);
 		return NULL;
 	}
