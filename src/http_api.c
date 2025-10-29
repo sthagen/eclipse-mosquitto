@@ -212,7 +212,11 @@ static enum MHD_Result http_api__process_listeners(struct MHD_Connection *connec
 
 		cJSON_AddBoolToObject(j_listener, "tls", listener->certfile && listener->keyfile);
 		cJSON_AddBoolToObject(j_listener, "mtls", listener->require_certificate);
-		cJSON_AddBoolToObject(j_listener, "allow_anonymous", listener->security_options->allow_anonymous);
+		if(listener->security_options->allow_anonymous == -1){
+			cJSON_AddBoolToObject(j_listener, "allow_anonymous", db.config->security_options.allow_anonymous);
+		}else{
+			cJSON_AddBoolToObject(j_listener, "allow_anonymous", listener->security_options->allow_anonymous);
+		}
 	}
 	buf = cJSON_Print(j_tree);
 	cJSON_Delete(j_tree);
