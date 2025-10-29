@@ -95,7 +95,7 @@ int load_file(const char *filename)
 
 	cfg.pub_mode = MSGMODE_FILE;
 
-	int rc = mosquitto_read_file(filename, &buf, &buflen);
+	int rc = mosquitto_read_file(filename, false, &buf, &buflen);
 	if(rc){
 		err_printf(&cfg, "Error: Unable to read file \"%s\": %s.\n", filename, mosquitto_strerror(rc));
 		return 1;

@@ -425,14 +425,14 @@ error:
 }
 
 
-int mosquitto_read_file(const char *file, char **buf, size_t *buflen)
+int mosquitto_read_file(const char *file, bool restrict_read, char **buf, size_t *buflen)
 {
 	FILE *fptr;
 	long l;
 	size_t buflen_i;
 
 	*buf = NULL;
-	fptr = fopen(file, "rt");
+	fptr = mosquitto_fopen(file, "rt", restrict_read);
 	if(fptr == NULL){
 		return MOSQ_ERR_ERRNO;
 	}
