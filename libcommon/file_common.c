@@ -432,6 +432,9 @@ int mosquitto_read_file(const char *file, bool restrict_read, char **buf, size_t
 	size_t buflen_i;
 
 	*buf = NULL;
+	if(buflen){
+		*buflen = 0;
+	}
 	fptr = mosquitto_fopen(file, "rt", restrict_read);
 	if(fptr == NULL){
 		return MOSQ_ERR_ERRNO;
@@ -444,10 +447,6 @@ int mosquitto_read_file(const char *file, bool restrict_read, char **buf, size_t
 		fclose(fptr);
 		return MOSQ_ERR_ERRNO;
 	}else if(l == 0){
-		*buf = NULL;
-		if(buflen){
-			*buflen = 0;
-		}
 		fclose(fptr);
 		return MOSQ_ERR_SUCCESS;
 	}
