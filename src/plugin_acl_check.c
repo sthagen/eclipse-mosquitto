@@ -40,11 +40,11 @@ int acl__pre_check(mosquitto_plugin_id_t *plugin, struct mosquitto *context, int
 		* Do this check for every message regardless, we have to protect the
 		* plugins against possible pattern based attacks.
 		*/
-		if(username && strpbrk(username, "+#")){
+		if(username && strpbrk(username, "+#/")){
 			log__printf(NULL, MOSQ_LOG_NOTICE, "ACL denying access to client with dangerous username \"%s\"", username);
 			return MOSQ_ERR_ACL_DENIED;
 		}
-		if(context->id && strpbrk(context->id, "+#")){
+		if(context->id && strpbrk(context->id, "+#/")){
 			log__printf(NULL, MOSQ_LOG_NOTICE, "ACL denying access to client with dangerous client id \"%s\"", context->id);
 			return MOSQ_ERR_ACL_DENIED;
 		}
