@@ -149,6 +149,18 @@ int mosquitto_reinitialise(struct mosquitto *mosq, const char *id, bool clean_st
 	mosquitto__destroy(mosq);
 	memset(mosq, 0, sizeof(struct mosquitto));
 
+#ifdef WITH_THREADING
+	COMPAT_pthread_mutex_init(&mosq->callback_mutex, NULL);
+	COMPAT_pthread_mutex_init(&mosq->log_callback_mutex, NULL);
+	COMPAT_pthread_mutex_init(&mosq->state_mutex, NULL);
+	COMPAT_pthread_mutex_init(&mosq->out_packet_mutex, NULL);
+	COMPAT_pthread_mutex_init(&mosq->msgtime_mutex, NULL);
+	COMPAT_pthread_mutex_init(&mosq->msgs_in.mutex, NULL);
+	COMPAT_pthread_mutex_init(&mosq->msgs_out.mutex, NULL);
+	COMPAT_pthread_mutex_init(&mosq->mid_mutex, NULL);
+	mosq->thread_id = pthread_self();
+#endif
+
 	if(userdata){
 		mosq->userdata = userdata;
 	}else{
@@ -222,17 +234,6 @@ int mosquitto_reinitialise(struct mosquitto *mosq, const char *id, bool clean_st
 	mosq->want_write = false;
 	mosq->tls_ocsp_required = false;
 #endif
-#ifdef WITH_THREADING
-	COMPAT_pthread_mutex_init(&mosq->callback_mutex, NULL);
-	COMPAT_pthread_mutex_init(&mosq->log_callback_mutex, NULL);
-	COMPAT_pthread_mutex_init(&mosq->state_mutex, NULL);
-	COMPAT_pthread_mutex_init(&mosq->out_packet_mutex, NULL);
-	COMPAT_pthread_mutex_init(&mosq->msgtime_mutex, NULL);
-	COMPAT_pthread_mutex_init(&mosq->msgs_in.mutex, NULL);
-	COMPAT_pthread_mutex_init(&mosq->msgs_out.mutex, NULL);
-	COMPAT_pthread_mutex_init(&mosq->mid_mutex, NULL);
-	mosq->thread_id = pthread_self();
-#endif
 	if(mosq->disable_socketpair == false){
 		/* This must be after pthread_mutex_init(), otherwise the log mutex may be
 		* used before being initialised. */
@@ -261,19 +262,14 @@ void mosquitto__destroy(struct mosquitto *mosq)
 	}
 #  endif
 
-	if(mosq->id){
-		/* If mosq->id is not NULL then the client has already been initialised
-		 * and so the mutexes need destroying. If mosq->id is NULL, the mutexes
-		 * haven't been initialised. */
-		COMPAT_pthread_mutex_destroy(&mosq->callback_mutex);
-		COMPAT_pthread_mutex_destroy(&mosq->log_callback_mutex);
-		COMPAT_pthread_mutex_destroy(&mosq->state_mutex);
-		COMPAT_pthread_mutex_destroy(&mosq->out_packet_mutex);
-		COMPAT_pthread_mutex_destroy(&mosq->msgtime_mutex);
-		COMPAT_pthread_mutex_destroy(&mosq->msgs_in.mutex);
-		COMPAT_pthread_mutex_destroy(&mosq->msgs_out.mutex);
-		COMPAT_pthread_mutex_destroy(&mosq->mid_mutex);
-	}
+	COMPAT_pthread_mutex_destroy(&mosq->callback_mutex);
+	COMPAT_pthread_mutex_destroy(&mosq->log_callback_mutex);
+	COMPAT_pthread_mutex_destroy(&mosq->state_mutex);
+	COMPAT_pthread_mutex_destroy(&mosq->out_packet_mutex);
+	COMPAT_pthread_mutex_destroy(&mosq->msgtime_mutex);
+	COMPAT_pthread_mutex_destroy(&mosq->msgs_in.mutex);
+	COMPAT_pthread_mutex_destroy(&mosq->msgs_out.mutex);
+	COMPAT_pthread_mutex_destroy(&mosq->mid_mutex);
 #endif
 	if(net__is_connected(mosq)){
 		net__socket_close(mosq);
