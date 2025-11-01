@@ -1251,6 +1251,10 @@ static int config__read_file_core(struct mosquitto__config *config, bool reload,
 						return MOSQ_ERR_INVAL;
 					}
 					if(cur_security_options->auto_id_prefix){
+						if(strlen(cur_security_options->auto_id_prefix) > 50){
+							log__printf(NULL, MOSQ_LOG_ERR, "Error: auto_id_prefix length must be <= 50.");
+							return MOSQ_ERR_INVAL;
+						}
 						cur_security_options->auto_id_prefix_len = (uint16_t)strlen(cur_security_options->auto_id_prefix);
 					}else{
 						cur_security_options->auto_id_prefix_len = 0;
@@ -2022,6 +2026,10 @@ static int config__read_file_core(struct mosquitto__config *config, bool reload,
 						return MOSQ_ERR_INVAL;
 					}
 					if(cur_listener->security_options->auto_id_prefix){
+						if(strlen(cur_listener->security_options->auto_id_prefix) > 50){
+							log__printf(NULL, MOSQ_LOG_ERR, "Error: 'listener_auto_id_prefix' length must be <= 50.");
+							return MOSQ_ERR_INVAL;
+						}
 						cur_listener->security_options->auto_id_prefix_len = (uint16_t)strlen(cur_listener->security_options->auto_id_prefix);
 					}else{
 						cur_listener->security_options->auto_id_prefix_len = 0;

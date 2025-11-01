@@ -83,7 +83,9 @@ do_test_broker_failure(conf_file, [f"listener {port}", "max_topic_alias 65536"],
 do_test_broker_failure(conf_file, [f"listener {port}", "max_topic_alias -1"], port, 3, "Error: Invalid 'max_topic_alias' value in configuration.") # Invalid value
 do_test_broker_failure(conf_file, [f"listener {port}", "max_topic_alias_broker 65536"], port, 3, "Error: Invalid 'max_topic_alias_broker' value in configuration.") # Invalid value
 do_test_broker_failure(conf_file, [f"listener {port}", "max_topic_alias_broker -1"], port, 3, "Error: Invalid 'max_topic_alias_broker' value in configuration.") # Invalid value
-do_test_broker_failure(conf_file, ["websockets_headers_size 65536"], port, 3, "Error: Packet buffer size must be between 0 and 65535 inclusive.") # Invalid 'value
+do_test_broker_failure(conf_file, [f"listener {port}", "listener_auto_id_prefix"], port, 3, "Error: Empty 'listener_auto_id_prefix' value in configuration.") # Empty string
+do_test_broker_failure(conf_file, [f"listener {port}", f"listener_auto_id_prefix {'a'*51}"], port, 3, "Error: 'listener_auto_id_prefix' length must be <= 50.") # Invalid value
+do_test_broker_failure(conf_file, ["websockets_headers_size 65536"], port, 3, "Error: Packet buffer size must be between 0 and 65535 inclusive.") # Invalid value
 do_test_broker_failure(conf_file, ["websockets_headers_size -1"], port, 3, "Error: Packet buffer size must be between 0 and 65535 inclusive.") # Invalid value
 do_test_broker_failure(conf_file, ["memory_limit -1"], port, 3, "Error: Invalid 'memory_limit' value (-1).") # Invalid value
 
