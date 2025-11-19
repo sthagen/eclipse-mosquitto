@@ -18,10 +18,6 @@
 # directions, with two test clients, one at each end.
 
 # Disable on Travis for now, too unreliable
-import os
-if os.environ.get('TRAVIS') is not None:
-    exit(0)
-
 from mosq_test_helper import *
 from collections import namedtuple
 
@@ -41,13 +37,14 @@ def write_config_edge(filename, persistence_file, remote_port, listen_port, prot
         f.write("persistence_file %s\n" % (persistence_file))
         f.write("\n")
         f.write("connection bridge_sample\n")
+        f.write("local_clientid id_local\n")
+        f.write("remote_clientid id_remote\n")
         f.write("address 127.0.0.1:%d\n" % (remote_port))
         f.write("topic br_out/# out 1\n")
         f.write("topic br_in/# in 1\n")
-        f.write("notifications false\n")
         # We need to ensure connections break fast enough to keep test times sane
         f.write("keepalive_interval 5\n")
-        f.write("restart_timeout 5\n")
+        f.write("restart_timeout 2\n")
         f.write("cleansession %s\n" % ("true" if cs else "false"))
         # Ensure defaults are tested
         if lcs is not None:
@@ -64,6 +61,23 @@ def write_config_core(filename, listen_port, persistence_file):
         f.write("\n")
         f.write("persistence true\n")
         f.write("persistence_file %s\n" % (persistence_file))
+
+
+def wait_for_bridge_to_connect(port, clientid):
+    conn = mosq_test.gen_connect("helper", clean_session=True)
+    connack = mosq_test.gen_connack(rc=0)
+
+    sock = mosq_test.do_client_connect(conn, connack, port=port)
+    sub = mosq_test.gen_subscribe(1, f'$SYS/broker/connection/{clientid}/state', 0)
+    sub = mosq_test.gen_subscribe(1, f'$SYS/broker/connection/#', 0)
+    suback = mosq_test.gen_suback(1, 0)
+    mosq_test.do_send_receive(sock, sub, suback)
+    pub_r = mosq_test.gen_publish(topic=f"$SYS/broker/connection/{clientid}/state", payload="1", qos=0, retain=True)
+    pub_nr = mosq_test.gen_publish(topic=f"$SYS/broker/connection/{clientid}/state", payload="1", qos=0)
+    pub_rec = sock.recv(len(pub_r))
+    if pub_rec != pub_r and pub_rec != pub_nr:
+        raise ValueError(mosq_test.to_string(pub_rec))
+    sock.close()
 
 
 def do_test(proto_ver, cs, lcs=None):
@@ -180,8 +194,7 @@ def do_test(proto_ver, cs, lcs=None):
 
         client_b = mosq_test.do_client_connect(reconn_b.p, reconn_b.ack, port=port_b_listen)
         tprint("client b reconnected after restarting broker b at ", time.time())
-        # Need to sleep long enough to be sure of a re-connection...
-        time.sleep(10)  # yuck, this makes the test run for ages!
+        wait_for_bridge_to_connect(port_b_listen, "id_remote")
 
         # should go through
         tprint("(B should be alive again now!) sending (after reconn!) a3 at ", time.time())
@@ -212,8 +225,7 @@ def do_test(proto_ver, cs, lcs=None):
         # client a needs to reconnect now!
         client_a = mosq_test.do_client_connect(reconn_a.p, reconn_a.ack, port=port_a_listen)
         tprint("client A reconnected after restarting broker A at ", time.time())
-        # Need to sleep long enough to be sure of a re-connection...
-        time.sleep(10)  # yuck, this makes the test run for ages!
+        wait_for_bridge_to_connect(port_a_listen, "id_remote")
 
         # should go through
         mosq_test.do_send_receive(client_b, pub_b3.p, pub_b3.ack, "puback_b3")
@@ -228,6 +240,8 @@ def do_test(proto_ver, cs, lcs=None):
 
         success = broker_termination_success
 
+    except Exception as e:
+        print(e)
     except mosq_test.TestError:
         pass
     finally:

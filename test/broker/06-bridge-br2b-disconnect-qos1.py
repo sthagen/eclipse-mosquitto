@@ -13,7 +13,7 @@ def write_config(filename, port1, port2, protocol_version):
         f.write("address 127.0.0.1:%d\n" % (port1))
         f.write("topic bridge/# both 1\n")
         f.write("notifications false\n")
-        f.write("restart_timeout 5\n")
+        f.write("restart_timeout 2\n")
         f.write("bridge_protocol_version %s\n" % (protocol_version))
         f.write("bridge_max_topic_alias 0\n")
 
