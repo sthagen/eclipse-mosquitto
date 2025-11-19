@@ -61,7 +61,7 @@ libmosqcommon_EXPORT int mosquitto_read_file(const char *file, bool restrict_rea
  */
 libmosqcommon_EXPORT char *mosquitto_trimblanks(char *str);
 
-extern void (*libcommon_vprintf)(const char *fmt, va_list va);
+libmosqcommon_EXPORT extern void (*libcommon_vprintf)(const char *fmt, va_list va);
 
 #ifdef __cplusplus
 }
