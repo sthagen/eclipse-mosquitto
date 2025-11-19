@@ -29,11 +29,12 @@ Contributors:
 int password_file__parse(struct password_file_data *data)
 {
 	FILE *pwfile;
-	struct mosquitto__unpwd *unpwd;
+	struct mosquitto__unpwd *unpwd = NULL;
 	char *username, *password;
 	char *saveptr = NULL;
 	char *buf;
 	int buflen = 256;
+	int rc = MOSQ_ERR_INVAL;
 
 	buf = mosquitto_malloc((size_t)buflen);
 	if(buf == NULL){
@@ -62,38 +63,28 @@ int password_file__parse(struct password_file_data *data)
 				username = mosquitto_trimblanks(username);
 				if(strlen(username) > 65535){
 					mosquitto_log_printf(MOSQ_LOG_ERR, "password-file: Error: Invalid line in password file '%s', username too long.", data->password_file);
-					fclose(pwfile);
-					mosquitto_FREE(buf);
-					return MOSQ_ERR_INVAL;
+					goto error;
 				}
 				if(strlen(username) <= 0){
 					mosquitto_log_printf(MOSQ_LOG_ERR, "password-file: Error: Empty username in password file '%s'.", data->password_file);
-					fclose(pwfile);
-					mosquitto_FREE(buf);
-					return MOSQ_ERR_INVAL;
+					goto error;
 				}
 
 				HASH_FIND(hh, data->unpwd, username, strlen(username), unpwd);
 				if(unpwd){
 					mosquitto_log_printf(MOSQ_LOG_ERR, "password-file: Error: Duplicate user '%s' in password file '%s'.", username, data->password_file);
-					fclose(pwfile);
-					mosquitto_FREE(buf);
-					return MOSQ_ERR_INVAL;
+					goto error;
 				}
 
 				unpwd = mosquitto_calloc(1, sizeof(struct mosquitto__unpwd));
 				if(!unpwd){
-					fclose(pwfile);
-					mosquitto_FREE(buf);
-					return MOSQ_ERR_NOMEM;
+					goto error;
 				}
 
 				unpwd->username = mosquitto_strdup(username);
 				if(!unpwd->username){
-					mosquitto_FREE(unpwd);
-					mosquitto_FREE(buf);
-					fclose(pwfile);
-					return MOSQ_ERR_NOMEM;
+					rc = MOSQ_ERR_NOMEM;
+					goto error;
 				}
 				password = strtok_r(NULL, ":", &saveptr);
 				if(password){
@@ -101,34 +92,20 @@ int password_file__parse(struct password_file_data *data)
 
 					if(strlen(password) > 65535){
 						mosquitto_log_printf(MOSQ_LOG_ERR, "password-file: Error: Invalid line in password file '%s', password too long.", data->password_file);
-						mosquitto_FREE(unpwd->username);
-						mosquitto_FREE(unpwd);
-						mosquitto_FREE(buf);
-						fclose(pwfile);
-						return MOSQ_ERR_INVAL;
+						goto error;
 					}
 
 					if(mosquitto_pw_new(&unpwd->pw, MOSQ_PW_DEFAULT)
 							|| mosquitto_pw_decode(unpwd->pw, password)){
 
 						mosquitto_log_printf(MOSQ_LOG_ERR, "password-file: Error: Unable to decode line in password file '%s'.", data->password_file);
-						mosquitto_pw_cleanup(unpwd->pw);
-						mosquitto_FREE(unpwd->username);
-						mosquitto_FREE(unpwd);
-						mosquitto_FREE(buf);
-						fclose(pwfile);
-						return MOSQ_ERR_INVAL;
+						goto error;
 					}
 
 					HASH_ADD_KEYPTR(hh, data->unpwd, unpwd->username, strlen(unpwd->username), unpwd);
 				}else{
 					mosquitto_log_printf(MOSQ_LOG_ERR, "password-file: Error: Invalid line in password file '%s': %s", data->password_file, buf);
-					mosquitto_pw_cleanup(unpwd->pw);
-					mosquitto_FREE(unpwd->username);
-					mosquitto_FREE(unpwd);
-					mosquitto_FREE(buf);
-					fclose(pwfile);
-					return MOSQ_ERR_INVAL;
+					goto error;
 				}
 			}
 		}
@@ -137,6 +114,15 @@ int password_file__parse(struct password_file_data *data)
 	mosquitto_FREE(buf);
 
 	return MOSQ_ERR_SUCCESS;
+error:
+	if(unpwd){
+		mosquitto_pw_cleanup(unpwd->pw);
+		mosquitto_FREE(unpwd->username);
+		mosquitto_FREE(unpwd);
+	}
+	mosquitto_FREE(buf);
+	fclose(pwfile);
+	return rc;
 }
 
 
