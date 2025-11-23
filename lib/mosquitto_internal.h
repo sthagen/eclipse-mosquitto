@@ -360,6 +360,7 @@ struct mosquitto {
 	enum mosquitto__keyform tls_keyform;
 #endif
 	bool want_write;
+	bool run;
 #if defined(WITH_THREADING) && !defined(WITH_BROKER)
 	pthread_mutex_t callback_mutex;
 	pthread_mutex_t log_callback_mutex;

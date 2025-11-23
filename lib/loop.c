@@ -243,7 +243,6 @@ static int interruptible_sleep(struct mosquitto *mosq, time_t reconnect_delay)
 
 int mosquitto_loop_forever(struct mosquitto *mosq, int timeout, int max_packets)
 {
-	int run = 1;
 	int rc = MOSQ_ERR_SUCCESS;
 	unsigned long reconnect_delay;
 
@@ -252,14 +251,15 @@ int mosquitto_loop_forever(struct mosquitto *mosq, int timeout, int max_packets)
 	}
 
 	mosq->reconnects = 0;
+	mosq->run = true;
 
-	while(run){
+	while(mosq->run){
 		do{
 #ifdef HAVE_PTHREAD_CANCEL
 			COMPAT_pthread_testcancel();
 #endif
 			rc = mosquitto_loop(mosq, timeout, max_packets);
-		}while(run && rc == MOSQ_ERR_SUCCESS);
+		}while(mosq->run && rc == MOSQ_ERR_SUCCESS);
 		/* Quit after fatal errors. */
 		switch(rc){
 			case MOSQ_ERR_NOMEM:
@@ -287,7 +287,7 @@ int mosquitto_loop_forever(struct mosquitto *mosq, int timeout, int max_packets)
 #endif
 			rc = MOSQ_ERR_SUCCESS;
 			if(mosquitto__get_request_disconnect(mosq)){
-				run = 0;
+				mosq->run = false;
 			}else{
 				if(mosq->reconnect_delay_max > mosq->reconnect_delay){
 					if(mosq->reconnect_exponential_backoff){
@@ -311,12 +311,12 @@ int mosquitto_loop_forever(struct mosquitto *mosq, int timeout, int max_packets)
 				}
 
 				if(mosquitto__get_request_disconnect(mosq)){
-					run = 0;
+					mosq->run = false;
 				}else{
 					rc = mosquitto_reconnect(mosq);
 				}
 			}
-		}while(run && rc != MOSQ_ERR_SUCCESS);
+		}while(mosq->run && rc != MOSQ_ERR_SUCCESS);
 	}
 	return rc;
 }

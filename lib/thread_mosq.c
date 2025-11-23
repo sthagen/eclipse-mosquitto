@@ -79,6 +79,7 @@ int mosquitto_loop_stop(struct mosquitto *mosq, bool force)
 		return MOSQ_ERR_INVAL;
 	}
 
+	mosq->run = false;
 
 	/* Write a single byte to sockpairW (connected to sockpairR) to break out
 	 * of select() if in threaded mode. */
