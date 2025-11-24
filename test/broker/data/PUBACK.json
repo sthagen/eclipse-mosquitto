@@ -4,6 +4,7 @@
 		"ver":4,
 		"tests": [
 			{ "name": "40 [MQTT-3.1.0-1]", "connect":false, "msgs": [{"type":"send", "payload":"40 r2 m1"}]},
+			{ "name": "40 remaining length 5 bytes", "msgs":[{"type":"send", "payload":"40 r268435456"}]},
 			{ "name": "40 unsolicited long", "msgs": [{"type":"send", "payload":"40 r3 m1 00"}]},
 			{ "name": "40 unsolicited mid 0", "msgs": [{"type":"send", "payload":"40 r2 m0"}]},
 			{ "name": "40 unsolicited short 0", "msgs": [{"type":"send", "payload":"40 r0"}]},
@@ -20,6 +21,7 @@
 		"ver":5,
 		"tests": [
 			{ "name": "40 [MQTT-3.1.0-1] (no reason code)", "connect":false, "msgs": [{"type":"send", "payload":"40 r2 m1"}]},
+			{ "name": "40 remaining length 5 bytes", "msgs":[{"type":"send", "payload":"40 r268435456"}]},
 			{ "name": "40 [MQTT-3.1.0-1]", "connect":false, "msgs": [{"type":"send", "payload":"40 r3 m1 00"}]},
 			{ "name": "40 unsolicited long", "msgs": [
 				{"type":"send", "payload":"40 r5 m1 00 00 00"},

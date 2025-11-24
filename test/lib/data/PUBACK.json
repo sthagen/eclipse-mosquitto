@@ -4,6 +4,7 @@
 		"ver":4,
 		"tests": [
 			{ "name": "40 [MQTT-3.1.0-1]", "connack":false, "msgs": [{"type":"send", "payload":"40 r2 m1"}]},
+			{ "name": "40 remaining length 5 bytes", "msgs":[{"type":"send", "payload":"40 r268435456"}]},
 			{ "name": "40 long", "msgs": [{"type":"send", "payload":"40 r3 m1 00"}]},
 			{ "name": "40 mid 0", "msgs": [{"type":"send", "payload":"40 r2 m0"}]},
 			{ "name": "40 short 0", "msgs": [{"type":"send", "payload":"40 r0"}]},
@@ -23,30 +24,15 @@
 			{"type":"recv", "payload":"32 r23 s12 'test/publish' m1 'message'"}
 		],
 		"tests": [
-			{ "name": "40 long", "msgs": [
-				{"type":"send", "payload":"40 r3 m1 00"}
-			]},
-			{ "name": "40 mid 0", "msgs": [
-				{"type":"send", "payload":"40 r2 m0"}
-			]},
-			{ "name": "40 short 0", "msgs": [
-				{"type":"send", "payload":"40 r0"}
-			]},
-			{ "name": "40 short 1", "msgs": [
-				{"type":"send", "payload":"40 r1 01"}
-			]},
-			{ "name": "41", "msgs": [
-				{"type":"send", "payload":"41 r2 m1"}
-			]},
-			{ "name": "42", "msgs": [
-				{"type":"send", "payload":"42 r2 m1"}
-			]},
-			{ "name": "44", "msgs": [
-				{"type":"send", "payload":"44 r2 m1"}
-			]},
-			{ "name": "48", "msgs": [
-				{"type":"send", "payload":"48 r2 m1"}
-			]}
+			{ "name": "40 long", "msgs": [{"type":"send", "payload":"40 r3 m1 00"}]},
+			{ "name": "40 remaining length 5 bytes", "msgs":[{"type":"send", "payload":"40 r268435456"}]},
+			{ "name": "40 mid 0", "msgs": [{"type":"send", "payload":"40 r2 m0"}]},
+			{ "name": "40 short 0", "msgs": [{"type":"send", "payload":"40 r0"}]},
+			{ "name": "40 short 1", "msgs": [{"type":"send", "payload":"40 r1 01"}]},
+			{ "name": "41", "msgs": [{"type":"send", "payload":"41 r2 m1"}]},
+			{ "name": "42", "msgs": [{"type":"send", "payload":"42 r2 m1"}]},
+			{ "name": "44", "msgs": [{"type":"send", "payload":"44 r2 m1"}]},
+			{ "name": "48", "msgs": [{"type":"send", "payload":"48 r2 m1"}]}
 		]
 	},
 	{

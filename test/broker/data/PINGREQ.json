@@ -4,6 +4,7 @@
 		"ver":4,
 		"tests": [
 			{ "name": "C0 [MQTT-3.1.0-1]", "connect":false, "msgs": [{"type":"send", "payload":"C0 r0"}]},
+			{ "name": "C0 remaining length 5 bytes", "msgs":[{"type":"send", "payload":"C0 r268435456"}]},
 			{ "name": "C0 long", "msgs": [{"type":"send", "payload":"C00100"}]},
 			{ "name": "C0 valid", "expect_disconnect": false, "msgs": [{"type":"send", "payload":"C0 r0"}, {"type":"recv", "payload":"D0 00"}]},
 			{ "name": "C1", "msgs": [{"type":"send", "payload":"C1 r0"}]},
@@ -17,6 +18,7 @@
 		"ver":5,
 		"tests": [
 			{ "name": "C0 [MQTT-3.1.0-1]", "connect":false, "msgs": [{"type":"send", "payload":"C0 r0"}]},
+			{ "name": "C0 remaining length 5 bytes", "msgs":[{"type":"send", "payload":"C0 r268435456"}]},
 			{ "name": "C0 long", "msgs": [{"type":"send", "payload":"C0 r1 00"}]},
 			{ "name": "C0 valid", "expect_disconnect": false, "msgs": [{"type":"send", "payload":"C0 r0"}, {"type":"recv", "payload":"D0 00"}]},
 			{ "name": "C1", "msgs": [

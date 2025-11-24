@@ -219,9 +219,17 @@ def parse_message(message):
             # General variable length integer
             # Or 'r' remaining length
             v = int(parts[i][1:])
-            if v > 255:
-                raise ValueError("Variable length > 255 needs implementing")
-            b += v.to_bytes(length=1, byteorder='big', signed=False)
+
+            # This allows non-compliant values >=2^28
+            while True:
+                byte = v % 128
+                v = v // 128
+
+                if v > 0:
+                    byte = byte | 0x80
+                b += byte.to_bytes(length=1, byteorder='big', signed=False)
+                if v == 0:
+                    break
         else:
             # hex
             try:

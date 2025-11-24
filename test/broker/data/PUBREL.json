@@ -4,6 +4,7 @@
 		"ver":4,
 		"tests": [
 			{ "name": "62 [MQTT-3.1.0-1]", "connect":false, "msgs": [{"type":"send", "payload":"62 r2 m1"}]},
+			{ "name": "62 remaining length 5 bytes", "msgs":[{"type":"send", "payload":"62 r268435456"}]},
 			{ "name": "62 unsolicited", "expect_disconnect":false, "msgs": [
 				{"type":"send", "payload":"62 r2 m1"},
 				{"type":"recv", "payload":"70 r2 m1"}
@@ -23,6 +24,7 @@
 		"ver":5,
 		"tests": [
 			{ "name": "62 [MQTT-3.1.0-1] (no reason code)", "connect":false, "msgs": [{"type":"send", "payload":"62 r2 m1"}]},
+			{ "name": "62 remaining length 5 bytes", "msgs":[{"type":"send", "payload":"62 r268435456"}]},
 			{ "name": "62 [MQTT-3.1.0-1]", "connect":false, "msgs": [{"type":"send", "payload":"62 r3 m1 00"}]},
 			{ "name": "62 unsolicited long", "msgs": [
 				{"type":"send", "payload":"62 r5 m1 00 00 00"},

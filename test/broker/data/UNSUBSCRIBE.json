@@ -4,6 +4,7 @@
 		"ver":4,
 		"tests": [
 			{ "name": "A2 [MQTT-3.1.0-1]", "connect":false, "msgs": [{"type":"send", "payload":"A2 r5 m1234 s1 'p'"}]},
+			{ "name": "A2 remaining length 5 bytes", "msgs":[{"type":"send", "payload":"A2 r268435456"}]},
 			{ "name": "A2 (no subscribe) [MQTT-3.10.4-5]", "expect_disconnect":false, "msgs": [
 				{"type":"send", "payload":"A2 r5 m1234 s1 'p'"},
 				{"type":"recv", "payload":"B0 r2 m1234"}
@@ -45,6 +46,7 @@
 		"ver":5,
 		"tests": [
 			{ "name": "A2 [MQTT-3.1.0-1]", "connect":false, "msgs": [{"type":"send", "payload":"A2 r6 m1234 00 s1 'p'"}]},
+			{ "name": "A2 remaining length 5 bytes", "msgs":[{"type":"send", "payload":"A2 r268435456"}]},
 			{ "name": "A2 (no subscribe) [MQTT-3.10.4-5]", "expect_disconnect":false, "msgs": [
 				{"type":"send", "payload":"A2 r6 m1234 v0 s1 'p'"},
 				{"type":"recv", "payload":"B0 r4 m1234 v0 11"}

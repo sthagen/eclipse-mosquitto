@@ -4,6 +4,7 @@
 		"ver":4,
 		"tests": [
 			{ "name": "00 first packet", "connect": false, "msgs": [{"type":"send", "payload":"00 r0"}]},
+			{ "name": "00 remaining length 5 bytes", "msgs":[{"type":"send", "payload":"00 r268435456"}]},
 			{ "name": "01 first packet", "connect": false, "msgs": [{"type":"send", "payload":"01 r0"}]},
 			{ "name": "02 first packet", "connect": false, "msgs": [{"type":"send", "payload":"02 r0"}]},
 			{ "name": "04 first packet", "connect": false, "msgs": [{"type":"send", "payload":"04 r0"}]},
@@ -21,6 +22,10 @@
 		"ver":5,
 		"tests": [
 			{ "name": "00 first packet", "connect": false, "msgs": [{"type":"send", "payload":"00 r0"}]},
+			{ "name": "00 remaining length 5 bytes", "msgs":[
+				{"type":"send", "payload":"00 r268435456"},
+				{"type":"recv", "payload":"E0 r1 82", "comment":"DISCONNECT protocol error"}
+			]},
 			{ "name": "01 first packet", "connect": false, "msgs": [{"type":"send", "payload":"01 r0"}]},
 			{ "name": "02 first packet", "connect": false, "msgs": [{"type":"send", "payload":"02 r0"}]},
 			{ "name": "04 first packet", "connect": false, "msgs": [{"type":"send", "payload":"04 r0"}]},

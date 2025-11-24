@@ -4,6 +4,7 @@
 		"ver":4,
 		"tests": [
 			{ "name": "B0 [MQTT-3.1.0-1]", "connack":false, "msgs": [{"type":"send", "payload":"B0 r2 m1"}]},
+			{ "name": "B0 remaining length 5 bytes", "msgs":[{"type":"send", "payload":"B0 r268435456"}]},
 			{ "name": "B0 short 0", "msgs": [{"type":"send", "payload":"B0 r0"}]},
 			{ "name": "B0 short 1", "msgs": [{"type":"send", "payload":"B0 r1 01"}]},
 			{ "name": "B0", "expect_disconnect":false, "msgs": [{"type":"send", "payload":"B0 r2 m1"}]},
@@ -21,6 +22,7 @@
 			{"type":"recv", "payload":"A2 r18 m1 s14 'test/subscribe'"}
 		],
 		"tests": [
+			{ "name": "B0 remaining length 5 bytes", "msgs":[{"type":"send", "payload":"B0 r268435456"}]},
 			{ "name": "B0 short 0", "msgs": [{"type":"send", "payload":"B0 r0"}]},
 			{ "name": "B0 short 1", "msgs": [{"type":"send", "payload":"B0 r1 01"}]},
 			{ "name": "B0", "expect_disconnect":false, "msgs": [{"type":"send", "payload":"B0 r2 m1"}]},

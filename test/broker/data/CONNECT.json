@@ -28,6 +28,9 @@
 			{ "name": "10 ok", "expect_disconnect":false, "msgs":[
 				{"type":"send", "payload":"10 r15 s6 'MQIsdp' 03 02 k10 s1 'p'", "comment":"CONNECT clean session true, no client id"},
 				{"type":"recv", "payload":"20 r2 00 00", "comment": "CONNACK"}
+			]},
+			{ "name": "10 remaining length 5 bytes", "msgs":[
+				{"type":"send", "payload":"10 r268435456 s6 'MQIsdp' 03 02 k10 s1 'p'", "comment":"minimal valid CONNECT"}
 			]}
 		]
 	},
@@ -63,7 +66,7 @@
 				{"type":"recv", "payload":"20 r3 00 84 00", "comment": "v3.1.1 CONNACK identifier rejected"}
 			]},
 			{ "name": "10 remaining length 5 bytes", "msgs":[
-				{"type":"send", "payload":"10 FFFFFFFF7F s4 'MQTT' 06 00 k10 s1 'p'", "comment":"CONNECT"}
+				{"type":"send", "payload":"10 r268435456 s4 'MQTT' 05 02 k10 s1 'p'", "comment":"CONNECT"}
 			]},
 			{ "name": "11", "msgs":[{"type":"send", "payload":"11 r13 s4 'MQTT' 04 02 k10 s1 'p'"}]},
 			{ "name": "12", "msgs":[{"type":"send", "payload":"12 r13 s4 'MQTT' 04 02 k10 s1 'p'"}]},
@@ -143,6 +146,9 @@
 			{ "name": "10 ok ", "expect_disconnect":false, "msgs":[
 				{"type":"send", "payload":"10 r14 s4 'MQTT' 05 02 k10 v0 s1 'p'", "comment":"minimal valid CONNECT"},
 				{"type":"recv", "payload":"20 r9 00 00 06 22 H10 21 H20", "comment": "CONNACK"}
+			]},
+			{ "name": "10 remaining length 5 bytes", "msgs":[
+				{"type":"send", "payload":"10 r268435456 s4 'MQTT' 05 02 k10 s1 'p'", "comment":"CONNECT"}
 			]},
 			{ "name": "10 Username flag 1 ok", "expect_disconnect":false, "msgs":[
 				{"type":"send", "payload":"10 r17 s4 'MQTT' 05 82 k10 v0 s1 'p' s1 'p'"},

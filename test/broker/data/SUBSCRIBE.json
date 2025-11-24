@@ -4,6 +4,7 @@
 		"ver":4,
 		"tests": [
 			{ "name": "82 [MQTT-3.1.0-1]", "connect":false, "msgs": [{"type":"send", "payload":"82 r6 m1234 s1 'p' 00"}]},
+			{ "name": "82 remaining length 5 bytes", "msgs":[{"type":"send", "payload":"82 r268435456"}]},
 			{ "name": "80", "msgs": [{"type":"send", "payload":"80061234 s1 'p' 00"}]},
 			{ "name": "83 [MQTT-3.8.1-1]", "msgs": [{"type":"send", "payload":"83 r6 m1234 s1 'p' 00"}]},
 			{ "name": "84 [MQTT-3.8.1-1]", "msgs": [{"type":"send", "payload":"84 r6 m1234 s1 'p' 00"}]},

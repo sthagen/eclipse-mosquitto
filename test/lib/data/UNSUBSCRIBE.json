@@ -4,6 +4,7 @@
 		"ver":4,
 		"tests": [
 			{ "name": "A2 [MQTT-3.1.0-1]", "connack":false, "msgs": [{"type":"send", "payload":"A2 r5 m1234 s1 'p'"}]},
+			{ "name": "A2 remaining length 5 bytes", "msgs":[{"type":"send", "payload":"A2 r268435456"}]},
 			{ "name": "A2 (no subscribe) [MQTT-3.10.4-5]", "msgs": [{"type":"send", "payload":"A2 r5 m1234 s1 'p'"}]},
 			{ "name": "A2 multiple [MQTT-3.10.4-6]", "msgs": [{"type":"send", "payload":"A2 r8 m1234 s1 'p' s1 'q'"}]},
 			{ "name": "A2 multiple zero 1st", "msgs": [{"type":"send", "payload":"A2 r7 m1234 s0 s1 'q'"}]},
@@ -33,6 +34,7 @@
 		"ver":5,
 		"tests": [
 			{ "name": "A2 [MQTT-3.1.0-1]", "connack":false, "msgs": [{"type":"send", "payload":"A2 r6 m1234 00 s1 'p'"}]},
+			{ "name": "A2 remaining length 5 bytes", "msgs":[{"type":"send", "payload":"A2 r268435456"}]},
 			{ "name": "A2 [MQTT-3.10.4-5]", "msgs": [{"type":"send", "payload":"A2 r6 m1234 00 s1 'p'"}]},
 			{ "name": "A2 multiple zero 1st", "msgs": [{"type":"send", "payload":"A2 r8 m1234 00 s0 s1 'q'"}]},
 			{ "name": "A2 multiple zero 2nd", "msgs": [{"type":"send", "payload":"A2 r8 m1234 00 s1 'q' s0"}]},

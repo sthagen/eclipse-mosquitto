@@ -4,6 +4,7 @@
 		"ver":4,
 		"tests": [
 			{ "name": "82 [MQTT-3.1.0-1]", "connack":false, "msgs": [{"type":"send", "payload":"82 r6 m1234 s1 'p' 00"}]},
+			{ "name": "82 remaining length 5 bytes", "msgs":[{"type":"send", "payload":"82 r268435456"}]},
 			{ "name": "80", "msgs": [{"type":"send", "payload":"80 r6 m1234 s1 'p' 00"}]},
 			{ "name": "83 [MQTT-3.8.1-1]", "msgs": [{"type":"send", "payload":"83 r6 m1234 s1 'p' 00"}]},
 			{ "name": "84 [MQTT-3.8.1-1]", "msgs": [{"type":"send", "payload":"84 r6 m1234 s1 'p' 00"}]},
@@ -46,6 +47,7 @@
 		"ver":5,
 		"tests": [
 			{ "name": "82 [MQTT-3.1.0-1]", "connack":false, "msgs": [{"type":"send", "payload":"82 07 m1234 v0 s1 'p' 00"}]},
+			{ "name": "82 remaining length 5 bytes", "msgs":[{"type":"send", "payload":"82 r268435456"}]},
 			{ "name": "82 single ok QoS 0 [MQTT-3.8.4-1]", "msgs": [{"type":"send", "payload":"82 07 m1234 v0 s1 'p' 00"}]},
 			{ "name": "82 single ok QoS 1 [MQTT-3.8.4-1]", "msgs": [{"type":"send", "payload":"82 07 m1234 v0 s1 'p' 01"}]},
 			{ "name": "82 single ok QoS 2 [MQTT-3.8.4-1]", "msgs": [{"type":"send", "payload":"82 07 m1234 v0 s1 'p' 02"}]},

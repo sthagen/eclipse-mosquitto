@@ -4,6 +4,7 @@
 		"ver":4,
 		"tests": [
 			{ "name": "30 [MQTT-3.1.0-1]", "connect":false, "msgs": [{"type":"send", "payload":"30 r14 s5 'topic' 'payload'"}]},
+			{ "name": "30 remaining length 5 bytes", "msgs":[{"type":"send", "payload":"30 r268435456"}]},
 			{ "name": "30", "expect_disconnect":false, "msgs": [{"type":"send", "payload":"30 r14 s5 'topic' 'payload'"}]},
 			{ "name": "31 retain 1", "expect_disconnect":false, "msgs": [{"type":"send", "payload":"31 r14 s5 'topic' 'payload'"}]},
 			{ "name": "31 retain 1 zero length", "expect_disconnect":false, "msgs": [{"type":"send", "payload":"31 r7 s5 'topic'"}]},
@@ -58,6 +59,7 @@
 		"ver":5,
 		"tests": [
 			{ "name": "30 [MQTT-3.1.0-1]", "connect":false, "msgs": [{"type":"send", "payload":"30 r15 s5 'topic' 00 'payload'"}]},
+			{ "name": "30 remaining length 5 bytes", "msgs":[{"type":"send", "payload":"30 r268435456"}]},
 			{ "name": "30", "expect_disconnect":false, "msgs": [{"type":"send", "payload":"30 r15 s5 'topic' 00 'payload'"}]},
 			{ "name": "31 retain 1", "expect_disconnect":false, "msgs": [{"type":"send", "payload":"31 r15 s5 'topic' v0 'payload'"}]},
 			{ "name": "31 retain 1 zero length", "expect_disconnect":false, "msgs": [{"type":"send", "payload":"31 r8 s5 'topic' v0"}]},
