@@ -654,6 +654,11 @@ int net__tls_load_verify(struct mosquitto__listener *listener)
 		}
 	}
 #  else
+	STACK_OF(X509_NAME) *ca_names = NULL;
+	if(listener->cafile || listener->capath){
+		ca_names = sk_X509_NAME_new_null();
+	}
+
 	if(listener->cafile){
 		rc = SSL_CTX_load_verify_file(listener->ssl_ctx, listener->cafile);
 		if(rc == 0){
@@ -661,6 +666,15 @@ int net__tls_load_verify(struct mosquitto__listener *listener)
 			net__print_ssl_error(NULL, NULL);
 			return MOSQ_ERR_TLS;
 		}
+
+		STACK_OF(X509_NAME) *cert_names = SSL_load_client_CA_file(listener->cafile);
+		if(cert_names){
+			for(int i=0; i<sk_X509_NAME_num(cert_names); i++){
+				sk_X509_NAME_push(ca_names, X509_NAME_dup(sk_X509_NAME_value(cert_names, i)));
+			}
+			sk_X509_NAME_free(cert_names);
+		}
+
 	}
 	if(listener->capath){
 		rc = SSL_CTX_load_verify_dir(listener->ssl_ctx, listener->capath);
@@ -669,6 +683,11 @@ int net__tls_load_verify(struct mosquitto__listener *listener)
 			net__print_ssl_error(NULL, NULL);
 			return MOSQ_ERR_TLS;
 		}
+
+		SSL_add_dir_cert_subjects_to_stack(ca_names, listener->capath);
+	}
+	if(ca_names){
+		SSL_CTX_set_client_CA_list(listener->ssl_ctx, ca_names);
 	}
 #  endif
 
