@@ -232,7 +232,10 @@ endif (WITH_WEBSOCKETS)
 add_executable(mosquitto ${MOSQ_SRCS})
 target_link_libraries(mosquitto ${MOSQ_LIBS})
 if (WIN32)
-	set_target_properties(mosquitto PROPERTIES ENABLE_EXPORTS 1)
+	set_target_properties(mosquitto PROPERTIES
+		ENABLE_EXPORTS 1
+		ARCHIVE_OUTPUT_NAME "mosquitto_broker"
+	)
 endif (WIN32)
 
 if (UNIX)
