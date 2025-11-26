@@ -44,6 +44,7 @@ int handle__connack(struct mosquitto *context)
 		return MOSQ_ERR_INVAL;
 	}
 	if(context->bridge == NULL){
+		log__printf(NULL, MOSQ_LOG_INFO, "Protocol error from %s: CONNACK when not a bridge.", context->id);
 		return MOSQ_ERR_PROTOCOL;
 	}
 	if(context->in_packet.command != CMD_CONNACK){

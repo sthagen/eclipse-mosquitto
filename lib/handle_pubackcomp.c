@@ -49,6 +49,9 @@ int handle__pubackcomp(struct mosquitto *mosq, const char *type)
 	assert(mosq);
 
 	if(mosquitto__get_state(mosq) != mosq_cs_active){
+#ifdef WITH_BROKER
+		log__printf(NULL, MOSQ_LOG_INFO, "Protocol error from %s: %s before session is active.", mosq->id, type);
+#endif
 		return MOSQ_ERR_PROTOCOL;
 	}
 	if(mosq->protocol != mosq_p_mqtt31){
@@ -75,6 +78,9 @@ int handle__pubackcomp(struct mosquitto *mosq, const char *type)
 		qos = 2;
 	}
 	if(mid == 0){
+#ifdef WITH_BROKER
+		log__printf(NULL, MOSQ_LOG_INFO, "Protocol error from %s: %s with mid = 0.", mosq->id, type);
+#endif
 		return MOSQ_ERR_PROTOCOL;
 	}
 
@@ -101,6 +107,10 @@ int handle__pubackcomp(struct mosquitto *mosq, const char *type)
 					){
 
 				mosquitto_property_free_all(&properties);
+#ifdef WITH_BROKER
+				log__printf(NULL, MOSQ_LOG_INFO, "Protocol error from %s: %s with reason code = %d.",
+						mosq->id, type, reason_code);
+#endif
 				return MOSQ_ERR_PROTOCOL;
 			}
 		}else{
@@ -109,6 +119,10 @@ int handle__pubackcomp(struct mosquitto *mosq, const char *type)
 					){
 
 				mosquitto_property_free_all(&properties);
+#ifdef WITH_BROKER
+				log__printf(NULL, MOSQ_LOG_INFO, "Protocol error from %s: %s with reason code = %d.",
+						mosq->id, type, reason_code);
+#endif
 				return MOSQ_ERR_PROTOCOL;
 			}
 		}

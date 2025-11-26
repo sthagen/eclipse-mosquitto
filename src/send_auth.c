@@ -33,7 +33,10 @@ int send__auth(struct mosquitto *context, uint8_t reason_code, const void *auth_
 	uint32_t remaining_length;
 
 	if(context->auth_method == NULL) return MOSQ_ERR_INVAL;
-	if(context->protocol != mosq_p_mqtt5) return MOSQ_ERR_PROTOCOL;
+	if(context->protocol != mosq_p_mqtt5){
+		log__printf(NULL, MOSQ_LOG_INFO, "Protocol error from %s: Sending AUTH packet when session not MQTT v5.0.", context->id);
+		return MOSQ_ERR_PROTOCOL;
+	}
 
 	log__printf(NULL, MOSQ_LOG_DEBUG, "Sending AUTH to %s (rc%d, %s)", context->id, reason_code, context->auth_method);
 
