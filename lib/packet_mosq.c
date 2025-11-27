@@ -393,6 +393,78 @@ static int read_header(struct mosquitto *mosq, ssize_t (*func_read)(struct mosqu
 }
 
 
+#ifdef WITH_BROKER
+static int packet__check_in_packet_oversize(struct mosquitto *mosq)
+{
+	switch(mosq->in_packet.command & 0xF0){
+		case CMD_CONNECT:
+			if(mosq->in_packet.remaining_length > db.config->packet_max_connect){
+				return MOSQ_ERR_OVERSIZE_PACKET;
+			}
+			break;
+
+		case CMD_PUBACK:
+		case CMD_PUBREC:
+		case CMD_PUBREL:
+		case CMD_PUBCOMP:
+		case CMD_UNSUBACK:
+			if(mosq->protocol == mosq_p_mqtt5){
+				if(mosq->in_packet.remaining_length > db.config->packet_max_simple){
+					return MOSQ_ERR_OVERSIZE_PACKET;
+				}
+			}else{
+				if(mosq->in_packet.remaining_length != 2){
+					return MOSQ_ERR_MALFORMED_PACKET;
+				}
+			}
+			break;
+
+		case CMD_PINGREQ:
+		case CMD_PINGRESP:
+			if(mosq->in_packet.remaining_length != 0){
+				return MOSQ_ERR_MALFORMED_PACKET;
+			}
+			break;
+
+		case CMD_DISCONNECT:
+			if(mosq->protocol == mosq_p_mqtt5){
+				if(mosq->in_packet.remaining_length > db.config->packet_max_simple){
+					return MOSQ_ERR_OVERSIZE_PACKET;
+				}
+			}else{
+				if(mosq->in_packet.remaining_length != 0){
+					return MOSQ_ERR_MALFORMED_PACKET;
+				}
+			}
+			break;
+
+		case CMD_SUBSCRIBE:
+		case CMD_UNSUBSCRIBE:
+			if(mosq->protocol == mosq_p_mqtt5 && mosq->in_packet.remaining_length > db.config->packet_max_sub){
+				return MOSQ_ERR_OVERSIZE_PACKET;
+			}
+			break;
+
+		case CMD_AUTH:
+			if(mosq->in_packet.remaining_length > db.config->packet_max_auth){
+				return MOSQ_ERR_OVERSIZE_PACKET;
+			}
+			break;
+
+	}
+
+	if(db.config->max_packet_size > 0 && mosq->in_packet.remaining_length+1 > db.config->max_packet_size){
+		if(mosq->protocol == mosq_p_mqtt5){
+			send__disconnect(mosq, MQTT_RC_PACKET_TOO_LARGE, NULL);
+		}
+		return MOSQ_ERR_OVERSIZE_PACKET;
+	}
+
+	return MOSQ_ERR_SUCCESS;
+}
+#endif
+
+
 static int packet__read_single(struct mosquitto *mosq, enum mosquitto_client_state state, ssize_t (*local__read)(struct mosquitto *, void *, size_t))
 {
 	ssize_t read_length;
@@ -469,68 +541,9 @@ static int packet__read_single(struct mosquitto *mosq, enum mosquitto_client_sta
 		mosq->in_packet.remaining_count = (int8_t)(mosq->in_packet.remaining_count * -1);
 
 #ifdef WITH_BROKER
-		switch(mosq->in_packet.command & 0xF0){
-			case CMD_CONNECT:
-				if(mosq->in_packet.remaining_length > db.config->packet_max_connect){
-					return MOSQ_ERR_OVERSIZE_PACKET;
-				}
-				break;
-
-			case CMD_PUBACK:
-			case CMD_PUBREC:
-			case CMD_PUBREL:
-			case CMD_PUBCOMP:
-			case CMD_UNSUBACK:
-				if(mosq->protocol == mosq_p_mqtt5){
-					if(mosq->in_packet.remaining_length > db.config->packet_max_simple){
-						return MOSQ_ERR_OVERSIZE_PACKET;
-					}
-				}else{
-					if(mosq->in_packet.remaining_length != 2){
-						return MOSQ_ERR_MALFORMED_PACKET;
-					}
-				}
-				break;
-
-			case CMD_PINGREQ:
-			case CMD_PINGRESP:
-				if(mosq->in_packet.remaining_length != 0){
-					return MOSQ_ERR_MALFORMED_PACKET;
-				}
-				break;
-
-			case CMD_DISCONNECT:
-				if(mosq->protocol == mosq_p_mqtt5){
-					if(mosq->in_packet.remaining_length > db.config->packet_max_simple){
-						return MOSQ_ERR_OVERSIZE_PACKET;
-					}
-				}else{
-					if(mosq->in_packet.remaining_length != 0){
-						return MOSQ_ERR_MALFORMED_PACKET;
-					}
-				}
-				break;
-
-			case CMD_SUBSCRIBE:
-			case CMD_UNSUBSCRIBE:
-				if(mosq->protocol == mosq_p_mqtt5 && mosq->in_packet.remaining_length > db.config->packet_max_sub){
-					return MOSQ_ERR_OVERSIZE_PACKET;
-				}
-				break;
-
-			case CMD_AUTH:
-				if(mosq->in_packet.remaining_length > db.config->packet_max_auth){
-					return MOSQ_ERR_OVERSIZE_PACKET;
-				}
-				break;
-
-		}
-
-		if(db.config->max_packet_size > 0 && mosq->in_packet.remaining_length+1 > db.config->max_packet_size){
-			if(mosq->protocol == mosq_p_mqtt5){
-				send__disconnect(mosq, MQTT_RC_PACKET_TOO_LARGE, NULL);
-			}
-			return MOSQ_ERR_OVERSIZE_PACKET;
+		rc = packet__check_in_packet_oversize(mosq);
+		if(rc){
+			return rc;
 		}
 #else
 		/* FIXME - client case for incoming message received from broker too large */
