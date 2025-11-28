@@ -365,7 +365,9 @@ static int read_header(struct mosquitto *mosq, ssize_t (*func_read)(struct mosqu
 {
 	ssize_t read_length;
 
-	read_length = func_read(mosq, &mosq->in_packet.packet_buffer[mosq->in_packet.packet_buffer_pos], mosq->in_packet.packet_buffer_size-mosq->in_packet.packet_buffer_pos);
+	mosq->in_packet.packet_buffer_pos = 0;
+	mosq->in_packet.packet_buffer_to_process = 0;
+	read_length = func_read(mosq, mosq->in_packet.packet_buffer, mosq->in_packet.packet_buffer_size);
 	if(read_length > 0){
 		mosq->in_packet.packet_buffer_to_process = (uint16_t)read_length;
 #ifdef WITH_BROKER
