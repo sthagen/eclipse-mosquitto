@@ -71,6 +71,8 @@ int mosquitto_base64_decode(const char *in, unsigned char **decoded, unsigned in
 	int rc = 1;
 
 	slen = strlen(in);
+	*decoded = NULL;
+	*decoded_len = 0;
 
 	b64 = BIO_new(BIO_f_base64());
 	if(!b64){

@@ -13,6 +13,7 @@ ifeq ($(WITH_TLS),yes)
 endif
 
 TEST_OBJS = \
+	base64_test.o \
 	property_add.o \
 	property_value.o \
 	strings_test.o \

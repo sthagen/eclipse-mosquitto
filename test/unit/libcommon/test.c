@@ -4,6 +4,7 @@
 #include <CUnit/CUnit.h>
 #include <CUnit/Basic.h>
 
+int init_base64_tests(void);
 int init_property_add_tests(void);
 int init_property_value_tests(void);
 int init_strings_tests(void);
@@ -25,6 +26,7 @@ int main(int argc, char *argv[])
 	}
 
 	if(0
+			|| init_base64_tests()
 			|| init_property_add_tests()
 			|| init_property_value_tests()
 			|| init_strings_tests()
