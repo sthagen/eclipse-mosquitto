@@ -205,6 +205,21 @@ void plugin_persist__handle_subscription_delete(struct mosquitto *context, char 
 }
 
 
+static inline void set_client_msg_event_data(struct mosquitto_evt_persist_client_msg *event_data, struct mosquitto *context, const struct mosquitto__client_msg *client_msg)
+{
+	event_data->data.clientid = context->id;
+	event_data->data.cmsg_id = client_msg->data.cmsg_id;
+	event_data->data.direction = (uint8_t)client_msg->data.direction;
+	event_data->data.dup = client_msg->data.dup;
+	event_data->data.mid = client_msg->data.mid;
+	event_data->data.qos = client_msg->data.qos;
+	event_data->data.retain = client_msg->data.retain;
+	event_data->data.state = (uint8_t)client_msg->data.state;
+	event_data->data.store_id = client_msg->base_msg->data.store_id;
+	event_data->data.subscription_identifier = client_msg->data.subscription_identifier;
+}
+
+
 void plugin_persist__handle_client_msg_add(struct mosquitto *context, const struct mosquitto__client_msg *client_msg)
 {
 	struct mosquitto_evt_persist_client_msg event_data;
@@ -221,16 +236,7 @@ void plugin_persist__handle_client_msg_add(struct mosquitto *context, const stru
 	opts = &db.config->security_options;
 	memset(&event_data, 0, sizeof(event_data));
 
-	event_data.data.clientid = context->id;
-	event_data.data.cmsg_id = client_msg->data.cmsg_id;
-	event_data.data.store_id = client_msg->base_msg->data.store_id;
-	event_data.data.subscription_identifier = client_msg->data.subscription_identifier;
-	event_data.data.mid = client_msg->data.mid;
-	event_data.data.qos = client_msg->data.qos;
-	event_data.data.retain = client_msg->data.retain;
-	event_data.data.dup = client_msg->data.dup;
-	event_data.data.direction = (uint8_t)client_msg->data.direction;
-	event_data.data.state = (uint8_t)client_msg->data.state;
+	set_client_msg_event_data(&event_data, context, client_msg);
 
 	DL_FOREACH_SAFE(opts->plugin_callbacks.persist_client_msg_add, cb_base, cb_next){
 		cb_base->cb(MOSQ_EVT_PERSIST_CLIENT_MSG_ADD, &event_data, cb_base->userdata);
@@ -254,13 +260,7 @@ void plugin_persist__handle_client_msg_delete(struct mosquitto *context, const s
 	opts = &db.config->security_options;
 	memset(&event_data, 0, sizeof(event_data));
 
-	event_data.data.clientid = context->id;
-	event_data.data.cmsg_id = client_msg->data.cmsg_id;
-	event_data.data.mid = client_msg->data.mid;
-	event_data.data.state = (uint8_t)client_msg->data.state;
-	event_data.data.qos = client_msg->data.qos;
-	event_data.data.store_id = client_msg->base_msg->data.store_id;
-	event_data.data.direction = (uint8_t)client_msg->data.direction;
+	set_client_msg_event_data(&event_data, context, client_msg);
 
 	DL_FOREACH_SAFE(opts->plugin_callbacks.persist_client_msg_delete, cb_base, cb_next){
 		cb_base->cb(MOSQ_EVT_PERSIST_CLIENT_MSG_DELETE, &event_data, cb_base->userdata);
@@ -284,15 +284,7 @@ void plugin_persist__handle_client_msg_update(struct mosquitto *context, const s
 	opts = &db.config->security_options;
 	memset(&event_data, 0, sizeof(event_data));
 
-	event_data.data.clientid = context->id;
-	event_data.data.cmsg_id = client_msg->data.cmsg_id;
-	event_data.data.store_id = client_msg->base_msg->data.store_id;
-	event_data.data.subscription_identifier = client_msg->data.subscription_identifier;
-	event_data.data.mid = client_msg->data.mid;
-	event_data.data.state = (uint8_t)client_msg->data.state;
-	event_data.data.dup = client_msg->data.dup;
-	event_data.data.direction = (uint8_t)client_msg->data.direction;
-	event_data.data.qos = client_msg->data.qos;
+	set_client_msg_event_data(&event_data, context, client_msg);
 
 	DL_FOREACH_SAFE(opts->plugin_callbacks.persist_client_msg_update, cb_base, cb_next){
 		cb_base->cb(MOSQ_EVT_PERSIST_CLIENT_MSG_UPDATE, &event_data, cb_base->userdata);
