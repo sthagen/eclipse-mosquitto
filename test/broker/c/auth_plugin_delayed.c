@@ -79,7 +79,7 @@ static int tick_callback(int event, void *event_data, void *user_data)
 	}
 
 	/* fast turn around for quick testing */
-	ed->next_ms = 100;
+	ed->next_ms = 10;
 
 	return MOSQ_ERR_SUCCESS;
 }
