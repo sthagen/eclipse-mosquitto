@@ -164,6 +164,7 @@ static int persist__client_save(FILE *db_fptr)
 		memset(&chunk, 0, sizeof(struct P_client));
 
 		if(context &&
+				context->session_expiry_interval != MQTT_SESSION_EXPIRY_IMMEDIATE &&
 #ifdef WITH_BRIDGE
 				((!context->bridge && context->clean_start == false)
 				|| (context->bridge && context->bridge->clean_start_local == false))
@@ -172,7 +173,9 @@ static int persist__client_save(FILE *db_fptr)
 #endif
 				){
 			chunk.F.session_expiry_time = context->session_expiry_time;
-			if(context->session_expiry_interval != MQTT_SESSION_EXPIRY_IMMEDIATE && context->session_expiry_interval != MQTT_SESSION_EXPIRY_NEVER && context->session_expiry_time == 0){
+			if(context->session_expiry_interval != MQTT_SESSION_EXPIRY_NEVER
+					&& context->session_expiry_time == 0){
+
 				chunk.F.session_expiry_time = context->session_expiry_interval + db.now_real_s;
 			}else{
 				chunk.F.session_expiry_time = context->session_expiry_time;
@@ -241,7 +244,10 @@ static int persist__subs_save(FILE *db_fptr, struct mosquitto__subhier *node, co
 
 	sub = node->subs;
 	while(sub){
-		if(sub->context->clean_start == false && sub->context->id){
+		if(sub->context->session_expiry_interval != MQTT_SESSION_EXPIRY_IMMEDIATE
+				&& sub->context->clean_start == false
+				&& sub->context->id){
+
 			memset(&sub_chunk, 0, sizeof(struct P_sub));
 
 			sub_chunk.F.identifier = sub->identifier;
