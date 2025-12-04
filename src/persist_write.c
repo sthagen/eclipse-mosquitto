@@ -172,7 +172,7 @@ static int persist__client_save(FILE *db_fptr)
 #endif
 				){
 			chunk.F.session_expiry_time = context->session_expiry_time;
-			if(context->session_expiry_interval != 0 && context->session_expiry_interval != UINT32_MAX && context->session_expiry_time == 0){
+			if(context->session_expiry_interval != MQTT_SESSION_EXPIRY_IMMEDIATE && context->session_expiry_interval != MQTT_SESSION_EXPIRY_NEVER && context->session_expiry_time == 0){
 				chunk.F.session_expiry_time = context->session_expiry_interval + db.now_real_s;
 			}else{
 				chunk.F.session_expiry_time = context->session_expiry_time;

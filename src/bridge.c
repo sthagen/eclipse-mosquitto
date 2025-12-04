@@ -127,7 +127,7 @@ static struct mosquitto *bridge__new(struct mosquitto__bridge *bridge)
 	new_context->retain_available = bridge->outgoing_retain;
 	new_context->protocol = bridge->protocol_version;
 	if(!bridge->clean_start_local){
-		new_context->session_expiry_interval = UINT32_MAX;
+		new_context->session_expiry_interval = MQTT_SESSION_EXPIRY_NEVER;
 		plugin_persist__handle_client_add(new_context);
 		if(new_context->expiry_list_item){
 			/* We've restored from persistence and been added to the session
@@ -432,7 +432,7 @@ int bridge__connect_step3(struct mosquitto *context)
 		receive_maximum.next = properties;
 		properties = &receive_maximum;
 	}
-	if(context->bridge->session_expiry_interval != 0){
+	if(context->bridge->session_expiry_interval != MQTT_SESSION_EXPIRY_IMMEDIATE){
 		session_expiry_interval.value.i32 = context->bridge->session_expiry_interval;
 		session_expiry_interval.identifier = MQTT_PROP_SESSION_EXPIRY_INTERVAL;
 		session_expiry_interval.property_type = MQTT_PROP_TYPE_INT32;
@@ -615,7 +615,7 @@ int bridge__connect(struct mosquitto *context)
 		receive_maximum.next = properties;
 		properties = &receive_maximum;
 	}
-	if(context->bridge->session_expiry_interval != 0){
+	if(context->bridge->session_expiry_interval != MQTT_SESSION_EXPIRY_IMMEDIATE){
 		session_expiry_interval.value.i32 = context->bridge->session_expiry_interval;
 		session_expiry_interval.identifier = MQTT_PROP_SESSION_EXPIRY_INTERVAL;
 		session_expiry_interval.property_type = MQTT_PROP_TYPE_INT32;

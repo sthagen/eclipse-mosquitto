@@ -268,7 +268,7 @@ void context__disconnect(struct mosquitto *context, int reason)
 		}
 	}
 
-	if(context->session_expiry_interval == 0){
+	if(context->session_expiry_interval == MQTT_SESSION_EXPIRY_IMMEDIATE){
 		plugin__handle_disconnect(context, reason);
 	}else{
 		plugin__handle_client_offline(context, reason);
@@ -281,7 +281,7 @@ void context__disconnect(struct mosquitto *context, int reason)
 	/* Outgoing bridge connection never expire */
 #endif
 	{
-		if(context->session_expiry_interval == 0){
+		if(context->session_expiry_interval == MQTT_SESSION_EXPIRY_IMMEDIATE){
 			plugin_persist__handle_client_delete(context);
 			/* Client session is due to be expired now */
 			if(context->will_delay_interval == 0){

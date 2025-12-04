@@ -212,7 +212,9 @@ int property__process_disconnect(struct mosquitto *context, mosquitto_property *
 	while(p){
 		if(mosquitto_property_identifier(p) == MQTT_PROP_SESSION_EXPIRY_INTERVAL){
 			uint32_t session_expiry_interval = mosquitto_property_int32_value(p);
-			if(context->session_expiry_interval == 0 && session_expiry_interval != 0){
+			if(context->session_expiry_interval == MQTT_SESSION_EXPIRY_IMMEDIATE
+					&& session_expiry_interval != MQTT_SESSION_EXPIRY_IMMEDIATE){
+
 				return MOSQ_ERR_PROTOCOL;
 			}
 			context->session_expiry_interval = session_expiry_interval;

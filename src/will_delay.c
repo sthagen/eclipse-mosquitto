@@ -94,7 +94,7 @@ void will_delay__check(void)
 			item->context->will_delay_interval = 0;
 			item->context->will_delay_entry = NULL;
 			context__send_will(item->context);
-			if(item->context->session_expiry_interval == 0){
+			if(item->context->session_expiry_interval == MQTT_SESSION_EXPIRY_IMMEDIATE){
 				context__add_to_disused(item->context);
 			}
 			mosquitto_FREE(item);

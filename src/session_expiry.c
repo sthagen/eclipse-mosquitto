@@ -72,7 +72,7 @@ int session_expiry__add(struct mosquitto *context)
 	}
 
 	if(db.config->persistent_client_expiration == 0){
-		if(context->session_expiry_interval == UINT32_MAX){
+		if(context->session_expiry_interval == MQTT_SESSION_EXPIRY_NEVER){
 			/* There isn't a global expiry set, and the client has asked to
 			 * never expire, so we don't add it to the list. */
 			return MOSQ_ERR_SUCCESS;
@@ -107,7 +107,7 @@ int session_expiry__add_from_persistence(struct mosquitto *context, time_t expir
 	}
 
 	if(db.config->persistent_client_expiration == 0){
-		if(context->session_expiry_interval == UINT32_MAX){
+		if(context->session_expiry_interval == MQTT_SESSION_EXPIRY_NEVER){
 			/* There isn't a global expiry set, and the client has asked to
 			 * never expire, so we don't add it to the list. */
 			return MOSQ_ERR_SUCCESS;
@@ -152,7 +152,7 @@ void session_expiry__remove_all(void)
 	DL_FOREACH_SAFE(expiry_list, item, tmp){
 		context = item->context;
 		session_expiry__remove(context);
-		context->session_expiry_interval = 0;
+		context->session_expiry_interval = MQTT_SESSION_EXPIRY_IMMEDIATE;
 		context->will_delay_interval = 0;
 		will_delay__remove(context);
 		context__disconnect(context, -1);
@@ -193,7 +193,7 @@ void session_expiry__check(void)
 			metrics__int_inc(mosq_counter_clients_expired, 1);
 
 			/* Session has now expired, so clear interval */
-			context->session_expiry_interval = 0;
+			context->session_expiry_interval = MQTT_SESSION_EXPIRY_IMMEDIATE;
 			/* Session has expired, so will delay should be cleared. */
 			context->will_delay_interval = 0;
 			will_delay__remove(context);

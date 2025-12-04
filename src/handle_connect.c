@@ -106,13 +106,13 @@ int connect__on_authorised(struct mosquitto *context, void *auth_data_out, uint1
 
 		if(context->clean_start == true){
 			sub__clean_session(found_context);
-			found_context->session_expiry_interval = 0;
+			found_context->session_expiry_interval = MQTT_SESSION_EXPIRY_IMMEDIATE;
 			plugin_persist__handle_client_delete(found_context);
 		}
 		context->is_persisted = found_context->is_persisted;
 		found_context->is_persisted = false; /* stops persistence for context being removed */
 
-		if(context->clean_start == false && found_context->session_expiry_interval > 0){
+		if(context->clean_start == false && found_context->session_expiry_interval != MQTT_SESSION_EXPIRY_IMMEDIATE){
 			if(context->protocol == mosq_p_mqtt311 || context->protocol == mosq_p_mqtt5){
 				connect_ack |= 0x01;
 			}
@@ -170,7 +170,7 @@ int connect__on_authorised(struct mosquitto *context, void *auth_data_out, uint1
 			}
 		}
 
-		if((found_context->protocol == mosq_p_mqtt5 && found_context->session_expiry_interval == 0)
+		if((found_context->protocol == mosq_p_mqtt5 && found_context->session_expiry_interval == MQTT_SESSION_EXPIRY_IMMEDIATE)
 				|| (found_context->protocol != mosq_p_mqtt5 && found_context->clean_start == true)
 				|| (context->clean_start == true)
 				){
@@ -183,7 +183,7 @@ int connect__on_authorised(struct mosquitto *context, void *auth_data_out, uint1
 		will__clear(found_context);
 
 		found_context->clean_start = true;
-		found_context->session_expiry_interval = 0;
+		found_context->session_expiry_interval = MQTT_SESSION_EXPIRY_IMMEDIATE;
 		mosquitto__set_state(found_context, mosq_cs_duplicate);
 		if(found_context->protocol == mosq_p_mqtt5){
 			send__disconnect(found_context, MQTT_RC_SESSION_TAKEN_OVER, NULL);
@@ -317,7 +317,7 @@ int connect__on_authorised(struct mosquitto *context, void *auth_data_out, uint1
 	if(rc == MOSQ_ERR_SUCCESS){
 		plugin__handle_connect(context);
 
-		if(context->session_expiry_interval != 0){
+		if(context->session_expiry_interval != MQTT_SESSION_EXPIRY_IMMEDIATE){
 			plugin_persist__handle_client_add(context);
 		}else if(context->will){
 			plugin_persist__handle_will_add(context);
@@ -582,9 +582,9 @@ static void set_session_expiry_interval(struct mosquitto *context, uint8_t clean
 	/* session_expiry_interval will be overridden if the properties are read later */
 	if(clean_start == false && protocol_version != PROTOCOL_VERSION_v5){
 		/* v3* has clean_start == false mean the session never expires */
-		context->session_expiry_interval = UINT32_MAX;
+		context->session_expiry_interval = MQTT_SESSION_EXPIRY_NEVER;
 	}else{
-		context->session_expiry_interval = 0;
+		context->session_expiry_interval = MQTT_SESSION_EXPIRY_IMMEDIATE;
 	}
 }
 
@@ -1265,7 +1265,7 @@ handle_connect_error:
 	will__clear(context);
 	/* We return an error here which means the client is freed later on. */
 	context->clean_start = true;
-	context->session_expiry_interval = 0;
+	context->session_expiry_interval = MQTT_SESSION_EXPIRY_IMMEDIATE;
 	context->will_delay_interval = 0;
 	return rc;
 }

@@ -419,7 +419,7 @@ static void disconnect_client(struct mosquitto *context, bool with_will)
 	if(with_will == false){
 		mosquitto__set_state(context, mosq_cs_disconnecting);
 	}
-	if(context->session_expiry_interval > 0){
+	if(context->session_expiry_interval != MQTT_SESSION_EXPIRY_IMMEDIATE){
 		check_subscription_acls(context);
 	}
 	do_disconnect(context, MOSQ_ERR_ADMINISTRATIVE_ACTION);
@@ -618,7 +618,7 @@ BROKER_EXPORT int mosquitto_persist_client_delete(const char *clientid)
 	will__clear(context);
 
 	context->clean_start = true;
-	context->session_expiry_interval = 0;
+	context->session_expiry_interval = MQTT_SESSION_EXPIRY_IMMEDIATE;
 	context->is_persisted = false;
 	mosquitto__set_state(context, mosq_cs_duplicate);
 	do_disconnect(context, MOSQ_ERR_SUCCESS);
@@ -876,7 +876,7 @@ BROKER_EXPORT void mosquitto_complete_basic_auth(const char *clientid, int resul
 				send__connack(context, 0, CONNACK_REFUSED_NOT_AUTHORIZED, NULL);
 			}
 			context->clean_start = true;
-			context->session_expiry_interval = 0;
+			context->session_expiry_interval = MQTT_SESSION_EXPIRY_IMMEDIATE;
 			will__clear(context);
 			do_disconnect(context, MOSQ_ERR_AUTH);
 		}

@@ -295,4 +295,6 @@ enum mqtt5_sub_options {
 #define MQTT_SUB_OPT_SET(opt, val) ((opt) |= val)
 #define MQTT_SUB_OPT_CLEAR(opt, val) ((opt) = (opt) & !val)
 
+#define MQTT_SESSION_EXPIRY_IMMEDIATE 0
+#define MQTT_SESSION_EXPIRY_NEVER UINT32_MAX
 #endif
