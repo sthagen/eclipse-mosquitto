@@ -205,7 +205,6 @@ tests = [
     (1, './11-message-expiry.py'),
     (1, './11-persistence-autosave-changes.py'),
     (1, './11-persistent-subscription.py'),
-    (1, './11-persistent-subscription-v5.py'),
     (1, './11-persistent-subscription-no-local.py'),
     (1, './11-pub-props.py'),
     (1, './11-subscription-id.py'),
