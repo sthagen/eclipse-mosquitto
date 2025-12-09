@@ -51,6 +51,8 @@ int password_file__parse(struct password_file_data *data)
 
 	while(!feof(pwfile)){
 		if(mosquitto_fgets(&buf, &buflen, pwfile)){
+			unpwd = NULL;
+
 			if(buf[0] == '#'){
 				continue;
 			}
