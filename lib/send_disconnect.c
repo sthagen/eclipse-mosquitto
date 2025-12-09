@@ -69,7 +69,7 @@ int send__disconnect(struct mosquitto *mosq, uint8_t reason_code, const mosquitt
 		mosquitto_FREE(packet);
 		return rc;
 	}
-	if(mosq->protocol == mosq_p_mqtt5 && (reason_code != 0 || properties)){
+	if(remaining_length > 0){
 		packet__write_byte(packet, reason_code);
 		if(properties){
 			property__write_all(packet, properties, true);
