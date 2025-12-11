@@ -74,40 +74,6 @@
 	</refsect1>
 
 	<refsect1>
-		<title>Sections</title>
-		<para>
-			The rest of this man page is divided into the following sections:
-			<variablelist>
-				<varlistentry>
-					<term><option>File Format</option> a description of the configuration
-						file syntax.</term>
-				</varlistentry>
-				<varlistentry>
-					<term><option>Authentication</option> a discussion of the authentication
-						options available.</term>
-				</varlistentry>
-				<varlistentry>
-					<term><option>General Options</option> the general options for configuring
-						Mosquitto.</term>
-				</varlistentry>
-				<varlistentry>
-					<term><option>Listeners</option> general options for configuring listeners,
-						which are the ways that MQTT clients can connect to Mosquitto,
-						as well as certificate and pre-shared-key based SSL/TLS options.</term>
-				</varlistentry>
-				<varlistentry>
-					<term><option>Configuring Bridges</option> general options for configuring bridges,
-						which are a way of connecting multiple brokers together,
-						as well as certificate and pre-shared-key based SSL/TLS options.</term>
-				</varlistentry>
-				<varlistentry>
-					<term><option>Other</option> The Files, Bugs, See Also sections.</term>
-				</varlistentry>
-			</variablelist>
-		</para>
-	</refsect1>
-
-	<refsect1>
 		<title>File Format</title>
 		<para>
             All lines with a # as the very first character are treated as a
