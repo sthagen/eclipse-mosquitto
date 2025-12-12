@@ -29,18 +29,6 @@ cmake \
 make -j $(nproc)
 make install
 
-cd ${SRC}/libprotobuf-mutator
-cmake \
-	-DCMAKE_C_COMPILER=clang \
-	-DCMAKE_CXX_COMPILER=clang++ \
-	-DCMAKE_BUILD_TYPE=Debug \
-	-DLIB_PROTO_MUTATOR_DOWNLOAD_PROTOBUF=ON \
-	-DLIB_PROTO_MUTATOR_EXAMPLES=OFF \
-	-DLIB_PROTO_MUTATOR_TESTING=OFF \
-	.
-make -j $(nproc)
-make install
-
 # Build broker and library static libraries
 cd ${SRC}/mosquitto
 make \

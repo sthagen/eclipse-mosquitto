@@ -34,9 +34,13 @@ apt-get update && apt-get install -y \
 	ninja-build \
 	pkg-config
 git clone https://github.com/ralight/cJSON ${SRC}/cJSON
-git clone https://github.com/google/libprotobuf-mutator ${SRC}/libprotobuf-mutator
 
-mkdir ${SRC}/LPM
-cd ${SRC}/LPM
-cmake ../libprotobuf-mutator -GNinja -DLIB_PROTO_MUTATOR_DOWNLOAD_PROTOBUF=ON -DLIB_PROTO_MUTATOR_TESTING=OFF -DCMAKE_BUILD_TYPE=Release
-ninja
+# If building outside of oss-fuzz, we need LPM
+if [ ! -d ${SRC}/LPM ]; then
+	git clone https://github.com/google/libprotobuf-mutator ${SRC}/libprotobuf-mutator
+
+	mkdir ${SRC}/LPM \
+		&& cd ${SRC}/LPM \
+		&& cmake ../libprotobuf-mutator -GNinja -DLIB_PROTO_MUTATOR_DOWNLOAD_PROTOBUF=ON -DLIB_PROTO_MUTATOR_TESTING=OFF -DCMAKE_BUILD_TYPE=Release \
+		&& ninja
+fi
