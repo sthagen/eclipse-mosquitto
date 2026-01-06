@@ -20,6 +20,13 @@ uint32_t last_identifier;
 struct mosquitto_db db;
 
 
+static void dummy_vprintf(const char *fmt, va_list va)
+{
+	UNUSED(fmt);
+	UNUSED(va);
+}
+
+
 static void test_cleanup(void)
 {
 	struct mosquitto *ctxt, *ctxt_tmp;
@@ -946,6 +953,8 @@ int main(int argc, char *argv[])
 
 	UNUSED(argc);
 	UNUSED(argv);
+
+	libcommon_vprintf = dummy_vprintf;
 
 	if(CU_initialize_registry() != CUE_SUCCESS){
 		printf("Error initializing CUnit registry.\n");
