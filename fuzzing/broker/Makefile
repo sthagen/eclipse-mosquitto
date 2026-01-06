@@ -6,6 +6,7 @@ include ${R}/fuzzing/config.mk
 FUZZERS:= \
 	broker_fuzz_acl_file \
 	broker_fuzz_password_file \
+	broker_fuzz_proxy_v1 \
 	broker_fuzz_proxy_v2 \
 	broker_fuzz_psk_file \
 	broker_fuzz_queue_msg \
@@ -48,6 +49,11 @@ broker_fuzz_password_file : broker_fuzz_password_file.cpp ${R}/src/mosquitto_bro
 	$(CXX) $(LOCAL_CXXFLAGS) $(LOCAL_CPPFLAGS) $(LOCAL_LDFLAGS) -o $@ $< $(LOCAL_LIBADD) ${BROKER_A}
 	install $@ ${OUT}/$@
 	cp ${R}/fuzzing/corpora/broker_password_file_seed_corpus.zip ${OUT}/$@_seed_corpus.zip
+
+broker_fuzz_proxy_v1 : broker_fuzz_proxy_v1.cpp ${R}/src/proxy_v1.o
+	$(CXX) $(LOCAL_CXXFLAGS) $(LOCAL_CPPFLAGS) $(LOCAL_LDFLAGS) -o $@ $< ${R}/src/proxy_v1.o $(LOCAL_LIBADD)
+	cp ${R}/fuzzing/corpora/broker_fuzz_proxy_v1_seed_corpus.zip ${OUT}/$@_seed_corpus.zip
+	install $@ ${OUT}/$@
 
 broker_fuzz_proxy_v2 : broker_fuzz_proxy_v2.cpp ${R}/src/proxy_v2.o
 	$(CXX) $(LOCAL_CXXFLAGS) $(LOCAL_CPPFLAGS) $(LOCAL_LDFLAGS) -o $@ $< ${R}/src/proxy_v2.o $(LOCAL_LIBADD)
