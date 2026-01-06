@@ -358,8 +358,9 @@ static int persist__retain_chunk_restore(FILE *db_fptr)
 
 	HASH_FIND(hh, db.msg_store, &chunk.F.store_id, sizeof(chunk.F.store_id), base_msg);
 	if(base_msg){
-		if(sub__topic_tokenise(base_msg->data.topic, &local_topic, &split_topics, NULL)){
-			return 1;
+		rc = sub__topic_tokenise(base_msg->data.topic, &local_topic, &split_topics, NULL);
+		if(rc){
+			return rc;
 		}
 		retain__store(base_msg->data.topic, base_msg, split_topics, true);
 		mosquitto_FREE(local_topic);
@@ -471,7 +472,7 @@ int persist__restore(void)
 			}else{
 				fclose(fptr);
 				log__printf(NULL, MOSQ_LOG_ERR, "Error: Unsupported persistent database format version %d (need version %d).", db_version, MOSQ_DB_VERSION);
-				return 1;
+				return MOSQ_ERR_INVAL;
 			}
 		}
 
@@ -479,57 +480,64 @@ int persist__restore(void)
 			switch(chunk){
 				case DB_CHUNK_CFG:
 					if(db_version == 6 || db_version == 5){
-						if(persist__chunk_cfg_read_v56(fptr, &cfg_chunk)){
+						rc = persist__chunk_cfg_read_v56(fptr, &cfg_chunk);
+						if(rc){
 							fclose(fptr);
-							return 1;
+							return rc;
 						}
 					}else{
-						if(persist__chunk_cfg_read_v234(fptr, &cfg_chunk)){
+						rc = persist__chunk_cfg_read_v234(fptr, &cfg_chunk);
+						if(rc){
 							fclose(fptr);
-							return 1;
+							return rc;
 						}
 					}
 					if(cfg_chunk.dbid_size != sizeof(dbid_t)){
 						log__printf(NULL, MOSQ_LOG_ERR, "Error: Incompatible database configuration (dbid size is %d bytes, expected %lu)",
 								cfg_chunk.dbid_size, (unsigned long)sizeof(dbid_t));
 						fclose(fptr);
-						return 1;
+						return MOSQ_ERR_INVAL;
 					}
 					db.last_db_id = cfg_chunk.last_db_id;
 					break;
 
 				case DB_CHUNK_BASE_MSG:
-					if(persist__base_msg_chunk_restore(fptr, length)){
+					rc = persist__base_msg_chunk_restore(fptr, length);
+					if(rc){
 						fclose(fptr);
-						return 1;
+						return rc;
 					}
 					break;
 
 				case DB_CHUNK_CLIENT_MSG:
-					if(persist__client_msg_chunk_restore(fptr, length)){
+					rc = persist__client_msg_chunk_restore(fptr, length);
+					if(rc){
 						fclose(fptr);
-						return 1;
+						return rc;
 					}
 					break;
 
 				case DB_CHUNK_RETAIN:
-					if(persist__retain_chunk_restore(fptr)){
+					rc = persist__retain_chunk_restore(fptr);
+					if(rc){
 						fclose(fptr);
-						return 1;
+						return rc;
 					}
 					break;
 
 				case DB_CHUNK_SUB:
-					if(persist__sub_chunk_restore(fptr)){
+					rc = persist__sub_chunk_restore(fptr);
+					if(rc){
 						fclose(fptr);
-						return 1;
+						return rc;
 					}
 					break;
 
 				case DB_CHUNK_CLIENT:
-					if(persist__client_chunk_restore(fptr)){
+					rc = persist__client_chunk_restore(fptr);
+					if(rc){
 						fclose(fptr);
-						return 1;
+						return rc;
 					}
 					break;
 
@@ -537,7 +545,7 @@ int persist__restore(void)
 					log__printf(NULL, MOSQ_LOG_WARNING, "Warning: Unsupported chunk \"%d\" in persistent database file. Ignoring.", chunk);
 					if(fseek(fptr, length, SEEK_CUR) < 0){
 						fclose(fptr);
-						return 1;
+						return MOSQ_ERR_INVAL;
 					}
 					break;
 			}
@@ -562,7 +570,7 @@ error:
 	if(fptr){
 		fclose(fptr);
 	}
-	return 1;
+	return MOSQ_ERR_ERRNO;
 }
 
 
@@ -581,7 +589,7 @@ static int persist__restore_sub(const struct mosquitto_subscription *sub)
 
 	context = persist__find_or_add_context(sub->clientid, 0);
 	if(!context){
-		return 1;
+		return MOSQ_ERR_INVAL;
 	}
 	return sub__add(context, sub);
 }

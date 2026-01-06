@@ -7,6 +7,7 @@
 #include <CUnit/Basic.h>
 #include "path_helper.h"
 
+#include "mosquitto.h"
 #include "mosquitto_broker_internal.h"
 #include "persist.h"
 #include "property_mosq.h"
@@ -85,7 +86,7 @@ static void TEST_corrupt_header(void)
 	cat_sourcedir_with_relpath(persistence_filepath, "/files/persist_read/corrupt-header-short.test-db");
 	config.persistence_filepath = persistence_filepath;
 	rc = persist__restore();
-	CU_ASSERT_EQUAL(rc, 1);
+	CU_ASSERT_EQUAL(rc, MOSQ_ERR_ERRNO);
 
 	cat_sourcedir_with_relpath(persistence_filepath, "/files/persist_read/corrupt-header-long.test-db");
 	config.persistence_filepath = persistence_filepath;
@@ -109,7 +110,7 @@ static void TEST_unsupported_version(void)
 	config.persistence_filepath = persistence_filepath;
 
 	rc = persist__restore();
-	CU_ASSERT_EQUAL(rc, 1);
+	CU_ASSERT_EQUAL(rc, MOSQ_ERR_INVAL);
 }
 
 
@@ -168,7 +169,7 @@ static void TEST_v3_config_truncated(void)
 	config.persistence_filepath = persistence_filepath;
 
 	rc = persist__restore();
-	CU_ASSERT_EQUAL(rc, 1);
+	CU_ASSERT_EQUAL(rc, MOSQ_ERR_UNKNOWN);
 	CU_ASSERT_EQUAL(db.last_db_id, 0);
 }
 
@@ -188,7 +189,7 @@ static void TEST_v3_config_bad_dbid(void)
 	config.persistence_filepath = persistence_filepath;
 
 	rc = persist__restore();
-	CU_ASSERT_EQUAL(rc, 1);
+	CU_ASSERT_EQUAL(rc, MOSQ_ERR_INVAL);
 	CU_ASSERT_EQUAL(db.last_db_id, 0);
 }
 
