@@ -61,6 +61,7 @@ fuzzing/broker/broker_fuzz_handle_unsubscribe
 fuzzing/broker/broker_fuzz_initial_packet
 fuzzing/broker/broker_fuzz_initial_packet_with_init
 fuzzing/broker/broker_fuzz_password_file
+fuzzing/broker/broker_fuzz_proxy_v2
 fuzzing/broker/broker_fuzz_psk_file
 fuzzing/broker/broker_fuzz_queue_msg
 fuzzing/broker/broker_fuzz_read_handle
