@@ -55,7 +55,7 @@ jobs:
           cmake -B ${{github.workspace}}/build64 \
             -G Ninja \
             -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} \
-            -DDOCUMENTATION=OFF \
+            -DWITH_DOCS=OFF \
             -DWITH_WEBSOCKETS=ON \
             -DWITH_TESTS=OFF \
             -DCMAKE_INCLUDE_PATH="$EDITLINE_PREFIX/include" \
