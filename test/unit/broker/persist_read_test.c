@@ -862,6 +862,30 @@ static void TEST_v6_sub(void)
 }
 
 
+static void TEST_v6_base_msg_topic_0(void)
+{
+	struct mosquitto__config config;
+	int rc;
+
+	last_sub = NULL;
+	last_qos = -1;
+
+	memset(&db, 0, sizeof(struct mosquitto_db));
+	memset(&config, 0, sizeof(struct mosquitto__config));
+	db.config = &config;
+
+	config.persistence = true;
+	char persistence_filepath[4096];
+	cat_sourcedir_with_relpath(persistence_filepath, "/files/persist_read/v6-base-msg-topic-0.test-db");
+	config.persistence_filepath = persistence_filepath;
+
+	rc = persist__restore();
+	CU_ASSERT_EQUAL(rc, MOSQ_ERR_INVAL);
+
+	test_cleanup();
+}
+
+
 /* ========================================================================
  * TEST SUITE SETUP
  * ======================================================================== */
@@ -904,6 +928,7 @@ int init_persist_read_tests(void)
 			|| !CU_add_test(test_suite, "v6 client message+props", TEST_v6_client_message_props)
 			|| !CU_add_test(test_suite, "v6 retain", TEST_v6_retain)
 			|| !CU_add_test(test_suite, "v6 sub", TEST_v6_sub)
+			|| !CU_add_test(test_suite, "v6 base msg topic 0", TEST_v6_base_msg_topic_0)
 			){
 
 		printf("Error adding persist CUnit tests.\n");

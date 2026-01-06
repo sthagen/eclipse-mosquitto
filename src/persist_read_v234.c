@@ -135,6 +135,7 @@ int persist__chunk_base_msg_read_v234(FILE *db_fptr, struct P_base_msg *chunk, u
 	uint32_t i32temp;
 	uint16_t i16temp;
 	int rc = 0;
+	size_t slen;
 
 	read_e(db_fptr, &chunk->F.store_id, sizeof(dbid_t));
 
@@ -162,6 +163,12 @@ int persist__chunk_base_msg_read_v234(FILE *db_fptr, struct P_base_msg *chunk, u
 	if(rc){
 		goto error;
 	}
+	slen = strlen(chunk->topic);
+	if(slen > UINT16_MAX){
+		rc = MOSQ_ERR_INVAL;
+		goto error;
+	}
+	chunk->F.topic_len = (uint16_t)slen;
 
 	read_e(db_fptr, &chunk->F.qos, sizeof(uint8_t));
 	read_e(db_fptr, &chunk->F.retain, sizeof(uint8_t));

@@ -62,6 +62,10 @@ int sub__topic_tokenise(const char *subtopic, char **local_sub, char ***topics, 
 	int topic_index = 0;
 	size_t len;
 
+	if(!subtopic){
+		return MOSQ_ERR_INVAL;
+	}
+
 	len = strlen(subtopic);
 	if(len == 0){
 		return MOSQ_ERR_INVAL;

@@ -273,6 +273,10 @@ static int persist__base_msg_chunk_restore(FILE *db_fptr, uint32_t length)
 	if(rc){
 		return rc;
 	}
+	if(chunk.F.topic_len == 0){
+		rc = MOSQ_ERR_INVAL;
+		goto cleanup;
+	}
 
 	if(chunk.F.source_port){
 		for(int i=0; i<db.config->listener_count; i++){

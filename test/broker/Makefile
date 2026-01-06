@@ -235,8 +235,8 @@ endif
 11 :
 	./11-message-expiry.py
 	./11-persistence-autosave-changes.py
-	./11-persistent-subscription.py
 	./11-persistent-subscription-no-local.py
+	./11-persistent-subscription.py
 	./11-pub-props.py
 	./11-subscription-id.py
 
