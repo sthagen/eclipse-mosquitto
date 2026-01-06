@@ -74,6 +74,7 @@ int password_file__parse(struct password_file_data *data)
 
 				HASH_FIND(hh, data->unpwd, username, strlen(username), unpwd);
 				if(unpwd){
+					unpwd = NULL;
 					mosquitto_log_printf(MOSQ_LOG_ERR, "password-file: Error: Duplicate user '%s' in password file '%s'.", username, data->password_file);
 					goto error;
 				}
