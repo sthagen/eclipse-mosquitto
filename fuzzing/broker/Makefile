@@ -33,20 +33,20 @@ PACKET_FUZZERS:= \
 all: $(FUZZERS) $(PACKET_FUZZERS)
 
 ${PACKET_FUZZERS} : %: %.cpp fuzz_packet_read_base.o ${R}/src/mosquitto_broker.a
-	$(CC) $(LOCAL_CFLAGS) $(LOCAL_CPPFLAGS) $(LOCAL_LDFLAGS) -o $@ $< fuzz_packet_read_base.o  $(LOCAL_LIBADD) ${BROKER_A}
+	$(CC) $(LOCAL_CFLAGS) $(LOCAL_CPPFLAGS) $(LOCAL_LDFLAGS) -o $@ $< fuzz_packet_read_base.o  $(BROKER_A) $(LOCAL_LIBADD)
 	install $@ ${OUT}/$@
 
 fuzz_packet_read_base.o : fuzz_packet_read_base.c
 	$(CC) $(LOCAL_CFLAGS) $(LOCAL_CPPFLAGS) -c -o $@ $<
 
 broker_fuzz_acl_file : broker_fuzz_acl_file.cpp ${R}/src/mosquitto_broker.a
-	$(CXX) $(LOCAL_CXXFLAGS) $(LOCAL_CPPFLAGS) $(LOCAL_LDFLAGS) -o $@ $< $(LOCAL_LIBADD) ${BROKER_A}
+	$(CXX) $(LOCAL_CXXFLAGS) $(LOCAL_CPPFLAGS) $(LOCAL_LDFLAGS) -o $@ $< $(BROKER_A) $(LOCAL_LIBADD)
 	install $@ ${OUT}/$@
 	cp ${R}/fuzzing/corpora/broker_acl_file_seed_corpus.zip ${OUT}/$@_seed_corpus.zip
 	cp ${R}/fuzzing/corpora/broker_acl_file.dict ${OUT}/$@.dict
 
 broker_fuzz_password_file : broker_fuzz_password_file.cpp ${R}/src/mosquitto_broker.a
-	$(CXX) $(LOCAL_CXXFLAGS) $(LOCAL_CPPFLAGS) $(LOCAL_LDFLAGS) -o $@ $< $(LOCAL_LIBADD) ${BROKER_A}
+	$(CXX) $(LOCAL_CXXFLAGS) $(LOCAL_CPPFLAGS) $(LOCAL_LDFLAGS) -o $@ $< $(BROKER_A) $(LOCAL_LIBADD)
 	install $@ ${OUT}/$@
 	cp ${R}/fuzzing/corpora/broker_password_file_seed_corpus.zip ${OUT}/$@_seed_corpus.zip
 
@@ -61,22 +61,22 @@ broker_fuzz_proxy_v2 : broker_fuzz_proxy_v2.cpp ${R}/src/proxy_v2.o
 	install $@ ${OUT}/$@
 
 broker_fuzz_psk_file : broker_fuzz_psk_file.cpp ${R}/src/mosquitto_broker.a
-	$(CXX) $(LOCAL_CXXFLAGS) $(LOCAL_CPPFLAGS) $(LOCAL_LDFLAGS) -o $@ $< $(LOCAL_LIBADD) ${BROKER_A}
+	$(CXX) $(LOCAL_CXXFLAGS) $(LOCAL_CPPFLAGS) $(LOCAL_LDFLAGS) -o $@ $< $(BROKER_A) $(LOCAL_LIBADD)
 	install $@ ${OUT}/$@
 	cp ${R}/fuzzing/corpora/broker_psk_file_seed_corpus.zip ${OUT}/$@_seed_corpus.zip
 
 broker_fuzz_queue_msg : broker_fuzz_queue_msg.cpp ${R}/src/mosquitto_broker.a
-	$(CXX) $(LOCAL_CXXFLAGS) $(LOCAL_CPPFLAGS) $(LOCAL_LDFLAGS) -o $@ $< $(LOCAL_LIBADD) ${BROKER_A}
+	$(CXX) $(LOCAL_CXXFLAGS) $(LOCAL_CPPFLAGS) $(LOCAL_LDFLAGS) -o $@ $< $(BROKER_A) $(LOCAL_LIBADD)
 	install $@ ${OUT}/$@
 	cp ${R}/fuzzing/corpora/broker_queue_msg_seed_corpus.zip ${OUT}/$@_seed_corpus.zip
 
 broker_fuzz_read_handle : broker_fuzz_read_handle.cpp fuzz_packet_read_base.o ${R}/src/mosquitto_broker.a
-	$(CXX) $(LOCAL_CXXFLAGS) $(LOCAL_CPPFLAGS) $(LOCAL_LDFLAGS) -o $@ $^ $(LOCAL_LIBADD) ${BROKER_A}
+	$(CXX) $(LOCAL_CXXFLAGS) $(LOCAL_CPPFLAGS) $(LOCAL_LDFLAGS) -o $@ $^ $(BROKER_A) $(LOCAL_LIBADD)
 	install $@ ${OUT}/$@
 	cp ${R}/fuzzing/corpora/broker_packet_seed_corpus.zip ${OUT}/$@_seed_corpus.zip
 
 broker_fuzz_test_config : broker_fuzz_test_config.cpp ${R}/src/mosquitto_broker.a
-	$(CXX) $(LOCAL_CXXFLAGS) $(LOCAL_CPPFLAGS) $(LOCAL_LDFLAGS) -o $@ $< $(LOCAL_LIBADD) ${BROKER_A}
+	$(CXX) $(LOCAL_CXXFLAGS) $(LOCAL_CPPFLAGS) $(LOCAL_LDFLAGS) -o $@ $< $(BROKER_A) $(LOCAL_LIBADD)
 	install $@ ${OUT}/$@
 	cp ${R}/fuzzing/corpora/broker_fuzz_test_config_seed_corpus.zip ${OUT}/$@_seed_corpus.zip
 	cp ${R}/fuzzing/corpora/broker_conf.dict ${OUT}/$@.dict
