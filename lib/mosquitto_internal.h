@@ -77,11 +77,16 @@ typedef int mosq_sock_t;
 
 #ifdef WIN32
 #  define WINDOWS_SET_ERRNO() \
+		do{ \
+			errno = WSAGetLastError(); \
+		}while(0)
+#  define WINDOWS_SET_ERRNO_RW() \
 		if(errno != EAGAIN){ \
 			errno = WSAGetLastError(); \
 		}
 #else
 #  define WINDOWS_SET_ERRNO()
+#  define WINDOWS_SET_ERRNO_RW()
 #endif
 
 #define SAFE_PRINT(A) (A)?(A):"null"

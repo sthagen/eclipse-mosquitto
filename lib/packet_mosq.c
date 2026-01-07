@@ -307,8 +307,7 @@ int packet__write(struct mosquitto *mosq)
 				packet->to_process -= (uint32_t)write_length;
 				packet->pos += (uint32_t)write_length;
 			}else{
-				WINDOWS_SET_ERRNO();
-
+				WINDOWS_SET_ERRNO_RW();
 				if(errno == EAGAIN || errno == COMPAT_EWOULDBLOCK
 #ifdef WIN32
 						|| errno == WSAENOTCONN
@@ -377,7 +376,7 @@ static int read_header(struct mosquitto *mosq, ssize_t (*func_read)(struct mosqu
 		if(read_length == 0){
 			return MOSQ_ERR_CONN_LOST; /* EOF */
 		}
-		WINDOWS_SET_ERRNO();
+		WINDOWS_SET_ERRNO_RW();
 		if(errno == EAGAIN || errno == COMPAT_EWOULDBLOCK){
 			return MOSQ_ERR_SUCCESS;
 		}else{
@@ -586,7 +585,7 @@ static int packet__read_single(struct mosquitto *mosq, enum mosquitto_client_sta
 			mosq->in_packet.to_process -= (uint32_t)read_length;
 			mosq->in_packet.pos += (uint32_t)read_length;
 		}else{
-			WINDOWS_SET_ERRNO();
+			WINDOWS_SET_ERRNO_RW();
 			if(errno == EAGAIN || errno == COMPAT_EWOULDBLOCK){
 				if(mosq->in_packet.to_process > 1000){
 					/* Update last_msg_in time if more than 1000 bytes left to
