@@ -163,6 +163,10 @@ int persist__chunk_base_msg_read_v234(FILE *db_fptr, struct P_base_msg *chunk, u
 	if(rc){
 		goto error;
 	}
+	if(!chunk->topic){
+		rc = MOSQ_ERR_INVAL;
+		goto error;
+	}
 	slen = strlen(chunk->topic);
 	if(slen > UINT16_MAX){
 		rc = MOSQ_ERR_INVAL;
