@@ -50,7 +50,7 @@ jobs:
           target: ${{github.workspace}}/installer/
 
       - name: Installer
-        uses: joncloud/makensis-action@v5
+        uses: joncloud/makensis-action@v5.0
         with:
           script-file: ${{github.workspace}}/installer/mosquitto.nsi
 
