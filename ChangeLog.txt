@@ -10,6 +10,8 @@ Broker:
 - Check return value of openssl ASN1_string_[get0_]data() functions for NULL.
   This prevents a crash in case of incorrect certificate handling in openssl.
   Closes #3390.
+- Fix potential crash on startup if a malicious/corrupt persistence file from
+  mosquitto 1.5 or earlier is loaded. Closes #3439.
 
 
 2.0.22 - 2025-07-11

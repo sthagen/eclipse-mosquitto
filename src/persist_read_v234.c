@@ -31,6 +31,7 @@ Contributors:
 #include <time.h>
 
 #include "mosquitto_broker_internal.h"
+#include "mqtt_protocol.h"
 #include "memory_mosq.h"
 #include "persist.h"
 #include "time_mosq.h"
@@ -171,6 +172,13 @@ int persist__chunk_msg_store_read_v234(FILE *db_fptr, struct P_msg_store *chunk,
 	chunk->F.payloadlen = ntohl(i32temp);
 
 	if(chunk->F.payloadlen){
+		if(chunk->F.payloadlen > MQTT_MAX_PAYLOAD){
+			mosquitto__free(chunk->source.id);
+			mosquitto__free(chunk->source.username);
+			mosquitto__free(chunk->topic);
+			log__printf(NULL, MOSQ_LOG_ERR, "Error: Persistent payload too large (%u).", chunk->F.payloadlen);
+			return MOSQ_ERR_INVAL;
+		}
 		chunk->payload = mosquitto_malloc(chunk->F.payloadlen+1);
 		if(chunk->payload == NULL){
 			mosquitto__free(chunk->source.id);
