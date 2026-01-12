@@ -16,6 +16,11 @@
 # Contributors:
 #    Roger Light - initial implementation and documentation.
 
+export CC="${CC:-clang}"
+export CXX="${CXX:-clang++}"
+export CFLAGS
+export CXXFLAGS
+export LDFLAGS
 
 # Build direct broker dependency - cJSON
 # Note that other dependencies, i.e. sqlite are not yet built because they are
