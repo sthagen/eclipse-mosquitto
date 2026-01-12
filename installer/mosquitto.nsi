@@ -145,7 +145,6 @@ Section "Files" SecInstall
 	File "..\dashboard\src\sidebar.js"
 	File "..\dashboard\src\styles.css"
 	File "..\dashboard\src\tailwind.config.js"
-	File "..\dashboard\src\tailwind\styles.css"
 	File "..\dashboard\src\utils.js"
 
 	SetOutPath "$INSTDIR\dashboard\media"
@@ -288,9 +287,7 @@ Section "Uninstall"
 	Delete "$INSTDIR\dashboard\queue.js"
 	Delete "$INSTDIR\dashboard\sidebar.js"
 	Delete "$INSTDIR\dashboard\styles.css"
-	Delete "$INSTDIR\dashboard\tailwind"
 	Delete "$INSTDIR\dashboard\tailwind.config.js"
-	Delete "$INSTDIR\dashboard\tailwind\styles.css"
 	Delete "$INSTDIR\dashboard\utils.js"
 	RMDir "$INSTDIR\dashboard"
 
