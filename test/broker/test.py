@@ -168,6 +168,7 @@ tests = [
     (1, './09-plugin-acl-access-variants.py'),
     (1, './09-plugin-acl-change.py'),
     (1, './09-plugin-auth-acl-pub.py'),
+    (1, './09-plugin-auth-acl-pub-prop.py'),
     (1, './09-plugin-auth-acl-sub-denied.py'),
     (1, './09-plugin-auth-acl-sub.py'),
     (1, './09-plugin-auth-context-params.py'),

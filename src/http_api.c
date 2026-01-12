@@ -357,7 +357,7 @@ static int check_access(struct mosquitto__listener *listener, struct MHD_Connect
 	/* Authentication */
 	auth_rc = mosquitto_basic_auth(&context);
 	if(auth_rc == MOSQ_ERR_SUCCESS){
-		acl_rc = mosquitto_acl_check(&context, url, 0, NULL, 0, false, MOSQ_ACL_READ);
+		acl_rc = mosquitto_acl_check(&context, url, 0, NULL, 0, false, NULL, MOSQ_ACL_READ);
 	}
 	MHD_free(context.username);
 	MHD_free(context.password);

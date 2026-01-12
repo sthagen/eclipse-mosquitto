@@ -187,7 +187,7 @@ int handle__subscribe(struct mosquitto *context)
 			}
 
 			allowed = true;
-			rc2 = mosquitto_acl_check(context, sub.topic_filter, 0, NULL, qos, false, MOSQ_ACL_SUBSCRIBE);
+			rc2 = mosquitto_acl_check(context, sub.topic_filter, 0, NULL, qos, false, properties, MOSQ_ACL_SUBSCRIBE);
 			switch(rc2){
 				case MOSQ_ERR_SUCCESS:
 					break;

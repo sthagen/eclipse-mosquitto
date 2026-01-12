@@ -1321,7 +1321,8 @@ static void db__client_messages_check_acl(struct mosquitto *context, struct mosq
 		}
 		if(mosquitto_acl_check(context, base_msg->data.topic,
 				base_msg->data.payloadlen, base_msg->data.payload,
-				base_msg->data.qos, base_msg->data.retain, access) != MOSQ_ERR_SUCCESS){
+				base_msg->data.qos, base_msg->data.retain,
+				base_msg->data.properties, access) != MOSQ_ERR_SUCCESS){
 
 			DL_DELETE((*head), client_msg);
 			decrement_stats_fn(msg_data, client_msg);

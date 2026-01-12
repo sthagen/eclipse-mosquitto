@@ -76,7 +76,7 @@ int send__pubrel(struct mosquitto *mosq, uint16_t mid, const mosquitto_property 
 }
 
 
-int mosquitto_acl_check(struct mosquitto *context, const char *topic, uint32_t payloadlen, void *payload, uint8_t qos, bool retain, int access)
+int mosquitto_acl_check(struct mosquitto *context, const char *topic, uint32_t payloadlen, void *payload, uint8_t qos, bool retain, mosquitto_property *properties, int access)
 {
 	UNUSED(context);
 	UNUSED(topic);
@@ -84,6 +84,7 @@ int mosquitto_acl_check(struct mosquitto *context, const char *topic, uint32_t p
 	UNUSED(payload);
 	UNUSED(qos);
 	UNUSED(retain);
+	UNUSED(properties);
 	UNUSED(access);
 
 	return MOSQ_ERR_SUCCESS;

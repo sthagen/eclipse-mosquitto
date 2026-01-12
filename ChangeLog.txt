@@ -149,6 +149,7 @@
 - Plugins can now use the `next_s` and `next_ms` members of the tick event data
   struct to set a minimum interval that the broker will wait before calling the
   tick callback again.
+- MOSQ_EVT_ACL_CHECK event is now passed message properties where possible.
 
 # Plugins
 - Add acl-file plugin.

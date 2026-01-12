@@ -237,7 +237,7 @@ static int retain__process(struct mosquitto__retainhier *branch, struct mosquitt
 	retained = branch->retained;
 
 	rc = mosquitto_acl_check(context, retained->data.topic, retained->data.payloadlen, retained->data.payload,
-			retained->data.qos, retained->data.retain, MOSQ_ACL_READ);
+			retained->data.qos, retained->data.retain, retained->data.properties, MOSQ_ACL_READ);
 	if(rc == MOSQ_ERR_ACL_DENIED){
 		return MOSQ_ERR_SUCCESS;
 	}else if(rc != MOSQ_ERR_SUCCESS){
@@ -254,7 +254,7 @@ static int retain__process(struct mosquitto__retainhier *branch, struct mosquitt
 		retain_ctxt.listener = retained->source_listener;
 
 		rc = mosquitto_acl_check(&retain_ctxt, retained->data.topic, retained->data.payloadlen, retained->data.payload,
-				retained->data.qos, retained->data.retain, MOSQ_ACL_WRITE);
+				retained->data.qos, retained->data.retain, retained->data.properties, MOSQ_ACL_WRITE);
 		if(rc == MOSQ_ERR_ACL_DENIED){
 			return MOSQ_ERR_SUCCESS;
 		}else if(rc != MOSQ_ERR_SUCCESS){

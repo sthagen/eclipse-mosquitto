@@ -45,6 +45,7 @@ int mosquitto_auth_acl_check_v5(int event, void *event_data, void *user_data)
 {
 	struct mosquitto_evt_acl_check *ed = event_data;
 	const char *username = mosquitto_client_username(ed->client);
+	char *prop_name, *prop_value;
 
 	(void)user_data;
 
@@ -64,7 +65,10 @@ int mosquitto_auth_acl_check_v5(int event, void *event_data, void *user_data)
 		}else{
 			return MOSQ_ERR_ACL_DENIED;
 		}
+	}else if(mosquitto_property_read_string_pair(ed->properties, MQTT_PROP_USER_PROPERTY, &prop_name, &prop_value, false)
+			&& !strcmp(prop_name, "custom-name") && !strcmp(prop_value, "custom-value")){
 
+		return MOSQ_ERR_SUCCESS;
 	}else{
 		return MOSQ_ERR_ACL_DENIED;
 	}

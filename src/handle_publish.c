@@ -357,7 +357,10 @@ int handle__publish(struct mosquitto *context)
 	}
 
 	/* Check for topic access */
-	rc = mosquitto_acl_check(context, base_msg->data.topic, base_msg->data.payloadlen, base_msg->data.payload, base_msg->data.qos, base_msg->data.retain, MOSQ_ACL_WRITE);
+	rc = mosquitto_acl_check(context,
+			base_msg->data.topic, base_msg->data.payloadlen, base_msg->data.payload,
+			base_msg->data.qos, base_msg->data.retain, base_msg->data.properties,
+			MOSQ_ACL_WRITE);
 	if(rc == MOSQ_ERR_ACL_DENIED){
 		log__printf(NULL, MOSQ_LOG_DEBUG,
 				"Denied PUBLISH from %s (d%d, q%d, r%d, m%d, '%s', ... (%ld bytes))",

@@ -120,7 +120,7 @@ int handle__unsubscribe(struct mosquitto *context)
 
 		/* ACL check */
 		allowed = true;
-		rc = mosquitto_acl_check(context, sub.topic_filter, 0, NULL, 0, false, MOSQ_ACL_UNSUBSCRIBE);
+		rc = mosquitto_acl_check(context, sub.topic_filter, 0, NULL, 0, false, properties, MOSQ_ACL_UNSUBSCRIBE);
 		switch(rc){
 			case MOSQ_ERR_SUCCESS:
 				break;

@@ -197,6 +197,7 @@ endif
 	./09-plugin-acl-access-variants.py
 	./09-plugin-acl-change.py
 	./09-plugin-auth-acl-pub.py
+	./09-plugin-auth-acl-pub-prop.py
 	./09-plugin-auth-acl-sub-denied.py
 	./09-plugin-auth-acl-sub.py
 	./09-plugin-auth-context-params.py

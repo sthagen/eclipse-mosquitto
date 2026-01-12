@@ -402,6 +402,7 @@ static void check_subscription_acls(struct mosquitto *context)
 				NULL,
 				0, /* FIXME */
 				false,
+				NULL,
 				MOSQ_ACL_SUBSCRIBE);
 
 		if(rc != MOSQ_ERR_SUCCESS){
