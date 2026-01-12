@@ -20,7 +20,7 @@ PROTOBUF_LIBS=${SRC}/LPM/src/libfuzzer/libprotobuf-mutator-libfuzzer.a \
 			  -Wl,--start-group \
 			  ${SRC}/LPM/external.protobuf/lib/lib*.a \
 			  -Wl,--end-group
-PROTOC?=/src/libprotobuf-mutator/external.protobuf/bin/protoc
+PROTOC?=${SRC}/LPM/external.protobuf/bin/protoc
 
 all: $(FUZZERS)
 
