@@ -103,7 +103,7 @@ static int read_tlv_ssl(struct mosquitto *context, uint16_t len, bool *have_cert
 	}
 
 	while(len > 0){
-		if(context->proxy.len - context->proxy.pos < sizeof(struct pp2_tlv)){
+		if(context->proxy.len - context->proxy.pos < (int)sizeof(struct pp2_tlv)){
 			return MOSQ_ERR_INVAL;
 		}
 		struct pp2_tlv *tlv = (struct pp2_tlv *)(&context->proxy.buf[context->proxy.pos]);
@@ -147,7 +147,7 @@ static int read_tlv_ssl(struct mosquitto *context, uint16_t len, bool *have_cert
 static int read_tlv(struct mosquitto *context, bool *have_certificate)
 {
 	while(context->proxy.pos < context->proxy.len){
-		if(context->proxy.len - context->proxy.pos < sizeof(struct pp2_tlv)){
+		if(context->proxy.len - context->proxy.pos < (int)sizeof(struct pp2_tlv)){
 			return MOSQ_ERR_INVAL;
 		}
 		struct pp2_tlv *tlv = (struct pp2_tlv *)(&context->proxy.buf[context->proxy.pos]);
