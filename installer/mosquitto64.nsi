@@ -150,6 +150,7 @@ Section "Files" SecInstall
 	File "..\dashboard\src\utils.js"
 
 	SetOutPath "$INSTDIR\dashboard\media"
+	File "..\dashboard\src\media\banner.svg"
 	File "..\dashboard\src\media\favicon-16x16.png"
 	File "..\dashboard\src\media\favicon-32x32.png"
 	File "..\dashboard\src\media\mosquitto-logo.png"
@@ -269,6 +270,7 @@ Section "Uninstall"
 	RMDir "$INSTDIR\devel\mosquitto"
 	RMDir "$INSTDIR\devel"
 
+	Delete "$INSTDIR\dashboard\media\banner.svg"
 	Delete "$INSTDIR\dashboard\media\favicon-16x16.png"
 	Delete "$INSTDIR\dashboard\media\favicon-32x32.png"
 	Delete "$INSTDIR\dashboard\media\mosquitto-logo.png"
