@@ -38,7 +38,7 @@ jobs:
             uthash-dev \
             xsltproc
 
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
 
     - run: |
         make \
