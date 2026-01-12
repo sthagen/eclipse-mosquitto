@@ -99,7 +99,7 @@ static char *http__canonical_filename(
 		return NULL;
 	}
 #ifdef WIN32
-	char *resolved = _fullpath(filename_canonical, filename, 0);
+	char *resolved = _fullpath(filename_canonical, filename, PATH_MAX);
 	mosquitto_FREE(filename);
 	if(!resolved){
 		*error_code = MHD_HTTP_INTERNAL_SERVER_ERROR;
