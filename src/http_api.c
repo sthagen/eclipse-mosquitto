@@ -425,7 +425,7 @@ int http_api__start_local(struct mosquitto__listener *listener)
 		listener->security_options->allow_anonymous = db.config->security_options.allow_anonymous;
 	}
 
-	if(listener->http_dir == NULL && strlen(HTTP_API_DIR) > 1){
+	if(listener->http_dir == NULL && strlen(HTTP_API_DIR) > 0){
 #ifdef WIN32
 		char *http_dir_canonical = _fullpath(NULL, HTTP_API_DIR, 0);
 #else
