@@ -923,6 +923,10 @@ static int config__read_file_core(struct mosquitto__config *config, bool reload,
 					conf__set_cur_security_options(config, cur_listener, &cur_security_options);
 					if(conf__parse_string(&token, "auto_id_prefix", &cur_security_options->auto_id_prefix, saveptr)) return MOSQ_ERR_INVAL;
 					if(cur_security_options->auto_id_prefix){
+						if(strlen(cur_security_options->auto_id_prefix) > 50){
+							log__printf(NULL, MOSQ_LOG_ERR, "Error: auto_id_prefix length must be <= 50.");
+							return MOSQ_ERR_INVAL;
+						}
 						cur_security_options->auto_id_prefix_len = (uint16_t)strlen(cur_security_options->auto_id_prefix);
 					}else{
 						cur_security_options->auto_id_prefix_len = 0;

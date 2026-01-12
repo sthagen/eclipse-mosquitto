@@ -12,6 +12,7 @@ Broker:
   Closes #3390.
 - Fix potential crash on startup if a malicious/corrupt persistence file from
   mosquitto 1.5 or earlier is loaded. Closes #3439.
+- Limit auto_id_prefix to 50 characters. Closes #3440.
 
 
 2.0.22 - 2025-07-11
