@@ -131,39 +131,38 @@ Section "Files" SecInstall
 	File "..\include\mosquitto\mqtt_protocol.h"
 
 	SetOutPath "$INSTDIR\dashboard"
-	File "..\dashboard\src\index.html
-	File "..\dashboard\src\listeners.html
+	File "..\dashboard\src\index.html"
+	File "..\dashboard\src\listeners.html"
 
 	SetOutPath "$INSTDIR\dashboard\app"
-	File "..\dashboard\src\app\consts.js
-	File "..\dashboard\src\app\dashboard.js
-	File "..\dashboard\src\app\index.js
-	File "..\dashboard\src\app\listeners.js
-	File "..\dashboard\src\app\sidebar.js
+	File "..\dashboard\src\app\consts.js"
+	File "..\dashboard\src\app\dashboard.js"
+	File "..\dashboard\src\app\index.js"
+	File "..\dashboard\src\app\listeners.js"
+	File "..\dashboard\src\app\sidebar.js"
 
 	SetOutPath "$INSTDIR\dashboard\css"
-	File "..\dashboard\src\css\styles.css
+	File "..\dashboard\src\css\styles.css"
 
 	SetOutPath "$INSTDIR\dashboard\lib"
-	File "..\dashboard\src\lib\chart.umd.js
-	File "..\dashboard\src\lib\chartjs-plugin-zoom.min.js
-	File "..\dashboard\src\lib\hammer.min.js
+	File "..\dashboard\src\lib\chart.umd.js"
+	File "..\dashboard\src\lib\chartjs-plugin-zoom.min.js"
+	File "..\dashboard\src\lib\hammer.min.js"
 
 	SetOutPath "$INSTDIR\dashboard\media"
-	File "..\dashboard\src\media
-	File "..\dashboard\src\media\banner.svg
-	File "..\dashboard\src\media\favicon-16x16.png
-	File "..\dashboard\src\media\favicon-32x32.png
-	File "..\dashboard\src\media\mosquitto-logo.png
+	File "..\dashboard\src\media\banner.svg"
+	File "..\dashboard\src\media\favicon-16x16.png"
+	File "..\dashboard\src\media\favicon-32x32.png"
+	File "..\dashboard\src\media\mosquitto-logo.png"
 
 	SetOutPath "$INSTDIR\dashboard\tailwind"
-	File "..\dashboard\src\tailwind.config.js
-	File "..\dashboard\src\tailwind\styles.css
+	File "..\dashboard\src\tailwind.config.js"
+	File "..\dashboard\src\tailwind\styles.css"
 
 	SetOutPath "$INSTDIR\dashboard\utils"
-	File "..\dashboard\src\utils\assert.js
-	File "..\dashboard\src\utils\queue.js
-	File "..\dashboard\src\utils\utils.js
+	File "..\dashboard\src\utils\assert.js"
+	File "..\dashboard\src\utils\queue.js"
+	File "..\dashboard\src\utils\utils.js"
 
 	WriteUninstaller "$INSTDIR\Uninstall.exe"
 	WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Mosquitto" "DisplayName" "Eclipse Mosquitto MQTT broker (32 bit)"
@@ -280,31 +279,31 @@ Section "Uninstall"
 	RMDir "$INSTDIR\devel\mosquitto"
 	RMDir "$INSTDIR\devel"
 
-	Delete "$INSTDIR\dashboard\app\consts.js
-	Delete "$INSTDIR\dashboard\app\dashboard.js
-	Delete "$INSTDIR\dashboard\app\index.js
-	Delete "$INSTDIR\dashboard\app\listeners.js
-	Delete "$INSTDIR\dashboard\app\sidebar.js
+	Delete "$INSTDIR\dashboard\app\consts.js"
+	Delete "$INSTDIR\dashboard\app\dashboard.js"
+	Delete "$INSTDIR\dashboard\app\index.js"
+	Delete "$INSTDIR\dashboard\app\listeners.js"
+	Delete "$INSTDIR\dashboard\app\sidebar.js"
 	RMDir "$INSTDIR\dashboard\app"
-	Delete "$INSTDIR\dashboard\css\styles.css
+	Delete "$INSTDIR\dashboard\css\styles.css"
 	RMDir "$INSTDIR\dashboard\css"
-	Delete "$INSTDIR\dashboard\index.html
-	Delete "$INSTDIR\dashboard\lib\chart.umd.js
-	Delete "$INSTDIR\dashboard\lib\chartjs-plugin-zoom.min.js
-	Delete "$INSTDIR\dashboard\lib\hammer.min.js
+	Delete "$INSTDIR\dashboard\index.html"
+	Delete "$INSTDIR\dashboard\lib\chart.umd.js"
+	Delete "$INSTDIR\dashboard\lib\chartjs-plugin-zoom.min.js"
+	Delete "$INSTDIR\dashboard\lib\hammer.min.js"
 	RMDir "$INSTDIR\dashboard\lib"
-	Delete "$INSTDIR\dashboard\listeners.html
-	Delete "$INSTDIR\dashboard\media\banner.svg
-	Delete "$INSTDIR\dashboard\media\favicon-16x16.png
-	Delete "$INSTDIR\dashboard\media\favicon-32x32.png
-	Delete "$INSTDIR\dashboard\media\mosquitto-logo.png
+	Delete "$INSTDIR\dashboard\listeners.html"
+	Delete "$INSTDIR\dashboard\media\banner.svg"
+	Delete "$INSTDIR\dashboard\media\favicon-16x16.png"
+	Delete "$INSTDIR\dashboard\media\favicon-32x32.png"
+	Delete "$INSTDIR\dashboard\media\mosquitto-logo.png"
 	RMDir "$INSTDIR\dashboard\media"
-	Delete "$INSTDIR\dashboard\tailwind.config.js
-	Delete "$INSTDIR\dashboard\tailwind\styles.css
+	Delete "$INSTDIR\dashboard\tailwind.config.js"
+	Delete "$INSTDIR\dashboard\tailwind\styles.css"
 	RMDir "$INSTDIR\dashboard\tailwind"
-	Delete "$INSTDIR\dashboard\utils\assert.js
-	Delete "$INSTDIR\dashboard\utils\queue.js
-	Delete "$INSTDIR\dashboard\utils\utils.js
+	Delete "$INSTDIR\dashboard\utils\assert.js"
+	Delete "$INSTDIR\dashboard\utils\queue.js"
+	Delete "$INSTDIR\dashboard\utils\utils.js"
 	RMDir "$INSTDIR\dashboard\utils"
 	RMDir "$INSTDIR\dashboard"
 
