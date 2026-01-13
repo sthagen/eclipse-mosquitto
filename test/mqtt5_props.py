@@ -210,7 +210,7 @@ def unpack_property(b: bytes):
     elif id == SUBSCRIPTION_IDENTIFIER:
         value, pack_len = unpack_varint(b[1:])
         return "SUBSCRIPTION_IDENTIFIER", value, pack_len + 1
-    elif id == PROP_USER_PROPERTY:
+    elif id == USER_PROPERTY:
         name, pack_name_len = unpack_string(b[1:])
         value, pack_value_len = unpack_varint(b[1 + pack_name_len :])
         return (
