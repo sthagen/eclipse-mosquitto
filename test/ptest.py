@@ -130,8 +130,8 @@ class PTest():
 
             for t in running_tests:
                 t.proc.poll()
+                t.runtime = time.time() - t.start_time
                 if t.proc.returncode is not None:
-                    t.runtime = time.time() - t.start_time
                     running_tests.remove(t)
 
                     for portret in t.mosq_port:
@@ -139,7 +139,7 @@ class PTest():
                     t.proc.terminate()
                     t.proc.wait()
 
-                    if t.proc.returncode == 1 and t.attempts < 5:
+                    if t.proc.returncode != 0 and t.attempts < 5:
                         t.print_result(t.attempts+1, 226-6*t.attempts)
                         retried += 1
                         t.attempts += 1
@@ -148,7 +148,7 @@ class PTest():
                         retry_tests.append(t)
                         continue
 
-                    if t.proc.returncode == 1:
+                    if t.proc.returncode != 0:
                         t.print_result(0, COLOUR_FAIL)
                         failed = failed + 1
                         failed_tests.append(t.cmd)
@@ -158,6 +158,9 @@ class PTest():
                     else:
                         passed = passed + 1
                         t.print_result(0, COLOUR_PASS)
+                elif t.runtime > 180: # 3 minutes max
+                    t.proc.terminate()
+                    t.proc.wait()
 
         print("Passed: %d\nRetried: %d\nFailed: %d\nTotal: %d\nTotal time: %0.2f" % (passed, retried, failed, passed+failed, time.time()-start_time))
         if failed > 0:
