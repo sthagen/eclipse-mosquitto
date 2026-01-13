@@ -181,7 +181,7 @@
                             <div class="group-open:block hidden absolute right-0 mt-2 w-64 rounded-xl border border-gray-200 bg-white p-3 text-sm shadow-lg z-10">
                                 <div class="font-medium mb-1">clients total</div>
                                 <p class="text-gray-600 break-words">
-                                    The total number of active and inactive clients currently connected and registered on the broker. Topic: <code>$SYS/broker/clients/total</code>
+                                    The total number of online and offline client sessions currently connected and registered on the broker. Topic: <code>$SYS/broker/clients/total</code>
                                 </p>
                             </div>
                         </details>
@@ -245,7 +245,7 @@
                             <div class="group-open:block hidden absolute right-0 mt-2 w-64 rounded-xl border border-gray-200 bg-white p-3 text-sm shadow-lg z-10">
                                 <div class="font-medium mb-1">clients offline</div>
                                 <p class="text-gray-600 break-words">
-                                    The total number of persistent clients (with clean session disabled) that are registered at the broker but are currently disconnected. Topic: <code>$SYS/broker/clients/disconnected</code>
+                                    The total number of persistent client sessions (with clean session disabled) that are registered at the broker but are currently disconnected. Topic: <code>$SYS/broker/clients/disconnected</code>
                                 </p>
                             </div>
                         </details>
@@ -275,7 +275,7 @@
 
                             <!-- popup panel -->
                             <div class="group-open:block hidden absolute right-0 mt-2 w-64 rounded-xl border border-gray-200 bg-white p-3 text-sm shadow-lg z-10">
-                                <div class="font-medium mb-1">max simulataneius clientst</div>
+                                <div class="font-medium mb-1">max simultaneous clients</div>
                                 <p class="text-gray-600 break-words">
                                     The maximum number of clients that have been connected to the broker at the same time. Topic: <code>$SYS/broker/clients/maximum</code>
                                 </p>
@@ -307,7 +307,7 @@
 
                             <!-- popup panel -->
                             <div class="group-open:block hidden absolute right-0 mt-2 w-64 rounded-xl border border-gray-200 bg-white p-3 text-sm shadow-lg z-10">
-                                <div class="font-medium mb-1">connection sockets</div>
+                                <div class="font-medium mb-1">socket connections</div>
                                 <p class="text-gray-600 break-words">
                                     Number of open socket connections on the broker. Topic: <code>$SYS/broker/connections/socket/count</code>
                                 </p>
