@@ -23,6 +23,7 @@ def do_test(publish_packet, reason_code, error_string):
 
     connack_props = mqtt5_props.gen_uint16_prop(mqtt5_props.TOPIC_ALIAS_MAXIMUM, 10)
     connack_props += mqtt5_props.gen_byte_prop(mqtt5_props.RETAIN_AVAILABLE, 0)
+    connack_props += mqtt5_props.gen_uint32_prop(mqtt5_props.MAXIMUM_PACKET_SIZE, 2000000)
     connack_props += mqtt5_props.gen_uint16_prop(mqtt5_props.RECEIVE_MAXIMUM, 20)
     connack_props += mqtt5_props.gen_byte_prop(mqtt5_props.MAXIMUM_QOS, 1)
 

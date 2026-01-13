@@ -18,6 +18,7 @@ def do_test(proto_ver):
     sub_connect_packet = mosq_test.gen_connect("sub", properties=properties, proto_ver=proto_ver, clean_session=False)
 
     properties = mqtt5_props.gen_uint16_prop(mqtt5_props.TOPIC_ALIAS_MAXIMUM, 10) \
+        + mqtt5_props.gen_uint32_prop(mqtt5_props.MAXIMUM_PACKET_SIZE, 2000000) \
         + mqtt5_props.gen_uint16_prop(mqtt5_props.RECEIVE_MAXIMUM, 1)
     sub_connack_packet = mosq_test.gen_connack(rc=0, proto_ver=proto_ver, properties=properties, property_helper=False)
     sub_connack_packet2 = mosq_test.gen_connack(rc=0, flags=1, proto_ver=proto_ver, properties=properties, property_helper=False)
@@ -28,6 +29,7 @@ def do_test(proto_ver):
 
     connect_packet = mosq_test.gen_connect("pub-qos1-test", proto_ver=proto_ver)
     properties = mqtt5_props.gen_uint16_prop(mqtt5_props.TOPIC_ALIAS_MAXIMUM, 10) \
+        + mqtt5_props.gen_uint32_prop(mqtt5_props.MAXIMUM_PACKET_SIZE, 2000000) \
         + mqtt5_props.gen_uint16_prop(mqtt5_props.RECEIVE_MAXIMUM, 1)
     connack_packet = mosq_test.gen_connack(rc=0, proto_ver=proto_ver, properties=properties, property_helper=False)
 

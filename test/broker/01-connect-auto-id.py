@@ -65,7 +65,7 @@ def do_test(config_func, client_port, auto_id):
     # Remove the "xxxx" part - this means the front part of the packet
     # is correct (so remaining length etc. is correct), but we don't
     # need to match against the random id.
-    connack_packet = connack_packet[:-39]
+    connack_packet = connack_packet[:-44]
 
     broker = mosq_test.start_broker(filename=os.path.basename(__file__), port=port1, use_conf=True)
 

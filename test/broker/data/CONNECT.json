@@ -145,14 +145,14 @@
 		"tests": [
 			{ "name": "10 ok ", "expect_disconnect":false, "msgs":[
 				{"type":"send", "payload":"10 r14 s4 'MQTT' 05 02 k10 v0 s1 'p'", "comment":"minimal valid CONNECT"},
-				{"type":"recv", "payload":"20 r9 00 00 06 22 H10 21 H20", "comment": "CONNACK"}
+				{"type":"recv", "payload":"20 r14 00000B 22 H10 27 L2000000 21 H20", "comment": "CONNACK"}
 			]},
 			{ "name": "10 remaining length 5 bytes", "msgs":[
 				{"type":"send", "payload":"10 r268435456 s4 'MQTT' 05 02 k10 s1 'p'", "comment":"CONNECT"}
 			]},
 			{ "name": "10 Username flag 1 ok", "expect_disconnect":false, "msgs":[
 				{"type":"send", "payload":"10 r17 s4 'MQTT' 05 82 k10 v0 s1 'p' s1 'p'"},
-				{"type":"recv", "payload":"20 r9 00 00 06 22 H10 21 H20", "comment": "CONNACK"}
+				{"type":"recv", "payload":"20 r14 00000B 22 H10 27 L2000000 21 H20", "comment": "CONNACK"}
 			]},
 			{ "name": "10 Client ID with 0x0000", "msgs": [
 				{"type":"send", "payload":"10 r18 s4 'MQTT' 05 02 k10 v0 s5 746F700000"},
@@ -219,7 +219,7 @@
 			]},
 			{ "name": "10 Will flag 1 ok", "expect_disconnect":false, "msgs":[
 				{"type":"send", "payload":"10 r21 s4 'MQTT' 05 06 k10 v0 s1 'p' 00 s1 'p' s1 'p'"},
-				{"type":"recv", "payload":"20 r9 00 00 06 22 H10 21 H20", "comment": "CONNACK"}
+				{"type":"recv", "payload":"20 r14 00000B 22 H10 27 L2000000 21 H20", "comment": "CONNACK"}
 			]},
 			{ "name": "tiny max packet", "msgs":[{"type":"send", "payload":"10 r19 s4 'MQTT' 05 02 k10 05 27 L2 s1 'p'"}]}
 		]
@@ -242,7 +242,7 @@
 		"tests": [
 			{ "name": "session-expiry-interval (four byte integer)", "expect_disconnect":false, "msgs":[
 				{"type":"send", "payload":"10 r19 s4 'MQTT' 05 02 k10 05 11 L1 s1 'p'"},
-				{"type":"recv", "payload":"20 r9 00 00 06 22 H10 21 H20", "comment": "CONNACK"}
+				{"type":"recv", "payload":"20 r14 00000B 22 H10 27 L2000000 21 H20", "comment": "CONNACK"}
 			]},
 			{ "name": "2*session-expiry-interval (four byte integer)", "msgs":[
 				{"type":"send", "payload":"10 r24 s4 'MQTT' 05 02 k10 0A 11 L1 11 L1 s1 'p'"},
@@ -255,7 +255,7 @@
 
 			{ "name": "receive-maximum (two byte integer)", "expect_disconnect":false, "msgs": [
 				{"type":"send", "payload":"10 r17 s4 'MQTT' 05 02 k10 03 21 0101 s1 'p'"},
-				{"type":"recv", "payload":"20 r9 00 00 06 22 H10 21 H20", "comment": "CONNACK"}
+				{"type":"recv", "payload":"20 r14 00000B 22 H10 27 L2000000 21 H20", "comment": "CONNACK"}
 			]},
 			{ "name": "receive-maximum (two byte integer) 0 value", "msgs": [
 				{"type":"send", "payload":"10 r17 s4 'MQTT' 05 02 k10 03 21 0000 s1 'p'"},
@@ -272,7 +272,7 @@
 
 			{ "name": "maximum-packet-size (four byte integer)", "expect_disconnect":false, "msgs":[
 				{"type":"send", "payload":"10 r19 s4 'MQTT' 05 02 k10 05 27 10000001 s1 'p'"},
-				{"type":"recv", "payload":"20 r9 00 00 06 22 H10 21 H20", "comment": "CONNACK"}
+				{"type":"recv", "payload":"20 r14 00000B 22 H10 27 L2000000 21 H20", "comment": "CONNACK"}
 			]},
 			{ "name": "2*maximum-packet-size (four byte integer)", "msgs":[
 				{"type":"send", "payload":"10 r24 s4 'MQTT' 05 02 k10 0A 27 10000001 27 10000001 s1 'p'"},
@@ -288,16 +288,16 @@
 			]},
 			{ "name": "maximum-packet-size (four byte integer) FFFFFFFF value", "expect_disconnect":false, "msgs":[
 				{"type":"send", "payload":"10 r19 s4 'MQTT' 05 02 k10 05 27 FFFFFFFF s1 'p'"},
-				{"type":"recv", "payload":"20 r9 00 00 06 22 H10 21 H20", "comment": "CONNACK"}
+				{"type":"recv", "payload":"20 r14 00000B 22 H10 27 L2000000 21 H20", "comment": "CONNACK"}
 			]},
 
 			{ "name": "topic-alias-maximum (two byte integer)", "expect_disconnect":false, "msgs": [
 				{"type":"send", "payload":"10 r17 s4 'MQTT' 05 02 k10 03 22 0101 s1 'p'"},
-				{"type":"recv", "payload":"20 r9 00 00 06 22 H10 21 H20", "comment": "CONNACK"}
+				{"type":"recv", "payload":"20 r14 00000B 22 H10 27 L2000000 21 H20", "comment": "CONNACK"}
 			]},
 			{ "name": "topic-alias-maximum (two byte integer) 0 value", "expect_disconnect":false, "msgs": [
 				{"type":"send", "payload":"10 r17 s4 'MQTT' 05 02 k10 03 22 0000 s1 'p'"},
-				{"type":"recv", "payload":"20 r9 00 00 06 22 H10 21 H20", "comment": "CONNACK"}
+				{"type":"recv", "payload":"20 r14 00000B 22 H10 27 L2000000 21 H20", "comment": "CONNACK"}
 			]},
 			{ "name": "2*topic-alias-maximum (two byte integer)", "msgs": [
 				{"type":"send", "payload":"10 r20 s4 'MQTT' 05 02 k10 06 22 0101 22 0101 s1 'p'"},
@@ -310,7 +310,7 @@
 
 			{ "name": "request-response-information (byte)", "expect_disconnect":false, "msgs": [
 				{"type":"send", "payload":"10 r16 s4 'MQTT' 05 02 k10 02 19 01 s1 'p'"},
-				{"type":"recv", "payload":"20 r9 00 00 06 22 H10 21 H20", "comment": "CONNACK"}
+				{"type":"recv", "payload":"20 r14 00000B 22 H10 27 L2000000 21 H20", "comment": "CONNACK"}
 			]},
 			{ "name": "2*request-response-information (byte)", "msgs": [
 				{"type":"send", "payload":"10 r18 s4 'MQTT' 05 02 k10 04 19 01 19 01 s1 'p'"},
@@ -327,7 +327,7 @@
 
 			{ "name": "request-problem-information (byte)", "expect_disconnect":false, "msgs": [
 				{"type":"send", "payload":"10 r16 s4 'MQTT' 05 02 k10 02 17 01 s1 'p'"},
-				{"type":"recv", "payload":"20 r9 00 00 06 22 H10 21 H20", "comment": "CONNACK"}
+				{"type":"recv", "payload":"20 r14 00000B 22 H10 27 L2000000 21 H20", "comment": "CONNACK"}
 			]},
 			{ "name": "2*request-problem-information (byte)", "msgs": [
 				{"type":"send", "payload":"10 r18 s4 'MQTT' 05 02 k10 04 17 01 17 01 s1 'p'"},
@@ -344,11 +344,11 @@
 
 			{ "name": "user-property", "expect_disconnect":false, "msgs": [
 				{"type":"send", "payload":"10 r21 s4 'MQTT' 05 02 k10 07 26 s1 'p' s1 'p' s1 'p'"},
-				{"type":"recv", "payload":"20 r9 00 00 06 22 H10 21 H20", "comment": "CONNACK"}
+				{"type":"recv", "payload":"20 r14 00000B 22 H10 27 L2000000 21 H20", "comment": "CONNACK"}
 			]},
 			{ "name": "2*user-property", "expect_disconnect":false, "msgs": [
 				{"type":"send", "payload":"10 r28 s4 'MQTT' 05 02 k10 0E 26 s1 'p' s1 'p' 26 s1 'p' s1 'p' s1 'p'"},
-				{"type":"recv", "payload":"20 r9 00 00 06 22 H10 21 H20", "comment": "CONNACK"}
+				{"type":"recv", "payload":"20 r14 00000B 22 H10 27 L2000000 21 H20", "comment": "CONNACK"}
 			]},
 			{ "name": "user-property missing value", "msgs": [
 				{"type":"send", "payload":"10 r18 s4 'MQTT' 05 02 k10 04 26 s1 'p' s1 'p'"},
@@ -360,15 +360,15 @@
 			]},
 			{ "name": "user-property empty key", "expect_disconnect":false, "msgs": [
 				{"type":"send", "payload":"10 r20 s4 'MQTT' 05 02 k10 06 26 0000 s1 'p' s1 'p'"},
-				{"type":"recv", "payload":"20 r9 00 00 06 22 H10 21 H20", "comment": "CONNACK"}
+				{"type":"recv", "payload":"20 r14 00000B 22 H10 27 L2000000 21 H20", "comment": "CONNACK"}
 			]},
 			{ "name": "user-property empty value", "expect_disconnect":false, "msgs": [
 				{"type":"send", "payload":"10 r20 s4 'MQTT' 05 02 k10 06 26 s1 'p' 0000 s1 'p'"},
-				{"type":"recv", "payload":"20 r9 00 00 06 22 H10 21 H20", "comment": "CONNACK"}
+				{"type":"recv", "payload":"20 r14 00000B 22 H10 27 L2000000 21 H20", "comment": "CONNACK"}
 			]},
 			{ "name": "user-property empty key,value", "expect_disconnect":false, "msgs": [
 				{"type":"send", "payload":"10 r19 s4 'MQTT' 05 02 k10 05 26 0000 0000 s1 'p'"},
-				{"type":"recv", "payload":"20 r9 00 00 06 22 H10 21 H20", "comment": "CONNACK"}
+				{"type":"recv", "payload":"20 r14 00000B 22 H10 27 L2000000 21 H20", "comment": "CONNACK"}
 			]},
 
 			{ "name": "authentication-method (UTF-8 string) missing", "msgs": [
@@ -705,7 +705,7 @@
 		"tests": [
 			{ "name": "payload-format-indicator (byte)", "expect_disconnect":false, "msgs":[
 				{"type":"send", "payload":"10 r23 s4 'MQTT' 05 06 k10 v0 s1 'p' 02 01 01 s1 'p' s1 'p'"},
-				{"type":"recv", "payload":"20 r9 00 00 06 22 H10 21 H20", "comment": "CONNACK"}
+				{"type":"recv", "payload":"20 r14 00000B 22 H10 27 L2000000 21 H20", "comment": "CONNACK"}
 			]},
 			{ "name": "payload-format-indicator (byte) missing", "msgs":[
 				{"type":"send", "payload":"10 r22 s4 'MQTT' 05 06 k10 v0 s1 'p' 01 01 s1 'p' s1 'p'"},
@@ -718,7 +718,7 @@
 
 			{ "name": "message-expiry-interval (four byte integer)", "expect_disconnect":false, "msgs":[
 				{"type":"send", "payload":"10 r26 s4 'MQTT' 05 06 k10 v0 s1 'p' 05 02 L1 s1 'p' s1 'p'"},
-				{"type":"recv", "payload":"20 r9 00 00 06 22 H10 21 H20", "comment": "CONNACK"}
+				{"type":"recv", "payload":"20 r14 00000B 22 H10 27 L2000000 21 H20", "comment": "CONNACK"}
 			]},
 			{ "name": "2*message-expiry-interval (four byte integer)", "msgs":[
 				{"type":"send", "payload":"10 r31 s4 'MQTT' 05 06 k10 v0 s1 'p' 0A 02 L1 02 L1 s1 'p' s1 'p'"},
@@ -731,7 +731,7 @@
 
 			{ "name": "will-delay-interval (four byte integer)", "expect_disconnect":false, "msgs":[
 				{"type":"send", "payload":"10 r26 s4 'MQTT' 05 06 k10 v0 s1 'p' 05 18 L1 s1 'p' s1 'p'"},
-				{"type":"recv", "payload":"20 r9 00 00 06 22 H10 21 H20", "comment": "CONNACK"}
+				{"type":"recv", "payload":"20 r14 00000B 22 H10 27 L2000000 21 H20", "comment": "CONNACK"}
 			]},
 			{ "name": "will-delay-interval (four byte integer)", "msgs":[
 				{"type":"send", "payload":"10 r31 s4 'MQTT' 05 06 k10 v0 s1 'p' 0A 18 L1 18 L1 s1 'p' s1 'p'"},
@@ -744,7 +744,7 @@
 
 			{ "name": "content-type (UTF-8 string)", "expect_disconnect":false, "msgs":[
 				{"type":"send", "payload":"10 r25 s4 'MQTT' 05 06 k10 v0 s1 'p' 04 03 s1 'p' s1 'p' s1 'p'"},
-				{"type":"recv", "payload":"20 r9 00 00 06 22 H10 21 H20", "comment": "CONNACK"}
+				{"type":"recv", "payload":"20 r14 00000B 22 H10 27 L2000000 21 H20", "comment": "CONNACK"}
 			]},
 			{ "name": "2*content-type (UTF-8 string)", "msgs":[
 				{"type":"send", "payload":"10 r29 s4 'MQTT' 05 06 k10 v0 s1 'p' 08 03 s1 'p' 03 s1 'p' s1 'p' s1 'p'"},
@@ -756,12 +756,12 @@
 			]},
 			{ "name": "content-type (UTF-8 string) empty", "expect_disconnect":false, "msgs":[
 				{"type":"send", "payload":"10 r24 s4 'MQTT' 05 06 k10 v0 s1 'p' 03 03 0000 s1 'p' s1 'p'"},
-				{"type":"recv", "payload":"20 r9 00 00 06 22 H10 21 H20", "comment": "CONNACK"}
+				{"type":"recv", "payload":"20 r14 00000B 22 H10 27 L2000000 21 H20", "comment": "CONNACK"}
 			]},
 
 			{ "name": "response-topic (UTF-8 string)", "expect_disconnect":false, "msgs":[
 				{"type":"send", "payload":"10 r25 s4 'MQTT' 05 06 k10 v0 s1 'p' 04 08 s1 'p' s1 'p' s1 'p'"},
-				{"type":"recv", "payload":"20 r9 00 00 06 22 H10 21 H20", "comment": "CONNACK"}
+				{"type":"recv", "payload":"20 r14 00000B 22 H10 27 L2000000 21 H20", "comment": "CONNACK"}
 			]},
 			{ "name": "2*response-topic (UTF-8 string)", "msgs":[
 				{"type":"send", "payload":"10 r29 s4 'MQTT' 05 06 k10 v0 s1 'p' 08 08 s1 'p' 08 s1 'p' s1 'p' s1 'p'"},
@@ -778,7 +778,7 @@
 
 			{ "name": "correlation-data (binary)", "expect_disconnect":false, "msgs":[
 				{"type":"send", "payload":"10 r25 s4 'MQTT' 05 06 k10 v0 s1 'p' 04 09 s1 'p' s1 'p' s1 'p'"},
-				{"type":"recv", "payload":"20 r9 00 00 06 22 H10 21 H20", "comment": "CONNACK"}
+				{"type":"recv", "payload":"20 r14 00000B 22 H10 27 L2000000 21 H20", "comment": "CONNACK"}
 			]},
 			{ "name": "2*correlation-data (binary)", "msgs":[
 				{"type":"send", "payload":"10 r29 s4 'MQTT' 05 06 k10 v0 s1 'p' 08 09 s1 'p' 09 s1 'p' s1 'p' s1 'p'"},
@@ -790,16 +790,16 @@
 			]},
 			{ "name": "correlation-data (binary) empty", "expect_disconnect":false, "msgs":[
 				{"type":"send", "payload":"10 r24 s4 'MQTT' 05 06 k10 v0 s1 'p' 03 09 0000 s1 'p' s1 'p'"},
-				{"type":"recv", "payload":"20 r9 00 00 06 22 H10 21 H20", "comment": "CONNACK"}
+				{"type":"recv", "payload":"20 r14 00000B 22 H10 27 L2000000 21 H20", "comment": "CONNACK"}
 			]},
 
 			{ "name": "user-property", "expect_disconnect":false, "msgs":[
 				{"type":"send", "payload":"10 r28 s4 'MQTT' 05 06 k10 v0 s1 'p' 07 26 s1 'p' s1 'p' s1 'p' s1 'p'"},
-				{"type":"recv", "payload":"20 r9 00 00 06 22 H10 21 H20", "comment": "CONNACK"}
+				{"type":"recv", "payload":"20 r14 00000B 22 H10 27 L2000000 21 H20", "comment": "CONNACK"}
 			]},
 			{ "name": "2*user-property", "expect_disconnect":false, "msgs":[
 				{"type":"send", "payload":"10 r35 s4 'MQTT' 05 06 k10 v0 s1 'p' 0E 26 s1 'p' s1 'p' 26 s1 'p' s1 'p' s1 'p' s1 'p'"},
-				{"type":"recv", "payload":"20 r9 00 00 06 22 H10 21 H20", "comment": "CONNACK"}
+				{"type":"recv", "payload":"20 r14 00000B 22 H10 27 L2000000 21 H20", "comment": "CONNACK"}
 			]},
 			{ "name": "user-property missing value", "msgs":[
 				{"type":"send", "payload":"10 r25 s4 'MQTT' 05 06 k10 v0 s1 'p' 04 26 s1 'p' s1 'p' s1 'p'"},
@@ -811,15 +811,15 @@
 			]},
 			{ "name": "user-property empty key", "expect_disconnect":false, "msgs":[
 				{"type":"send", "payload":"10 r27 s4 'MQTT' 05 06 k10 v0 s1 'p' 06 26 0000 s1 'p' s1 'p' s1 'p'"},
-				{"type":"recv", "payload":"20 r9 00 00 06 22 H10 21 H20", "comment": "CONNACK"}
+				{"type":"recv", "payload":"20 r14 00000B 22 H10 27 L2000000 21 H20", "comment": "CONNACK"}
 			]},
 			{ "name": "user-property empty value", "expect_disconnect":false, "msgs":[
 				{"type":"send", "payload":"10 r27 s4 'MQTT' 05 06 k10 v0 s1 'p' 06 26 s1 'p' 0000 s1 'p' s1 'p'"},
-				{"type":"recv", "payload":"20 r9 00 00 06 22 H10 21 H20", "comment": "CONNACK"}
+				{"type":"recv", "payload":"20 r14 00000B 22 H10 27 L2000000 21 H20", "comment": "CONNACK"}
 			]},
 			{ "name": "user-property empty key,value", "expect_disconnect":false, "msgs":[
 				{"type":"send", "payload":"10 r26 s4 'MQTT' 05 06 k10 v0 s1 'p' 05 26 0000 0000 s1 'p' s1 'p'"},
-				{"type":"recv", "payload":"20 r9 00 00 06 22 H10 21 H20", "comment": "CONNACK"}
+				{"type":"recv", "payload":"20 r14 00000B 22 H10 27 L2000000 21 H20", "comment": "CONNACK"}
 			]}
 		]
 	},

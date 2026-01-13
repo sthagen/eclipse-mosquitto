@@ -8,8 +8,10 @@ from mosq_test_helper import *
 
 def do_test(conn, data):
     connect_packet = mosq_test.gen_connect("publish-qos0-test", proto_ver=5)
-    props = mqtt5_props.gen_uint32_prop(mqtt5_props.MAXIMUM_PACKET_SIZE, 30)
-    connack_packet = mosq_test.gen_connack(rc=0, proto_ver=5, properties=props)
+    props = mqtt5_props.gen_uint16_prop(mqtt5_props.TOPIC_ALIAS_MAXIMUM, 10)
+    props += mqtt5_props.gen_uint32_prop(mqtt5_props.MAXIMUM_PACKET_SIZE, 30)
+    props += mqtt5_props.gen_uint16_prop(mqtt5_props.RECEIVE_MAXIMUM, 20)
+    connack_packet = mosq_test.gen_connack(rc=0, proto_ver=5, properties=props, property_helper=False)
 
     bad_publish_packet = mosq_test.gen_publish("pub/test", qos=0, payload="0123456789012345678", proto_ver=5)
     publish_packet = mosq_test.gen_publish("pub/test", qos=0, payload="012345678901234567", proto_ver=5)

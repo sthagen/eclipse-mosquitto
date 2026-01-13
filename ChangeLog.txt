@@ -15,6 +15,10 @@
 
 ## Behaviour changes
 
+- max_packet_size now defaults to 2,000,000 bytes instead of the 256MB MQTT
+  limit. If you are using payloads that will result in a packet larger than
+  this, you need to manually set the option to a value that suits your
+  application.
 - acl_file and password_file will produce an error on invalid input when
   reloading the config, causing the broker to quit.
 

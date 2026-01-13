@@ -24,6 +24,7 @@ connect_packet = mosq_test.gen_connect("12-server-keepalive", proto_ver=5, keepa
 
 props = mqtt5_props.gen_uint16_prop(mqtt5_props.SERVER_KEEP_ALIVE, 60) \
         + mqtt5_props.gen_uint16_prop(mqtt5_props.TOPIC_ALIAS_MAXIMUM, 10) \
+        + mqtt5_props.gen_uint32_prop(mqtt5_props.MAXIMUM_PACKET_SIZE, 2000000) \
         + mqtt5_props.gen_uint16_prop(mqtt5_props.RECEIVE_MAXIMUM, 20)
 connack_packet = mosq_test.gen_connack(rc=0, proto_ver=5, properties=props, property_helper=False)
 

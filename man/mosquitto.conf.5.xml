@@ -833,7 +833,11 @@ log_timestamp_format %Y-%m-%dT%H:%M:%S
 						clients regardless of the protocol version they are
 						using, but v3.1.1 and earlier clients will of course
 						not have received the maximum packet size information.
-						Defaults to no limit.</para>
+					</para>
+					<para>
+						Defaults to 2000000 bytes since 2.1. Earlier versions
+						defaulted to no limit.
+					</para>
 
 					<para>This option applies to all clients, not just those
 						using MQTT v5, but it is not possible to notify clients

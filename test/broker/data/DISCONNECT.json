@@ -96,7 +96,7 @@
 			]},
 			{ "name": "E0 non-zero session expiry", "connect":false, "msgs": [
 				{"type":"send", "payload":"10 r19 s4 'MQTT' 05 02 k10 05 11 L0 s1 'p'", "comment":"CONNECT with session expiry=0"},
-				{"type":"recv", "payload":"20 r9 00000622000A210014", "comment": "CONNACK"},
+				{"type":"recv", "payload":"20 r14 00000B 22 H10 27 L2000000 21 H20", "comment": "CONNACK"},
 				{"type":"send", "payload":"E0 r7 00 05 11 L1"},
 				{"type":"recv", "payload":"E0 r1 82"}
 			]}

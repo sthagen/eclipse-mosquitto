@@ -154,7 +154,7 @@
 		"tests": [
 			{ "name": "maximum packet size", "connect":false, "expect_disconnect":false, "msgs":[
 				{"type":"send", "payload":"10 r19 s4 'MQTT' 05 02 k10 v5 2700000014 s1 'p'", "comment":"CONNECT with max-packet-size 20"},
-				{"type":"recv", "payload":"20 r9 00 00 06 22000A210014", "comment": "CONNACK"},
+				{"type":"recv", "payload":"20 r14 00000B 22 H10 27 L2000000 21 H20", "comment": "CONNACK"},
 				{"type":"send", "payload":"82 r11 m1234 v0 s5 'topic' 00", "comment":"SUBSCRIBE topic"},
 				{"type":"recv", "payload":"90 r4 m1234 v0 00", "comment":"SUBACK"},
 				{"type":"send", "payload":"30 r22 s5 'topic' v0 'payloadpayload'", "comment":"PUBLISH with size > 20"},

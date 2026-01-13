@@ -676,7 +676,9 @@ def gen_connack(flags=0, rc=0, proto_ver=4, properties=b"", property_helper=True
         if property_helper == True:
             if properties is not None:
                 properties = mqtt5_props.gen_uint16_prop(mqtt5_props.TOPIC_ALIAS_MAXIMUM, 10) \
-                    + properties + mqtt5_props.gen_uint16_prop(mqtt5_props.RECEIVE_MAXIMUM, 20)
+                    + properties \
+                    + mqtt5_props.gen_uint32_prop(mqtt5_props.MAXIMUM_PACKET_SIZE, 2000000) \
+                    + mqtt5_props.gen_uint16_prop(mqtt5_props.RECEIVE_MAXIMUM, 20)
             else:
                 properties = b""
         properties = mqtt5_props.prop_finalise(properties)

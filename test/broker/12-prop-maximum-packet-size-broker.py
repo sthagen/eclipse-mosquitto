@@ -17,8 +17,10 @@ write_config(conf_file, port)
 rc = 1
 
 connect_packet = mosq_test.gen_connect("12-max-packet-broker", proto_ver=5)
-props = mqtt5_props.gen_uint32_prop(mqtt5_props.MAXIMUM_PACKET_SIZE, 40)
-connack_packet = mosq_test.gen_connack(rc=0, proto_ver=5, properties=props)
+props = mqtt5_props.gen_uint16_prop(mqtt5_props.TOPIC_ALIAS_MAXIMUM, 10)
+props += mqtt5_props.gen_uint32_prop(mqtt5_props.MAXIMUM_PACKET_SIZE, 40)
+props += mqtt5_props.gen_uint16_prop(mqtt5_props.RECEIVE_MAXIMUM, 20)
+connack_packet = mosq_test.gen_connack(rc=0, proto_ver=5, properties=props, property_helper=False)
 
 publish_packet = mosq_test.gen_publish("12/max/packet/size/broker/test/topic", qos=0, payload="0123456789012345678901234567890", proto_ver=5)
 disconnect_packet = mosq_test.gen_disconnect(reason_code=149, proto_ver=5)
