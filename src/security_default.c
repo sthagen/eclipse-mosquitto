@@ -1200,10 +1200,17 @@ int mosquitto_security_apply_default(void)
 							continue;
 						}
 #if OPENSSL_VERSION_NUMBER < 0x10100000L
-						context->username = mosquitto__strdup((char *) ASN1_STRING_data(name_asn1));
+						const char *username = (const char *)ASN1_STRING_data(name_asn1);
 #else
-						context->username = mosquitto__strdup((char *) ASN1_STRING_get0_data(name_asn1));
+						const char *username = (const char *)ASN1_STRING_get0_data(name_asn1);
 #endif
+						if(!username){
+							X509_free(client_cert);
+							client_cert = NULL;
+							security__disconnect_auth(context);
+							continue;
+						}
+						context->username = mosquitto__strdup(username);
 						if(!context->username){
 							X509_free(client_cert);
 							client_cert = NULL;

@@ -43,6 +43,7 @@ int handle__unsubscribe(struct mosquitto *context)
 	if(!context) return MOSQ_ERR_INVAL;
 
 	if(context->state != mosq_cs_active){
+		log__printf(NULL, MOSQ_LOG_INFO, "Protocol error from %s: UNSUBSCRIBE before session is active.", context->id);
 		return MOSQ_ERR_PROTOCOL;
 	}
 	if(context->in_packet.command != (CMD_UNSUBSCRIBE|2)){
@@ -65,6 +66,7 @@ int handle__unsubscribe(struct mosquitto *context)
 			 * MOSQ_ERR_MALFORMED_PACKET, but this is would change the library
 			 * return codes so needs doc changes as well. */
 			if(rc == MOSQ_ERR_PROTOCOL){
+				log__printf(NULL, MOSQ_LOG_INFO, "Protocol error from %s: UNSUBSCRIBE packet with invalid properties.", context->id);
 				return MOSQ_ERR_MALFORMED_PACKET;
 			}else{
 				return rc;

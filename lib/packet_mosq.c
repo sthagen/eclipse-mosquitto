@@ -398,11 +398,15 @@ int packet__read(struct mosquitto *mosq)
 			G_BYTES_RECEIVED_INC(1);
 			/* Clients must send CONNECT as their first command. */
 			if(!(mosq->bridge) && state == mosq_cs_new && (byte&0xF0) != CMD_CONNECT){
+				log__printf(NULL, MOSQ_LOG_INFO, "Protocol error from %s:%d: First packet not CONNECT (%02X).",
+						mosq->address, mosq->remote_port, byte);
 				return MOSQ_ERR_PROTOCOL;
 			}else if((byte&0xF0) == CMD_RESERVED){
 				if(mosq->protocol == mosq_p_mqtt5){
 					send__disconnect(mosq, MQTT_RC_PROTOCOL_ERROR, NULL);
 				}
+				log__printf(NULL, MOSQ_LOG_INFO, "Protocol error from %s:%d: RESERVED packet.",
+						mosq->address, mosq->remote_port);
 				return MOSQ_ERR_PROTOCOL;
 			}
 #endif

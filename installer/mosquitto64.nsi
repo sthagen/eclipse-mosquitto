@@ -77,9 +77,9 @@ Section "Files" SecInstall
 	File "..\build64\vcpkg_installed\x64-windows-release\bin\zlib1.dll"
 
 	SetOutPath "$INSTDIR\devel"
-	File /oname=mosquitto_broker.lib "..\build64\src\Release\mosquitto.lib"
 	File "..\build64\lib\Release\mosquitto.lib"
 	File "..\build64\lib\cpp\Release\mosquittopp.lib"
+	File "..\build64\src\Release\mosquitto_broker.lib"
 	File "..\include\mosquitto.h"
 	File "..\include\mosquitto_broker.h"
 	File "..\include\mosquitto_plugin.h"

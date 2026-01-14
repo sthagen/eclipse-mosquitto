@@ -54,6 +54,7 @@ int handle__publish(struct mosquitto *context)
 	uint16_t mid = 0;
 
 	if(context->state != mosq_cs_active){
+		log__printf(NULL, MOSQ_LOG_INFO, "Protocol error from %s: PUBLISH before session is active.", context->id);
 		return MOSQ_ERR_PROTOCOL;
 	}
 
@@ -106,6 +107,7 @@ int handle__publish(struct mosquitto *context)
 		}
 		if(mid == 0){
 			db__msg_store_free(msg);
+			log__printf(NULL, MOSQ_LOG_INFO, "Protocol error from %s: PUBLISH packet with mid = 0.", context->id);
 			return MOSQ_ERR_PROTOCOL;
 		}
 		/* It is important to have a separate copy of mid, because msg may be
@@ -188,6 +190,8 @@ int handle__publish(struct mosquitto *context)
 			rc = alias__find(context, &msg->topic, (uint16_t)topic_alias);
 			if(rc){
 				db__msg_store_free(msg);
+				log__printf(NULL, MOSQ_LOG_INFO, "Protocol error from %s: PUBLISH invalid topic alias (%d).",
+						context->id, topic_alias);
 				return MOSQ_ERR_PROTOCOL;
 			}
 		}
@@ -359,6 +363,7 @@ int handle__publish(struct mosquitto *context)
 					rc2 = send__pubrec(context, stored->source_mid, 0, NULL);
 					if(rc2) rc = rc2;
 				}else{
+					log__printf(NULL, MOSQ_LOG_INFO, "Protocol error from %s: PUBLISH with dup = %d.", context->id, dup);
 					return MOSQ_ERR_PROTOCOL;
 				}
 			}else{
