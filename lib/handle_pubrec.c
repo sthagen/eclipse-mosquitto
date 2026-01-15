@@ -48,6 +48,9 @@ int handle__pubrec(struct mosquitto *mosq)
 	assert(mosq);
 
 	if(mosquitto__get_state(mosq) != mosq_cs_active){
+#ifdef WITH_BROKER
+		log__printf(NULL, MOSQ_LOG_INFO, "Protocol error from %s: PUBREC before session is active.", mosq->id);
+#endif
 		return MOSQ_ERR_PROTOCOL;
 	}
 	if(mosq->in_packet.command != CMD_PUBREC){
@@ -59,6 +62,10 @@ int handle__pubrec(struct mosquitto *mosq)
 		return rc;
 	}
 	if(mid == 0){
+#ifdef WITH_BROKER
+		log__printf(NULL, MOSQ_LOG_INFO, "Protocol error from %s: PUBREC with mid = 0.",
+				mosq->id);
+#endif
 		return MOSQ_ERR_PROTOCOL;
 	}
 
@@ -78,12 +85,21 @@ int handle__pubrec(struct mosquitto *mosq)
 				&& reason_code != MQTT_RC_QUOTA_EXCEEDED
 				&& reason_code != MQTT_RC_PAYLOAD_FORMAT_INVALID){
 
+#ifdef WITH_BROKER
+			log__printf(NULL, MOSQ_LOG_INFO, "Protocol error from %s: PUBREC with reason code = %d.",
+					mosq->id, reason_code);
+#endif
 			return MOSQ_ERR_PROTOCOL;
 		}
 
 		if(mosq->in_packet.remaining_length > 3){
 			rc = property__read_all(CMD_PUBREC, &mosq->in_packet, &properties);
 			if(rc){
+				if(rc == MOSQ_ERR_PROTOCOL){
+#ifdef WITH_BROKER
+					log__printf(NULL, MOSQ_LOG_INFO, "Protocol error from %s: PUBREC with invalid properties.", mosq->id);
+#endif
+				}
 				return rc;
 			}
 

@@ -407,6 +407,13 @@ int net__tls_server_ctx(struct mosquitto__listener *listener)
 	char buf[256];
 	int rc;
 
+	if(tls_ex_index_context == -1){
+		tls_ex_index_context = SSL_get_ex_new_index(0, "client context", NULL, NULL, NULL);
+	}
+	if(tls_ex_index_listener == -1){
+		tls_ex_index_listener = SSL_get_ex_new_index(0, "listener", NULL, NULL, NULL);
+	}
+
 	if(listener->ssl_ctx){
 		SSL_CTX_free(listener->ssl_ctx);
 		listener->ssl_ctx = NULL;

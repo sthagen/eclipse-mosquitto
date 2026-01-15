@@ -51,6 +51,9 @@ int handle__pubrel(struct mosquitto *mosq)
 	assert(mosq);
 
 	if(mosquitto__get_state(mosq) != mosq_cs_active){
+#ifdef WITH_BROKER
+		log__printf(NULL, MOSQ_LOG_INFO, "Protocol error from %s: PUBREL before session is active.", mosq->id);
+#endif
 		return MOSQ_ERR_PROTOCOL;
 	}
 	if(mosq->protocol != mosq_p_mqtt31 && mosq->in_packet.command != (CMD_PUBREL|2)){
@@ -59,6 +62,10 @@ int handle__pubrel(struct mosquitto *mosq)
 
 	if(mosq->protocol != mosq_p_mqtt31){
 		if((mosq->in_packet.command&0x0F) != 0x02){
+#ifdef WITH_BROKER
+			log__printf(NULL, MOSQ_LOG_INFO, "Protocol error from %s: PUBREL with non-zero reserved flags (%02X).",
+					mosq->id, mosq->in_packet.command);
+#endif
 			return MOSQ_ERR_PROTOCOL;
 		}
 	}
@@ -67,6 +74,10 @@ int handle__pubrel(struct mosquitto *mosq)
 		return rc;
 	}
 	if(mid == 0){
+#ifdef WITH_BROKER
+		log__printf(NULL, MOSQ_LOG_INFO, "Protocol error from %s: PUBREL with mid = 0.",
+				mosq->id);
+#endif
 		return MOSQ_ERR_PROTOCOL;
 	}
 
@@ -77,17 +88,26 @@ int handle__pubrel(struct mosquitto *mosq)
 		}
 
 		if(reason_code != MQTT_RC_SUCCESS && reason_code != MQTT_RC_PACKET_ID_NOT_FOUND){
+#ifdef WITH_BROKER
+			log__printf(NULL, MOSQ_LOG_INFO, "Protocol error from %s: PUBREL with reason code = %d.",
+					mosq->id, reason_code);
+#endif
 			return MOSQ_ERR_PROTOCOL;
 		}
 
 		if(mosq->in_packet.remaining_length > 3){
 			rc = property__read_all(CMD_PUBREL, &mosq->in_packet, &properties);
-			if(rc){
-				return rc;
-			}
 			/* Immediately free, we don't do anything with Reason String or
 			 * User Property at the moment */
 			mosquitto_property_free_all(&properties);
+			if(rc){
+				if(rc == MOSQ_ERR_PROTOCOL){
+#ifdef WITH_BROKER
+					log__printf(NULL, MOSQ_LOG_INFO, "Protocol error from %s: PUBREL with invalid properties.", mosq->id);
+#endif
+				}
+				return rc;
+			}
 		}
 	}
 

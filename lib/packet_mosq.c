@@ -486,11 +486,15 @@ static int packet__read_single(struct mosquitto *mosq, enum mosquitto_client_sta
 #ifdef WITH_BROKER
 			/* Clients must send CONNECT as their first command. */
 			if(!(mosq->bridge) && state == mosq_cs_new && (mosq->in_packet.command&0xF0) != CMD_CONNECT){
+				log__printf(NULL, MOSQ_LOG_INFO, "Protocol error from %s:%d: First packet not CONNECT (%02X).",
+						mosq->address, mosq->remote_port, mosq->in_packet.command);
 				return MOSQ_ERR_PROTOCOL;
 			}else if((mosq->in_packet.command&0xF0) == CMD_RESERVED){
 				if(mosq->protocol == mosq_p_mqtt5){
 					send__disconnect(mosq, MQTT_RC_PROTOCOL_ERROR, NULL);
 				}
+				log__printf(NULL, MOSQ_LOG_INFO, "Protocol error from %s:%d: RESERVED packet.",
+						mosq->address, mosq->remote_port);
 				return MOSQ_ERR_PROTOCOL;
 			}
 #else

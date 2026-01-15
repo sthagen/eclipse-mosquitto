@@ -363,6 +363,8 @@ static int will__read(struct mosquitto *context, const char *clientid, struct mo
 		goto error_cleanup;
 	}
 	if(!tlen){
+		log__printf(NULL, MOSQ_LOG_INFO, "Protocol error from %s: Will with empty topic.",
+				context->id);
 		rc = MOSQ_ERR_PROTOCOL;
 		goto error_cleanup;
 	}
@@ -479,12 +481,18 @@ static int read_protocol_name(struct mosquitto *context, char protocol_name[7])
 	uint16_t slen = 0;
 
 	if(packet__read_uint16(&context->in_packet, &slen)){
+		log__printf(NULL, MOSQ_LOG_INFO, "Protocol error from %s:%d: CONNECT with missing protocol string length.",
+				context->address, context->remote_port);
 		return MOSQ_ERR_PROTOCOL;
 	}
 	if(slen != 4 /* MQTT */ && slen != 6 /* MQIsdp */){
+		log__printf(NULL, MOSQ_LOG_INFO, "Protocol error from %s:%d: CONNECT with incorrect protocol string length (%d).",
+				context->address, context->remote_port, slen);
 		return MOSQ_ERR_PROTOCOL;
 	}
 	if(packet__read_bytes(&context->in_packet, protocol_name, slen)){
+		log__printf(NULL, MOSQ_LOG_INFO, "Protocol error from %s:%d: CONNECT with missing protocol string.",
+				context->address, context->remote_port);
 		return MOSQ_ERR_PROTOCOL;
 	}
 	protocol_name[slen] = '\0';
@@ -498,6 +506,8 @@ static int read_and_verify_protocol_version(struct mosquitto *context, const cha
 {
 	uint8_t tmp_protocol_version = 0;
 	if(packet__read_byte(&context->in_packet, &tmp_protocol_version)){
+		log__printf(NULL, MOSQ_LOG_INFO, "Protocol error from %s:%d: CONNECT with missing protocol version.",
+				context->address, context->remote_port);
 		return MOSQ_ERR_PROTOCOL;
 	}
 
@@ -515,8 +525,8 @@ static int read_and_verify_protocol_version(struct mosquitto *context, const cha
 	if(!strcmp(protocol_name, PROTOCOL_NAME_v31)){
 		if((tmp_protocol_version&0x7F) != PROTOCOL_VERSION_v31){
 			if(db.config->connection_messages == true){
-				log__printf(NULL, MOSQ_LOG_INFO, "Invalid protocol version %d in CONNECT from %s.",
-						tmp_protocol_version, context->address);
+				log__printf(NULL, MOSQ_LOG_INFO, "Protocol error from %s:%d: CONNECT with invalid protocol version (%d).",
+						context->address, context->remote_port, tmp_protocol_version);
 			}
 			send__connack(context, 0, CONNACK_REFUSED_PROTOCOL_VERSION, NULL);
 			return MOSQ_ERR_PROTOCOL;
@@ -536,20 +546,22 @@ static int read_and_verify_protocol_version(struct mosquitto *context, const cha
 			context->protocol = mosq_p_mqtt5;
 		}else{
 			if(db.config->connection_messages == true){
-				log__printf(NULL, MOSQ_LOG_INFO, "Invalid protocol version %d in CONNECT from %s.",
-						tmp_protocol_version, context->address);
+				log__printf(NULL, MOSQ_LOG_INFO, "Protocol error from %s:%d: CONNECT with invalid protocol version (%d).",
+						context->address, context->remote_port, tmp_protocol_version);
 			}
 			send__connack(context, 0, CONNACK_REFUSED_PROTOCOL_VERSION, NULL);
 			return MOSQ_ERR_PROTOCOL;
 		}
 		if((context->in_packet.command&0x0F) != 0x00){
 			/* Reserved flags not set to 0, must disconnect. */
+			log__printf(NULL, MOSQ_LOG_INFO, "Protocol error from %s:%d: CONNECT with non-zero reserved flags (%02X).",
+					context->address, context->remote_port, context->in_packet.command);
 			return MOSQ_ERR_PROTOCOL;
 		}
 	}else{
 		if(db.config->connection_messages == true){
-			log__printf(NULL, MOSQ_LOG_INFO, "Invalid protocol \"%s\" in CONNECT from %s.",
-					protocol_name, context->address);
+			log__printf(NULL, MOSQ_LOG_INFO, "Protocol error from %s:%d: CONNECT with invalid protocol \"%s\".",
+					context->address, context->remote_port, protocol_name);
 		}
 		return MOSQ_ERR_PROTOCOL;
 	}
@@ -565,10 +577,14 @@ static int read_and_verify_protocol_version(struct mosquitto *context, const cha
 static int read_and_verify_connect_flags(struct mosquitto *context, uint8_t *connect_flags)
 {
 	if(packet__read_byte(&context->in_packet, connect_flags)){
+		log__printf(NULL, MOSQ_LOG_INFO, "Protocol error from %s:%d: CONNECT with missing connect flags.",
+				context->address, context->remote_port);
 		return MOSQ_ERR_PROTOCOL;
 	}
 	if(context->protocol == mosq_p_mqtt311 || context->protocol == mosq_p_mqtt5){
 		if((*connect_flags & 0x01) != 0x00){
+			log__printf(NULL, MOSQ_LOG_INFO, "Protocol error from %s:%d: CONNECT with non-zero connect reserved flag (%02X).",
+					context->address, context->remote_port, *connect_flags);
 			return MOSQ_ERR_PROTOCOL;
 		}
 	}
@@ -596,6 +612,8 @@ static int read_and_reset_keepalive(struct mosquitto *context)
 	keepalive__remove(context);
 
 	if(packet__read_uint16(&context->in_packet, &(context->keepalive))){
+		log__printf(NULL, MOSQ_LOG_INFO, "%s sent CONNECT with missing keepalive.",
+				context->id);
 		return MOSQ_ERR_PROTOCOL;
 	}
 	keepalive__add(context);
@@ -658,6 +676,8 @@ static int handle_zero_length_clientid(struct mosquitto *context, char **clienti
 		uint8_t clean_start)
 {
 	if(context->protocol == mosq_p_mqtt31){
+		log__printf(NULL, MOSQ_LOG_INFO, "Protocol error from %s:%d: v3.1 CONNECT with zero length clientid.",
+				context->address, context->remote_port);
 		send__connack(context, 0, CONNACK_REFUSED_IDENTIFIER_REJECTED, NULL);
 		return MOSQ_ERR_PROTOCOL;
 	}
@@ -672,6 +692,8 @@ static int handle_zero_length_clientid(struct mosquitto *context, char **clienti
 	}
 
 	if((context->protocol == mosq_p_mqtt311 && clean_start == 0) || *allow_zero_length_clientid == false){
+		log__printf(NULL, MOSQ_LOG_INFO, "Protocol error from %s:%d: CONNECT with zero length clientid when forbidden.",
+				context->address, context->remote_port);
 		uint8_t err_code = context->protocol == mosq_p_mqtt311 ? (uint8_t)CONNACK_REFUSED_IDENTIFIER_REJECTED : (uint8_t)MQTT_RC_UNSPECIFIED;
 		return send__connack_error_and_return(context, err_code, MOSQ_ERR_PROTOCOL);
 	}
@@ -731,7 +753,7 @@ static int read_and_verify_clientid_from_packet(struct mosquitto *context, char 
 }
 
 
-static int set_username_from_packet(struct mosquitto *context, char **username)
+static int set_username_from_packet(struct mosquitto *context, char **username, const char *clientid)
 {
 	int rc;
 
@@ -744,6 +766,8 @@ static int set_username_from_packet(struct mosquitto *context, char **username)
 			/* Username flag given, but no username. Ignore. */
 			/* NOTE: Removed setting of username_flag to zero as it is unused afterwards */
 		}else{
+			log__printf(NULL, MOSQ_LOG_INFO, "Protocol error from %s: CONNECT with username flag but no username.",
+					clientid);
 			return MOSQ_ERR_PROTOCOL;
 		}
 	}
@@ -752,7 +776,7 @@ static int set_username_from_packet(struct mosquitto *context, char **username)
 }
 
 
-static int set_password_from_packet(struct mosquitto *context, char **password)
+static int set_password_from_packet(struct mosquitto *context, char **password, const char *clientid)
 {
 	int rc;
 
@@ -765,6 +789,8 @@ static int set_password_from_packet(struct mosquitto *context, char **password)
 		if(context->protocol == mosq_p_mqtt31){
 			/* Password flag given, but no password. Ignore. */
 		}else{
+			log__printf(NULL, MOSQ_LOG_INFO, "Protocol error from %s: CONNECT with password flag but no password.",
+					clientid);
 			return MOSQ_ERR_PROTOCOL;
 		}
 	}
@@ -781,7 +807,7 @@ static int read_and_verify_client_credentials_from_packet(struct mosquitto *cont
 	int rc;
 
 	if(username_flag){
-		rc = set_username_from_packet(context, username);
+		rc = set_username_from_packet(context, username, clientid);
 		if(rc != MOSQ_ERR_SUCCESS){
 			return rc;
 		}
@@ -795,7 +821,7 @@ static int read_and_verify_client_credentials_from_packet(struct mosquitto *cont
 		}
 	}
 	if(password_flag){
-		rc = set_password_from_packet(context, password);
+		rc = set_password_from_packet(context, password, clientid);
 		if(rc != MOSQ_ERR_SUCCESS){
 			return rc;
 		}
@@ -809,6 +835,8 @@ static int check_additional_trailing_data(struct mosquitto *context, uint8_t pro
 {
 	if(context->in_packet.pos != context->in_packet.remaining_length){
 		/* Surplus data at end of packet, this must be an error. */
+		log__printf(NULL, MOSQ_LOG_INFO, "Protocol error from %s: CONNECT packet with overlong remaining length (%d:%d).",
+				context->id, context->in_packet.pos, context->in_packet.remaining_length);
 		if(protocol_version == PROTOCOL_VERSION_v5){
 			send__connack(context, 0, MQTT_RC_MALFORMED_PACKET, NULL);
 		}
@@ -1042,7 +1070,8 @@ int handle__connect(struct mosquitto *context)
 
 	/* Don't accept multiple CONNECT commands. */
 	if(context->state != mosq_cs_new){
-		log__printf(NULL, MOSQ_LOG_NOTICE, "Bad client %s sending multiple CONNECT messages.", context->id);
+		log__printf(NULL, MOSQ_LOG_NOTICE, "Bad client %s:%d sending multiple CONNECT messages.",
+				context->address, context->remote_port);
 		rc = MOSQ_ERR_PROTOCOL;
 		goto handle_connect_error;
 	}
@@ -1087,6 +1116,12 @@ int handle__connect(struct mosquitto *context)
 
 	will = connect_flags & 0x04;
 	will_qos = (connect_flags & 0x18) >> 3;
+	if(will_qos == 3){
+		log__printf(NULL, MOSQ_LOG_INFO, "Protocol error from %s:%d: CONNECT with invalid Will QoS (%d).",
+				context->address, context->remote_port, will_qos);
+		rc = MOSQ_ERR_PROTOCOL;
+		goto handle_connect_error;
+	}
 	will_retain = ((connect_flags & 0x20) == 0x20);
 	rc = verify_will_options(context, will, will_qos, will_retain, protocol_version);
 	if(rc != MOSQ_ERR_SUCCESS){
@@ -1099,6 +1134,8 @@ int handle__connect(struct mosquitto *context)
 
 	if(auth_data && !context->auth_method){
 		send__connack(context, 0, MQTT_RC_PROTOCOL_ERROR, NULL);
+		log__printf(NULL, MOSQ_LOG_INFO, "Protocol error from %s:%d CONNECT with missing clientid string.",
+				context->address, context->remote_port);
 		rc = MOSQ_ERR_PROTOCOL;
 		goto handle_connect_error;
 	}
@@ -1123,6 +1160,8 @@ int handle__connect(struct mosquitto *context)
 	}else{
 		if(context->protocol == mosq_p_mqtt311 || context->protocol == mosq_p_mqtt5){
 			if(will_qos != 0 || will_retain != 0){
+				log__printf(NULL, MOSQ_LOG_INFO, "Protocol error from %s: CONNECT without Will with non-zero QoS (%d) or retain (%d).",
+						clientid, will_qos, will_retain);
 				rc = MOSQ_ERR_PROTOCOL;
 				goto handle_connect_error;
 			}

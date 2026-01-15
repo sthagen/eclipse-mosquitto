@@ -45,7 +45,12 @@ int handle__auth(struct mosquitto *context)
 		return MOSQ_ERR_INVAL;
 	}
 
-	if(context->protocol != mosq_p_mqtt5 || context->auth_method == NULL){
+	if(context->protocol != mosq_p_mqtt5){
+		log__printf(NULL, MOSQ_LOG_INFO, "Protocol error from %s: AUTH packet when session not MQTT v5.0.", context->id);
+		return MOSQ_ERR_PROTOCOL;
+	}
+	if(context->auth_method == NULL){
+		log__printf(NULL, MOSQ_LOG_INFO, "Protocol error from %s: AUTH packet without existing auth-method.", context->id);
 		return MOSQ_ERR_PROTOCOL;
 	}
 	if(context->in_packet.command != CMD_AUTH){
@@ -60,6 +65,8 @@ int handle__auth(struct mosquitto *context)
 				&& reason_code != MQTT_RC_REAUTHENTICATE){
 
 			send__disconnect(context, MQTT_RC_PROTOCOL_ERROR, NULL);
+			log__printf(NULL, MOSQ_LOG_INFO, "Protocol error from %s: AUTH packet with reason-code = %d.",
+					context->id, reason_code);
 			return MOSQ_ERR_PROTOCOL;
 		}
 
@@ -68,6 +75,9 @@ int handle__auth(struct mosquitto *context)
 				&& context->state != mosq_cs_authenticating && context->state != mosq_cs_reauthenticating)){
 
 			send__disconnect(context, MQTT_RC_PROTOCOL_ERROR, NULL);
+			log__printf(NULL, MOSQ_LOG_INFO, "Protocol error from %s: AUTH reauthentication packet before session is active,",
+					context->id);
+			log__printf(NULL, MOSQ_LOG_INFO, "     or attempted to continue authentication when no authentication in progress.");
 			return MOSQ_ERR_PROTOCOL;
 		}
 
@@ -81,6 +91,8 @@ int handle__auth(struct mosquitto *context)
 		if(mosquitto_property_read_string(properties, MQTT_PROP_AUTHENTICATION_METHOD, &auth_method, false) == NULL){
 			mosquitto_property_free_all(&properties);
 			send__disconnect(context, MQTT_RC_UNSPECIFIED, NULL);
+			log__printf(NULL, MOSQ_LOG_INFO, "Protocol error from %s: AUTH packet without auth-method property.",
+					context->id);
 			return MOSQ_ERR_PROTOCOL;
 		}
 
@@ -89,6 +101,8 @@ int handle__auth(struct mosquitto *context)
 			mosquitto_FREE(auth_method);
 			mosquitto_property_free_all(&properties);
 			send__disconnect(context, MQTT_RC_PROTOCOL_ERROR, NULL);
+			log__printf(NULL, MOSQ_LOG_INFO, "Protocol error from %s: AUTH packet with non-matching auth-method property (%s:%s).",
+					context->id, context->auth_method, auth_method);
 			return MOSQ_ERR_PROTOCOL;
 		}
 		mosquitto_FREE(auth_method);

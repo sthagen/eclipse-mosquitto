@@ -428,8 +428,12 @@ int db__message_delete_outgoing(struct mosquitto *context, uint16_t mid, enum mo
 	DL_FOREACH_SAFE(context->msgs_out.inflight, client_msg, tmp){
 		if(client_msg->data.mid == mid){
 			if(client_msg->data.qos != qos){
+				log__printf(NULL, MOSQ_LOG_INFO, "Protocol error from %s: Mismatched QoS (%d:%d) when deleting outgoing message.",
+						context->id, client_msg->data.qos, qos);
 				return MOSQ_ERR_PROTOCOL;
 			}else if(qos == 2 && client_msg->data.state != expect_state && expect_state != mosq_ms_any){
+				log__printf(NULL, MOSQ_LOG_INFO, "Protocol error from %s: Mismatched state (%d:%d) when deleting outgoing message.",
+						context->id, client_msg->data.state, expect_state);
 				return MOSQ_ERR_PROTOCOL;
 			}
 			db__message_remove_inflight(context, &context->msgs_out, client_msg);
@@ -749,6 +753,8 @@ static inline int db__message_update_outgoing_state(struct mosquitto *context, s
 	DL_FOREACH(head, client_msg){
 		if(client_msg->data.mid == mid){
 			if(client_msg->data.qos != qos){
+				log__printf(NULL, MOSQ_LOG_INFO, "Protocol error from %s: Mismatched QoS (%d:%d) when updating outgoing message.",
+						context->id, client_msg->data.qos, qos);
 				return MOSQ_ERR_PROTOCOL;
 			}
 			client_msg->data.state = (enum mosquitto_msg_state)state;
@@ -1199,6 +1205,8 @@ int db__message_remove_incoming(struct mosquitto *context, uint16_t mid)
 	DL_FOREACH_SAFE(context->msgs_in.inflight, client_msg, tmp){
 		if(client_msg->data.mid == mid){
 			if(client_msg->base_msg->data.qos != 2){
+				log__printf(NULL, MOSQ_LOG_INFO, "Protocol error from %s: Incorrect QoS (%d) when deleting incoming message.",
+						context->id, client_msg->base_msg->data.qos);
 				return MOSQ_ERR_PROTOCOL;
 			}
 			db__message_remove_inflight(context, &context->msgs_in, client_msg);
@@ -1226,6 +1234,8 @@ int db__message_release_incoming(struct mosquitto *context, uint16_t mid)
 	DL_FOREACH_SAFE(context->msgs_in.inflight, client_msg, tmp){
 		if(client_msg->data.mid == mid){
 			if(client_msg->base_msg->data.qos != 2){
+				log__printf(NULL, MOSQ_LOG_INFO, "Protocol error from %s: Incorrect QoS (%d) when releasing incoming message.",
+						context->id, client_msg->base_msg->data.qos);
 				return MOSQ_ERR_PROTOCOL;
 			}
 			topic = client_msg->base_msg->data.topic;

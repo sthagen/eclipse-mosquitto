@@ -955,7 +955,9 @@ void service_install(char *name);
 void service_uninstall(char *name);
 void service_run(char *name);
 
-DWORD WINAPI SigThreadProc(void *data);
+#ifdef WIN32
+DWORD WINAPI SigThreadProc(void* data);
+#endif
 #endif
 
 /* ============================================================

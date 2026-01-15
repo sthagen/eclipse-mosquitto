@@ -301,6 +301,7 @@ endif()
 
 set_target_properties(mosquitto PROPERTIES
 	ENABLE_EXPORTS 1
+	ARCHIVE_OUTPUT_NAME "mosquitto_broker"
 )
 
 if(UNIX)

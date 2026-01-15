@@ -34,6 +34,7 @@ jobs:
             python3-all \
             python3-paho-mqtt \
             python3-psutil \
+            uthash-dev \
             xsltproc
 
     - uses: vapier/coverity-scan-action@v1

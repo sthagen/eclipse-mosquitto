@@ -233,6 +233,7 @@ int mosquitto_security_apply_default(void)
 						const char *username = (const char *)ASN1_STRING_get0_data(name_asn1);
 						if(!username){
 							X509_free(client_cert);
+							client_cert = NULL;
 							security__disconnect_auth(context);
 							continue;
 						}

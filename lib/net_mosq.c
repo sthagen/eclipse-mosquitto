@@ -691,6 +691,8 @@ static int net__init_ssl_ctx(struct mosquitto *mosq)
 
 	net__init_tls();
 
+	net__init_tls();
+
 #ifndef WITH_BROKER
 	if(mosq->user_ssl_ctx){
 		mosq->ssl_ctx = mosq->user_ssl_ctx;

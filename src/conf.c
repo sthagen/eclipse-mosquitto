@@ -2474,6 +2474,10 @@ static int config__read_file_core(struct mosquitto__config *config, bool reload,
 #ifdef FINAL_WITH_TLS_PSK
 					REQUIRE_LISTENER_IF_PER_LISTENER(token);
 					conf__set_cur_security_options(config, &cur_listener, &cur_security_options, token);
+					if(cur_listener && cur_listener->certfile){
+						log__printf(NULL, MOSQ_LOG_ERR, "Error: Cannot use both certificate and psk encryption in a single listener.");
+						return MOSQ_ERR_INVAL;
+					}
 					mosquitto_FREE(cur_security_options->psk_file);
 					if(conf__parse_string(&token, "psk_file", &cur_security_options->psk_file, &saveptr)){
 						return MOSQ_ERR_INVAL;
