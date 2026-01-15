@@ -214,6 +214,7 @@ int persist__chunk_msg_store_read_v56(FILE *db_fptr, struct P_msg_store *chunk, 
 			mosquitto__free(chunk->source.id);
 			mosquitto__free(chunk->source.username);
 			mosquitto__free(chunk->topic);
+			mosquitto__free(chunk->payload);
 			return MOSQ_ERR_NOMEM;
 		}
 		read_e(db_fptr, prop_packet.payload, length);
@@ -223,6 +224,7 @@ int persist__chunk_msg_store_read_v56(FILE *db_fptr, struct P_msg_store *chunk, 
 			mosquitto__free(chunk->source.id);
 			mosquitto__free(chunk->source.username);
 			mosquitto__free(chunk->topic);
+			mosquitto__free(chunk->payload);
 			return rc;
 		}
 	}
@@ -234,6 +236,7 @@ error:
 	mosquitto__free(chunk->source.id);
 	mosquitto__free(chunk->source.username);
 	mosquitto__free(chunk->topic);
+	mosquitto__free(chunk->payload);
 	mosquitto__free(prop_packet.payload);
 	return 1;
 }

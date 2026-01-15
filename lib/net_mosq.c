@@ -147,20 +147,22 @@ int net__init(void)
 void net__cleanup(void)
 {
 #ifdef WITH_TLS
+	cleanup_ui_method();
+	if(is_tls_initialized){
 #  if OPENSSL_VERSION_NUMBER < 0x10100000L
-	CRYPTO_cleanup_all_ex_data();
-	ERR_free_strings();
-	ERR_remove_thread_state(NULL);
-	EVP_cleanup();
+		CRYPTO_cleanup_all_ex_data();
+		ERR_free_strings();
+		ERR_remove_thread_state(NULL);
+		EVP_cleanup();
 
 #    if !defined(OPENSSL_NO_ENGINE)
-	ENGINE_cleanup();
+		ENGINE_cleanup();
 #    endif
-	is_tls_initialized = false;
+		is_tls_initialized = false;
 #  endif
 
-	CONF_modules_unload(1);
-	cleanup_ui_method();
+		CONF_modules_unload(1);
+	}
 #endif
 
 #ifdef WITH_SRV
@@ -241,6 +243,9 @@ int net__socket_close(struct mosquitto *mosq)
 			mosquitto__set_state(mosq, mosq_cs_disconnect_ws);
 		}
 		lws_callback_on_writable(mosq->wsi);
+		if(mosq->listener){
+			mosq->listener->client_count--;
+		}
 	}else
 #endif
 	{
@@ -250,18 +255,14 @@ int net__socket_close(struct mosquitto *mosq)
 			if(mosq_found){
 				HASH_DELETE(hh_sock, db.contexts_by_sock, mosq_found);
 			}
+			if(mosq->listener && mosq->state != mosq_cs_disused){
+				mosq->listener->client_count--;
+			}
 #endif
 			rc = COMPAT_CLOSE(mosq->sock);
 			mosq->sock = INVALID_SOCKET;
 		}
 	}
-
-#ifdef WITH_BROKER
-	if(mosq->listener){
-		mosq->listener->client_count--;
-		mosq->listener = NULL;
-	}
-#endif
 
 	return rc;
 }
@@ -649,6 +650,8 @@ static int net__init_ssl_ctx(struct mosquitto *mosq)
 	EVP_PKEY *pkey;
 #endif
 
+	net__init_tls();
+
 #ifndef WITH_BROKER
 	if(mosq->user_ssl_ctx){
 		mosq->ssl_ctx = mosq->user_ssl_ctx;
@@ -665,7 +668,6 @@ static int net__init_ssl_ctx(struct mosquitto *mosq)
 	 * has not been set, or if both of MOSQ_OPT_SSL_CTX and
 	 * MOSQ_OPT_SSL_CTX_WITH_DEFAULTS are set. */
 	if(mosq->tls_cafile || mosq->tls_capath || mosq->tls_psk || mosq->tls_use_os_certs){
-		net__init_tls();
 		if(!mosq->ssl_ctx){
 
 #if OPENSSL_VERSION_NUMBER < 0x10100000L
@@ -880,7 +882,11 @@ int net__socket_connect_step3(struct mosquitto *mosq, const char *host)
 			return MOSQ_ERR_TLS;
 		}
 
-		SSL_set_ex_data(mosq->ssl, tls_ex_index_mosq, mosq);
+		if(!SSL_set_ex_data(mosq->ssl, tls_ex_index_mosq, mosq)){
+			net__socket_close(mosq);
+			net__print_ssl_error(mosq);
+			return MOSQ_ERR_TLS;
+		}
 		bio = BIO_new_socket(mosq->sock, BIO_NOCLOSE);
 		if(!bio){
 			net__socket_close(mosq);

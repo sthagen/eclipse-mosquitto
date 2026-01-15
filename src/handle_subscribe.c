@@ -50,6 +50,7 @@ int handle__subscribe(struct mosquitto *context)
 	if(!context) return MOSQ_ERR_INVAL;
 
 	if(context->state != mosq_cs_active){
+		log__printf(NULL, MOSQ_LOG_INFO, "Protocol error from %s: SUBSCRIBE before session is active.", context->id);
 		return MOSQ_ERR_PROTOCOL;
 	}
 	if(context->in_packet.command != (CMD_SUBSCRIBE|2)){
@@ -73,6 +74,7 @@ int handle__subscribe(struct mosquitto *context)
 			 * MOSQ_ERR_MALFORMED_PACKET, but this is would change the library
 			 * return codes so needs doc changes as well. */
 			if(rc == MOSQ_ERR_PROTOCOL){
+				log__printf(NULL, MOSQ_LOG_INFO, "Protocol error from %s: SUBSCRIBE packet with invalid properties.", context->id);
 				return MOSQ_ERR_MALFORMED_PACKET;
 			}else{
 				return rc;
@@ -134,6 +136,7 @@ int handle__subscribe(struct mosquitto *context)
 			if((subscription_options & MQTT_SUB_OPT_NO_LOCAL) && !strncmp(sub, "$share/", 7)){
 				mosquitto__free(sub);
 				mosquitto__free(payload);
+				log__printf(NULL, MOSQ_LOG_INFO, "Protocol error from %s: $share subscription with no-local set.", context->id);
 				return MOSQ_ERR_PROTOCOL;
 			}
 			retain_handling = (subscription_options & 0x30);

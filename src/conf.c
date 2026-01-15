@@ -465,11 +465,12 @@ int config__parse_args(struct mosquitto__config *config, int argc, char *argv[])
 			){
 
 		config->listener_count++;
-		config->listeners = mosquitto__realloc(config->listeners, sizeof(struct mosquitto__listener)*(size_t)config->listener_count);
-		if(!config->listeners){
+		struct mosquitto__listener *new_listeners = mosquitto__realloc(config->listeners, sizeof(struct mosquitto__listener)*(size_t)config->listener_count);
+		if(!new_listeners){
 			log__printf(NULL, MOSQ_LOG_ERR, "Error: Out of memory.");
 			return MOSQ_ERR_NOMEM;
 		}
+		config->listeners = new_listeners;
 		memset(&config->listeners[config->listener_count-1], 0, sizeof(struct mosquitto__listener));
 		if(config->default_listener.port){
 			config->listeners[config->listener_count-1].port = config->default_listener.port;
@@ -792,11 +793,12 @@ static int config__read_file_core(struct mosquitto__config *config, bool reload,
 							break;
 						}
 						cur_bridge->address_count++;
-						cur_bridge->addresses = mosquitto__realloc(cur_bridge->addresses, sizeof(struct bridge_address)*(size_t)cur_bridge->address_count);
-						if(!cur_bridge->addresses){
+						struct bridge_address *new_addresses = mosquitto__realloc(cur_bridge->addresses, sizeof(struct bridge_address)*(size_t)cur_bridge->address_count);
+						if(!new_addresses){
 							log__printf(NULL, MOSQ_LOG_ERR, "Error: Out of memory.");
 							return MOSQ_ERR_NOMEM;
 						}
+						cur_bridge->addresses = new_addresses;
 						cur_bridge->addresses[cur_bridge->address_count-1].address = token;
 					}
 					for(i=0; i<cur_bridge->address_count; i++){
@@ -875,12 +877,13 @@ static int config__read_file_core(struct mosquitto__config *config, bool reload,
 					}
 					if(token[0]){
 						cur_auth_plugin_config->option_count++;
-						cur_auth_plugin_config->options = mosquitto__realloc(cur_auth_plugin_config->options, (size_t)cur_auth_plugin_config->option_count*sizeof(struct mosquitto_auth_opt));
-						if(!cur_auth_plugin_config->options){
+						struct mosquitto_opt *new_options = mosquitto__realloc(cur_auth_plugin_config->options, (size_t)cur_auth_plugin_config->option_count*sizeof(struct mosquitto_opt));
+						if(!new_options){
 							log__printf(NULL, MOSQ_LOG_ERR, "Error: Out of memory.");
 							mosquitto__free(key);
 							return MOSQ_ERR_NOMEM;
 						}
+						cur_auth_plugin_config->options = new_options;
 						cur_auth_plugin_config->options[cur_auth_plugin_config->option_count-1].key = key;
 						cur_auth_plugin_config->options[cur_auth_plugin_config->option_count-1].value = mosquitto__strdup(token);
 						if(!cur_auth_plugin_config->options[cur_auth_plugin_config->option_count-1].value){
@@ -895,11 +898,12 @@ static int config__read_file_core(struct mosquitto__config *config, bool reload,
 				}else if(!strcmp(token, "auth_plugin") || !strcmp(token, "plugin")){
 					if(reload) continue; /* Auth plugin not currently valid for reloading. */
 					conf__set_cur_security_options(config, cur_listener, &cur_security_options);
-					cur_security_options->auth_plugin_configs = mosquitto__realloc(cur_security_options->auth_plugin_configs, (size_t)(cur_security_options->auth_plugin_config_count+1)*sizeof(struct mosquitto__auth_plugin_config));
-					if(!cur_security_options->auth_plugin_configs){
+					struct mosquitto__auth_plugin_config *new_configs = mosquitto__realloc(cur_security_options->auth_plugin_configs, (size_t)(cur_security_options->auth_plugin_config_count+1)*sizeof(struct mosquitto__auth_plugin_config));
+					if(!new_configs){
 						log__printf(NULL, MOSQ_LOG_ERR, "Error: Out of memory.");
 						return MOSQ_ERR_NOMEM;
 					}
+					cur_security_options->auth_plugin_configs = new_configs;
 					cur_auth_plugin_config = &cur_security_options->auth_plugin_configs[cur_security_options->auth_plugin_config_count];
 					memset(cur_auth_plugin_config, 0, sizeof(struct mosquitto__auth_plugin_config));
 					cur_auth_plugin_config->path = NULL;
@@ -919,6 +923,10 @@ static int config__read_file_core(struct mosquitto__config *config, bool reload,
 					conf__set_cur_security_options(config, cur_listener, &cur_security_options);
 					if(conf__parse_string(&token, "auto_id_prefix", &cur_security_options->auto_id_prefix, saveptr)) return MOSQ_ERR_INVAL;
 					if(cur_security_options->auto_id_prefix){
+						if(strlen(cur_security_options->auto_id_prefix) > 50){
+							log__printf(NULL, MOSQ_LOG_ERR, "Error: auto_id_prefix length must be <= 50.");
+							return MOSQ_ERR_INVAL;
+						}
 						cur_security_options->auto_id_prefix_len = (uint16_t)strlen(cur_security_options->auto_id_prefix);
 					}else{
 						cur_security_options->auto_id_prefix_len = 0;
@@ -1261,11 +1269,12 @@ static int config__read_file_core(struct mosquitto__config *config, bool reload,
 						}
 
 						config->bridge_count++;
-						config->bridges = mosquitto__realloc(config->bridges, (size_t)config->bridge_count*sizeof(struct mosquitto__bridge));
-						if(!config->bridges){
+						struct mosquitto__bridge *new_bridges = mosquitto__realloc(config->bridges, (size_t)config->bridge_count*sizeof(struct mosquitto__bridge));
+						if(!new_bridges){
 							log__printf(NULL, MOSQ_LOG_ERR, "Error: Out of memory.");
 							return MOSQ_ERR_NOMEM;
 						}
+						config->bridges = new_bridges;
 						cur_bridge = &(config->bridges[config->bridge_count-1]);
 						memset(cur_bridge, 0, sizeof(struct mosquitto__bridge));
 						cur_bridge->name = mosquitto__strdup(token);
@@ -1458,11 +1467,12 @@ static int config__read_file_core(struct mosquitto__config *config, bool reload,
 							}
 						}else{
 							config->listener_count++;
-							config->listeners = mosquitto__realloc(config->listeners, sizeof(struct mosquitto__listener)*(size_t)config->listener_count);
-							if(!config->listeners){
+							struct mosquitto__listener *new_listeners = mosquitto__realloc(config->listeners, sizeof(struct mosquitto__listener)*(size_t)config->listener_count);
+							if(!new_listeners){
 								log__printf(NULL, MOSQ_LOG_ERR, "Error: Out of memory.");
 								return MOSQ_ERR_NOMEM;
 							}
+							config->listeners = new_listeners;
 							cur_listener = &config->listeners[config->listener_count-1];
 							memset(cur_listener, 0, sizeof(struct mosquitto__listener));
 						}
@@ -1871,6 +1881,10 @@ static int config__read_file_core(struct mosquitto__config *config, bool reload,
 				}else if(!strcmp(token, "psk_file")){
 #ifdef FINAL_WITH_TLS_PSK
 					conf__set_cur_security_options(config, cur_listener, &cur_security_options);
+					if(cur_listener->certfile){
+						log__printf(NULL, MOSQ_LOG_ERR, "Error: Cannot use both certificate and psk encryption in a single listener.");
+						return MOSQ_ERR_INVAL;
+					}
 					if(reload){
 						mosquitto__free(cur_security_options->psk_file);
 						cur_security_options->psk_file = NULL;

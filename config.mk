@@ -134,7 +134,7 @@ WITH_ASAN=no
 
 # Also bump lib/mosquitto.h, CMakeLists.txt,
 # installer/mosquitto.nsi, installer/mosquitto64.nsi
-VERSION=2.0.22
+VERSION=2.0.23
 
 # Client library SO version. Bump if incompatible API/ABI changes are made.
 SOVERSION=1
@@ -318,7 +318,10 @@ ifeq ($(WITH_EC),yes)
 endif
 
 ifeq ($(WITH_ADNS),yes)
-	BROKER_LDADD:=$(BROKER_LDADD) -lanl
+	NEED_LIBANL:=$(shell printf 'int main(){return 0;}' | gcc -D_GNU_SOURCE -lanl -o /dev/null -x c - 2>/dev/null || echo yes)
+	ifeq ($(NEED_LIBANL),yes)
+		BROKER_LDADD+=-lanl
+	endif
 	BROKER_CPPFLAGS:=$(BROKER_CPPFLAGS) -DWITH_ADNS
 endif
 

@@ -48,6 +48,9 @@ int handle__unsuback(struct mosquitto *mosq)
 	assert(mosq);
 
 	if(mosquitto__get_state(mosq) != mosq_cs_active){
+#ifdef WITH_BROKER
+		log__printf(NULL, MOSQ_LOG_INFO, "Protocol error from %s: UNSUBACK before session is active.", mosq->id);
+#endif
 		return MOSQ_ERR_PROTOCOL;
 	}
 	if(mosq->in_packet.command != CMD_UNSUBACK){
@@ -57,6 +60,7 @@ int handle__unsuback(struct mosquitto *mosq)
 #ifdef WITH_BROKER
 	if(mosq->bridge == NULL){
 		/* Client is not a bridge, so shouldn't be sending SUBACK */
+		log__printf(NULL, MOSQ_LOG_INFO, "Protocol error from %s: UNSUBACK when not a bridge.", mosq->id);
 		return MOSQ_ERR_PROTOCOL;
 	}
 	log__printf(NULL, MOSQ_LOG_DEBUG, "Received UNSUBACK from %s", SAFE_PRINT(mosq->id));

@@ -168,12 +168,31 @@ if (WITH_TLS)
 endif()
 
 # Check for getaddrinfo_a
-include(CheckLibraryExists)
-check_library_exists(anl getaddrinfo_a  "" HAVE_GETADDRINFO_A)
-if (HAVE_GETADDRINFO_A AND WITH_ADNS)
-	add_definitions("-DWITH_ADNS")
-	add_definitions(-DHAVE_GETADDRINFO_A)
-	set (MOSQ_LIBS ${MOSQ_LIBS} anl)
+# Prior to glibc 2.34 this required linking with anl
+if(WITH_ADNS)
+	cmake_push_check_state()
+	set(ANL_CODE "
+		#include <stdlib.h>
+		#include <netdb.h>
+		int main(){
+			return getaddrinfo_a(0, NULL, 0, NULL);
+		}
+	")
+	check_source_compiles(C "${ANL_CODE}" HAVE_GETADDRINFO_A)
+	if(HAVE_GETADDRINFO_A)
+		add_definitions(mosquitto PRIVATE "WITH_ADNS")
+	else()
+		set(CMAKE_REQUIRED_LIBRARIES "anl")
+		check_source_compiles(C "${ANL_CODE}" HAVE_GETADDRINFO_A_LIBANL)
+
+		if(HAVE_GETADDRINFO_A_LIBANL)
+			add_definitions(mosquitto PRIVATE "WITH_ADNS")
+			set (MOSQ_LIBS ${MOSQ_LIBS} anl)
+		else()
+			message(FATAL_ERROR "WITH_ADNS is set, but getaddrinfo_a() is not available.")
+		endif()
+	endif()
+	cmake_pop_check_state()
 endif (HAVE_GETADDRINFO_A AND WITH_ADNS)
 
 
@@ -216,7 +235,10 @@ endif (WITH_WEBSOCKETS)
 add_executable(mosquitto ${MOSQ_SRCS})
 target_link_libraries(mosquitto ${MOSQ_LIBS})
 if (WIN32)
-	set_target_properties(mosquitto PROPERTIES ENABLE_EXPORTS 1)
+	set_target_properties(mosquitto PROPERTIES
+		ENABLE_EXPORTS 1
+		ARCHIVE_OUTPUT_NAME "mosquitto_broker"
+	)
 endif (WIN32)
 
 if (UNIX)

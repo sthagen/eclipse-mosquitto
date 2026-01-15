@@ -7,7 +7,7 @@
 cmake_minimum_required(VERSION 3.18)
 
 project(mosquitto)
-set (VERSION 2.0.22)
+set (VERSION 2.0.23)
 
 list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake/")
 
@@ -23,6 +23,8 @@ if(APPLE)
 endif(APPLE)
 
 include(GNUInstallDirs)
+include(CMakePushCheckState)
+include(CheckSourceCompiles)
 
 option(WITH_BUNDLED_DEPS "Build with bundled dependencies?" ON)
 option(WITH_TLS
@@ -72,7 +74,7 @@ option(WITH_THREADING "Include client library threading support?" ON)
 if (WITH_THREADING)
 	add_definitions("-DWITH_THREADING")
 	if(WIN32)
-		find_package(Pthreads4W REQUIRED)
+		find_package(PThreads4W REQUIRED)
 	endif()
 endif (WITH_THREADING)
 
