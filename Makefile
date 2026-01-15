@@ -10,8 +10,10 @@ DISTFILES= \
 	common/ \
 	dashboard/ \
 	deps/ \
+	doc/ \
 	docker/ \
 	examples/ \
+	fuzzing/ \
 	include/ \
 	installer/ \
 	libcommon/ \
@@ -26,10 +28,19 @@ DISTFILES= \
 	snap/ \
 	src/ \
 	test/ \
+	www/ \
+	.github \
 	\
+	.editorconfig \
+	.gitignore \
+	.uncrustify.cfg \
+	buildtest.py \
+	codecov.yml \
 	CMakeLists.txt \
+	CITATION.cff \
 	CONTRIBUTING.md \
 	ChangeLog.txt \
+	format.sh \
 	LICENSE.txt \
 	Makefile \
 	about.html \
@@ -46,8 +57,14 @@ DISTFILES= \
 	pwfile.example \
 	README-compiling.md \
 	README-letsencrypt.md \
+	README-tests.md \
 	README-windows.txt \
-	README.md
+	README.md \
+	run_tests.py \
+	set-version.sh \
+	SECURITY.md \
+	THANKS.txt \
+	vcpkg.json
 
 .PHONY : all mosquitto api docs binary check clean reallyclean test test-compile install uninstall dist sign copy localdocker
 
