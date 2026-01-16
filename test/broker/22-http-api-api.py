@@ -141,7 +141,7 @@ try:
     if response.status != 200:
         raise ValueError(f"Error: /api/v1/version {response.status}")
     payload = response.read().decode('utf-8')
-    if not re.match(r'^\d+\.\d+\.\d+$', payload):
+    if not re.match(r'^\d+\.\d+\.\d+.*$', payload):
         raise ValueError(f"Error: /api/v1/version\n{payload}")
 
 
