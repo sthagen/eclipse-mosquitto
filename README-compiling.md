@@ -19,6 +19,13 @@ The following packages can be used to add features to mosquitto.
 * xsltproc (xsltproc and docbook-xsl on Debian based systems) - only needed
   when building from git sources - disable with `WITH_DOCS=no`
 
+For testing, the following packages are required:
+* cunit
+* googletest / gmock
+* microsocks
+* python
+
+
 To compile you may either use CMake, or on Linux look in the file `config.mk`
 for compile options and use plain `make`.
 
