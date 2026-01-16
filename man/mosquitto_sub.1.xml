@@ -538,6 +538,12 @@ mosquitto_sub -t 'bbc/#' -T bbc/bbc1 --remove-retained</programlisting>
 		<simplelist type="inline">
 			<member>
 				<citerefentry>
+					<refentrytitle><link xlink:href="mosquitto-7.html">mosquitto</link></refentrytitle>
+					<manvolnum>7</manvolnum>
+				</citerefentry>
+			</member>
+			<member>
+				<citerefentry>
 					<refentrytitle><link xlink:href="mqtt-7.html">mqtt</link></refentrytitle>
 					<manvolnum>7</manvolnum>
 				</citerefentry>

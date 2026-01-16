@@ -20,7 +20,7 @@
 			The mosquitto project contains MQTT related programs, and comprises
 			the mosquitto broker and applications, command line clients, and a
 			client library for implementing custom MQTT clients. A brief description
-			of some MQTT features is available at 
+			of some MQTT features is available at
 			<citerefentry><refentrytitle><link xlink:href="mqtt-7.html">mqtt</link></refentrytitle><manvolnum>7</manvolnum></citerefentry>.
 		</para>
 
@@ -76,6 +76,10 @@
 				<citerefentry><refentrytitle><link xlink:href="mosquitto_ctrl-1.html">mosquitto_ctrl</link></refentrytitle><manvolnum>1</manvolnum></citerefentry>,
 				with the Dynamic Security module described in
 				<citerefentry><refentrytitle><link xlink:href="mosquitto_ctrl_dynsec-1.html">mosquitto_ctrl_dynsec</link></refentrytitle><manvolnum>1</manvolnum></citerefentry>.
+			</para>
+			<para>
+				The interactive shell mode is described in
+				<citerefentry><refentrytitle><link xlink:href="mosquitto_ctrl_shell-1.html">mosquitto_ctrl_shell</link></refentrytitle><manvolnum>1</manvolnum></citerefentry>.
 			</para>
 		</refsect2>
 
