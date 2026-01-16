@@ -80,7 +80,6 @@ parts:
       - libmicrohttpd-dev
       - libsqlite3-dev
       - libssl-dev
-      - libwebsockets-dev
       - xsltproc
     stage-packages:
       - ca-certificates
