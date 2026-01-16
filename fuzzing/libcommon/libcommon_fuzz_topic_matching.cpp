@@ -18,7 +18,7 @@ DEFINE_PROTO_FUZZER(const fuzz_topic_matches_sub::FuzzerInput& fuzzer_input)
 		clientid = fuzzer_input.clientid().c_str();
 	}
 
-		//targeted_function_1(fuzzer_input.arg1(), fuzzer_input.arg2(), fuzzer_input.arg3());
+	//targeted_function_1(fuzzer_input.arg1(), fuzzer_input.arg2(), fuzzer_input.arg3());
 	mosquitto_topic_matches_sub(string1, string2, &result);
 	mosquitto_topic_matches_sub2(string1, strlen(string1), string2, strlen(string2), &result);
 	mosquitto_topic_matches_sub_with_pattern(string1, string2, clientid, username, &result);

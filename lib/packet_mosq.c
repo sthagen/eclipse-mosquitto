@@ -395,6 +395,8 @@ static int read_header(struct mosquitto *mosq, ssize_t (*func_read)(struct mosqu
 
 
 #ifdef WITH_BROKER
+
+
 static int packet__check_in_packet_oversize(struct mosquitto *mosq)
 {
 	switch(mosq->in_packet.command & 0xF0){

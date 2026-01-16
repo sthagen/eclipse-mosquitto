@@ -30,6 +30,7 @@ static int packet_data_remaining = 0;
 extern "C" {
 #include "mosquitto_broker_internal.h"
 
+
 ssize_t net__read(struct mosquitto *mosq, void *buf, size_t count)
 {
 	int res = count < packet_data_remaining?count:packet_data_remaining;
@@ -38,6 +39,7 @@ ssize_t net__read(struct mosquitto *mosq, void *buf, size_t count)
 	return res;
 }
 
+
 int net__socket_get_address(mosq_sock_t sock, char *buf, size_t len, uint16_t *remote_port)
 {
 	snprintf(buf, len, "localhost");
@@ -45,12 +47,14 @@ int net__socket_get_address(mosq_sock_t sock, char *buf, size_t len, uint16_t *r
 	return MOSQ_ERR_SUCCESS;
 }
 
+
 int http__context_init(struct mosquitto *context)
 {
 	context->transport = mosq_t_http;
 
 	return MOSQ_ERR_SUCCESS;
 }
+
 
 int log__printf(struct mosquitto *mosq, unsigned int priority, const char *fmt, ...)
 {
@@ -62,8 +66,8 @@ int log__printf(struct mosquitto *mosq, unsigned int priority, const char *fmt, 
 
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
 {
-	struct mosquitto context{};
-	struct mosquitto__listener listener{};
+	struct mosquitto context {};
+	struct mosquitto__listener listener {};
 
 	packet_data = data;
 	packet_data_pos = 0;
