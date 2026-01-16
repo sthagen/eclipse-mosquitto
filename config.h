@@ -92,4 +92,7 @@ typedef SSIZE_T ssize_t;
 
 #define TOPIC_HIERARCHY_LIMIT 200
 
+#ifdef WITH_ADNS
+#  define _GNU_SOURCE
+#endif
 #endif
