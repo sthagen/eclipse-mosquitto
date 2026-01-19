@@ -62,6 +62,7 @@ endif
 	./03-publish-socks-no-auth.py
 	./03-publish-stdin-file.py
 	./03-publish-stdin-line.py
+	./03-publish-tls.py
 	./03-publish-url.py
 
 04 :

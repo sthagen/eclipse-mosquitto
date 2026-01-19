@@ -370,7 +370,7 @@ static int pub_other_loop(struct mosquitto *mosq)
 				err_printf(&cfg, "Error sending repeat publish: %s", mosquitto_strerror(rc));
 			}
 		}
-	}while(rc == MOSQ_ERR_SUCCESS);
+	}while(rc == MOSQ_ERR_SUCCESS && disconnect_sent == false);
 
 	if(status == STATUS_DISCONNECTED){
 		return MOSQ_ERR_SUCCESS;

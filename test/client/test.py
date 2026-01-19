@@ -36,6 +36,7 @@ tests = [
     (2, './03-publish-qos1-ws-large.py'),
     (1, './03-publish-repeat.py'),
     (1, './03-publish-url.py'),
+    (1, './03-publish-tls.py'),
 
     (2, './03-publish-socks.py'),
     (2, './03-publish-socks-auth-failed.py'),
