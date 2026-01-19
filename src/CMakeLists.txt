@@ -193,7 +193,7 @@ if(WITH_ADNS)
 		endif()
 	endif()
 	cmake_pop_check_state()
-endif (HAVE_GETADDRINFO_A AND WITH_ADNS)
+endif()
 
 
 if (UNIX)
