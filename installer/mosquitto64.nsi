@@ -67,7 +67,6 @@ Section "Files" SecInstall
 	File "..\build64\plugins\sparkplug-aware\Release\mosquitto_sparkplug_aware.dll"
 	File "..\aclfile.example"
 	File "..\ChangeLog.txt"
-	File "..\mosquitto.conf"
 	File "..\NOTICE.md"
 	File "..\pskfile.example"
 	File "..\pwfile.example"
@@ -77,6 +76,10 @@ Section "Files" SecInstall
 	File "..\SECURITY.md"
 	File "..\edl-v10"
 	File "..\epl-v20"
+
+	SetOverwrite off
+	File "..\mosquitto.conf"
+	SetOverwrite on
 
 	File "..\build64\vcpkg_installed\x64-windows-release\bin\cjson.dll"
 	File "..\build64\vcpkg_installed\x64-windows-release\bin\libcrypto-3-x64.dll"
