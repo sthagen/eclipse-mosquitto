@@ -98,7 +98,11 @@ endif()
 
 find_package(cJSON REQUIRED)
 find_package(argon2)
-find_package(edit)
+
+option(WITH_CTRL_SHELL "Include mosquitto_ctrl interactive shell support?" ON)
+if(WITH_CTRL_SHELL)
+	find_package(edit)
+endif()
 if(ARGON2_FOUND)
 	# Disable until separate password handling thread is implemented
 	#add_definitions("-DWITH_ARGON2")
