@@ -22,10 +22,11 @@ Contributors:
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <strings.h>
 #include <sys/stat.h>
 #ifdef WIN32
 #  include <direct.h>
+#else
+#  include <strings.h>
 #endif
 
 #include "mosquitto.h"
