@@ -19,6 +19,7 @@ Contributors:
 #ifndef MOSQUITTO_LIBCOMMON_FILE_H
 #define MOSQUITTO_LIBCOMMON_FILE_H
 
+#include <stdarg.h>
 #include <stdbool.h>
 #include <stdio.h>
 
