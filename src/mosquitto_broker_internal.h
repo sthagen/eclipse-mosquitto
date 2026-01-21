@@ -840,7 +840,6 @@ void listeners__stop(void);
  * Plugin related functions
  * ============================================================ */
 int plugin__load_v5(mosquitto_plugin_id_t *plugin, void *lib);
-int plugin__load_v5(mosquitto_plugin_id_t *plugin, void *lib);
 int plugin__load_v4(mosquitto_plugin_id_t *plugin, void *lib);
 int plugin__load_v3(mosquitto_plugin_id_t *plugin, void *lib);
 int plugin__load_v2(mosquitto_plugin_id_t *plugin, void *lib);
