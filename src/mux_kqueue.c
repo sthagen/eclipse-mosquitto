@@ -22,6 +22,7 @@ Contributors:
 
 #define MAX_EVENTS 1000
 
+#include <errno.h>
 #include <signal.h>
 #include <sys/event.h>
 #include <sys/socket.h>
