@@ -525,7 +525,7 @@ int db__message_insert_incoming(struct mosquitto *context, uint64_t cmsg_id, str
 	db__msg_store_ref_inc(client_msg->base_msg);
 	client_msg->data.mid = base_msg->data.source_mid;
 	client_msg->data.direction = mosq_md_in;
-	client_msg->data.state = (enum mosquitto_msg_state)state;
+	client_msg->data.state = (uint8_t)state;
 	client_msg->data.dup = false;
 	if(base_msg->data.qos > context->max_qos){
 		client_msg->data.qos = context->max_qos;
@@ -674,7 +674,7 @@ int db__message_insert_outgoing(struct mosquitto *context, uint64_t cmsg_id, uin
 	db__msg_store_ref_inc(client_msg->base_msg);
 	client_msg->data.mid = mid;
 	client_msg->data.direction = mosq_md_out;
-	client_msg->data.state = (enum mosquitto_msg_state)state;
+	client_msg->data.state = (uint8_t)state;
 	client_msg->data.dup = false;
 	if(qos > context->max_qos){
 		client_msg->data.qos = context->max_qos;
@@ -757,7 +757,7 @@ static inline int db__message_update_outgoing_state(struct mosquitto *context, s
 						context->id, client_msg->data.qos, qos);
 				return MOSQ_ERR_PROTOCOL;
 			}
-			client_msg->data.state = (enum mosquitto_msg_state)state;
+			client_msg->data.state = (uint8_t)state;
 			if(persist){
 				plugin_persist__handle_client_msg_update(context, client_msg);
 			}

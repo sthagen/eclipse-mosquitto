@@ -639,7 +639,7 @@ ssize_t phr_decode_chunked(struct phr_chunked_decoder *decoder, char *buf, size_
             decoder->_state = CHUNKED_IN_TRAILERS_LINE_HEAD;
             break;
         default:
-            assert(!"decoder is corrupt");
+            assert(0 /*"decoder is corrupt"*/);
         }
     }
 

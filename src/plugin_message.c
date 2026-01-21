@@ -44,7 +44,7 @@ static int plugin__handle_message_single(struct mosquitto__callback *callbacks, 
 	event_data.properties = stored->properties;
 
 	DL_FOREACH_SAFE(callbacks, cb_base, cb_next){
-		rc = cb_base->cb(ev_type, &event_data, cb_base->userdata);
+		rc = cb_base->cb((int)ev_type, &event_data, cb_base->userdata);
 		if(rc != MOSQ_ERR_SUCCESS){
 			break;
 		}

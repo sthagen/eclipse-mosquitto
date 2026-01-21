@@ -224,20 +224,20 @@ BROKER_EXPORT int mosquitto_callback_register(
 	if(own_callback == NULL){
 		return MOSQ_ERR_NOMEM;
 	}
-	own_callback->event = event;
+	own_callback->event = (enum mosquitto_plugin_event)event;
 	own_callback->cb_func = cb_func;
 	DL_APPEND(identifier->own_callbacks, own_callback);
 
 	if(identifier->config.security_option_count == 0){
 		log__printf(NULL, MOSQ_LOG_WARNING, "Plugin could not register callback '%s'",
-				get_event_name(event));
+				get_event_name((enum mosquitto_plugin_event)event));
 		return MOSQ_ERR_INVAL;
 	}
 
 	for(int i=0; i<identifier->config.security_option_count; i++){
 		security_options = identifier->config.security_options[i];
 
-		cb_base = plugin__get_callback_base(security_options, event);
+		cb_base = plugin__get_callback_base(security_options, (enum mosquitto_plugin_event)event);
 		if(cb_base == NULL){
 			return MOSQ_ERR_NOT_SUPPORTED;
 		}
@@ -261,10 +261,10 @@ BROKER_EXPORT int mosquitto_callback_register(
 
 	if(identifier->plugin_name){
 		log__printf(NULL, MOSQ_LOG_INFO, "Plugin %s has registered to receive '%s' events.",
-				identifier->plugin_name, get_event_name(event));
+				identifier->plugin_name, get_event_name((enum mosquitto_plugin_event)event));
 	}else{
 		log__printf(NULL, MOSQ_LOG_INFO, "Plugin has registered to receive '%s' events.",
-				get_event_name(event));
+				get_event_name((enum mosquitto_plugin_event)event));
 	}
 
 	return MOSQ_ERR_SUCCESS;

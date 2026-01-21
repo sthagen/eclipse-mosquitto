@@ -393,7 +393,7 @@ TEST_F(CtrlShellDynsecTest, NoDynsec)
 		data.response_received = true;
 		return 0;
 	}))
-		.WillOnce(t::Invoke([this, &mosq](pthread_cond_t *, pthread_mutex_t *, const struct timespec *){
+		.WillOnce(t::Invoke([](pthread_cond_t *, pthread_mutex_t *, const struct timespec *){
 		// Subscribe
 		data.response_received = true;
 		return 0;

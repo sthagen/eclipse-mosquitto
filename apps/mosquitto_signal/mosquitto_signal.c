@@ -51,7 +51,7 @@ int main(int argc, char *argv[])
 {
 	int idx;
 	int pid = -2;
-	int msig = 0;
+	enum mosq_signal msig = 0;
 
 	if(argc == 1){
 		print_usage();
