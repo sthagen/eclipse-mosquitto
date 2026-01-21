@@ -2729,12 +2729,12 @@ static int config__read_file_core(struct mosquitto__config *config, bool reload,
 						}
 
 						char *topic_in_quotes = strtok_r(NULL, "\"", &saveptr);
-						size_t slen = 1;
+						size_t tlen = 1;
 						if(topic_in_quotes){
-							slen = strlen(topic_in_quotes);
+							tlen = strlen(topic_in_quotes);
 						}
 
-						topic = mosquitto_malloc(strlen(token) + slen + 1);
+						topic = mosquitto_malloc(strlen(token) + tlen + 1);
 						if(!topic){
 							log__printf(NULL, MOSQ_LOG_ERR, "Error: Out of memory.");
 							return MOSQ_ERR_NOMEM;
