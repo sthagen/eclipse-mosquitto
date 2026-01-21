@@ -240,7 +240,9 @@ static int create_tables(struct mosquitto_sqlite *ms)
 		if(rc){
 			goto fail;
 		}
-		memcpy(db_schema_version, (int[3]){1, 0, 0}, sizeof(db_schema_version));
+		db_schema_version[0] = 1;
+		db_schema_version[1] = 0;
+		db_schema_version[2] = 0;
 	}
 	if(db_schema_version[0] == 1){
 		/* 1.0.x needs to be upgraded to 1.1 */
@@ -249,7 +251,9 @@ static int create_tables(struct mosquitto_sqlite *ms)
 			if(rc){
 				goto fail;
 			}
-			memcpy(db_schema_version, (int[3]){1, 1, 0}, sizeof(db_schema_version));
+			db_schema_version[0] = 1;
+			db_schema_version[1] = 1;
+			db_schema_version[2] = 0;
 		}
 		/* 1.1.x  is the current DB-Schema version */
 		if(db_schema_version[1] == 1){
