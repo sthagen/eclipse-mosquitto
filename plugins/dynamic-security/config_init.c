@@ -82,7 +82,7 @@ static int get_password_from_init_file(struct dynsec__data *data, char **pw)
 	fclose(fptr);
 
 	pos = (int)strlen(buf)-1;
-	while(pos >= 0 && isspace(buf[pos])){
+	while(pos >= 0 && isspace((unsigned char)buf[pos])){
 		buf[pos] = '\0';
 		pos--;
 	}

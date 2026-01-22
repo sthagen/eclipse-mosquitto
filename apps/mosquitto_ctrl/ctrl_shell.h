@@ -24,6 +24,7 @@ extern "C" {
 
 #include <cjson/cJSON.h>
 #include <stdbool.h>
+#include <stdio.h>
 
 extern const char *ANSI_URL;
 extern const char *ANSI_MODULE;

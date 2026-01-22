@@ -59,7 +59,7 @@ static int scmp_p(const void *p1, const void *p2)
 
 	while(s1[0] && s2[0]){
 		/* Sort by case insensitive part first */
-		result = toupper(s1[0]) - toupper(s2[0]);
+		result = toupper((unsigned char)s1[0]) - toupper((unsigned char)s2[0]);
 		if(result == 0){
 			/* Case insensitive part matched, now distinguish between case */
 			result = s1[0] - s2[0];

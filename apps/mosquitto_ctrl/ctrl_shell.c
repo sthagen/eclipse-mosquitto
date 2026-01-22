@@ -21,7 +21,6 @@ Contributors:
 #include <arpa/inet.h>
 #include <ctype.h>
 #include <errno.h>
-#include <editline/readline.h>
 #include <fcntl.h>
 #include <pthread.h>
 #include <signal.h>
@@ -131,7 +130,7 @@ static void term_set_canon(bool canon)
 void ctrl_shell_rtrim(char *buf)
 {
 	size_t slen = strlen(buf);
-	while(slen > 0 && isspace(buf[slen-1])){
+	while(slen > 0 && isspace((unsigned char)buf[slen-1])){
 		buf[slen-1] = '\0';
 		slen = strlen(buf);
 	}

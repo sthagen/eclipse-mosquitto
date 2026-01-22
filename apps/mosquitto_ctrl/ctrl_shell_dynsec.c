@@ -795,7 +795,7 @@ static void print_details(cJSON *j_data)
 	int64_t groupcount;
 	int64_t rolecount;
 	int64_t changeindex;
-	int align = strlen("Change index: ");
+	int align = (int)strlen("Change index: ");
 	json_get_int64(j_data, "clientCount", &clientcount, true, 0);
 	json_get_int64(j_data, "groupCount", &groupcount, true, 0);
 	json_get_int64(j_data, "roleCount", &rolecount, true, 0);

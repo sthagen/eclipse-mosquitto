@@ -262,11 +262,11 @@ char *mosquitto_trimblanks(char *str)
 		return NULL;
 	}
 
-	while(isspace(str[0])){
+	while(isspace((unsigned char)str[0])){
 		str++;
 	}
 	endptr = &str[strlen(str)-1];
-	while(endptr > str && isspace(endptr[0])){
+	while(endptr > str && isspace((unsigned char)endptr[0])){
 		endptr[0] = '\0';
 		endptr--;
 	}

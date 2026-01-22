@@ -41,7 +41,7 @@ static void control__negative_reply(const char *clientid, const char *request_to
 	}
 	snprintf(response_topic, response_topic_len, "%s/response", request_topic);
 
-	mosquitto_broker_publish_copy(clientid, response_topic, strlen(payload), payload, 0, false, NULL);
+	mosquitto_broker_publish_copy(clientid, response_topic, (int)strlen(payload), payload, 0, false, NULL);
 	mosquitto_FREE(response_topic);
 }
 

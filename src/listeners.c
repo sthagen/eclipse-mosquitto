@@ -172,7 +172,7 @@ static int listeners__add_local(const char *host, uint16_t port)
 		mosquitto_FREE(listeners[db.config->listener_count].security_options);
 		return MOSQ_ERR_NOMEM;
 	}
-	listeners[db.config->listener_count].security_options->auto_id_prefix_len = strlen("auto-");
+	listeners[db.config->listener_count].security_options->auto_id_prefix_len = (int)strlen("auto-");
 	listeners[db.config->listener_count].port = port;
 	listeners[db.config->listener_count].host = mosquitto_strdup(host);
 	if(listeners[db.config->listener_count].host == NULL){

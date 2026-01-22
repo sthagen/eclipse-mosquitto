@@ -3003,7 +3003,7 @@ static int config__check(struct mosquitto__config *config)
 		id_prefix_len = config->security_options.auto_id_prefix_len;
 	}else{
 		id_prefix = "auto-";
-		id_prefix_len = strlen("auto-");
+		id_prefix_len = (int)strlen("auto-");
 	}
 
 	/* Default to auto_id_prefix = 'auto-' if none set. */

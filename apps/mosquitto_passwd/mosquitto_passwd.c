@@ -413,7 +413,7 @@ static bool is_username_valid(const char *username)
 			return false;
 		}
 		for(i=0; i<slen; i++){
-			if(iscntrl(username[i])){
+			if(iscntrl((unsigned char)username[i])){
 				fprintf(stderr, "Error: Username must not contain control characters.\n");
 				return false;
 			}

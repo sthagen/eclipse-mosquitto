@@ -213,7 +213,7 @@ int acl_file__parse(struct acl_file_data *data)
 
 	while(mosquitto_fgets(&buf, &buflen, aclfptr)){
 		slen = strlen(buf);
-		while(slen > 0 && isspace(buf[slen-1])){
+		while(slen > 0 && isspace((unsigned char)buf[slen-1])){
 			buf[slen-1] = '\0';
 			slen = strlen(buf);
 		}

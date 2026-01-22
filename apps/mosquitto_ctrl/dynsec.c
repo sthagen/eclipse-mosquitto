@@ -184,7 +184,7 @@ static void print_json_array(cJSON *j_list, int slen, const char *label, const c
 static void print_client(cJSON *j_response)
 {
 	cJSON *j_data, *j_client, *jtmp;
-	const int label_width = strlen("Connections:");
+	const int label_width = (int)strlen("Connections:");
 
 	j_data = cJSON_GetObjectItem(j_response, "data");
 	if(j_data == NULL || !cJSON_IsObject(j_data)){
@@ -226,7 +226,7 @@ static void print_client(cJSON *j_response)
 static void print_group(cJSON *j_response)
 {
 	cJSON *j_data, *j_group;
-	int label_width = strlen("Groupname:");
+	int label_width = (int)strlen("Groupname:");
 	const char *groupname;
 
 	j_data = cJSON_GetObjectItem(j_response, "data");

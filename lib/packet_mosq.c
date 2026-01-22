@@ -48,7 +48,7 @@ Contributors:
 
 int packet__alloc(struct mosquitto__packet **packet, uint8_t command, uint32_t remaining_length)
 {
-	uint8_t remaining_bytes[5], byte;
+	uint8_t remaining_bytes[5] = {0}, byte;
 	int8_t remaining_count;
 	uint32_t packet_length;
 	uint32_t remaining_length_stored;
