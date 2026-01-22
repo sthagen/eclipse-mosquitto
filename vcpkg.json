@@ -1,6 +1,6 @@
 {
 	"name": "mosquitto",
-	"version-string": "2.1.0rc1",
+	"version-string": "2.1.0rc2",
 	"dependencies": [
 		"argon2",
 		"cjson",
