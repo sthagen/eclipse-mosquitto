@@ -1,6 +1,8 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+#include <sys/select.h>
+#include <sys/types.h>
 
 #include <mosquitto/libmosquittopp.h>
 
