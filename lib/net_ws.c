@@ -202,7 +202,7 @@ static ssize_t read_ws_payloadlen_extended(struct mosquitto *mosq)
 	for(ssize_t i=0; i<len; i++){
 		mosq->wsd.payloadlen = (mosq->wsd.payloadlen << 8) + hbuf[i];
 	}
-	mosq->wsd.payloadlen_bytes -= (uint8_t)len;
+	mosq->wsd.payloadlen_bytes = (uint8_t)(mosq->wsd.payloadlen_bytes - len);
 
 	return len;
 }
@@ -216,7 +216,7 @@ static ssize_t read_ws_mask(struct mosquitto *mosq)
 	if(len <= 0){
 		return len;
 	}
-	mosq->wsd.mask_bytes -= (uint8_t)len;
+	mosq->wsd.mask_bytes = (uint8_t)(mosq->wsd.mask_bytes - len);
 	if(mosq->wsd.mask_bytes > 0){
 		errno = EAGAIN;
 		return -1;

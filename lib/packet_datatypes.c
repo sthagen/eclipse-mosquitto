@@ -165,7 +165,7 @@ int packet__read_uint16(struct mosquitto__packet_in *packet, uint16_t *word)
 	}
 
 	memcpy(&val, &packet->payload[packet->pos], sizeof(uint16_t));
-	packet->pos += sizeof(uint16_t);
+	packet->pos = packet->pos + (uint32_t)sizeof(uint16_t);
 
 	*word = ntohs(val);
 
@@ -195,7 +195,7 @@ int packet__read_uint32(struct mosquitto__packet_in *packet, uint32_t *word)
 	}
 
 	memcpy(&val, &packet->payload[packet->pos], sizeof(uint32_t));
-	packet->pos += sizeof(uint32_t);
+	packet->pos = packet->pos + (uint32_t)sizeof(uint32_t);
 
 	*word = ntohl(val);
 

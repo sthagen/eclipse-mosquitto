@@ -95,8 +95,8 @@ static int read_tlv_ssl(struct mosquitto *context, uint16_t len, bool *have_cert
 
 	ssl.client = context->proxy.buf[context->proxy.pos];
 	ssl.verify = ntohl(*(uint32_t *)(&context->proxy.buf[context->proxy.pos + sizeof(uint8_t)]));
-	context->proxy.pos += sizeof(uint8_t) + sizeof(uint32_t);
-	len -= (uint16_t)(sizeof(uint8_t) + sizeof(uint32_t));
+	context->proxy.pos = (uint16_t)(context->proxy.pos + sizeof(uint8_t) + sizeof(uint32_t));
+	len = (uint16_t)(len - (sizeof(uint8_t) + sizeof(uint32_t)));
 
 	if(ssl.client & PP2_CLIENT_SSL && ssl.client & PP2_CLIENT_CERT_SESS && !ssl.verify){
 		*have_certificate = true;
@@ -108,7 +108,7 @@ static int read_tlv_ssl(struct mosquitto *context, uint16_t len, bool *have_cert
 		}
 		struct pp2_tlv *tlv = (struct pp2_tlv *)(&context->proxy.buf[context->proxy.pos]);
 		uint16_t tlv_len = (uint16_t)((tlv->length_h<<8) + tlv->length_l);
-		context->proxy.pos += (uint16_t)sizeof(struct pp2_tlv);
+		context->proxy.pos = (uint16_t)(context->proxy.pos + sizeof(struct pp2_tlv));
 
 		if(tlv_len > context->proxy.len - context->proxy.pos){
 			return MOSQ_ERR_INVAL;
@@ -135,8 +135,8 @@ static int read_tlv_ssl(struct mosquitto *context, uint16_t len, bool *have_cert
 				}
 				break;
 		}
-		len -= (uint16_t)(sizeof(uint8_t) + sizeof(uint8_t) + sizeof(uint8_t) + tlv_len);
-		context->proxy.pos += tlv_len;
+		len = (uint16_t)(len - (sizeof(uint8_t) + sizeof(uint8_t) + sizeof(uint8_t) + tlv_len));
+		context->proxy.pos = (uint16_t)(context->proxy.pos + tlv_len);
 	}
 	context->proxy.have_tls = true;
 
@@ -152,7 +152,7 @@ static int read_tlv(struct mosquitto *context, bool *have_certificate)
 		}
 		struct pp2_tlv *tlv = (struct pp2_tlv *)(&context->proxy.buf[context->proxy.pos]);
 		uint16_t tlv_len = (uint16_t)((tlv->length_h<<8) + tlv->length_l);
-		context->proxy.pos += (uint16_t)sizeof(struct pp2_tlv);
+		context->proxy.pos = (uint16_t)(context->proxy.pos + sizeof(struct pp2_tlv));
 
 		if(tlv_len > context->proxy.len - context->proxy.pos){
 			return MOSQ_ERR_INVAL;
@@ -168,7 +168,7 @@ static int read_tlv(struct mosquitto *context, bool *have_certificate)
 				}
 				break;
 			default:
-				context->proxy.pos += (uint16_t)tlv_len;
+				context->proxy.pos = (uint16_t)(context->proxy.pos + tlv_len);
 				break;
 		}
 	}
@@ -225,7 +225,7 @@ int proxy_v2__read(struct mosquitto *context)
 					}
 					break;
 			}
-			context->proxy.buf = mosquitto_calloc(1, context->proxy.len+1);
+			context->proxy.buf = mosquitto_calloc(1, (size_t)(context->proxy.len+1));
 			if(!context->proxy.buf){
 				return MOSQ_ERR_NOMEM;
 			}
@@ -238,9 +238,9 @@ int proxy_v2__read(struct mosquitto *context)
 	}
 
 	if(context->proxy.pos < context->proxy.len){
-		ssize_t rc = net__read(context, context->proxy.buf, context->proxy.len - context->proxy.pos);
+		ssize_t rc = net__read(context, context->proxy.buf, (size_t)(context->proxy.len - context->proxy.pos));
 		if(rc > 0){
-			context->proxy.pos += (uint16_t)rc;
+			context->proxy.pos = (uint16_t)(context->proxy.pos + rc);
 		}else{
 			proxy_cleanup(context);
 			return MOSQ_ERR_CONN_LOST;
@@ -267,7 +267,7 @@ int proxy_v2__read(struct mosquitto *context)
 			union proxy_addr *addr = (union proxy_addr *)context->proxy.buf;
 			context->address = mosquitto_strndup((char *)addr->unix_addr.src_addr, sizeof(addr->unix_addr.src_addr));
 			context->remote_port = 0;
-			context->proxy.pos = (uint16_t)strlen(context->address) + 1;
+			context->proxy.pos = (uint16_t)(strlen(context->address) + 1);
 		}else{
 			/* Must be LOCAL */
 			/* Ignore address */

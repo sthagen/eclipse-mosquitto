@@ -43,7 +43,9 @@ static struct mosquitto__retainhier *retain__add_hier_entry(struct mosquitto__re
 	}
 	child->parent = parent;
 	child->topic_len = len;
-	strncpy(child->topic, topic, len);
+	if(len > 0){
+		strncpy(child->topic, topic, (size_t)(len+1));
+	}
 
 	HASH_ADD(hh, *sibling, topic, child->topic_len, child);
 

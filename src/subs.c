@@ -553,7 +553,7 @@ static struct mosquitto__subhier *sub__add_hier_entry(struct mosquitto__subhier 
 	child->parent = parent;
 	child->topic_len = len;
 	if(len > 0){
-		strncpy(child->topic, topic, len);
+		strncpy(child->topic, topic, (size_t)(len+1));
 	}
 
 	HASH_ADD(hh, *sibling, topic, child->topic_len, child);
