@@ -411,7 +411,7 @@ int http_api__start_local(struct mosquitto__listener *listener)
 	if(listener->security_options == NULL){
 		return MOSQ_ERR_NOMEM;
 	}
-	
+
 	listener->host = mosquitto_strdup("127.0.0.1");
 	if(!listener->host){
 		mosquitto_FREE(listener->security_options);
