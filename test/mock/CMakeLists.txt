@@ -8,6 +8,7 @@ if(EDITLINE_FOUND)
 		PUBLIC
 			${mosquitto_SOURCE_DIR}/test/mock
 	)
+	target_link_libraries(editline_mock PRIVATE GTest::gmock)
 endif()
 
 add_library(pthread_mock OBJECT pthread_mock.cpp)
@@ -15,3 +16,4 @@ target_include_directories(pthread_mock
     PUBLIC
         ${mosquitto_SOURCE_DIR}/test/mock
 )
+target_link_libraries(pthread_mock PRIVATE GTest::gmock)

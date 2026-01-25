@@ -13,4 +13,5 @@ if(EDITLINE_FOUND)
 			${mosquitto_SOURCE_DIR}/test/mock
 			${mosquitto_SOURCE_DIR}/test/mock/apps/mosquitto_ctrl
 	)
+	target_link_libraries(ctrl_shell_mock PRIVATE GTest::gmock)
 endif()
