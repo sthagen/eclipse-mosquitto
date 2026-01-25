@@ -305,7 +305,3 @@ ifeq ($(WITH_ARGON2),yes)
 	LIB_ARGON2=-largon2
 	LIBMOSQ_COMMON+=${LIB_ARGON2}
 endif
-
-ifeq ($(WITH_EDITLINE),yes)
-	LOCAL_CPPFLAGS+=-DWITH_EDITLINE
-endif

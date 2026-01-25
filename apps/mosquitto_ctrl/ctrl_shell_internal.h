@@ -18,14 +18,22 @@ Contributors:
 #ifndef CTRL_SHELL_INTERNAL_H
 #define CTRL_SHELL_INTERNAL_H
 
-#ifdef WITH_EDITLINE
+#ifdef WITH_CTRL_SHELL
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 #include <cjson/cJSON.h>
+#include <stdio.h>
+
+#ifdef WITH_EDITLINE
 #include <editline/readline.h>
+#elif defined(WITH_READLINE)
+#include <readline/history.h>
+#include <readline/readline.h>
+#endif
+#include <pthread.h>
 
 #include "ctrl_shell.h"
 #include "mosquitto_ctrl.h"

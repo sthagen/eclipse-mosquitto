@@ -104,7 +104,7 @@ find_package(argon2)
 
 option(WITH_CTRL_SHELL "Include mosquitto_ctrl interactive shell support?" ON)
 if(WITH_CTRL_SHELL)
-	find_package(edit)
+	find_package(LineEditing)
 endif()
 if(ARGON2_FOUND)
 	# Disable until separate password handling thread is implemented

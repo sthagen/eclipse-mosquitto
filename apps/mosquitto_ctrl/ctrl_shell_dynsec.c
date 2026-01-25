@@ -25,7 +25,7 @@ Contributors:
 #include "ctrl_shell_internal.h"
 #include "json_help.h"
 
-#ifdef WITH_EDITLINE
+#ifdef WITH_CTRL_SHELL
 
 #define UNUSED(A) (void)(A)
 

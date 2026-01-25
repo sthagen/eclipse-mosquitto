@@ -65,6 +65,7 @@ TEST_OBJS = \
 
 ifeq ($(WITH_GMOCK),yes)
 ifeq ($(WITH_EDITLINE),yes)
+LOCAL_CPPFLAGS+=-DWITH_CTRL_SHELL -DWITH_EDITLINE
 MOCK_TESTS = \
 	ctrl_shell_test \
 	ctrl_shell_broker_test \

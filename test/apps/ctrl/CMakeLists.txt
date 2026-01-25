@@ -20,7 +20,7 @@ endforeach()
 
 
 function(add_ctrl_shell_test TEST_NAME)
-	if(NOT EDITLINE_FOUND)
+	if(NOT WITH_CTRL_SHELL OR NOT EDITLINE_FOUND)
 		return()
 	endif()
 	add_executable(${TEST_NAME}
@@ -30,7 +30,10 @@ function(add_ctrl_shell_test TEST_NAME)
 		$<TARGET_OBJECTS:ctrl_shell_mock>
 		$<TARGET_OBJECTS:libmosquitto_mock>
 	)
-	target_compile_definitions(${TEST_NAME} PRIVATE WITH_EDITLINE)
+	target_compile_definitions(${TEST_NAME} PRIVATE
+		WITH_CTRL_SHELL
+		WITH_EDITLINE
+	)
 	target_include_directories(${TEST_NAME} PRIVATE
 		${mosquitto_SOURCE_DIR}
 		${mosquitto_SOURCE_DIR}/apps/mosquitto_ctrl
@@ -52,7 +55,7 @@ function(add_ctrl_shell_test TEST_NAME)
 endfunction()
 
 function(add_ctrl_shell_test_real_editline TEST_NAME)
-	if(NOT EDITLINE_FOUND)
+	if(NOT WITH_CTRL_SHELL OR NOT EDITLINE_FOUND)
 		return()
 	endif()
 	add_executable(${TEST_NAME}
@@ -62,7 +65,9 @@ function(add_ctrl_shell_test_real_editline TEST_NAME)
 		$<TARGET_OBJECTS:ctrl_shell_mock>
 		$<TARGET_OBJECTS:libmosquitto_mock>
 	)
-	target_compile_definitions(${TEST_NAME} PRIVATE WITH_EDITLINE)
+	target_compile_definitions(${TEST_NAME} PRIVATE
+		WITH_CTRL_SHELL
+	)
 	target_include_directories(${TEST_NAME} PRIVATE
 		${mosquitto_SOURCE_DIR}
 		${mosquitto_SOURCE_DIR}/apps/mosquitto_ctrl
@@ -74,7 +79,7 @@ function(add_ctrl_shell_test_real_editline TEST_NAME)
 		${mosquitto_SOURCE_DIR}/test/mock/lib
 	)
 	target_link_libraries(${TEST_NAME} PRIVATE
-		"${EDITLINE_LIBRARIES}"
+		LineEditing::LineEditing
 		GTest::gmock_main
 		pthread_mock
 		cjson

@@ -40,7 +40,7 @@ Contributors:
 
 #define UNUSED(A) (void)(A)
 
-#ifdef WITH_EDITLINE
+#ifdef WITH_CTRL_SHELL
 
 #define FREE(A) do{free(A); A = NULL;}while(0)
 

@@ -12,7 +12,7 @@ if(WITH_TLS)
 		../../common/json_help.c ../../common/json_help.h
 	)
 
-	if(EDITLINE_FOUND)
+	if(WITH_CTRL_SHELL AND LINEEDITING_FOUND)
 		add_library(ctrl_shell OBJECT
 			ctrl_shell.c
 			ctrl_shell.h
@@ -24,26 +24,32 @@ if(WITH_TLS)
 			ctrl_shell_pre_connect.c
 			ctrl_shell_printf.c
 		)
-		target_compile_definitions(ctrl_shell PRIVATE WITH_EDITLINE)
+		target_compile_definitions(ctrl_shell PRIVATE WITH_CTRL_SHELL)
 		target_include_directories(ctrl_shell PRIVATE
 			"${mosquitto_SOURCE_DIR}"
 			"${mosquitto_SOURCE_DIR}/common"
 			"${mosquitto_SOURCE_DIR}/include"
 			"${CJSON_INCLUDE_DIRS}"
 		)
-		target_link_libraries(ctrl_shell PRIVATE OpenSSL::SSL)
+		target_link_libraries(ctrl_shell PRIVATE
+			LineEditing::LineEditing
+			OpenSSL::SSL
+		)
 
 		add_library(ctrl_shell_io OBJECT
 			ctrl_shell_io.c
 		)
-		target_compile_definitions(ctrl_shell_io PRIVATE WITH_EDITLINE)
+		target_compile_definitions(ctrl_shell_io PRIVATE WITH_CTRL_SHELL)
 		target_include_directories(ctrl_shell_io PRIVATE
 			"${mosquitto_SOURCE_DIR}"
 			"${mosquitto_SOURCE_DIR}/common"
 			"${mosquitto_SOURCE_DIR}/include"
 			"${CJSON_INCLUDE_DIRS}"
 		)
-		target_link_libraries(ctrl_shell_io PRIVATE OpenSSL::SSL)
+		target_link_libraries(ctrl_shell_io PRIVATE
+			LineEditing::LineEditing
+			OpenSSL::SSL
+		)
 	endif()
 	add_executable(mosquitto_ctrl ${SRC})
 
@@ -62,10 +68,10 @@ if(WITH_TLS)
 		)
 	endif()
 
-	if(EDITLINE_FOUND)
-		target_compile_definitions(mosquitto_ctrl PRIVATE WITH_EDITLINE)
+	if(WITH_CTRL_SHELL AND LINEEDITING_FOUND)
+		target_compile_definitions(mosquitto_ctrl PRIVATE WITH_CTRL_SHELL)
 		target_link_libraries(mosquitto_ctrl PRIVATE
-			"${EDITLINE_LIBRARIES}"
+			LineEditing::LineEditing
 			ctrl_shell
 			ctrl_shell_io
 		)

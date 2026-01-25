@@ -3,6 +3,7 @@
 #include <gmock/gmock.h>
 #include <editline/readline.h>
 
+#include "mosquitto_ctrl.h"
 #include "ctrl_shell_internal.h"
 
 #include "c_function_mock.hpp"

@@ -4,6 +4,8 @@ include ${R}/config.mk
 .PHONY: all check test-compile test clean
 
 LOCAL_CPPFLAGS+= \
+	-DWITH_CTRL_SHELL \
+	-DWITH_EDITLINE \
 	-I../ \
 	-I${R} \
 	-I${R}/apps/mosquitto_ctrl \

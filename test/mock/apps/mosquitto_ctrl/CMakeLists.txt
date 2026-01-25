@@ -1,9 +1,12 @@
-if(EDITLINE_FOUND)
+if(WITH_CTRL_SHELL AND EDITLINE_FOUND)
 	add_library(ctrl_shell_mock OBJECT
 		ctrl_shell_mock.cpp
 		ctrl_shell_mock.hpp
 	)
-	target_compile_definitions(ctrl_shell_mock PRIVATE WITH_EDITLINE)
+	target_compile_definitions(ctrl_shell_mock PRIVATE
+		WITH_CTRL_SHELL
+		WITH_EDITLINE
+	)
 
 	target_include_directories(ctrl_shell_mock
 		PUBLIC

@@ -64,7 +64,7 @@ int main(int argc, char *argv[])
 	char lib_name[200];
 
 	if(argc == 1){
-#ifdef WITH_EDITLINE
+#ifdef WITH_CTRL_SHELL
 		ctrl_shell__main(NULL);
 #else
 		print_usage();
@@ -86,7 +86,7 @@ int main(int argc, char *argv[])
 		return rc;
 	}
 
-#ifdef WITH_EDITLINE
+#ifdef WITH_CTRL_SHELL
 	if(argc == 0){
 		ctrl_shell__main(&ctrl.cfg);
 		return 0;
