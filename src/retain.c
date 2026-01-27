@@ -378,8 +378,10 @@ void retain__expire(struct mosquitto__retainhier **retainhier)
 
 	HASH_ITER(hh, *retainhier, peer, retainhier_tmp){
 		retain__expire(&peer->children);
+
+		struct mosquitto__retainhier *parent = peer->parent;
 		if(retain__delete_expired_msg(peer)){
-			retain__clean_empty_hierarchy(peer);
+			retain__clean_empty_hierarchy(parent);
 		}
 	}
 }
