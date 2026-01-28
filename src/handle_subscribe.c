@@ -268,7 +268,6 @@ int handle__subscribe(struct mosquitto *context)
 	if(context->protocol != mosq_p_mqtt31){
 		if(payloadlen == 0){
 			/* No subscriptions specified, protocol error. */
-			fprintf(stderr, "no payload\n");
 			return MOSQ_ERR_MALFORMED_PACKET;
 		}
 	}
