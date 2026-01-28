@@ -331,6 +331,10 @@
 		<itemizedlist mark="circle">
 			<listitem><para>read_cc128.pl | mosquitto_pub <literal>-t</literal> sensors/cc128 <literal>-l</literal></para></listitem>
 		</itemizedlist>
+		<para>Power on an appliance using zigbee2mqtt and an appropriately configured power socket:</para>
+		<itemizedlist mark="circle">
+			<listitem><para>mosquitto_pub <literal>-t</literal> zigbee2mqtt/power-microwave/set <literal>-m</literal> '{"state":"ON"}'</para></listitem>
+		</itemizedlist>
 	</refsect1>
 
 	<refsect1>
