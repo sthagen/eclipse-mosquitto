@@ -45,7 +45,8 @@
   certificate to be considered valid.
 - Add `bridge_tls_use_os_certs` option to allow bridges to be easily configured
   to trust default CA certificates. Closes #2473.
-- Remove support for TLS v1.1.
+- Remove support for TLS v1.1 (clients only - it remains available in the
+  broker but is now undocumented)
 - Use openssl provided function for x509 certificate hostname verification,
   rather than own function.
 
