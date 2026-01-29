@@ -75,10 +75,7 @@ int mosquitto_psk_key_get(struct mosquitto *context, const char *hint, const cha
 	}
 
 	/* Per listener plugins */
-	if(db.config->per_listener_settings){
-		if(context->listener == NULL){
-			return MOSQ_ERR_AUTH;
-		}
+	if(context->listener){
 		if(context->listener->security_options->plugin_callbacks.psk_key){
 			rc = plugin__psk_key_get(context->listener->security_options, context,
 					hint, identity, key, max_key_len);
@@ -90,6 +87,10 @@ int mosquitto_psk_key_get(struct mosquitto *context, const char *hint, const cha
 			}else{
 				return rc;
 			}
+		}
+	}else{
+		if(db.config->per_listener_settings){
+			return MOSQ_ERR_AUTH;
 		}
 	}
 

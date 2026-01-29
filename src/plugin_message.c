@@ -96,7 +96,7 @@ int plugin__handle_message_out(struct mosquitto *context, struct mosquitto_base_
 		return rc;
 	}
 
-	if(db.config->per_listener_settings && context->listener){
+	if(context->listener){
 		rc = plugin__handle_message_single(context->listener->security_options->plugin_callbacks.message_out,
 				MOSQ_EVT_MESSAGE_OUT, &to_free, context, stored);
 	}
@@ -117,7 +117,7 @@ int plugin__handle_message_in(struct mosquitto *context, struct mosquitto_base_m
 		return rc;
 	}
 
-	if(db.config->per_listener_settings && context->listener){
+	if(context->listener){
 		rc = plugin__handle_message_single(context->listener->security_options->plugin_callbacks.message_in,
 				MOSQ_EVT_MESSAGE_IN, &to_free, context, stored);
 	}

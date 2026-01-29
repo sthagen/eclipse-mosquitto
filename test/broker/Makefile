@@ -225,7 +225,9 @@ endif
 	./09-plugin-evt-subscribe.py
 	./09-plugin-evt-tick.py
 	./09-plugin-evt-unsubscribe.py
-	./09-plugin-load.py
+	./09-plugin-load-acl.py
+	./09-plugin-load-basic-auth.py
+	./09-plugin-load-extended-auth.py
 	./09-plugin-publish.py
 	./09-plugin-unsupported.py
 	./09-pwfile-parse-invalid.py

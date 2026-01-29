@@ -160,8 +160,6 @@ int mosquitto_acl_check(struct mosquitto *context, const char *topic, uint32_t p
 	 */
 	rc_final = MOSQ_ERR_SUCCESS;
 
-	/* If per_listener_settings is true, these are the global plugins.
-	 * If per listener_settings is false, these are global and listener plugins. */
 	if(db.config->security_options.plugin_callbacks.acl_check){
 		rc = plugin__acl_check(&db.config->security_options, context, topic, payloadlen,
 				payload, qos, retain, properties, access);
@@ -175,21 +173,21 @@ int mosquitto_acl_check(struct mosquitto *context, const char *topic, uint32_t p
 		}
 	}
 
-	if(db.config->per_listener_settings){
-		if(context->listener){
-			if(context->listener->security_options->plugin_callbacks.acl_check){
-				rc = plugin__acl_check(context->listener->security_options, context, topic, payloadlen,
-						payload, qos, retain, properties, access);
+	if(context->listener){
+		if(context->listener->security_options->plugin_callbacks.acl_check){
+			rc = plugin__acl_check(context->listener->security_options, context, topic, payloadlen,
+					payload, qos, retain, properties, access);
 
-				if(rc == MOSQ_ERR_PLUGIN_IGNORE){
-					/* Do nothing, this is as if the plugin doesn't exist */
-				}else if(rc == MOSQ_ERR_PLUGIN_DEFER){
-					rc_final = MOSQ_ERR_PLUGIN_DEFER;
-				}else{
-					return rc;
-				}
+			if(rc == MOSQ_ERR_PLUGIN_IGNORE){
+				/* Do nothing, this is as if the plugin doesn't exist */
+			}else if(rc == MOSQ_ERR_PLUGIN_DEFER){
+				rc_final = MOSQ_ERR_PLUGIN_DEFER;
+			}else{
+				return rc;
 			}
-		}else{
+		}
+	}else{
+		if(db.config->per_listener_settings){
 			return MOSQ_ERR_ACL_DENIED;
 		}
 	}

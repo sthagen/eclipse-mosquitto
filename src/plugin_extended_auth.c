@@ -84,10 +84,7 @@ int mosquitto_security_auth_start(struct mosquitto *context, bool reauth, const 
 	}
 
 	/* Per listener plugins */
-	if(db.config->per_listener_settings){
-		if(context->listener == NULL){
-			return MOSQ_ERR_AUTH;
-		}
+	if(context->listener){
 		if(context->listener->security_options->plugin_callbacks.ext_auth_start){
 			rc = plugin__ext_auth_start(context->listener->security_options, context,
 					reauth, data_in, data_in_len, data_out, data_out_len);
@@ -97,6 +94,10 @@ int mosquitto_security_auth_start(struct mosquitto *context, bool reauth, const 
 			}else{
 				return rc;
 			}
+		}
+	}else{
+		if(db.config->per_listener_settings){
+			return MOSQ_ERR_AUTH;
 		}
 	}
 
@@ -156,10 +157,7 @@ int mosquitto_security_auth_continue(struct mosquitto *context, const void *data
 	}
 
 	/* Per listener plugins */
-	if(db.config->per_listener_settings){
-		if(context->listener == NULL){
-			return MOSQ_ERR_AUTH;
-		}
+	if(context->listener){
 		if(context->listener->security_options->plugin_callbacks.ext_auth_continue){
 			rc = plugin__ext_auth_continue(context->listener->security_options, context,
 					data_in, data_in_len, data_out, data_out_len);
@@ -169,6 +167,10 @@ int mosquitto_security_auth_continue(struct mosquitto *context, const void *data
 			}else{
 				return rc;
 			}
+		}
+	}else{
+		if(db.config->per_listener_settings){
+			return MOSQ_ERR_AUTH;
 		}
 	}
 

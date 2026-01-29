@@ -50,6 +50,8 @@ set(PLUGINS
     plugin_evt_subscribe
     plugin_evt_tick
     plugin_evt_unsubscribe
+    plugin_load_acl
+    plugin_load_extended_auth
 )
 
 foreach(PLUGIN ${PLUGINS})

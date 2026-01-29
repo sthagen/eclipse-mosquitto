@@ -160,16 +160,12 @@ int mosquitto_security_apply_default(void)
 			continue;
 		}
 
-		/* Check for anonymous clients when allow_anonymous is false */
-		if(db.config->per_listener_settings){
-			if(context->listener){
-				allow_anonymous = context->listener->security_options->allow_anonymous;
-			}else{
-				/* Client not currently connected, so defer judgement until it does connect */
-				allow_anonymous = true;
-			}
+		if((context->listener && context->listener->security_options->allow_anonymous == true)
+				|| (!db.config->per_listener_settings && db.config->security_options.allow_anonymous == true
+				&& context->listener && context->listener->security_options->allow_anonymous != false)){
+			allow_anonymous = true;
 		}else{
-			allow_anonymous = db.config->security_options.allow_anonymous;
+			allow_anonymous = false;
 		}
 
 		if(!allow_anonymous && !context->username){

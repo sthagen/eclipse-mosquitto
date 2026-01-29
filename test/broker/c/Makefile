@@ -58,7 +58,9 @@ PLUGIN_SRC = \
 	plugin_evt_subscribe.c \
 	plugin_evt_tick.c \
 	plugin_evt_unsubscribe.c \
-	plugin_evt_persist_client_update.c
+	plugin_evt_persist_client_update.c \
+	plugin_load_acl.c \
+	plugin_load_extended_auth.c
 
 PLUGINS = ${PLUGIN_SRC:.c=.so}
 

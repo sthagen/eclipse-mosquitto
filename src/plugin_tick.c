@@ -62,12 +62,10 @@ void plugin__handle_tick(void)
 	/* Global plugins */
 	plugin__handle_tick_single(&db.config->security_options);
 
-	if(db.config->per_listener_settings){
-		for(int i=0; i<db.config->listener_count; i++){
-			opts = db.config->listeners[i].security_options;
-			if(opts && opts->plugin_callbacks.tick){
-				plugin__handle_tick_single(opts);
-			}
+	for(int i=0; i<db.config->listener_count; i++){
+		opts = db.config->listeners[i].security_options;
+		if(opts && opts->plugin_callbacks.tick){
+			plugin__handle_tick_single(opts);
 		}
 	}
 }

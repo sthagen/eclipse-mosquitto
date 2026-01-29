@@ -58,14 +58,12 @@ int plugin__handle_reload(void)
 		return rc;
 	}
 
-	if(db.config->per_listener_settings){
-		for(int i=0; i<db.config->listener_count; i++){
-			opts = db.config->listeners[i].security_options;
-			if(opts && opts->plugin_callbacks.reload){
-				rc = plugin__handle_reload_single(opts);
-				if(rc){
-					return rc;
-				}
+	for(int i=0; i<db.config->listener_count; i++){
+		opts = db.config->listeners[i].security_options;
+		if(opts && opts->plugin_callbacks.reload){
+			rc = plugin__handle_reload_single(opts);
+			if(rc){
+				return rc;
 			}
 		}
 	}

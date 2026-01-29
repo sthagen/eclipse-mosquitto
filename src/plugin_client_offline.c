@@ -47,7 +47,7 @@ void plugin__handle_client_offline(struct mosquitto *context, int reason)
 	plugin__handle_client_offline_single(&db.config->security_options, context, reason);
 
 	/* Per listener plugins */
-	if(db.config->per_listener_settings && context->listener){
+	if(context->listener){
 		plugin__handle_client_offline_single(context->listener->security_options, context, reason);
 	}
 }
