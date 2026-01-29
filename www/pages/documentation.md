@@ -61,13 +61,13 @@ These are some Mosquitto documentation hosted by third parties.
 
 [mosquitto]:/man/mosquitto-8.html
 [mosquitto.conf]:/man/mosquitto-conf-5.html
-[mosquitto_ctrl]:(/man/mosquitto_ctrl-1.html)
-[mosquitto_ctrl_dynsec]:(/man/mosquitto_ctrl_dynsec-1.html)
-[mosquitto_ctrl_shell]:(/man/mosquitto_ctrl_shell-1.html)
+[mosquitto_ctrl]:/man/mosquitto_ctrl-1.html
+[mosquitto_ctrl_dynsec]:/man/mosquitto_ctrl_dynsec-1.html
+[mosquitto_ctrl_shell]:/man/mosquitto_ctrl_shell-1.html
 [mosquitto_passwd]:/man/mosquitto_passwd-1.html
 [mosquitto_pub]:/man/mosquitto_pub-1.html
 [mosquitto_rr]:/man/mosquitto_rr-1.html
-[mosquitto_signal]:(/man/mosquitto_signal-1.html)
+[mosquitto_signal]:/man/mosquitto_signal-1.html
 [mosquitto_sub]:/man/mosquitto_sub-1.html
 [mosquitto-tls]:/man/mosquitto-tls-7.html
 [mqtt]:/man/mqtt-7.html
