@@ -18,7 +18,8 @@ RUN set -x && \
         libedit-dev \
         libmicrohttpd-dev \
         libssl-dev \
-        libsqlite3-dev && \
+        libsqlite3-dev \
+        wget && \
     wget https://mosquitto.org/files/source/mosquitto-${VERSION}.tar.gz -O /tmp/mosq.tar.gz && \
     echo "$DOWNLOAD_SHA256  /tmp/mosq.tar.gz" | sha256sum -c - && \
     wget https://mosquitto.org/files/source/mosquitto-${VERSION}.tar.gz.asc -O /tmp/mosq.tar.gz.asc && \
