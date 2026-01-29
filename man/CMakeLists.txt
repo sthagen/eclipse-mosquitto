@@ -8,7 +8,7 @@ find_program(XSLTPROC xsltproc OPTIONAL)
 if(XSLTPROC AND NOT WIN32)
 	function(compile_manpage page)
 		add_custom_command(OUTPUT ${PROJECT_SOURCE_DIR}/man/${page}
-			COMMAND xsltproc --nonet ${PROJECT_SOURCE_DIR}/man/${page}.xml -o ${PROJECT_SOURCE_DIR}/man/
+			COMMAND xsltproc --xinclude --nonet ${PROJECT_SOURCE_DIR}/man/${page}.xml -o ${PROJECT_SOURCE_DIR}/man/
 			MAIN_DEPENDENCY ${PROJECT_SOURCE_DIR}/man/${page}.xml)
 		add_custom_target(${page} ALL DEPENDS ${PROJECT_SOURCE_DIR}/man/${page})
 	endfunction()
