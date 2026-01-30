@@ -68,6 +68,7 @@ RUN set -x && \
     install -s -m755 /build/mosq/plugins/persist-sqlite/mosquitto_persist_sqlite.so /usr/lib/mosquitto_persist_sqlite.so && \
     install -s -m755 /build/mosq/plugins/sparkplug-aware/mosquitto_sparkplug_aware.so /usr/lib/mosquitto_sparkplug_aware.so && \
     install -m644 /build/mosq/docker/2.1-ubuntu/mosquitto.conf /mosquitto/config/mosquitto.conf && \
+    install -m644 /build/mosq/docker/2.1-ubuntu/mosquitto.conf /mosquitto-no-auth.conf && \
     install -d /usr/share/mosquitto && \
     cp -r /build/mosq/dashboard/src /usr/share/mosquitto/dashboard && \
     install -Dm644 /build/mosq/epl-v20 /usr/share/licenses/mosquitto/epl-v20 && \
