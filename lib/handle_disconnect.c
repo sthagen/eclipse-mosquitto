@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2009-2020 Roger Light <roger@atchoo.org>
+Copyright (c) 2009-2021 Roger Light <roger@atchoo.org>
 
 All rights reserved. This program and the accompanying materials
 are made available under the terms of the Eclipse Public License 2.0
@@ -22,14 +22,14 @@ Contributors:
 #include <string.h>
 
 #include "logging_mosq.h"
-#include "mqtt_protocol.h"
-#include "memory_mosq.h"
+#include "mosquitto/mqtt_protocol.h"
 #include "net_mosq.h"
 #include "packet_mosq.h"
 #include "property_mosq.h"
 #include "read_handle.h"
 #include "send_mosq.h"
 #include "util_mosq.h"
+
 
 int handle__disconnect(struct mosquitto *mosq)
 {
@@ -49,11 +49,15 @@ int handle__disconnect(struct mosquitto *mosq)
 	}
 
 	rc = packet__read_byte(&mosq->in_packet, &reason_code);
-	if(rc) return rc;
+	if(rc){
+		return rc;
+	}
 
 	if(mosq->in_packet.remaining_length > 2){
 		rc = property__read_all(CMD_DISCONNECT, &mosq->in_packet, &properties);
-		if(rc) return rc;
+		if(rc){
+			return rc;
+		}
 		mosquitto_property_free_all(&properties);
 	}
 

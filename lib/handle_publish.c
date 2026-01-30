@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2009-2020 Roger Light <roger@atchoo.org>
+Copyright (c) 2009-2021 Roger Light <roger@atchoo.org>
 
 All rights reserved. This program and the accompanying materials
 are made available under the terms of the Eclipse Public License 2.0
@@ -21,18 +21,69 @@ Contributors:
 #include <assert.h>
 #include <string.h>
 
+#include "alias_mosq.h"
+#include "callbacks.h"
 #include "mosquitto.h"
 #include "mosquitto_internal.h"
 #include "logging_mosq.h"
-#include "memory_mosq.h"
-#include "mqtt_protocol.h"
+#include "mosquitto/mqtt_protocol.h"
 #include "messages_mosq.h"
 #include "packet_mosq.h"
 #include "property_mosq.h"
 #include "read_handle.h"
 #include "send_mosq.h"
-#include "time_mosq.h"
 #include "util_mosq.h"
+
+
+static int property__process_publish(struct mosquitto *mosq, mosquitto_property *props, struct mosquitto_message_all *message, uint16_t *topic_alias)
+{
+	while(props){
+		switch(mosquitto_property_identifier(props)){
+			case MQTT_PROP_PAYLOAD_FORMAT_INDICATOR:
+			case MQTT_PROP_MESSAGE_EXPIRY_INTERVAL:
+			case MQTT_PROP_CONTENT_TYPE:
+			case MQTT_PROP_RESPONSE_TOPIC: //
+			case MQTT_PROP_CORRELATION_DATA:
+			case MQTT_PROP_USER_PROPERTY:
+				/* Allowed */
+				break;
+
+			case MQTT_PROP_SUBSCRIPTION_IDENTIFIER:
+				/* Allowed */
+				if(mosquitto_property_varint_value(props) == 0){
+					return MOSQ_ERR_PROTOCOL;
+				}
+				break;
+
+			case MQTT_PROP_TOPIC_ALIAS:
+				{
+					*topic_alias = mosquitto_property_int16_value(props);
+					if(*topic_alias == 0 || *topic_alias > mosq->alias_max_l2r){
+						return MOSQ_ERR_TOPIC_ALIAS_INVALID;
+					}
+					if(message->msg.topic){
+						/* Set a new topic alias */
+						if(alias__add_r2l(mosq, message->msg.topic, *topic_alias)){
+							return MOSQ_ERR_NOMEM;
+						}
+					}else{
+						/* Retrieve an existing topic alias */
+						mosquitto_FREE(message->msg.topic);
+						if(alias__find_by_alias(mosq, ALIAS_DIR_R2L, *topic_alias, &message->msg.topic)){
+							return MOSQ_ERR_PROTOCOL;
+						}
+					}
+				}
+				break;
+
+			default:
+				return MOSQ_ERR_PROTOCOL;
+		}
+		props = mosquitto_property_next(props);
+	}
+
+	return MOSQ_ERR_SUCCESS;
+}
 
 
 int handle__publish(struct mosquitto *mosq)
@@ -43,6 +94,7 @@ int handle__publish(struct mosquitto *mosq)
 	uint16_t mid = 0;
 	uint16_t slen;
 	mosquitto_property *properties = NULL;
+	uint16_t topic_alias = 0;
 
 	assert(mosq);
 
@@ -50,8 +102,10 @@ int handle__publish(struct mosquitto *mosq)
 		return MOSQ_ERR_PROTOCOL;
 	}
 
-	message = mosquitto__calloc(1, sizeof(struct mosquitto_message_all));
-	if(!message) return MOSQ_ERR_NOMEM;
+	message = mosquitto_calloc(1, sizeof(struct mosquitto_message_all));
+	if(!message){
+		return MOSQ_ERR_NOMEM;
+	}
 
 	header = mosq->in_packet.command;
 
@@ -64,7 +118,7 @@ int handle__publish(struct mosquitto *mosq)
 		message__cleanup(&message);
 		return rc;
 	}
-	if(!slen){
+	if(mosq->protocol != mosq_p_mqtt5 && slen == 0){
 		message__cleanup(&message);
 		return MOSQ_ERR_PROTOCOL;
 	}
@@ -96,11 +150,29 @@ int handle__publish(struct mosquitto *mosq)
 			message__cleanup(&message);
 			return rc;
 		}
+
+		rc = property__process_publish(mosq, properties, message, &topic_alias);
+		if(rc){
+			message__cleanup(&message);
+			mosquitto_property_free_all(&properties);
+			return rc;
+		}
+	}
+	/* If we haven't got a topic at this point, it's a protocol error. */
+	if(topic_alias == 0 && message->msg.topic == NULL){
+		message__cleanup(&message);
+		mosquitto_property_free_all(&properties);
+		return MOSQ_ERR_PROTOCOL;
+	}
+	if(mosquitto_pub_topic_check(message->msg.topic) != MOSQ_ERR_SUCCESS){
+		message__cleanup(&message);
+		mosquitto_property_free_all(&properties);
+		return MOSQ_ERR_MALFORMED_PACKET;
 	}
 
 	message->msg.payloadlen = (int)(mosq->in_packet.remaining_length - mosq->in_packet.pos);
 	if(message->msg.payloadlen){
-		message->msg.payload = mosquitto__calloc((size_t)message->msg.payloadlen+1, sizeof(uint8_t));
+		message->msg.payload = mosquitto_calloc((size_t)message->msg.payloadlen+1, sizeof(uint8_t));
 		if(!message->msg.payload){
 			message__cleanup(&message);
 			mosquitto_property_free_all(&properties);
@@ -119,45 +191,16 @@ int handle__publish(struct mosquitto *mosq)
 			message->msg.mid, message->msg.topic,
 			(long)message->msg.payloadlen);
 
-	message->timestamp = mosquitto_time();
-	void (*on_message)(struct mosquitto *, void *userdata, const struct mosquitto_message *message);
-	void (*on_message_v5)(struct mosquitto *, void *userdata, const struct mosquitto_message *message, const mosquitto_property *props);
 	switch(message->msg.qos){
 		case 0:
-			COMPAT_pthread_mutex_lock(&mosq->callback_mutex);
-			on_message = mosq->on_message;
-			on_message_v5 = mosq->on_message_v5;
-			COMPAT_pthread_mutex_unlock(&mosq->callback_mutex);
-			if(on_message){
-				mosq->in_callback = true;
-				on_message(mosq, mosq->userdata, &message->msg);
-				mosq->in_callback = false;
-			}
-			if(mosq->on_message_v5){
-				mosq->in_callback = true;
-				on_message_v5(mosq, mosq->userdata, &message->msg, properties);
-				mosq->in_callback = false;
-			}
+			callback__on_message(mosq, &message->msg, properties);
 			message__cleanup(&message);
 			mosquitto_property_free_all(&properties);
 			return MOSQ_ERR_SUCCESS;
 		case 1:
 			util__decrement_receive_quota(mosq);
 			rc = send__puback(mosq, mid, 0, NULL);
-			COMPAT_pthread_mutex_lock(&mosq->callback_mutex);
-			on_message = mosq->on_message;
-			on_message_v5 = mosq->on_message_v5;
-			COMPAT_pthread_mutex_unlock(&mosq->callback_mutex);
-			if(on_message){
-				mosq->in_callback = true;
-				on_message(mosq, mosq->userdata, &message->msg);
-				mosq->in_callback = false;
-			}
-			if(on_message_v5){
-				mosq->in_callback = true;
-				on_message_v5(mosq, mosq->userdata, &message->msg, properties);
-				mosq->in_callback = false;
-			}
+			callback__on_message(mosq, &message->msg, properties);
 			message__cleanup(&message);
 			mosquitto_property_free_all(&properties);
 			return rc;

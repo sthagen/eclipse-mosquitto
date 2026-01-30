@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2013-2020 Roger Light <roger@atchoo.org>
+Copyright (c) 2013-2021 Roger Light <roger@atchoo.org>
 
 All rights reserved. This program and the accompanying materials
 are made available under the terms of the Eclipse Public License 2.0
@@ -26,13 +26,15 @@ Contributors:
 #  include <string.h>
 #endif
 
+#include "callbacks.h"
 #include "logging_mosq.h"
-#include "memory_mosq.h"
 #include "mosquitto_internal.h"
 #include "mosquitto.h"
 #include "util_mosq.h"
 
 #ifdef WITH_SRV
+
+
 static void srv_callback(void *arg, int status, int timeouts, unsigned char *abuf, int alen)
 {
 	struct mosquitto *mosq = arg;
@@ -49,32 +51,20 @@ static void srv_callback(void *arg, int status, int timeouts, unsigned char *abu
 	}else{
 		log__printf(mosq, MOSQ_LOG_ERR, "Error: SRV lookup failed (%d).", status);
 		/* FIXME - calling on_disconnect here isn't correct. */
-		void (*on_disconnect)(struct mosquitto *, void *userdata, int rc);
-		void (*on_disconnect_v5)(struct mosquitto *, void *userdata, int rc, const mosquitto_property *props);
-		COMPAT_pthread_mutex_lock(&mosq->callback_mutex);
-		on_disconnect = mosq->on_disconnect;
-		on_disconnect_v5 = mosq->on_disconnect_v5;
-		COMPAT_pthread_mutex_unlock(&mosq->callback_mutex);
-		if(on_disconnect){
-			mosq->in_callback = true;
-			on_disconnect(mosq, mosq->userdata, MOSQ_ERR_LOOKUP);
-			mosq->in_callback = false;
-		}
-		if(on_disconnect_v5){
-			mosq->in_callback = true;
-			on_disconnect_v5(mosq, mosq->userdata, MOSQ_ERR_LOOKUP, NULL);
-			mosq->in_callback = false;
-		}
+		callback__on_disconnect(mosq, MOSQ_ERR_LOOKUP, NULL);
 	}
 }
 #endif
+
 
 int mosquitto_connect_srv(struct mosquitto *mosq, const char *host, int keepalive, const char *bind_address)
 {
 #ifdef WITH_SRV
 	char *h;
 	int rc;
-	if(!mosq) return MOSQ_ERR_INVAL;
+	if(!mosq){
+		return MOSQ_ERR_INVAL;
+	}
 
 	UNUSED(bind_address);
 
@@ -92,19 +82,22 @@ int mosquitto_connect_srv(struct mosquitto *mosq, const char *host, int keepaliv
 	}else{
 #ifdef WITH_TLS
 		if(mosq->tls_cafile || mosq->tls_capath || mosq->tls_psk){
-			h = mosquitto__malloc(strlen(host) + strlen("_secure-mqtt._tcp.") + 1);
-			if(!h) return MOSQ_ERR_NOMEM;
+			h = mosquitto_malloc(strlen(host) + strlen("_secure-mqtt._tcp.") + 1);
+			if(!h){
+				return MOSQ_ERR_NOMEM;
+			}
 			sprintf(h, "_secure-mqtt._tcp.%s", host);
-		}else{
+		}else
 #endif
-			h = mosquitto__malloc(strlen(host) + strlen("_mqtt._tcp.") + 1);
-			if(!h) return MOSQ_ERR_NOMEM;
+		{
+			h = mosquitto_malloc(strlen(host) + strlen("_mqtt._tcp.") + 1);
+			if(!h){
+				return MOSQ_ERR_NOMEM;
+			}
 			sprintf(h, "_mqtt._tcp.%s", host);
-#ifdef WITH_TLS
 		}
-#endif
 		ares_search(mosq->achan, h, ns_c_in, ns_t_srv, srv_callback, mosq);
-		mosquitto__free(h);
+		mosquitto_FREE(h);
 	}
 
 	mosquitto__set_state(mosq, mosq_cs_connect_srv);

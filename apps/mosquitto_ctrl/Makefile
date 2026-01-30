@@ -1,104 +1,96 @@
-include ../../config.mk
+R=../..
+include ${R}/config.mk
 
 .PHONY: all install uninstall clean reallyclean
 
-ifeq ($(WITH_SHARED_LIBRARIES),yes)
-LIBMOSQ:=../../lib/libmosquitto.so.${SOVERSION}
-else
+LOCAL_CFLAGS+=
+LOCAL_CPPFLAGS+=-I${R}/lib -I${R}/apps/mosquitto_passwd -I${R}/plugins/dynamic-security -I${R}/common
+LOCAL_LDFLAGS+=
+LOCAL_LDADD+=-lcjson -ldl ${LIBMOSQ} ${LIBMOSQ_COMMON} -lcrypto -lssl
+
+# ------------------------------------------
+#  Compile time options
+# ------------------------------------------
+
+ifeq ($(WITH_SOCKS),yes)
+	LOCAL_CPPFLAGS+=-DWITH_SOCKS
+endif
+
 ifeq ($(WITH_THREADING),yes)
-LIBMOSQ:=../../lib/libmosquitto.a -lpthread -lssl -lcrypto
-else
-LIBMOSQ:=../../lib/libmosquitto.a
-endif
+LOCAL_LDFLAGS+=-pthread
 endif
 
-LOCAL_CPPFLAGS:=-I../mosquitto_passwd -DWITH_CJSON
 
-OBJS=	mosquitto_ctrl.o \
-		client.o \
-		dynsec.o \
-		dynsec_client.o \
-		dynsec_group.o \
-		dynsec_role.o \
-		get_password.o \
-		memory_mosq.o \
-		memory_public.o \
-		misc_mosq.o \
-		options.o \
-		password_mosq.o
+ifeq ($(WITH_EDITLINE),yes)
+LOCAL_LDADD+=-ledit
+LOCAL_CPPFLAGS+=-DWITH_CTRL_SHELL -DWITH_EDITLINE
+endif
+
+OBJS= \
+	mosquitto_ctrl.o \
+	broker.o \
+	client.o \
+	dynsec.o \
+	dynsec_client.o \
+	dynsec_group.o \
+	dynsec_role.o \
+	options.o
+
+ifeq ($(WITH_EDITLINE),yes)
+OBJS+= \
+	ctrl_shell.o \
+	ctrl_shell_broker.o \
+	ctrl_shell_client.o \
+	ctrl_shell_completion_tree.o \
+	ctrl_shell_dynsec.o \
+	ctrl_shell_io.o \
+	ctrl_shell_post_connect.o \
+	ctrl_shell_pre_connect.o \
+	ctrl_shell_printf.o
+endif
+
+OBJS_EXTERNAL= \
+	get_password.o \
+	json_help.o
 
 EXAMPLE_OBJS= example.o
 
 ifeq ($(WITH_TLS),yes)
-ifeq ($(WITH_CJSON),yes)
 TARGET:=mosquitto_ctrl mosquitto_ctrl_example.so
-else
-TARGET:=
-endif
-
 else
 TARGET:=
 endif
 
 all : ${TARGET}
 
-mosquitto_ctrl : ${OBJS} ${LIBMOSQ}
-	${CROSS_COMPILE}${CC} ${APP_LDFLAGS} $^ -o $@ $(PASSWD_LDADD) $(LOCAL_LDFLAGS) $(LIBMOSQ) -lcjson -ldl
+mosquitto_ctrl : ${OBJS} ${OBJS_EXTERNAL}
+	${CROSS_COMPILE}${CC} $^ -o $@ $(LOCAL_LDFLAGS) $(LOCAL_LDADD)
 
 mosquitto_ctrl_example.so : ${EXAMPLE_OBJS}
-	$(CROSS_COMPILE)$(CC) $(PLUGIN_CPPFLAGS) $(PLUGIN_CFLAGS) $(PLUGIN_LDFLAGS) -shared $< -o $@
+	$(CROSS_COMPILE)$(CC) $(LOCAL_CPPFLAGS) $(LOCAL_CFLAGS) ${LOCAL_LDFLAGS} -fPIC -shared $< -o $@
 
-mosquitto_ctrl.o : mosquitto_ctrl.c mosquitto_ctrl.h
-	${CROSS_COMPILE}${CC} $(LOCAL_CPPFLAGS) $(APP_CPPFLAGS) $(APP_CFLAGS) -c $< -o $@
-
-client.o : client.c mosquitto_ctrl.h
-	${CROSS_COMPILE}${CC} $(LOCAL_CPPFLAGS) $(APP_CPPFLAGS) $(APP_CFLAGS) -c $< -o $@
-
-dynsec.o : dynsec.c mosquitto_ctrl.h
-	${CROSS_COMPILE}${CC} $(LOCAL_CPPFLAGS) $(APP_CPPFLAGS) $(APP_CFLAGS) -c $< -o $@
-
-dynsec_client.o : dynsec_client.c mosquitto_ctrl.h
-	${CROSS_COMPILE}${CC} $(LOCAL_CPPFLAGS) $(APP_CPPFLAGS) $(APP_CFLAGS) -c $< -o $@
-
-dynsec_group.o : dynsec_group.c mosquitto_ctrl.h
-	${CROSS_COMPILE}${CC} $(LOCAL_CPPFLAGS) $(APP_CPPFLAGS) $(APP_CFLAGS) -c $< -o $@
-
-dynsec_role.o : dynsec_role.c mosquitto_ctrl.h
-	${CROSS_COMPILE}${CC} $(LOCAL_CPPFLAGS) $(APP_CPPFLAGS) $(APP_CFLAGS) -c $< -o $@
+${OBJS} : %.o: %.c mosquitto_ctrl.h
+	${CROSS_COMPILE}${CC} $(LOCAL_CPPFLAGS) $(LOCAL_CFLAGS) -c $< -o $@
 
 example.o : example.c mosquitto_ctrl.h
-	${CROSS_COMPILE}${CC} $(LOCAL_CPPFLAGS) $(PLUGIN_CPPFLAGS) $(PLUGIN_CFLAGS) -c $< -o $@
+	${CROSS_COMPILE}${CC} $(LOCAL_CPPFLAGS) $(LOCAL_CFLAGS) -fPIC -c $< -o $@
 
-get_password.o : ../mosquitto_passwd/get_password.c ../mosquitto_passwd/get_password.h
-	${CROSS_COMPILE}${CC} $(LOCAL_CPPFLAGS) $(APP_CPPFLAGS) $(APP_CFLAGS) -c $< -o $@
+get_password.o : ${R}/apps/mosquitto_passwd/get_password.c ${R}/apps/mosquitto_passwd/get_password.h
+	${CROSS_COMPILE}${CC} $(LOCAL_CPPFLAGS) $(LOCAL_CFLAGS) -c $< -o $@
 
-memory_mosq.o : ../../lib/memory_mosq.c
-	${CROSS_COMPILE}${CC} $(APP_CPPFLAGS) $(APP_CFLAGS) -c $< -o $@
+json_help.o : ${R}/common/json_help.c ${R}/common/json_help.h
+	${CROSS_COMPILE}${CC} $(LOCAL_CPPFLAGS) $(LOCAL_CFLAGS) -c $< -o $@
 
-memory_public.o : ../../src/memory_public.c
-	${CROSS_COMPILE}${CC} $(APP_CPPFLAGS) $(APP_CFLAGS) -c $< -o $@
+${R}/lib/libmosquitto.so.${SOVERSION} :
+	$(MAKE) -C ${R}/lib
 
-options.o : options.c mosquitto_ctrl.h
-	${CROSS_COMPILE}${CC} $(LOCAL_CPPFLAGS) $(APP_CPPFLAGS) $(APP_CFLAGS) -c $< -o $@
-
-misc_mosq.o : ../../lib/misc_mosq.c ../../lib/misc_mosq.h
-	${CROSS_COMPILE}${CC} $(APP_CPPFLAGS) $(APP_CFLAGS) -c $< -o $@
-
-password_mosq.o : ../../src/password_mosq.c ../../src/password_mosq.h
-	${CROSS_COMPILE}${CC} $(APP_CPPFLAGS) $(APP_CFLAGS) -c $< -o $@
-
-../../lib/libmosquitto.so.${SOVERSION} :
-	$(MAKE) -C ../../lib
-
-../../lib/libmosquitto.a :
-	$(MAKE) -C ../../lib libmosquitto.a
+${R}/lib/libmosquitto.a :
+	$(MAKE) -C ${R}/lib libmosquitto.a
 
 install : all
 ifeq ($(WITH_TLS),yes)
-ifeq ($(WITH_CJSON),yes)
 	$(INSTALL) -d "${DESTDIR}$(prefix)/bin"
 	$(INSTALL) ${STRIP_OPTS} mosquitto_ctrl "${DESTDIR}${prefix}/bin/mosquitto_ctrl"
-endif
 endif
 
 uninstall :

@@ -1,50 +1,93 @@
-include ../config.mk
+R=..
+include ${R}/config.mk
 
+LOCAL_CFLAGS+=-fPIC
+LOCAL_CPPFLAGS+=-I${R}/libcommon
+LOCAL_LDFLAGS+=-Wl,--version-script=linker.version -Wl,-soname,libmosquitto.so.$(SOVERSION) -fPIC -shared
+LOCAL_LIBADD+=-lcjson -lc ${LIBMOSQ_COMMON}
+STATIC_LIB_DEPS:=
+
+# ------------------------------------------
+#  Compile time options
+# ------------------------------------------
+
+ifeq ($(WITH_SOCKS),yes)
+	LOCAL_CPPFLAGS+=-DWITH_SOCKS
+endif
+
+ifeq ($(WITH_SRV),yes)
+	LOCAL_CPPFLAGS+=-DWITH_SRV
+	LOCAL_LIBADD+=-lcares
+	STATIC_LIB_DEPS+=-lcares
+endif
+
+ifeq ($(WITH_THREADING),yes)
+	LOCAL_CFLAGS+=-pthread
+	LOCAL_CPPFLAGS+=-DWITH_THREADING
+	LOCAL_LDFLAGS+=-pthread
+	STATIC_LIB_DEPS+=-pthread
+endif
+
+ifeq ($(WITH_TLS),yes)
+	LOCAL_LIBADD+=-lssl -lcrypto
+	STATIC_LIB_DEPS:=$(STATIC_LIB_DEPS) -lssl -lcrypto
+endif
+
+# ------------------------------------------
+#  Targets
+# ------------------------------------------
 .PHONY : really clean install
 
-MOSQ_OBJS=mosquitto.o \
-		  actions.o \
-		  callbacks.o \
-		  connect.o \
-		  handle_auth.o \
-		  handle_connack.o \
-		  handle_disconnect.o \
-		  handle_ping.o \
-		  handle_pubackcomp.o \
-		  handle_publish.o \
-		  handle_pubrec.o \
-		  handle_pubrel.o \
-		  handle_suback.o \
-		  handle_unsuback.o \
-		  helpers.o \
-		  logging_mosq.o \
-		  loop.o \
-		  memory_mosq.o \
-		  messages_mosq.o \
-		  misc_mosq.o \
-		  net_mosq_ocsp.o \
-		  net_mosq.o \
-		  options.o \
-		  packet_datatypes.o \
-		  packet_mosq.o \
-		  property_mosq.o \
-		  read_handle.o \
-		  send_connect.o \
-		  send_disconnect.o \
-		  send_mosq.o \
-		  send_publish.o \
-		  send_subscribe.o \
-		  send_unsubscribe.o \
-		  socks_mosq.o \
-		  srv_mosq.o \
-		  strings_mosq.o \
-		  thread_mosq.o \
-		  time_mosq.o \
-		  tls_mosq.o \
-		  utf8_mosq.o \
-		  util_mosq.o \
-		  util_topic.o \
-		  will_mosq.o
+OBJS= \
+	libmosquitto.o \
+	actions_publish.o \
+	actions_subscribe.o \
+	actions_unsubscribe.o \
+	alias_mosq.o \
+	callbacks.o \
+	connect.o \
+	extended_auth.o \
+	handle_auth.o \
+	handle_connack.o \
+	handle_disconnect.o \
+	handle_ping.o \
+	handle_pubackcomp.o \
+	handle_publish.o \
+	handle_pubrec.o \
+	handle_pubrel.o \
+	handle_suback.o \
+	handle_unsuback.o \
+	helpers.o \
+	http_client.o \
+	logging_mosq.o \
+	loop.o \
+	messages_mosq.o \
+	net_mosq_ocsp.o \
+	net_mosq.o \
+	net_ws.o \
+	options.o \
+	packet_datatypes.o \
+	packet_mosq.o \
+	property_mosq.o \
+	read_handle.o \
+	send_connect.o \
+	send_disconnect.o \
+	send_mosq.o \
+	send_publish.o \
+	send_subscribe.o \
+	send_unsubscribe.o \
+	socks_mosq.o \
+	srv_mosq.o \
+	thread_mosq.o \
+	tls_mosq.o \
+	util_mosq.o \
+	will_mosq.o
+
+OBJS_EXTERNAL=
+
+ifeq ($(WITH_WEBSOCKETS),yes)
+	OBJS_EXTERNAL+=${R}/deps/picohttpparser/picohttpparser.o
+endif
 
 ALL_DEPS:=
 
@@ -70,11 +113,8 @@ endif
 ifeq ($(WITH_STATIC_LIBRARIES),yes)
 	$(INSTALL) ${STRIP_OPTS} libmosquitto.a "${DESTDIR}${libdir}/libmosquitto.a"
 endif
-	$(INSTALL) -d "${DESTDIR}${incdir}/"
-	$(INSTALL) ../include/mosquitto.h "${DESTDIR}${incdir}/mosquitto.h"
-	$(INSTALL) ../include/mqtt_protocol.h "${DESTDIR}${incdir}/mqtt_protocol.h"
 	$(INSTALL) -d "${DESTDIR}${libdir}/pkgconfig"
-	$(INSTALL) -m644 ../libmosquitto.pc.in "${DESTDIR}${libdir}/pkgconfig/libmosquitto.pc"
+	$(INSTALL) -m644 ${R}/libmosquitto.pc.in "${DESTDIR}${libdir}/pkgconfig/libmosquitto.pc"
 	sed ${SEDINPLACE} -e "s#@CMAKE_INSTALL_PREFIX@#${prefix}#" -e "s#@CMAKE_INSTALL_LIBDIR@#lib${LIB_SUFFIX}#" -e "s#@VERSION@#${VERSION}#" "${DESTDIR}${libdir}/pkgconfig/libmosquitto.pc"
 ifeq ($(WITH_SHARED_LIBRARIES),yes)
 	$(MAKE) -C cpp install
@@ -89,141 +129,17 @@ uninstall :
 reallyclean : clean
 
 clean :
-	-rm -f *.o libmosquitto.so.${SOVERSION} libmosquitto.so libmosquitto.a *.gcno *.gcda
+	-rm -f ${OBJS} ${OBJS_EXTERNAL} libmosquitto.so.${SOVERSION} libmosquitto.so libmosquitto.a *.gcno *.gcda
 	$(MAKE) -C cpp clean
 
-libmosquitto.so.${SOVERSION} : ${MOSQ_OBJS}
-	${CROSS_COMPILE}$(CC) -shared $(LIB_LDFLAGS) $^ -o $@ ${LIB_LIBADD}
+libmosquitto.so.${SOVERSION} : ${OBJS} ${OBJS_EXTERNAL}
+	${CROSS_COMPILE}$(CC) $(LOCAL_LDFLAGS) $^ -o $@ ${LOCAL_LIBADD}
 
-libmosquitto.a : ${MOSQ_OBJS}
+libmosquitto.a : ${OBJS} ${OBJS_EXTERNAL}
 	${CROSS_COMPILE}$(AR) cr $@ $^
 
-mosquitto.o : mosquitto.c ../include/mosquitto.h mosquitto_internal.h
-	${CROSS_COMPILE}$(CC) $(LIB_CPPFLAGS) $(LIB_CFLAGS) -c $< -o $@
+${OBJS} : %.o: %.c ${R}/include/mosquitto.h mosquitto_internal.h
+	${CROSS_COMPILE}${CC} $(LOCAL_CPPFLAGS) $(LOCAL_CFLAGS) -c $< -o $@
 
-actions.o : actions.c ../include/mosquitto.h mosquitto_internal.h
-	${CROSS_COMPILE}$(CC) $(LIB_CPPFLAGS) $(LIB_CFLAGS) -c $< -o $@
-
-callbacks.o : callbacks.c ../include/mosquitto.h mosquitto_internal.h
-	${CROSS_COMPILE}$(CC) $(LIB_CPPFLAGS) $(LIB_CFLAGS) -c $< -o $@
-
-connect.o : connect.c ../include/mosquitto.h mosquitto_internal.h
-	${CROSS_COMPILE}$(CC) $(LIB_CPPFLAGS) $(LIB_CFLAGS) -c $< -o $@
-
-handle_auth.o : handle_auth.c read_handle.h
-	${CROSS_COMPILE}$(CC) $(LIB_CPPFLAGS) $(LIB_CFLAGS) -c $< -o $@
-
-handle_connack.o : handle_connack.c read_handle.h
-	${CROSS_COMPILE}$(CC) $(LIB_CPPFLAGS) $(LIB_CFLAGS) -c $< -o $@
-
-handle_disconnect.o : handle_disconnect.c read_handle.h
-	${CROSS_COMPILE}$(CC) $(LIB_CPPFLAGS) $(LIB_CFLAGS) -c $< -o $@
-
-handle_publish.o : handle_publish.c read_handle.h
-	${CROSS_COMPILE}$(CC) $(LIB_CPPFLAGS) $(LIB_CFLAGS) -c $< -o $@
-
-handle_ping.o : handle_ping.c read_handle.h
-	${CROSS_COMPILE}$(CC) $(LIB_CPPFLAGS) $(LIB_CFLAGS) -c $< -o $@
-
-handle_pubackcomp.o : handle_pubackcomp.c read_handle.h
-	${CROSS_COMPILE}$(CC) $(LIB_CPPFLAGS) $(LIB_CFLAGS) -c $< -o $@
-
-handle_pubrec.o : handle_pubrec.c read_handle.h
-	${CROSS_COMPILE}$(CC) $(LIB_CPPFLAGS) $(LIB_CFLAGS) -c $< -o $@
-
-handle_pubrel.o : handle_pubrel.c read_handle.h
-	${CROSS_COMPILE}$(CC) $(LIB_CPPFLAGS) $(LIB_CFLAGS) -c $< -o $@
-
-handle_suback.o : handle_suback.c read_handle.h
-	${CROSS_COMPILE}$(CC) $(LIB_CPPFLAGS) $(LIB_CFLAGS) -c $< -o $@
-
-handle_unsuback.o : handle_unsuback.c read_handle.h
-	${CROSS_COMPILE}$(CC) $(LIB_CPPFLAGS) $(LIB_CFLAGS) -c $< -o $@
-
-helpers.o : helpers.c
-	${CROSS_COMPILE}$(CC) $(LIB_CPPFLAGS) $(LIB_CFLAGS) -c $< -o $@
-
-logging_mosq.o : logging_mosq.c logging_mosq.h
-	${CROSS_COMPILE}$(CC) $(LIB_CPPFLAGS) $(LIB_CFLAGS) -c $< -o $@
-
-loop.o : loop.c ../include/mosquitto.h mosquitto_internal.h
-	${CROSS_COMPILE}$(CC) $(LIB_CPPFLAGS) $(LIB_CFLAGS) -c $< -o $@
-
-messages_mosq.o : messages_mosq.c messages_mosq.h
-	${CROSS_COMPILE}$(CC) $(LIB_CPPFLAGS) $(LIB_CFLAGS) -c $< -o $@
-
-memory_mosq.o : memory_mosq.c memory_mosq.h
-	${CROSS_COMPILE}$(CC) $(LIB_CPPFLAGS) $(LIB_CFLAGS) -c $< -o $@
-
-misc_mosq.o : misc_mosq.c misc_mosq.h
-	${CROSS_COMPILE}$(CC) $(LIB_CPPFLAGS) $(LIB_CFLAGS) -c $< -o $@
-
-net_mosq_ocsp.o : net_mosq_ocsp.c net_mosq.h
-	${CROSS_COMPILE}$(CC) $(LIB_CPPFLAGS) $(LIB_CFLAGS) -c $< -o $@
-
-net_mosq.o : net_mosq.c net_mosq.h
-	${CROSS_COMPILE}$(CC) $(LIB_CPPFLAGS) $(LIB_CFLAGS) -c $< -o $@
-
-options.o : options.c ../include/mosquitto.h mosquitto_internal.h
-	${CROSS_COMPILE}$(CC) $(LIB_CPPFLAGS) $(LIB_CFLAGS) -c $< -o $@
-
-packet_datatypes.o : packet_datatypes.c packet_mosq.h
-	${CROSS_COMPILE}$(CC) $(LIB_CPPFLAGS) $(LIB_CFLAGS) -c $< -o $@
-
-packet_mosq.o : packet_mosq.c packet_mosq.h
-	${CROSS_COMPILE}$(CC) $(LIB_CPPFLAGS) $(LIB_CFLAGS) -c $< -o $@
-
-property_mosq.o : property_mosq.c property_mosq.h
-	${CROSS_COMPILE}$(CC) $(LIB_CPPFLAGS) $(LIB_CFLAGS) -c $< -o $@
-
-read_handle.o : read_handle.c read_handle.h
-	${CROSS_COMPILE}$(CC) $(LIB_CPPFLAGS) $(LIB_CFLAGS) -c $< -o $@
-
-send_connect.o : send_connect.c send_mosq.h
-	${CROSS_COMPILE}$(CC) $(LIB_CPPFLAGS) $(LIB_CFLAGS) -c $< -o $@
-
-send_disconnect.o : send_disconnect.c send_mosq.h
-	${CROSS_COMPILE}$(CC) $(LIB_CPPFLAGS) $(LIB_CFLAGS) -c $< -o $@
-
-send_mosq.o : send_mosq.c send_mosq.h
-	${CROSS_COMPILE}$(CC) $(LIB_CPPFLAGS) $(LIB_CFLAGS) -c $< -o $@
-
-send_publish.o : send_publish.c send_mosq.h
-	${CROSS_COMPILE}$(CC) $(LIB_CPPFLAGS) $(LIB_CFLAGS) -c $< -o $@
-
-send_subscribe.o : send_subscribe.c send_mosq.h
-	${CROSS_COMPILE}$(CC) $(LIB_CPPFLAGS) $(LIB_CFLAGS) -c $< -o $@
-
-send_unsubscribe.o : send_unsubscribe.c send_mosq.h
-	${CROSS_COMPILE}$(CC) $(LIB_CPPFLAGS) $(LIB_CFLAGS) -c $< -o $@
-
-socks_mosq.o : socks_mosq.c
-	${CROSS_COMPILE}$(CC) $(LIB_CPPFLAGS) $(LIB_CFLAGS) -c $< -o $@
-
-srv_mosq.o : srv_mosq.c
-	${CROSS_COMPILE}$(CC) $(LIB_CPPFLAGS) $(LIB_CFLAGS) -c $< -o $@
-
-strings_mosq.o : strings_mosq.c
-	${CROSS_COMPILE}$(CC) $(LIB_CPPFLAGS) $(LIB_CFLAGS) -c $< -o $@
-
-thread_mosq.o : thread_mosq.c
-	${CROSS_COMPILE}$(CC) $(LIB_CPPFLAGS) $(LIB_CFLAGS) -c $< -o $@
-
-time_mosq.o : time_mosq.c
-	${CROSS_COMPILE}$(CC) $(LIB_CPPFLAGS) $(LIB_CFLAGS) -c $< -o $@
-
-tls_mosq.o : tls_mosq.c
-	${CROSS_COMPILE}$(CC) $(LIB_CPPFLAGS) $(LIB_CFLAGS) -c $< -o $@
-
-utf8_mosq.o : utf8_mosq.c
-	${CROSS_COMPILE}$(CC) $(LIB_CPPFLAGS) $(LIB_CFLAGS) -c $< -o $@
-
-util_mosq.o : util_mosq.c util_mosq.h
-	${CROSS_COMPILE}$(CC) $(LIB_CPPFLAGS) $(LIB_CFLAGS) -c $< -o $@
-
-util_topic.o : util_topic.c util_mosq.h
-	${CROSS_COMPILE}$(CC) $(LIB_CPPFLAGS) $(LIB_CFLAGS) -c $< -o $@
-
-will_mosq.o : will_mosq.c will_mosq.h
-	${CROSS_COMPILE}$(CC) $(LIB_CPPFLAGS) $(LIB_CFLAGS) -c $< -o $@
-
+${R}/deps/picohttpparser/picohttpparser.o : ${R}/deps/picohttpparser/picohttpparser.c
+	${CROSS_COMPILE}$(CC) $(LOCAL_CPPFLAGS) $(LOCAL_CFLAGS) -c $< -o $@

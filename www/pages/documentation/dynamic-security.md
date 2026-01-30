@@ -190,6 +190,22 @@ the ACL topic filter and the topic provided in the SUBSCRIBE or UNSUBSCRIBE
 message. This means that setting a `subscribePattern` ACL with topic filter `#`
 to deny would prevent matching devices from subscribing to any topic at all.
 
+#### ACL pattern substitution
+
+The `publishClientSend`, `publishClientReceive`, `subscribePattern`, and
+`unsubscribePattern` ACL types can make use of pattern substitution. This means
+that the strings `%c` and `%u` will be replaced with the client id and username
+of the client being checked, respectively. The pattern strings must be the only
+item in that level of hierarchy, so the ACL `topic/%count` will not be
+considered as a pattern.
+
+For example, with an ACL of `room/%c/temperature`, a client connecting with
+client id `kitchen` would be allowed to use the topic
+`room/kitchen/temperature` only.
+
+If a client does not have a username, a pattern that includes `%u` will always
+fail to match against that client.
+
 #### Text name
 
 This is an optional text field to give a human friendly name to this role.
@@ -210,18 +226,20 @@ applied.
 The order in which checks are made is determined in part by the `priority` of
 groups, roles and ACLs. Each client group has a priority, each client role and
 group role has a priority, and each ACL within a role has a priority. If not
-set explicitly, priorities will default to -1.
+set explicitly, priorities will default to -1. Priority has a maximum of 100000.
 
 For each of the group, role, and ACL objects, checks are made in priority order
 from the highest numerical value to the lowest numerical value. If two objects
 of the same type have the same priority, then they will be checked in
-lexographical order according to the username/groupname/rolename, but it is
+lexicographical order according to the username/groupname/rolename, but it is
 advised to use unique priorities per object type.
 
 When an event occurs that needs an ACL check, the ACLs for that ACL type are
 checked in order until there is a matching ACL for the topic in question.
 
-Within each role that is checked, the ACLs are checked in priority order.
+Within each role that is checked, the ACLs are checked in priority order. If
+ACLs have identical priority, they are evaluated in the order shown in the
+`getRole` command.
 
 The roles assigned to a client are checked first, in priority order.
 Each client group is checked in priority order, with all of the roles in a
@@ -309,8 +327,67 @@ listeners use the same authentication and access control.
 
 The `dynamic-security.json` file is where the plugin configuration will be
 stored. This file will be updated each time you make client/group/role changes,
-during normal operation the configuration stays in memory. To generate an
-initial file, use the `mosquitto_ctrl` utility.
+during normal operation the configuration stays in memory.
+
+### Generating the configuration file - 2.1 onwards
+
+To generate your initial configuration file there are a few choices. In version
+2.0.x, you must use the `mosquitto_ctrl` utility as described below. From
+version 2.1 onwards, if the configuration file does not exist, the plugin will
+attempt to generate a default configuration file with some sensible defaults.
+
+The roles created are:
+
+* `broker-admin` - grants access to administer general broker settings
+* `client` - read/write access to the full application topic hierarchy '#'
+* `dynsec-admin` - grants access to administer clients/groups/roles
+* `super-admin` - grants access to administer any `$CONTROL` APIs
+* `sys-notify` - allow bridges to publish connection state messages
+* `sys-observe` - allow read only access to the $SYS/# topic hierarchy
+* `topic-observe` - allow read only access to the full application topic hierarchy '#'
+
+The groups created are:
+
+* `unauthenticated` - automatic group that anonymous/unauthenticated clients
+  are placed in, if anonymous access is allowed.
+
+The initial users can be generated in three different ways, as described below.
+
+#### Initialisation file
+
+Create a text file with a single line. This line will be used as the password
+for the `admin` user, which will have access to administer the dynamic security
+plugin.
+
+Set the configuration option to trigger the use of this file:
+```
+plugin_opt_password_init_file path/to/init-file
+```
+
+Once the initial run of the broker has been done, the init file can be deleted.
+
+This method is well suited to use with e.g. docker secrets inside a container.
+
+#### Environment variable
+
+Set the `MOSQUITTO_DYNSEC_PASSWORD` environment variable to a string text and
+it will be used as the password for the `admin` user, which will have access to
+administer the dynamic security plugin.
+
+#### Default
+
+If neither `plugin_opt_password_init_file` nor `MOSQUITTO_DYNSEC_PASSWORD` are
+set, then the plugin will generate random passwords and store them in *plain
+text* at `<plugin_opt_config_file>.pw`, for example `dynamic-security.json.pw`.
+This file should be deleted once the passwords are known.
+
+Two users will be created, `admin`, which will have access to administer the
+dynamic security plugin, and `democlient`, which will have read/write access to
+the application topic hierarchy `#`.
+
+### Generating the configuration file - 2.0 onwards
+
+To generate an initial file using the `mosquitto_ctrl` utility:
 
 ```
 mosquitto_ctrl dynsec init path/to/dynamic-security.json admin-user
@@ -451,7 +528,7 @@ they would be provided on the command line. For example:
   the port defaults to 1883. If the scheme is mqtts:// then the port defaults
   to 8883.
 * `--nodelay` : Disable Nagle's algorithm for the socket. This means that
-  latency of sent messages is reduced, which is particularly noticable for
+  latency of sent messages is reduced, which is particularly noticeable for
   small, reasonably infrequent messages. Using this option may result in more
   packets being sent than would normally be necessary.
 * `-p port` : Connect to the port specified. If not given, the default of 1883
@@ -477,8 +554,8 @@ they would be provided on the command line. For example:
   This excludes any error messages given in case of invalid user input (e.g.
   using `-p` without a port).
 * `--tls-version version` : Choose which TLS protocol version to use when
-  communicating with the broker. Valid options are tlsv1.3, tlsv1.2 and
-  tlsv1.1. The default value is tlsv1.2. Must match the protocol version used
+  communicating with the broker. Valid options are tlsv1.3 and tlsv1.2.
+  The default value is tlsv1.2. Must match the protocol version used
   by the broker.
 * `-u username` : Provide a username to be used for authenticating with the
   broker. See also the `-P` argument.
@@ -577,6 +654,13 @@ To list all clients:
 
 ```
 mosquitto_ctrl <options> dynsec listClients
+```
+
+This gives an output that is a list of client usernames:
+
+```
+client1
+client2
 ```
 
 The `modifyClient` command also exists in the topic API, but is not currently available in `mosquitto_ctrl`.

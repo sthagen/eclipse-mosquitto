@@ -1,6 +1,7 @@
 #include <cstdio>
 #include <cstring>
-#include <mosquittopp.h>
+#include <mosquitto/libmosquittopp.h>
+
 
 void print_error(const char *topic, char **topics, int topic_count)
 {
@@ -16,10 +17,14 @@ void print_error(const char *topic, char **topics, int topic_count)
 	printf("\n");
 }
 
+
 int main(int argc, char *argv[])
 {
 	char **topics;
 	int topic_count;
+
+	(void)argc;
+	(void)argv;
 
 	if(mosqpp::sub_topic_tokenise("topic", &topics, &topic_count)){
 		printf("Out of memory.\n");

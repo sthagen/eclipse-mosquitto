@@ -1,22 +1,45 @@
 #include <cstring>
-#include <mosquittopp.h>
+#include <mosquitto/libmosquittopp.h>
 
 static int run = -1;
 
 class mosquittopp_test : public mosqpp::mosquittopp
 {
-	public:
-		mosquittopp_test(const char *id);
+public:
+	mosquittopp_test(const char *id);
+
+	void on_connect(int rc);
+	void on_disconnect(int rc);
 };
 
 mosquittopp_test::mosquittopp_test(const char *id) : mosqpp::mosquittopp(id)
 {
 }
 
+
+void mosquittopp_test::on_connect(int rc)
+{
+	if(rc){
+		exit(1);
+	}else{
+		disconnect();
+	}
+}
+
+
+void mosquittopp_test::on_disconnect(int rc)
+{
+	run = rc;
+}
+
+
 int main(int argc, char *argv[])
 {
-	struct mosquittopp_test *mosq;
+	mosquittopp_test *mosq;
 
+	if(argc != 2){
+		return 1;
+	}
 	int port = atoi(argv[1]);
 
 	mosqpp::lib_init();
@@ -29,7 +52,6 @@ int main(int argc, char *argv[])
 	while(run == -1){
 		mosq->loop();
 	}
-	delete mosq;
 
 	delete mosq;
 	mosqpp::lib_cleanup();

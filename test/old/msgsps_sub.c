@@ -12,10 +12,12 @@
 
 static atomic_int message_count = 0;
 
+
 void my_message_callback(struct mosquitto *mosq, void *obj, const struct mosquitto_message *msg)
 {
 	message_count++;
 }
+
 
 int main(int argc, char *argv[])
 {

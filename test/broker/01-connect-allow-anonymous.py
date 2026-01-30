@@ -34,6 +34,18 @@ def write_config7(filename, port):
     with open(filename, 'w') as f:
         f.write("allow_anonymous true\n")
 
+def write_config8(filename, port):
+    with open(filename, 'w') as f:
+        f.write("allow_anonymous false\n")
+        f.write("listener %d\n" % (port))
+        f.write("listener_allow_anonymous true\n")
+
+def write_config9(filename, port):
+    with open(filename, 'w') as f:
+        f.write("allow_anonymous true\n")
+        f.write("listener %d\n" % (port))
+        f.write("listener_allow_anonymous false\n")
+
 
 def do_test(use_conf, write_config, expect_success):
     port = mosq_test.get_port()
@@ -46,14 +58,13 @@ def do_test(use_conf, write_config, expect_success):
     try:
         for proto_ver in [4, 5]:
             rc = 1
-            keepalive = 10
-            connect_packet = mosq_test.gen_connect("connect-anon-test-%d" % (proto_ver), keepalive=keepalive, proto_ver=proto_ver)
+            connect_packet = mosq_test.gen_connect("connect-anon-test-%d" % (proto_ver), proto_ver=proto_ver)
 
             if proto_ver == 5:
                 if expect_success == True:
                     connack_packet = mosq_test.gen_connack(rc=0, proto_ver=proto_ver)
                 else:
-                    connack_packet = mosq_test.gen_connack(rc=mqtt5_rc.MQTT_RC_NOT_AUTHORIZED, proto_ver=proto_ver, properties=None)
+                    connack_packet = mosq_test.gen_connack(rc=mqtt5_rc.NOT_AUTHORIZED, proto_ver=proto_ver, properties=None)
             else:
                 if expect_success == True:
                     connack_packet = mosq_test.gen_connack(rc=0, proto_ver=proto_ver)
@@ -71,7 +82,9 @@ def do_test(use_conf, write_config, expect_success):
             os.remove(conf_file)
             pass
         broker.terminate()
-        broker.wait()
+        if mosq_test.wait_for_subprocess(broker):
+            print("broker not terminated")
+            if rc == 0: rc=1
         (stdo, stde) = broker.communicate()
         if rc:
             print(stde.decode('utf-8'))
@@ -102,4 +115,11 @@ do_test(use_conf=True, write_config=write_config6, expect_success=False)
 
 # Config file without "listener" - allow_anonymous explicitly true
 do_test(use_conf=True, write_config=write_config7, expect_success=True)
+
+# Config file with "listener" - allow_anonymous explicitly false and listener_allow_anonymous explicitly true
+do_test(use_conf=True, write_config=write_config8, expect_success=True)
+
+# Config file with "listener" - allow_anonymous explicitly true and listener_allow_anonymous explicitly false
+do_test(use_conf=True, write_config=write_config9, expect_success=False)
+
 exit(0)

@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2010-2020 Roger Light <roger@atchoo.org>
+Copyright (c) 2010-2021 Roger Light <roger@atchoo.org>
 
 All rights reserved. This program and the accompanying materials
 are made available under the terms of the Eclipse Public License 2.0
@@ -20,13 +20,21 @@ Contributors:
 
 #include <string.h>
 
+#ifdef WIN32
+#  include <winsock2.h>
+#  include <ws2tcpip.h>
+#else
+#  include <arpa/inet.h>
+#endif
+
+#include "callbacks.h"
+#include "http_client.h"
 #include "mosquitto.h"
 #include "mosquitto_internal.h"
 #include "logging_mosq.h"
 #include "messages_mosq.h"
-#include "memory_mosq.h"
 #include "packet_mosq.h"
-#include "mqtt_protocol.h"
+#include "property_common.h"
 #include "net_mosq.h"
 #include "send_mosq.h"
 #include "socks_mosq.h"
@@ -43,13 +51,19 @@ static int mosquitto__connect_init(struct mosquitto *mosq, const char *host, int
 	int i;
 	int rc;
 
-	if(!mosq) return MOSQ_ERR_INVAL;
-	if(!host || port < 0 || port > UINT16_MAX) return MOSQ_ERR_INVAL;
-	if(keepalive != 0 && (keepalive < 5 || keepalive > UINT16_MAX)) return MOSQ_ERR_INVAL;
+	if(!mosq){
+		return MOSQ_ERR_INVAL;
+	}
+	if(!host || port < 0 || port > UINT16_MAX){
+		return MOSQ_ERR_INVAL;
+	}
+	if(keepalive != 0 && (keepalive < 5 || keepalive > UINT16_MAX)){
+		return MOSQ_ERR_INVAL;
+	}
 
 	/* Only MQTT v3.1 requires a client id to be sent */
 	if(mosq->id == NULL && (mosq->protocol == mosq_p_mqtt31)){
-		mosq->id = (char *)mosquitto__calloc(24, sizeof(char));
+		mosq->id = (char *)mosquitto_calloc(24, sizeof(char));
 		if(!mosq->id){
 			return MOSQ_ERR_NOMEM;
 		}
@@ -59,17 +73,21 @@ static int mosquitto__connect_init(struct mosquitto *mosq, const char *host, int
 		mosq->id[3] = 'q';
 		mosq->id[4] = '-';
 
-		rc = util__random_bytes(&mosq->id[5], 18);
-		if(rc) return rc;
+		rc = mosquitto_getrandom(&mosq->id[5], 18);
+		if(rc){
+			return rc;
+		}
 
 		for(i=5; i<23; i++){
 			mosq->id[i] = alphanum[(mosq->id[i]&0x7F)%(sizeof(alphanum)-1)];
 		}
 	}
 
-	mosquitto__free(mosq->host);
-	mosq->host = mosquitto__strdup(host);
-	if(!mosq->host) return MOSQ_ERR_NOMEM;
+	mosquitto_FREE(mosq->host);
+	mosq->host = mosquitto_strdup(host);
+	if(!mosq->host){
+		return MOSQ_ERR_NOMEM;
+	}
 	mosq->port = (uint16_t)port;
 
 	mosq->keepalive = (uint16_t)keepalive;
@@ -93,27 +111,36 @@ int mosquitto_connect_bind(struct mosquitto *mosq, const char *host, int port, i
 	return mosquitto_connect_bind_v5(mosq, host, port, keepalive, bind_address, NULL);
 }
 
+
 int mosquitto_connect_bind_v5(struct mosquitto *mosq, const char *host, int port, int keepalive, const char *bind_address, const mosquitto_property *properties)
 {
 	int rc;
 
 	if(bind_address){
 		rc = mosquitto_string_option(mosq, MOSQ_OPT_BIND_ADDRESS, bind_address);
-		if(rc) return rc;
+		if(rc){
+			return rc;
+		}
 	}
 
 	mosquitto_property_free_all(&mosq->connect_properties);
 	if(properties){
 		rc = mosquitto_property_check_all(CMD_CONNECT, properties);
-		if(rc) return rc;
+		if(rc){
+			return rc;
+		}
 
 		rc = mosquitto_property_copy_all(&mosq->connect_properties, properties);
-		if(rc) return rc;
+		if(rc){
+			return rc;
+		}
 		mosq->connect_properties->client_generated = true;
 	}
 
 	rc = mosquitto__connect_init(mosq, host, port, keepalive);
-	if(rc) return rc;
+	if(rc){
+		return rc;
+	}
 
 	mosquitto__set_state(mosq, mosq_cs_new);
 
@@ -133,11 +160,15 @@ int mosquitto_connect_bind_async(struct mosquitto *mosq, const char *host, int p
 
 	if(bind_address){
 		rc = mosquitto_string_option(mosq, MOSQ_OPT_BIND_ADDRESS, bind_address);
-		if(rc) return rc;
+		if(rc){
+			return rc;
+		}
 	}
 
 	rc = mosquitto__connect_init(mosq, host, port, keepalive);
-	if(rc) return rc;
+	if(rc){
+		return rc;
+	}
 
 	return mosquitto__reconnect(mosq, false);
 }
@@ -155,17 +186,51 @@ int mosquitto_reconnect(struct mosquitto *mosq)
 }
 
 
+int get_address(int sock, char *buf, size_t len, uint16_t *remote_port)
+{
+	struct sockaddr_storage addr;
+	socklen_t addrlen;
+
+	memset(&addr, 0, sizeof(struct sockaddr_storage));
+	addrlen = sizeof(addr);
+	if(!getpeername(sock, (struct sockaddr *)&addr, &addrlen)){
+		if(addr.ss_family == AF_INET){
+			if(remote_port){
+				*remote_port = ntohs(((struct sockaddr_in *)&addr)->sin_port);
+			}
+			if(inet_ntop(AF_INET, &((struct sockaddr_in *)&addr)->sin_addr.s_addr, buf, (socklen_t)len)){
+				return 0;
+			}
+		}else if(addr.ss_family == AF_INET6){
+			if(remote_port){
+				*remote_port = ntohs(((struct sockaddr_in6 *)&addr)->sin6_port);
+			}
+			if(inet_ntop(AF_INET6, &((struct sockaddr_in6 *)&addr)->sin6_addr.s6_addr, buf, (socklen_t)len)){
+				return 0;
+			}
+		}
+	}
+	return 1;
+}
+
+
 static int mosquitto__reconnect(struct mosquitto *mosq, bool blocking)
 {
 	const mosquitto_property *outgoing_properties = NULL;
 	mosquitto_property local_property;
 	int rc;
 
-	if(!mosq) return MOSQ_ERR_INVAL;
-	if(!mosq->host) return MOSQ_ERR_INVAL;
+	if(!mosq){
+		return MOSQ_ERR_INVAL;
+	}
+	if(!mosq->host){
+		return MOSQ_ERR_INVAL;
+	}
 
 	if(mosq->connect_properties){
-		if(mosq->protocol != mosq_p_mqtt5) return MOSQ_ERR_NOT_SUPPORTED;
+		if(mosq->protocol != mosq_p_mqtt5){
+			return MOSQ_ERR_NOT_SUPPORTED;
+		}
 
 		if(mosq->connect_properties->client_generated){
 			outgoing_properties = mosq->connect_properties;
@@ -176,7 +241,9 @@ static int mosquitto__reconnect(struct mosquitto *mosq, bool blocking)
 			outgoing_properties = &local_property;
 		}
 		rc = mosquitto_property_check_all(CMD_CONNECT, outgoing_properties);
-		if(rc) return rc;
+		if(rc){
+			return rc;
+		}
 	}
 
 	COMPAT_pthread_mutex_lock(&mosq->msgtime_mutex);
@@ -192,9 +259,11 @@ static int mosquitto__reconnect(struct mosquitto *mosq, bool blocking)
 
 	message__reconnect_reset(mosq, false);
 
-	if(mosq->sock != INVALID_SOCKET){
+	if(net__is_connected(mosq)){
 		net__socket_close(mosq);
 	}
+
+	callback__on_pre_connect(mosq);
 
 #ifdef WITH_SOCKS
 	if(mosq->socks5_host){
@@ -204,6 +273,9 @@ static int mosquitto__reconnect(struct mosquitto *mosq, bool blocking)
 	{
 		rc = net__socket_connect(mosq, mosq->host, mosq->port, mosq->bind_address, blocking);
 	}
+	char address[1024];
+	uint16_t port;
+	get_address(mosq->sock, address, 1024, &port);
 	if(rc>0){
 		mosquitto__set_state(mosq, mosq_cs_connect_pending);
 		return rc;
@@ -217,11 +289,17 @@ static int mosquitto__reconnect(struct mosquitto *mosq, bool blocking)
 #endif
 	{
 		mosquitto__set_state(mosq, mosq_cs_connected);
-		rc = send__connect(mosq, mosq->keepalive, mosq->clean_start, outgoing_properties);
-		if(rc){
-			packet__cleanup_all(mosq);
-			net__socket_close(mosq);
-			mosquitto__set_state(mosq, mosq_cs_new);
+#if defined(WITH_WEBSOCKETS) && WITH_WEBSOCKETS == WS_IS_BUILTIN
+		if(mosq->transport == mosq_t_ws){
+			http_c__context_init(mosq);
+		}else
+#endif
+		{
+			rc = send__connect(mosq, mosq->keepalive, mosq->clean_start, outgoing_properties);
+			if(rc){
+				packet__cleanup_all(mosq);
+				net__socket_close(mosq);
+			}
 		}
 		return rc;
 	}
@@ -233,14 +311,21 @@ int mosquitto_disconnect(struct mosquitto *mosq)
 	return mosquitto_disconnect_v5(mosq, 0, NULL);
 }
 
+
 int mosquitto_disconnect_v5(struct mosquitto *mosq, int reason_code, const mosquitto_property *properties)
 {
 	const mosquitto_property *outgoing_properties = NULL;
 	mosquitto_property local_property;
 	int rc;
-	if(!mosq) return MOSQ_ERR_INVAL;
-	if(mosq->protocol != mosq_p_mqtt5 && properties) return MOSQ_ERR_NOT_SUPPORTED;
-	if(reason_code < 0 || reason_code > UINT8_MAX) return MOSQ_ERR_INVAL;
+	if(!mosq){
+		return MOSQ_ERR_INVAL;
+	}
+	if(mosq->protocol != mosq_p_mqtt5 && properties){
+		return MOSQ_ERR_NOT_SUPPORTED;
+	}
+	if(reason_code < 0 || reason_code > UINT8_MAX){
+		return MOSQ_ERR_INVAL;
+	}
 
 	if(properties){
 		if(properties->client_generated){
@@ -252,12 +337,14 @@ int mosquitto_disconnect_v5(struct mosquitto *mosq, int reason_code, const mosqu
 			outgoing_properties = &local_property;
 		}
 		rc = mosquitto_property_check_all(CMD_DISCONNECT, outgoing_properties);
-		if(rc) return rc;
+		if(rc){
+			return rc;
+		}
 	}
 
 	mosquitto__set_state(mosq, mosq_cs_disconnected);
 	mosquitto__set_request_disconnect(mosq, true);
-	if(mosq->sock == INVALID_SOCKET){
+	if(!net__is_connected(mosq)){
 		return MOSQ_ERR_NO_CONN;
 	}else{
 		return send__disconnect(mosq, (uint8_t)reason_code, outgoing_properties);
@@ -267,43 +354,16 @@ int mosquitto_disconnect_v5(struct mosquitto *mosq, int reason_code, const mosqu
 
 void do_client_disconnect(struct mosquitto *mosq, int reason_code, const mosquitto_property *properties)
 {
-	void (*on_disconnect)(struct mosquitto *, void *userdata, int rc);
-	void (*on_disconnect_v5)(struct mosquitto *, void *userdata, int rc, const mosquitto_property *props);
-
 	mosquitto__set_state(mosq, mosq_cs_disconnected);
 	net__socket_close(mosq);
 
 	/* Free data and reset values */
-	COMPAT_pthread_mutex_lock(&mosq->out_packet_mutex);
-	mosq->current_out_packet = mosq->out_packet;
-	if(mosq->out_packet){
-		mosq->out_packet = mosq->out_packet->next;
-		if(!mosq->out_packet){
-			mosq->out_packet_last = NULL;
-		}
-		mosq->out_packet_count--;
-	}
-	COMPAT_pthread_mutex_unlock(&mosq->out_packet_mutex);
+	packet__cleanup_all(mosq);
 
 	COMPAT_pthread_mutex_lock(&mosq->msgtime_mutex);
 	mosq->next_msg_out = mosquitto_time() + mosq->keepalive;
 	COMPAT_pthread_mutex_unlock(&mosq->msgtime_mutex);
 
-	COMPAT_pthread_mutex_lock(&mosq->callback_mutex);
-	on_disconnect = mosq->on_disconnect;
-	on_disconnect_v5 = mosq->on_disconnect_v5;
-	COMPAT_pthread_mutex_unlock(&mosq->callback_mutex);
-
-	if(on_disconnect){
-		mosq->in_callback = true;
-		on_disconnect(mosq, mosq->userdata, reason_code);
-		mosq->in_callback = false;
-	}
-	if(on_disconnect_v5){
-		mosq->in_callback = true;
-		on_disconnect_v5(mosq, mosq->userdata, reason_code, properties);
-		mosq->in_callback = false;
-	}
-	COMPAT_pthread_mutex_unlock(&mosq->current_out_packet_mutex);
+	callback__on_disconnect(mosq, reason_code, properties);
 }
 

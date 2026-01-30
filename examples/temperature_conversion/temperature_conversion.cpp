@@ -17,6 +17,7 @@ mqtt_tempconv::~mqtt_tempconv()
 {
 }
 
+
 void mqtt_tempconv::on_connect(int rc)
 {
 	printf("Connected with code %d.\n", rc);
@@ -25,6 +26,7 @@ void mqtt_tempconv::on_connect(int rc)
 		subscribe(NULL, "temperature/celsius");
 	}
 }
+
 
 void mqtt_tempconv::on_message(const struct mosquitto_message *message)
 {
@@ -41,6 +43,7 @@ void mqtt_tempconv::on_message(const struct mosquitto_message *message)
 		publish(NULL, "temperature/fahrenheit", strlen(buf), buf);
 	}
 }
+
 
 void mqtt_tempconv::on_subscribe(int mid, int qos_count, const int *granted_qos)
 {

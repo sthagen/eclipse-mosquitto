@@ -26,24 +26,27 @@ jobs:
     runs-on: windows-2022
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
+      - name: pin cmake to 3.x series
+        uses: jwlawson/actions-setup-cmake@09fd9b0fb3b239b4b68d9256cd65adf8d6b91da0
+        with:
+          cmake-version: '3.31.6'
 
       - name: vcpkg build
-        uses: johnwason/vcpkg-action@v6
+        uses: johnwason/vcpkg-action@v7
         id: vcpkg
         with:
           manifest-dir: ${{ github.workspace }}
           triplet: x64-windows-release
           token: ${{ github.token }}
-          github-binarycache: true
 
       - name: Configure CMake
-        run: cmake -B ${{github.workspace}}/build64 -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DWITH_WEBSOCKETS=ON -DWITH_TESTS=OFF -DCMAKE_GENERATOR_PLATFORM=x64 -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/vcpkg/scripts/buildsystems/vcpkg.cmake -DVCPKG_TARGET_TRIPLET=x64-windows-release -DVCPKG_MANIFEST_MODE=ON
+        run: cmake -B ${{github.workspace}}/build64 -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DWITH_WEBSOCKETS=ON -DWITH_TESTS=OFF -DCMAKE_GENERATOR_PLATFORM=x64 -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/vcpkg/scripts/buildsystems/vcpkg.cmake -DVCPKG_TARGET_TRIPLET=x64-windows-release -DVCPKG_MANIFEST_MODE=ON -DWITH_HTTP_API=ON -DHTTP_API_DIR="C:\\Program Files\\Mosquitto\\dashboard"
       - name: Build
         run: cmake --build ${{github.workspace}}/build64 --config ${{env.BUILD_TYPE}}
 
-      - uses: suisei-cn/actions-download-file@v1.6.0
+      - uses: suisei-cn/actions-download-file@v1.6.1
         id: vcredist
         name: Download VC redistributable
         with:
@@ -51,12 +54,12 @@ jobs:
           target: ${{github.workspace}}/installer/
 
       - name: Installer
-        uses: joncloud/makensis-action@v4
+        uses: joncloud/makensis-action@v5.0
         with:
           script-file: ${{github.workspace}}/installer/mosquitto64.nsi
 
       - name: Upload installer to artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: installer
           path: ${{ github.workspace }}/installer/mosquitto*.exe

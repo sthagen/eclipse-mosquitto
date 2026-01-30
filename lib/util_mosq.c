@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2009-2020 Roger Light <roger@atchoo.org>
+Copyright (c) 2009-2021 Roger Light <roger@atchoo.org>
 
 All rights reserved. This program and the accompanying materials
 are made available under the terms of the Eclipse Public License 2.0
@@ -31,33 +31,26 @@ Contributors:
 #  include <sys/stat.h>
 #endif
 
-#if !defined(WITH_TLS) && defined(__linux__) && defined(__GLIBC__)
-#  if __GLIBC_PREREQ(2, 25)
-#    include <sys/random.h>
-#    define HAVE_GETRANDOM 1
-#  endif
-#endif
-
 #ifdef WITH_TLS
 #  include <openssl/bn.h>
-#  include <openssl/rand.h>
 #endif
 
 #ifdef WITH_BROKER
 #include "mosquitto_broker_internal.h"
+#else
+#  include "callbacks.h"
 #endif
 
 #include "mosquitto.h"
-#include "memory_mosq.h"
 #include "net_mosq.h"
 #include "send_mosq.h"
-#include "time_mosq.h"
 #include "tls_mosq.h"
 #include "util_mosq.h"
 
-#ifdef WITH_WEBSOCKETS
+#if defined(WITH_WEBSOCKETS) && WITH_WEBSOCKETS == WS_IS_LWS
 #include <libwebsockets.h>
 #endif
+
 
 int mosquitto__check_keepalive(struct mosquitto *mosq)
 {
@@ -79,10 +72,10 @@ int mosquitto__check_keepalive(struct mosquitto *mosq)
 #if defined(WITH_BROKER) && defined(WITH_BRIDGE)
 	/* Check if a lazy bridge should be timed out due to idle. */
 	if(mosq->bridge && mosq->bridge->start_type == bst_lazy
-				&& mosq->sock != INVALID_SOCKET
-				&& now - mosq->last_msg_in >= mosq->bridge->idle_timeout){
+			&& net__is_connected(mosq)
+			&& now - mosq->next_msg_out - mosq->keepalive >= mosq->bridge->idle_timeout){
 
-		log__printf(NULL, MOSQ_LOG_NOTICE, "Bridge connection %s has exceeded idle timeout, disconnecting.", mosq->id);
+		log__printf(mosq, MOSQ_LOG_NOTICE, "Bridge connection %s has exceeded idle timeout, disconnecting.", mosq->id);
 		net__socket_close(mosq);
 		return MOSQ_ERR_SUCCESS;
 	}
@@ -91,7 +84,7 @@ int mosquitto__check_keepalive(struct mosquitto *mosq)
 	next_msg_out = mosq->next_msg_out;
 	last_msg_in = mosq->last_msg_in;
 	COMPAT_pthread_mutex_unlock(&mosq->msgtime_mutex);
-	if(mosq->keepalive && mosq->sock != INVALID_SOCKET &&
+	if(mosq->keepalive && net__is_connected(mosq) &&
 			(now >= next_msg_out || now - last_msg_in >= mosq->keepalive)){
 
 		state = mosquitto__get_state(mosq);
@@ -118,22 +111,7 @@ int mosquitto__check_keepalive(struct mosquitto *mosq)
 			}else{
 				rc = MOSQ_ERR_KEEPALIVE;
 			}
-			void (*on_disconnect)(struct mosquitto *, void *userdata, int rc);
-			void (*on_disconnect_v5)(struct mosquitto *, void *userdata, int rc, const mosquitto_property *props);
-			COMPAT_pthread_mutex_lock(&mosq->callback_mutex);
-			on_disconnect = mosq->on_disconnect;
-			on_disconnect_v5 = mosq->on_disconnect_v5;
-			COMPAT_pthread_mutex_unlock(&mosq->callback_mutex);
-			if(on_disconnect){
-				mosq->in_callback = true;
-				on_disconnect(mosq, mosq->userdata, rc);
-				mosq->in_callback = false;
-			}
-			if(on_disconnect_v5){
-				mosq->in_callback = true;
-				on_disconnect_v5(mosq, mosq->userdata, rc, NULL);
-				mosq->in_callback = false;
-			}
+			callback__on_disconnect(mosq, rc, NULL);
 
 			return rc;
 #endif
@@ -141,6 +119,7 @@ int mosquitto__check_keepalive(struct mosquitto *mosq)
 	}
 	return MOSQ_ERR_SUCCESS;
 }
+
 
 uint16_t mosquitto__mid_generate(struct mosquitto *mosq)
 {
@@ -156,7 +135,9 @@ uint16_t mosquitto__mid_generate(struct mosquitto *mosq)
 
 	COMPAT_pthread_mutex_lock(&mosq->mid_mutex);
 	mosq->last_mid++;
-	if(mosq->last_mid == 0) mosq->last_mid++;
+	if(mosq->last_mid == 0){
+		mosq->last_mid++;
+	}
 	mid = mosq->last_mid;
 	COMPAT_pthread_mutex_unlock(&mosq->mid_mutex);
 
@@ -165,6 +146,8 @@ uint16_t mosquitto__mid_generate(struct mosquitto *mosq)
 
 
 #ifdef WITH_TLS
+
+
 int mosquitto__hex2bin_sha1(const char *hex, unsigned char **bin)
 {
 	unsigned char *sha, tmp[SHA_DIGEST_LENGTH];
@@ -173,7 +156,7 @@ int mosquitto__hex2bin_sha1(const char *hex, unsigned char **bin)
 		return MOSQ_ERR_INVAL;
 	}
 
-	sha = mosquitto__malloc(SHA_DIGEST_LENGTH);
+	sha = mosquitto_malloc(SHA_DIGEST_LENGTH);
 	if(!sha){
 		return MOSQ_ERR_NOMEM;
 	}
@@ -182,27 +165,32 @@ int mosquitto__hex2bin_sha1(const char *hex, unsigned char **bin)
 	return MOSQ_ERR_SUCCESS;
 }
 
+
 int mosquitto__hex2bin(const char *hex, unsigned char *bin, int bin_max_len)
 {
 	BIGNUM *bn = NULL;
 	int len;
 	int leading_zero = 0;
-	int start = 0;
 	size_t i = 0;
 
 	/* Count the number of leading zero */
-	for(i=0; i<strlen(hex); i=i+2) {
-		if(strncmp(hex + i, "00", 2) == 0) {
-			leading_zero++;
+	for(i=0; i<strlen(hex); i=i+2){
+		if(strncmp(hex + i, "00", 2) == 0){
+			if(leading_zero >= bin_max_len){
+				return 0;
+			}
 			/* output leading zero to bin */
-			bin[start++] = 0;
+			bin[leading_zero] = 0;
+			leading_zero++;
 		}else{
 			break;
 		}
 	}
 
 	if(BN_hex2bn(&bn, hex) == 0){
-		if(bn) BN_free(bn);
+		if(bn){
+			BN_free(bn);
+		}
 		return 0;
 	}
 	if(BN_num_bytes(bn) + leading_zero > bin_max_len){
@@ -216,12 +204,14 @@ int mosquitto__hex2bin(const char *hex, unsigned char *bin, int bin_max_len)
 }
 #endif
 
+
 void util__increment_receive_quota(struct mosquitto *mosq)
 {
 	if(mosq->msgs_in.inflight_quota < mosq->msgs_in.inflight_maximum){
 		mosq->msgs_in.inflight_quota++;
 	}
 }
+
 
 void util__increment_send_quota(struct mosquitto *mosq)
 {
@@ -238,47 +228,12 @@ void util__decrement_receive_quota(struct mosquitto *mosq)
 	}
 }
 
+
 void util__decrement_send_quota(struct mosquitto *mosq)
 {
 	if(mosq->msgs_out.inflight_quota > 0){
 		mosq->msgs_out.inflight_quota--;
 	}
-}
-
-
-int util__random_bytes(void *bytes, int count)
-{
-	int rc = MOSQ_ERR_UNKNOWN;
-
-#ifdef WITH_TLS
-	if(RAND_bytes(bytes, count) == 1){
-		rc = MOSQ_ERR_SUCCESS;
-	}
-#elif defined(HAVE_GETRANDOM)
-	if(getrandom(bytes, (size_t)count, 0) == count){
-		rc = MOSQ_ERR_SUCCESS;
-	}
-#elif defined(WIN32)
-	HCRYPTPROV provider;
-
-	if(!CryptAcquireContext(&provider, NULL, NULL, PROV_RSA_FULL, CRYPT_VERIFYCONTEXT)){
-		return MOSQ_ERR_UNKNOWN;
-	}
-
-	if(CryptGenRandom(provider, count, bytes)){
-		rc = MOSQ_ERR_SUCCESS;
-	}
-
-	CryptReleaseContext(provider, 0);
-#else
-	int i;
-
-	for(i=0; i<count; i++){
-		((uint8_t *)bytes)[i] = (uint8_t )(random()&0xFF);
-	}
-	rc = MOSQ_ERR_SUCCESS;
-#endif
-	return rc;
 }
 
 
@@ -308,12 +263,15 @@ enum mosquitto_client_state mosquitto__get_state(struct mosquitto *mosq)
 }
 
 #ifndef WITH_BROKER
+
+
 void mosquitto__set_request_disconnect(struct mosquitto *mosq, bool request_disconnect)
 {
 	COMPAT_pthread_mutex_lock(&mosq->state_mutex);
 	mosq->request_disconnect = request_disconnect;
 	COMPAT_pthread_mutex_unlock(&mosq->state_mutex);
 }
+
 
 bool mosquitto__get_request_disconnect(struct mosquitto *mosq)
 {

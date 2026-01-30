@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2009-2020 Roger Light <roger@atchoo.org>
+Copyright (c) 2009-2021 Roger Light <roger@atchoo.org>
 
 All rights reserved. This program and the accompanying materials
 are made available under the terms of the Eclipse Public License 2.0
@@ -46,10 +46,9 @@ Contributors:
 #endif
 
 #include "mosquitto_broker_internal.h"
-#include "memory_mosq.h"
 #include "tls_mosq.h"
 #include "util_mosq.h"
-#include "mqtt_protocol.h"
+#include "mosquitto/mqtt_protocol.h"
 
 
 static int scmp_p(const void *p1, const void *p2)
@@ -60,7 +59,7 @@ static int scmp_p(const void *p1, const void *p2)
 
 	while(s1[0] && s2[0]){
 		/* Sort by case insensitive part first */
-		result = toupper(s1[0]) - toupper(s2[0]);
+		result = toupper((unsigned char)s1[0]) - toupper((unsigned char)s2[0]);
 		if(result == 0){
 			/* Case insensitive part matched, now distinguish between case */
 			result = s1[0] - s2[0];
@@ -79,10 +78,11 @@ static int scmp_p(const void *p1, const void *p2)
 }
 
 #ifdef WIN32
+
+
 int config__get_dir_files(const char *include_dir, char ***files, int *file_count)
 {
 	size_t len;
-	int i;
 	char **l_files = NULL;
 	int l_file_count = 0;
 	char **files_tmp;
@@ -102,23 +102,23 @@ int config__get_dir_files(const char *include_dir, char ***files, int *file_coun
 		len = strlen(include_dir)+1+strlen(find_data.cFileName)+1;
 
 		l_file_count++;
-		files_tmp = mosquitto__realloc(l_files, l_file_count*sizeof(char *));
+		files_tmp = mosquitto_realloc(l_files, l_file_count*sizeof(char *));
 		if(!files_tmp){
-			for(i=0; i<l_file_count-1; i++){
-				mosquitto__free(l_files[i]);
+			for(int i=0; i<l_file_count-1; i++){
+				mosquitto_FREE(l_files[i]);
 			}
-			mosquitto__free(l_files);
+			mosquitto_FREE(l_files);
 			FindClose(fh);
 			return MOSQ_ERR_NOMEM;
 		}
 		l_files = files_tmp;
 
-		l_files[l_file_count-1] = mosquitto__malloc(len+1);
+		l_files[l_file_count-1] = mosquitto_malloc(len+1);
 		if(!l_files[l_file_count-1]){
-			for(i=0; i<l_file_count-1; i++){
-				mosquitto__free(l_files[i]);
+			for(int i=0; i<l_file_count-1; i++){
+				mosquitto_FREE(l_files[i]);
 			}
-			mosquitto__free(l_files);
+			mosquitto_FREE(l_files);
 			FindClose(fh);
 			return MOSQ_ERR_NOMEM;
 		}
@@ -141,13 +141,13 @@ int config__get_dir_files(const char *include_dir, char ***files, int *file_coun
 
 #ifndef WIN32
 
+
 int config__get_dir_files(const char *include_dir, char ***files, int *file_count)
 {
 	char **l_files = NULL;
 	int l_file_count = 0;
 	char **files_tmp;
 	size_t len;
-	int i;
 
 	DIR *dh;
 	struct dirent *de;
@@ -163,25 +163,15 @@ int config__get_dir_files(const char *include_dir, char ***files, int *file_coun
 				len = strlen(include_dir)+1+strlen(de->d_name)+1;
 
 				l_file_count++;
-				files_tmp = mosquitto__realloc(l_files, (size_t)l_file_count*sizeof(char *));
+				files_tmp = mosquitto_realloc(l_files, (size_t)l_file_count*sizeof(char *));
 				if(!files_tmp){
-					for(i=0; i<l_file_count-1; i++){
-						mosquitto__free(l_files[i]);
-					}
-					mosquitto__free(l_files);
-					closedir(dh);
-					return MOSQ_ERR_NOMEM;
+					goto error;
 				}
 				l_files = files_tmp;
 
-				l_files[l_file_count-1] = mosquitto__malloc(len+1);
+				l_files[l_file_count-1] = mosquitto_malloc(len+1);
 				if(!l_files[l_file_count-1]){
-					for(i=0; i<l_file_count-1; i++){
-						mosquitto__free(l_files[i]);
-					}
-					mosquitto__free(l_files);
-					closedir(dh);
-					return MOSQ_ERR_NOMEM;
+					goto error;
 				}
 				snprintf(l_files[l_file_count-1], len, "%s/%s", include_dir, de->d_name);
 				l_files[l_file_count-1][len] = '\0';
@@ -197,6 +187,13 @@ int config__get_dir_files(const char *include_dir, char ***files, int *file_coun
 	*file_count = l_file_count;
 
 	return 0;
+error:
+	for(int i=0; i<l_file_count-1; i++){
+		mosquitto_FREE(l_files[i]);
+	}
+	mosquitto_FREE(l_files);
+	closedir(dh);
+	return MOSQ_ERR_NOMEM;
 }
 #endif
 

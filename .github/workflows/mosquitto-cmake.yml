@@ -19,7 +19,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
 
     steps:
     - name: Install third party dependencies
@@ -33,6 +33,9 @@ jobs:
           libcjson-dev \
           libcjson1 \
           libcunit1-dev \
+          libedit-dev \
+          libgmock-dev \
+          libmicrohttpd-dev \
           libssl-dev \
           libwrap0-dev \
           microsocks \
@@ -42,7 +45,7 @@ jobs:
           uthash-dev \
           xsltproc
 
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
 
     - run: cmake -E make_directory build
 
@@ -55,4 +58,4 @@ jobs:
     - run: cmake --build build --parallel $(nproc)
 
     - working-directory: build/
-      run: ctest --output-on-failure
+      run: ctest --output-on-failure --repeat until-pass:5

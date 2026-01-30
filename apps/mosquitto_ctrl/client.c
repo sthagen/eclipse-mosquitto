@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2020 Roger Light <roger@atchoo.org>
+Copyright (c) 2020-2021 Roger Light <roger@atchoo.org>
 
 All rights reserved. This program and the accompanying materials
 are made available under the terms of the Eclipse Public License 2.0
@@ -27,10 +27,11 @@ Contributors:
 #include <time.h>
 
 #include <mosquitto.h>
-#include <mqtt_protocol.h>
+#include <mosquitto/mqtt_protocol.h>
 #include "mosquitto_ctrl.h"
 
 static int run = 1;
+
 
 static void on_message(struct mosquitto *mosq, void *obj, const struct mosquitto_message *msg, const mosquitto_property *properties)
 {
@@ -129,9 +130,9 @@ int client_request_response(struct mosq_ctrl *ctrl)
 
 	if(ctrl->cfg.cafile == NULL && ctrl->cfg.capath == NULL && !ctrl->cfg.tls_use_os_certs && ctrl->cfg.port != 8883
 #  ifdef FINAL_WITH_TLS_PSK
-		&& !ctrl->cfg.psk
+			&& !ctrl->cfg.psk
 #  endif
-	){
+			){
 		fprintf(stderr, "Warning: You are running mosquitto_ctrl without encryption.\nThis means all of the configuration changes you are making are visible on the network, including passwords.\n\n");
 	}
 
@@ -139,7 +140,9 @@ int client_request_response(struct mosq_ctrl *ctrl)
 
 	mosq = mosquitto_new(ctrl->cfg.id, true, ctrl);
 	rc = client_opts_set(mosq, &ctrl->cfg);
-	if(rc) goto cleanup;
+	if(rc){
+		goto cleanup;
+	}
 
 	mosquitto_connect_v5_callback_set(mosq, on_connect);
 	mosquitto_subscribe_v5_callback_set(mosq, on_subscribe);
@@ -147,7 +150,9 @@ int client_request_response(struct mosq_ctrl *ctrl)
 	mosquitto_message_v5_callback_set(mosq, on_message);
 
 	rc = client_connect(mosq, &ctrl->cfg);
-	if(rc) goto cleanup;
+	if(rc){
+		goto cleanup;
+	}
 
 	start = time(NULL);
 	while(run && start+10 > time(NULL)){

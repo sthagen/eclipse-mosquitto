@@ -6,9 +6,9 @@ from mosq_test_helper import *
 
 def do_test():
     rc = 1
-    props = mqtt5_props.gen_string_pair_prop(mqtt5_props.PROP_USER_PROPERTY, "key", "value")
+    props = mqtt5_props.gen_string_pair_prop(mqtt5_props.USER_PROPERTY, "key", "value")
     for i in range(0, 5000):
-        props += mqtt5_props.gen_string_pair_prop(mqtt5_props.PROP_USER_PROPERTY, "key", "value")
+        props += mqtt5_props.gen_string_pair_prop(mqtt5_props.USER_PROPERTY, "key", "value")
     connect_packet_slow = mosq_test.gen_connect("connect-user-property", proto_ver=5, properties=props)
     connect_packet_fast = mosq_test.gen_connect("a"*65000, proto_ver=5)
     connack_packet = mosq_test.gen_connack(rc=0, proto_ver=5)
@@ -38,7 +38,9 @@ def do_test():
         pass
     finally:
         broker.terminate()
-        broker.wait()
+        if mosq_test.wait_for_subprocess(broker):
+            print("broker not terminated")
+            if rc == 0: rc=1
         (stdo, stde) = broker.communicate()
         if rc:
             print(stde.decode('utf-8'))

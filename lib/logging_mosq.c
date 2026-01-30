@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2009-2020 Roger Light <roger@atchoo.org>
+Copyright (c) 2009-2021 Roger Light <roger@atchoo.org>
 
 All rights reserved. This program and the accompanying materials
 are made available under the terms of the Eclipse Public License 2.0
@@ -26,7 +26,7 @@ Contributors:
 #include "logging_mosq.h"
 #include "mosquitto_internal.h"
 #include "mosquitto.h"
-#include "memory_mosq.h"
+
 
 int log__printf(struct mosquitto *mosq, unsigned int priority, const char *fmt, ...)
 {
@@ -44,7 +44,7 @@ int log__printf(struct mosquitto *mosq, unsigned int priority, const char *fmt, 
 
 	if(on_log){
 		len = strlen(fmt) + 500;
-		s = mosquitto__malloc(len*sizeof(char));
+		s = mosquitto_malloc(len*sizeof(char));
 		if(!s){
 			return MOSQ_ERR_NOMEM;
 		}
@@ -56,9 +56,8 @@ int log__printf(struct mosquitto *mosq, unsigned int priority, const char *fmt, 
 
 		on_log(mosq, mosq->userdata, (int)priority, s);
 
-		mosquitto__free(s);
+		mosquitto_FREE(s);
 	}
 
 	return MOSQ_ERR_SUCCESS;
 }
-

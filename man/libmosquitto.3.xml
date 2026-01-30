@@ -20,6 +20,17 @@
 	</refsect1>
 
 	<refsect1>
+		<title>See Also</title>
+		<simplelist type="inline">
+			<member>
+				<citerefentry>
+					<refentrytitle><link xlink:href="mosquitto-7.html">mosquitto</link></refentrytitle>
+					<manvolnum>7</manvolnum>
+				</citerefentry>
+			</member>
+		</simplelist>
+	</refsect1>
+	<refsect1>
 		<title>Author</title>
 		<para>Roger Light <email>roger@atchoo.org</email></para>
 	</refsect1>

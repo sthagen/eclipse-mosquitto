@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2009-2020 Roger Light <roger@atchoo.org>
+Copyright (c) 2009-2021 Roger Light <roger@atchoo.org>
 
 All rights reserved. This program and the accompanying materials
 are made available under the terms of the Eclipse Public License 2.0
@@ -22,23 +22,91 @@ Contributors:
 #include <string.h>
 
 #include "mosquitto_broker_internal.h"
-#include "memory_mosq.h"
-#include "mqtt_protocol.h"
+#include "mosquitto/mqtt_protocol.h"
 #include "packet_mosq.h"
 #include "send_mosq.h"
 #include "util_mosq.h"
+
+
+static int handle__connack_properties(struct mosquitto *context)
+{
+	int rc;
+	mosquitto_property *properties = NULL;
+	uint16_t inflight_maximum;
+	uint8_t max_qos = 255;
+	uint32_t maximum_packet_size;
+	uint16_t server_keepalive;
+	uint16_t max_topic_alias;
+	uint8_t retain_available;
+
+	rc = property__read_all(CMD_CONNACK, &context->in_packet, &properties);
+	if(rc){
+		return rc;
+	}
+
+	/* maximum-qos */
+	mosquitto_property_read_byte(properties, MQTT_PROP_MAXIMUM_QOS,
+			&max_qos, false);
+	if(max_qos != 255){
+		context->max_qos = max_qos;
+	}
+
+	/* maximum-packet-size */
+	if(mosquitto_property_read_int32(properties, MQTT_PROP_MAXIMUM_PACKET_SIZE,
+			&maximum_packet_size, false)){
+
+		if(context->maximum_packet_size == 0 || context->maximum_packet_size > maximum_packet_size){
+			context->maximum_packet_size = maximum_packet_size;
+		}
+	}
+
+	/* receive-maximum */
+	inflight_maximum = context->msgs_out.inflight_maximum;
+	mosquitto_property_read_int16(properties, MQTT_PROP_RECEIVE_MAXIMUM, &inflight_maximum, false);
+	if(context->msgs_out.inflight_maximum != inflight_maximum){
+		context->msgs_out.inflight_maximum = inflight_maximum;
+		db__message_reconnect_reset(context);
+	}
+
+	/* retain-available */
+	if(mosquitto_property_read_byte(properties, MQTT_PROP_RETAIN_AVAILABLE,
+			&retain_available, false)){
+
+		/* Only use broker provided value if the local config is set to available==true */
+		if(context->retain_available){
+			context->retain_available = retain_available;
+		}
+	}
+
+	/* server-keepalive */
+	if(mosquitto_property_read_int16(properties, MQTT_PROP_SERVER_KEEP_ALIVE,
+			&server_keepalive, false)){
+
+		context->keepalive = server_keepalive;
+	}
+
+	/* topic-alias-maximum */
+	if(mosquitto_property_read_int16(properties, MQTT_PROP_TOPIC_ALIAS_MAXIMUM,
+			&max_topic_alias, false)){
+
+		if(max_topic_alias < context->bridge->max_topic_alias){
+			context->alias_max_l2r = max_topic_alias;
+		}else{
+			context->alias_max_l2r = context->bridge->max_topic_alias;
+		}
+	}
+
+	mosquitto_property_free_all(&properties);
+
+	return MOSQ_ERR_SUCCESS;
+}
+
 
 int handle__connack(struct mosquitto *context)
 {
 	int rc;
 	uint8_t connect_acknowledge;
 	uint8_t reason_code;
-	mosquitto_property *properties = NULL;
-	uint32_t maximum_packet_size;
-	uint8_t retain_available;
-	uint16_t server_keepalive;
-	uint16_t inflight_maximum;
-	uint8_t max_qos = 255;
 
 	if(context == NULL){
 		return MOSQ_ERR_INVAL;
@@ -51,8 +119,12 @@ int handle__connack(struct mosquitto *context)
 		return MOSQ_ERR_MALFORMED_PACKET;
 	}
 	log__printf(NULL, MOSQ_LOG_DEBUG, "Received CONNACK on connection %s.", context->id);
-	if(packet__read_byte(&context->in_packet, &connect_acknowledge)) return MOSQ_ERR_MALFORMED_PACKET;
-	if(packet__read_byte(&context->in_packet, &reason_code)) return MOSQ_ERR_MALFORMED_PACKET;
+	if(packet__read_byte(&context->in_packet, &connect_acknowledge)){
+		return MOSQ_ERR_MALFORMED_PACKET;
+	}
+	if(packet__read_byte(&context->in_packet, &reason_code)){
+		return MOSQ_ERR_MALFORMED_PACKET;
+	}
 
 	if(context->protocol == mosq_p_mqtt5){
 		if(context->in_packet.remaining_length == 2 && reason_code == CONNACK_REFUSED_PROTOCOL_VERSION){
@@ -68,64 +140,26 @@ int handle__connack(struct mosquitto *context)
 			return MOSQ_ERR_PROTOCOL;
 		}
 
-		rc = property__read_all(CMD_CONNACK, &context->in_packet, &properties);
-		if(rc) return rc;
-
-		/* maximum-qos */
-		mosquitto_property_read_byte(properties, MQTT_PROP_MAXIMUM_QOS,
-					&max_qos, false);
-
-		/* maximum-packet-size */
-		if(mosquitto_property_read_int32(properties, MQTT_PROP_MAXIMUM_PACKET_SIZE,
-					&maximum_packet_size, false)){
-
-			if(context->maximum_packet_size == 0 || context->maximum_packet_size > maximum_packet_size){
-				context->maximum_packet_size = maximum_packet_size;
-			}
+		rc = handle__connack_properties(context);
+		if(rc){
+			return rc;
 		}
-
-		/* receive-maximum */
-		inflight_maximum = context->msgs_out.inflight_maximum;
-		mosquitto_property_read_int16(properties, MQTT_PROP_RECEIVE_MAXIMUM, &inflight_maximum, false);
-		if(context->msgs_out.inflight_maximum != inflight_maximum){
-			context->msgs_out.inflight_maximum = inflight_maximum;
-			db__message_reconnect_reset(context);
-		}
-
-		/* retain-available */
-		if(mosquitto_property_read_byte(properties, MQTT_PROP_RETAIN_AVAILABLE,
-					&retain_available, false)){
-
-			/* Only use broker provided value if the local config is set to available==true */
-			if(context->retain_available){
-				context->retain_available = retain_available;
-			}
-		}
-
-		/* server-keepalive */
-		if(mosquitto_property_read_int16(properties, MQTT_PROP_SERVER_KEEP_ALIVE,
-					&server_keepalive, false)){
-
-			context->keepalive = server_keepalive;
-		}
-
-		mosquitto_property_free_all(&properties);
 	}
-	mosquitto_property_free_all(&properties); /* FIXME - TEMPORARY UNTIL PROPERTIES PROCESSED */
 
 	if(reason_code == MQTT_RC_SUCCESS){
 #ifdef WITH_BRIDGE
 		if(context->bridge){
 			rc = bridge__on_connect(context);
-			if(rc) return rc;
+			if(rc){
+				return rc;
+			}
 		}
 #endif
-		if(max_qos != 255){
-			context->max_qos = max_qos;
-		}
 		mosquitto__set_state(context, mosq_cs_active);
 		rc = db__message_write_queued_out(context);
-		if(rc) return rc;
+		if(rc){
+			return rc;
+		}
 		rc = db__message_write_inflight_out_all(context);
 		return rc;
 	}else{
@@ -136,12 +170,8 @@ int handle__connack(struct mosquitto *context)
 					log__printf(NULL, MOSQ_LOG_ERR, "Connection Refused: retain not available (will retry)");
 					return MOSQ_ERR_CONN_LOST;
 				case MQTT_RC_QOS_NOT_SUPPORTED:
-					if(max_qos == 255){
-						if(context->max_qos != 0){
-							context->max_qos--;
-						}
-					}else{
-						context->max_qos = max_qos;
+					if(context->max_qos != 0){
+						context->max_qos--;
 					}
 					log__printf(NULL, MOSQ_LOG_ERR, "Connection Refused: QoS not supported (will retry)");
 					return MOSQ_ERR_CONN_LOST;

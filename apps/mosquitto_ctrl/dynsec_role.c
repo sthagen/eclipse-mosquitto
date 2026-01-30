@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2020 Roger Light <roger@atchoo.org>
+Copyright (c) 2020-2021 Roger Light <roger@atchoo.org>
 
 All rights reserved. This program and the accompanying materials
 are made available under the terms of the Eclipse Public License 2.0
@@ -28,7 +28,8 @@ Contributors:
 
 #include "mosquitto.h"
 #include "mosquitto_ctrl.h"
-#include "password_mosq.h"
+#include "json_help.h"
+
 
 int dynsec_role__create(int argc, char *argv[], cJSON *j_command)
 {
@@ -50,6 +51,7 @@ int dynsec_role__create(int argc, char *argv[], cJSON *j_command)
 	}
 }
 
+
 int dynsec_role__delete(int argc, char *argv[], cJSON *j_command)
 {
 	char *rolename = NULL;
@@ -70,6 +72,7 @@ int dynsec_role__delete(int argc, char *argv[], cJSON *j_command)
 	}
 }
 
+
 int dynsec_role__get(int argc, char *argv[], cJSON *j_command)
 {
 	char *rolename = NULL;
@@ -89,6 +92,7 @@ int dynsec_role__get(int argc, char *argv[], cJSON *j_command)
 		return MOSQ_ERR_SUCCESS;
 	}
 }
+
 
 int dynsec_role__list_all(int argc, char *argv[], cJSON *j_command)
 {
@@ -115,6 +119,7 @@ int dynsec_role__list_all(int argc, char *argv[], cJSON *j_command)
 		return MOSQ_ERR_SUCCESS;
 	}
 }
+
 
 int dynsec_role__add_acl(int argc, char *argv[], cJSON *j_command)
 {
@@ -167,6 +172,7 @@ int dynsec_role__add_acl(int argc, char *argv[], cJSON *j_command)
 		return MOSQ_ERR_SUCCESS;
 	}
 }
+
 
 int dynsec_role__remove_acl(int argc, char *argv[], cJSON *j_command)
 {

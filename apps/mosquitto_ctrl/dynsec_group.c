@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2020 Roger Light <roger@atchoo.org>
+Copyright (c) 2020-2021 Roger Light <roger@atchoo.org>
 
 All rights reserved. This program and the accompanying materials
 are made available under the terms of the Eclipse Public License 2.0
@@ -24,7 +24,8 @@ Contributors:
 
 #include "mosquitto.h"
 #include "mosquitto_ctrl.h"
-#include "password_mosq.h"
+#include "json_help.h"
+
 
 int dynsec_group__create(int argc, char *argv[], cJSON *j_command)
 {
@@ -46,6 +47,7 @@ int dynsec_group__create(int argc, char *argv[], cJSON *j_command)
 	}
 }
 
+
 int dynsec_group__delete(int argc, char *argv[], cJSON *j_command)
 {
 	char *groupname = NULL;
@@ -66,6 +68,7 @@ int dynsec_group__delete(int argc, char *argv[], cJSON *j_command)
 	}
 }
 
+
 int dynsec_group__get_anonymous(int argc, char *argv[], cJSON *j_command)
 {
 	UNUSED(argc);
@@ -79,6 +82,7 @@ int dynsec_group__get_anonymous(int argc, char *argv[], cJSON *j_command)
 		return MOSQ_ERR_SUCCESS;
 	}
 }
+
 
 int dynsec_group__set_anonymous(int argc, char *argv[], cJSON *j_command)
 {
@@ -100,6 +104,7 @@ int dynsec_group__set_anonymous(int argc, char *argv[], cJSON *j_command)
 	}
 }
 
+
 int dynsec_group__get(int argc, char *argv[], cJSON *j_command)
 {
 	char *groupname = NULL;
@@ -119,6 +124,7 @@ int dynsec_group__get(int argc, char *argv[], cJSON *j_command)
 		return MOSQ_ERR_SUCCESS;
 	}
 }
+
 
 int dynsec_group__add_remove_role(int argc, char *argv[], cJSON *j_command, const char *command)
 {
@@ -148,6 +154,7 @@ int dynsec_group__add_remove_role(int argc, char *argv[], cJSON *j_command, cons
 	}
 }
 
+
 int dynsec_group__list_all(int argc, char *argv[], cJSON *j_command)
 {
 	int count = -1, offset = -1;
@@ -173,6 +180,7 @@ int dynsec_group__list_all(int argc, char *argv[], cJSON *j_command)
 		return MOSQ_ERR_SUCCESS;
 	}
 }
+
 
 int dynsec_group__add_remove_client(int argc, char *argv[], cJSON *j_command, const char *command)
 {

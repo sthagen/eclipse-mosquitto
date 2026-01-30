@@ -6,9 +6,14 @@
 
 static int run = -1;
 
-void on_connect(struct mosquitto *mosq, void *obj, int rc, int flags, const mosquitto_property *properties)
+
+static void on_connect(struct mosquitto *mosq, void *obj, int rc, int flags, const mosquitto_property *properties)
 {
 	int i;
+
+	(void)obj;
+	(void)flags;
+	(void)properties;
 
 	if(rc){
 		exit(1);
@@ -19,21 +24,30 @@ void on_connect(struct mosquitto *mosq, void *obj, int rc, int flags, const mosq
 	}
 }
 
-void on_publish(struct mosquitto *mosq, void *obj, int mid, int reason_code, const mosquitto_property *properties)
+
+static void on_publish(struct mosquitto *mosq, void *obj, int mid, int reason_code, const mosquitto_property *properties)
 {
+	(void)obj;
+	(void)reason_code;
+	(void)properties;
+
 	if(mid == 6){
 		mosquitto_disconnect(mosq);
 		run = 0;
 	}
 }
 
+
 int main(int argc, char *argv[])
 {
 	int rc;
 	struct mosquitto *mosq;
-	mosquitto_property *props = NULL;
+	int port;
 
-	int port = atoi(argv[1]);
+	if(argc < 2){
+		return 1;
+	}
+	port = atoi(argv[1]);
 
 	mosquitto_lib_init();
 
@@ -47,6 +61,9 @@ int main(int argc, char *argv[])
 	mosquitto_publish_v5_callback_set(mosq, on_publish);
 
 	rc = mosquitto_connect_bind_v5(mosq, "localhost", port, 60, NULL, NULL);
+	if(rc != MOSQ_ERR_SUCCESS){
+		return rc;
+	}
 
 	while(run == -1){
 		mosquitto_loop(mosq, 300, 1);

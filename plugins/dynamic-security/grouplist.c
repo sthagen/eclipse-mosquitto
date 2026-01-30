@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2020 Roger Light <roger@atchoo.org>
+Copyright (c) 2020-2021 Roger Light <roger@atchoo.org>
 
 All rights reserved. This program and the accompanying materials
 are made available under the terms of the Eclipse Public License 2.0
@@ -22,11 +22,9 @@ Contributors:
 #include <stdio.h>
 #include <uthash.h>
 
-#include "mosquitto.h"
-#include "mosquitto_broker.h"
+#include "dynamic_security.h"
 #include "json_help.h"
 
-#include "dynamic_security.h"
 
 /* ################################################################
  * #
@@ -34,11 +32,13 @@ Contributors:
  * #
  * ################################################################ */
 
+
 /* ################################################################
  * #
  * # Function declarations
  * #
  * ################################################################ */
+
 
 /* ################################################################
  * #
@@ -46,11 +46,13 @@ Contributors:
  * #
  * ################################################################ */
 
+
 /* ################################################################
  * #
  * # Utility functions
  * #
  * ################################################################ */
+
 
 static int dynsec_grouplist__cmp(void *a, void *b)
 {
@@ -66,13 +68,16 @@ static int dynsec_grouplist__cmp(void *a, void *b)
 	}
 }
 
+
 cJSON *dynsec_grouplist__all_to_json(struct dynsec__grouplist *base_grouplist)
 {
 	struct dynsec__grouplist *grouplist, *grouplist_tmp;
 	cJSON *j_groups, *j_group;
 
 	j_groups = cJSON_CreateArray();
-	if(j_groups == NULL) return NULL;
+	if(j_groups == NULL){
+		return NULL;
+	}
 
 	HASH_ITER(hh, base_grouplist, grouplist, grouplist_tmp){
 		j_group = cJSON_CreateObject();
@@ -92,7 +97,6 @@ cJSON *dynsec_grouplist__all_to_json(struct dynsec__grouplist *base_grouplist)
 	}
 	return j_groups;
 }
-
 
 
 int dynsec_grouplist__add(struct dynsec__grouplist **base_grouplist, struct dynsec__group *group, int priority)

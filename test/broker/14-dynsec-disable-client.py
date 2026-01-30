@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 from mosq_test_helper import *
+from dynsec_helper import *
 import json
 import shutil
 
@@ -8,18 +9,8 @@ def write_config(filename, port):
     with open(filename, 'w') as f:
         f.write("listener %d\n" % (port))
         f.write("allow_anonymous true\n")
-        f.write("plugin ../../plugins/dynamic-security/mosquitto_dynamic_security.so\n")
+        f.write(f"plugin {mosq_test.get_build_root()}/plugins/dynamic-security/mosquitto_dynamic_security.so\n")
         f.write("plugin_opt_config_file %d/dynamic-security.json\n" % (port))
-
-def command_check(sock, command_payload, expected_response):
-    command_packet = mosq_test.gen_publish(topic="$CONTROL/dynamic-security/v1", qos=0, payload=json.dumps(command_payload))
-    sock.send(command_packet)
-    response = json.loads(mosq_test.read_publish(sock))
-    if response != expected_response:
-        print(expected_response)
-        print(response)
-        raise ValueError(response)
-
 
 
 port = mosq_test.get_port()
@@ -38,9 +29,9 @@ add_client_repeat_response = {'responses':[{"command":"createClient","error":"Cl
 get_client_command = { "commands": [{
             "command": "getClient", "username": "user_one"}]}
 get_client_response1 = {'responses':[{'command': 'getClient', 'data': {'client': {'username': 'user_one', 'clientid': 'cid',
-    'textname': 'Name', 'textdescription': 'Description', 'groups': [], 'roles': []}}}]}
+            'textname': 'Name', 'textdescription': 'Description', 'groups': [], 'roles': [], 'connections': []}}}]}
 get_client_response2 = {'responses':[{'command': 'getClient', 'data': {'client': {'username': 'user_one', 'clientid': 'cid',
-    'textname': 'Name', 'textdescription': 'Description', 'disabled':True, 'groups': [], 'roles': []}}}]}
+            'textname': 'Name', 'textdescription': 'Description', 'disabled':True, 'groups': [], 'roles': [], 'connections': []}}}]}
 
 disable_client_command = { "commands": [{
             "command": "disableClient", "username": "user_one"}]}
@@ -51,11 +42,10 @@ enable_client_command = { "commands": [{
 enable_client_response = {'responses':[{'command': 'enableClient'}]}
 
 rc = 1
-keepalive = 10
-connect_packet = mosq_test.gen_connect("ctrl-test", keepalive=keepalive, username="admin", password="admin")
+connect_packet = mosq_test.gen_connect("ctrl-test", username="admin", password="admin")
 connack_packet = mosq_test.gen_connack(rc=0)
 
-client_connect_packet = mosq_test.gen_connect("cid", keepalive=keepalive, username="user_one", password="password")
+client_connect_packet = mosq_test.gen_connect("cid", username="user_one", password="password")
 client_connack_packet1 = mosq_test.gen_connack(rc=5)
 client_connack_packet2 = mosq_test.gen_connack(rc=0)
 
@@ -65,7 +55,7 @@ suback_packet = mosq_test.gen_suback(mid, 1)
 
 try:
     os.mkdir(str(port))
-    shutil.copyfile("dynamic-security-init.json", "%d/dynamic-security.json" % (port))
+    shutil.copyfile(str(Path(__file__).resolve().parent / "dynamic-security-init.json"), "%d/dynamic-security.json" % (port))
 except FileExistsError:
     pass
 
@@ -100,6 +90,8 @@ try:
     client_sock = mosq_test.do_client_connect(client_connect_packet, client_connack_packet2, timeout=5, port=port)
     client_sock.close()
 
+    check_details(sock, 2, 0, 1, 3)
+
     rc = 0
 
     sock.close()
@@ -113,7 +105,9 @@ finally:
         pass
     os.rmdir(f"{port}")
     broker.terminate()
-    broker.wait()
+    if mosq_test.wait_for_subprocess(broker):
+        print("broker not terminated")
+        if rc == 0: rc=1
     (stdo, stde) = broker.communicate()
     if rc:
         print(stde.decode('utf-8'))

@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2020 Roger Light <roger@atchoo.org>
+Copyright (c) 2020-2021 Roger Light <roger@atchoo.org>
 
 All rights reserved. This program and the accompanying materials
 are made available under the terms of the Eclipse Public License 2.0
@@ -23,7 +23,9 @@ Contributors:
 #include "mosquitto.h"
 #include "mosquitto_ctrl.h"
 #include "get_password.h"
-#include "password_mosq.h"
+#include "json_help.h"
+#include "dynamic_security.h"
+
 
 int dynsec_client__create(int argc, char *argv[], cJSON *j_command)
 {
@@ -85,6 +87,7 @@ int dynsec_client__create(int argc, char *argv[], cJSON *j_command)
 	}
 }
 
+
 int dynsec_client__delete(int argc, char *argv[], cJSON *j_command)
 {
 	char *username = NULL;
@@ -105,6 +108,7 @@ int dynsec_client__delete(int argc, char *argv[], cJSON *j_command)
 	}
 }
 
+
 int dynsec_client__enable_disable(int argc, char *argv[], cJSON *j_command, const char *command)
 {
 	char *username = NULL;
@@ -124,6 +128,7 @@ int dynsec_client__enable_disable(int argc, char *argv[], cJSON *j_command, cons
 		return MOSQ_ERR_SUCCESS;
 	}
 }
+
 
 int dynsec_client__set_id(int argc, char *argv[], cJSON *j_command)
 {
@@ -148,6 +153,151 @@ int dynsec_client__set_id(int argc, char *argv[], cJSON *j_command)
 		return MOSQ_ERR_SUCCESS;
 	}
 }
+
+
+int dynsec_client__file_set_password(int argc, char *argv[], const char *file)
+{
+	char *username = NULL, *password = NULL;
+	long len;
+	FILE *fptr;
+	char *fstr;
+	cJSON *j_tree, *j_clients, *j_client;
+	struct dynsec__client client;
+	char *json_str;
+	int i;
+	int iterations = -1;
+
+	memset(&client, 0, sizeof(client));
+
+	if(argc >= 2){
+		username = argv[0];
+		password = argv[1];
+	}else{
+		return MOSQ_ERR_INVAL;
+	}
+	for(i=2; i<argc; i++){
+		if(!strcmp(argv[i], "-i")){
+			if(i+1 == argc){
+				fprintf(stderr, "Error: -i argument given, but no iterations provided.\n");
+				return MOSQ_ERR_INVAL;
+			}
+			iterations = atoi(argv[i+1]);
+			i++;
+		}else{
+			fprintf(stderr, "Error: Unknown argument: %s\n", argv[i]);
+			return MOSQ_ERR_INVAL;
+		}
+	}
+
+	fptr = fopen(file, "rb");
+	if(fptr == NULL){
+		fprintf(stderr, "Error: Unable to open %s.\n", file);
+		return MOSQ_ERR_INVAL;
+	}
+	fseek(fptr, 0, SEEK_END);
+	len = ftell(fptr);
+	fseek(fptr, 0, SEEK_SET);
+	if(len <= 0){
+		fprintf(stderr, "Error: %s is empty.\n", file);
+		fclose(fptr);
+		return MOSQ_ERR_INVAL;
+	}
+
+	fstr = calloc(1, (size_t)len+1);
+	if(fstr == NULL){
+		fclose(fptr);
+		return MOSQ_ERR_NOMEM;
+	}
+	if(fread(fstr, 1, (size_t)len, fptr) != (size_t)len){
+		fprintf(stderr, "Error: Incomplete read of %s.\n", file);
+		fclose(fptr);
+		free(fstr);
+		return MOSQ_ERR_NOMEM;
+	}
+	fclose(fptr);
+
+	j_tree = cJSON_Parse(fstr);
+	free(fstr);
+
+	if(j_tree == NULL){
+		fprintf(stderr, "Error: %s is not valid JSON.\n", file);
+		return MOSQ_ERR_INVAL;
+	}
+
+	j_clients = cJSON_GetObjectItem(j_tree, "clients");
+	if(j_clients == NULL || !cJSON_IsArray(j_clients)){
+		fprintf(stderr, "Error: %s is not a valid dynamic-security config file.\n", file);
+		cJSON_Delete(j_tree);
+		return MOSQ_ERR_INVAL;
+	}
+
+	cJSON_ArrayForEach(j_client, j_clients){
+		if(cJSON_IsObject(j_client) == true){
+			const char *username_json;
+			if(json_get_string(j_client, "username", &username_json, false) == MOSQ_ERR_SUCCESS){
+				if(!strcmp(username_json, username)){
+					if(iterations == -1){
+						if(mosquitto_pw_new(&client.pw, MOSQ_PW_DEFAULT)){
+							cJSON_Delete(j_tree);
+							fprintf(stderr, "Error: Problem generating password hash.\n");
+							return MOSQ_ERR_NOMEM;
+						}
+					}else{
+						if(mosquitto_pw_new(&client.pw, MOSQ_PW_SHA512_PBKDF2)){
+							cJSON_Delete(j_tree);
+							fprintf(stderr, "Error: Problem generating password hash.\n");
+							return MOSQ_ERR_NOMEM;
+						}
+						mosquitto_pw_set_param(client.pw, MOSQ_PW_PARAM_ITERATIONS, iterations);
+					}
+					if(!client.pw || mosquitto_pw_hash_encoded(client.pw, password)){
+						cJSON_Delete(j_tree);
+						mosquitto_pw_cleanup(client.pw);
+						client.pw = NULL;
+						fprintf(stderr, "Error: Problem generating password hash.\n");
+						return MOSQ_ERR_NOMEM;
+					}
+
+					cJSON *j_encoded_password = cJSON_CreateString(mosquitto_pw_get_encoded(client.pw));
+					if(!j_encoded_password){
+						fprintf(stderr, "Error: Out of memory.\n");
+						cJSON_Delete(j_tree);
+						mosquitto_pw_cleanup(client.pw);
+						return MOSQ_ERR_NOMEM;
+					}
+					mosquitto_pw_cleanup(client.pw);
+
+					cJSON_DeleteItemFromObject(j_client, "password");
+					cJSON_DeleteItemFromObject(j_client, "salt");
+					cJSON_DeleteItemFromObject(j_client, "iterations");
+					cJSON_DeleteItemFromObject(j_client, "encoded_password");
+					cJSON_AddItemToObject(j_client, "encoded_password", j_encoded_password);
+
+					json_str = cJSON_PrintUnformatted(j_tree);
+					cJSON_Delete(j_tree);
+					if(json_str == NULL){
+						fprintf(stderr, "Error: Out of memory.\n");
+						return MOSQ_ERR_NOMEM;
+					}
+					fptr = fopen(file, "wb");
+					if(fptr == NULL){
+						fprintf(stderr, "Error: Unable to write to %s.\n", file);
+						free(json_str);
+						return MOSQ_ERR_UNKNOWN;
+					}
+					fprintf(fptr, "%s", json_str);
+					free(json_str);
+					fclose(fptr);
+					return MOSQ_ERR_SUCCESS;
+				}
+			}
+		}
+	}
+
+	fprintf(stderr, "Error: Client %s not found.\n", username);
+	return MOSQ_ERR_SUCCESS;
+}
+
 
 int dynsec_client__set_password(int argc, char *argv[], cJSON *j_command)
 {
@@ -184,6 +334,7 @@ int dynsec_client__set_password(int argc, char *argv[], cJSON *j_command)
 	}
 }
 
+
 int dynsec_client__get(int argc, char *argv[], cJSON *j_command)
 {
 	char *username = NULL;
@@ -203,6 +354,7 @@ int dynsec_client__get(int argc, char *argv[], cJSON *j_command)
 		return MOSQ_ERR_SUCCESS;
 	}
 }
+
 
 int dynsec_client__add_remove_role(int argc, char *argv[], cJSON *j_command, const char *command)
 {
@@ -231,6 +383,7 @@ int dynsec_client__add_remove_role(int argc, char *argv[], cJSON *j_command, con
 		return MOSQ_ERR_SUCCESS;
 	}
 }
+
 
 int dynsec_client__list_all(int argc, char *argv[], cJSON *j_command)
 {

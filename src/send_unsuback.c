@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2009-2020 Roger Light <roger@atchoo.org>
+Copyright (c) 2009-2021 Roger Light <roger@atchoo.org>
 
 All rights reserved. This program and the accompanying materials
 are made available under the terms of the Eclipse Public License 2.0
@@ -21,32 +21,28 @@ Contributors:
 #include <assert.h>
 
 #include "mosquitto_broker_internal.h"
-#include "mqtt_protocol.h"
-#include "memory_mosq.h"
+#include "mosquitto/mqtt_protocol.h"
 #include "packet_mosq.h"
 #include "property_mosq.h"
+#include "sys_tree.h"
 
 
 int send__unsuback(struct mosquitto *mosq, uint16_t mid, int reason_code_count, uint8_t *reason_codes, const mosquitto_property *properties)
 {
 	struct mosquitto__packet *packet = NULL;
 	int rc;
+	uint32_t remaining_length;
 
 	assert(mosq);
-	packet = mosquitto__calloc(1, sizeof(struct mosquitto__packet));
-	if(!packet) return MOSQ_ERR_NOMEM;
 
-	packet->command = CMD_UNSUBACK;
-	packet->remaining_length = 2;
-
+	remaining_length = 2;
 	if(mosq->protocol == mosq_p_mqtt5){
-		packet->remaining_length += property__get_remaining_length(properties);
-		packet->remaining_length += (uint32_t)reason_code_count;
+		remaining_length += mosquitto_property_get_remaining_length(properties);
+		remaining_length += (uint32_t)reason_code_count;
 	}
 
-	rc = packet__alloc(packet);
+	rc = packet__alloc(&packet, CMD_UNSUBACK, remaining_length);
 	if(rc){
-		mosquitto__free(packet);
 		return rc;
 	}
 
@@ -57,5 +53,6 @@ int send__unsuback(struct mosquitto *mosq, uint16_t mid, int reason_code_count, 
 		packet__write_bytes(packet, reason_codes, (uint32_t)reason_code_count);
 	}
 
+	metrics__int_inc(mosq_counter_mqtt_unsuback_sent, 1);
 	return packet__queue(mosq, packet);
 }

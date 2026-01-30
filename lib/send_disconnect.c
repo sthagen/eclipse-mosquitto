@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2009-2020 Roger Light <roger@atchoo.org>
+Copyright (c) 2009-2021 Roger Light <roger@atchoo.org>
 
 All rights reserved. This program and the accompanying materials
 are made available under the terms of the Eclipse Public License 2.0
@@ -22,13 +22,13 @@ Contributors:
 
 #ifdef WITH_BROKER
 #  include "mosquitto_broker_internal.h"
+#  include "sys_tree.h"
 #endif
 
 #include "mosquitto.h"
 #include "mosquitto_internal.h"
 #include "logging_mosq.h"
-#include "memory_mosq.h"
-#include "mqtt_protocol.h"
+#include "mosquitto/mqtt_protocol.h"
 #include "packet_mosq.h"
 #include "property_mosq.h"
 #include "send_mosq.h"
@@ -38,6 +38,7 @@ int send__disconnect(struct mosquitto *mosq, uint8_t reason_code, const mosquitt
 {
 	struct mosquitto__packet *packet = NULL;
 	int rc;
+	uint32_t remaining_length = 0;
 
 	assert(mosq);
 #ifdef WITH_BROKER
@@ -53,32 +54,31 @@ int send__disconnect(struct mosquitto *mosq, uint8_t reason_code, const mosquitt
 #else
 	log__printf(mosq, MOSQ_LOG_DEBUG, "Client %s sending DISCONNECT", SAFE_PRINT(mosq->id));
 #endif
-	assert(mosq);
-	packet = mosquitto__calloc(1, sizeof(struct mosquitto__packet));
-	if(!packet) return MOSQ_ERR_NOMEM;
 
-	packet->command = CMD_DISCONNECT;
 	if(mosq->protocol == mosq_p_mqtt5 && (reason_code != 0 || properties)){
-		packet->remaining_length = 1;
+		remaining_length = 1;
 		if(properties){
-			packet->remaining_length += property__get_remaining_length(properties);
+			remaining_length += mosquitto_property_get_remaining_length(properties);
 		}
 	}else{
-		packet->remaining_length = 0;
+		remaining_length = 0;
 	}
 
-	rc = packet__alloc(packet);
+	rc = packet__alloc(&packet, CMD_DISCONNECT, remaining_length);
 	if(rc){
-		mosquitto__free(packet);
+		mosquitto_FREE(packet);
 		return rc;
 	}
-	if(mosq->protocol == mosq_p_mqtt5 && (reason_code != 0 || properties)){
+	if(remaining_length > 0){
 		packet__write_byte(packet, reason_code);
 		if(properties){
 			property__write_all(packet, properties, true);
 		}
 	}
 
+#ifdef WITH_BROKER
+	metrics__int_inc(mosq_counter_mqtt_disconnect_sent, 1);
+#endif
 	return packet__queue(mosq, packet);
 }
 

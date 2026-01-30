@@ -1,4 +1,5 @@
 # .gitignore
+*.a
 *.db
 *.gcda
 *.gcno
@@ -9,6 +10,7 @@
 *.so
 *.vglog
 callgrind.out.*
+coverage.info
 dhat.out.*
 massif.out.*
 vglog*
@@ -17,15 +19,21 @@ c/*.test
 cpp/*.test
 
 apps/db_dump/mosquitto_db_dump
+apps/db_dump/mosquitto_db_dump.a
 apps/mosquitto_ctrl/mosquitto_ctrl
 apps/mosquitto_passwd/mosquitto_passwd
+apps/mosquitto_passwd/mosquitto_passwd.a
+apps/mosquitto_signal/mosquitto_signal
 
 build/
 build64/
 
 client/mosquitto_pub
+client/mosquitto_pub.a
 client/mosquitto_rr
+client/mosquitto_rr.a
 client/mosquitto_sub
+client/mosquitto_sub.a
 client/testing
 client/testing.c
 
@@ -37,28 +45,82 @@ docker/local/mosq.tar.gz
 
 examples/mysql_log/mosquitto_mysql_log
 examples/temperature_conversion/mqtt_temperature_conversion
+examples/publish/basic-1
+examples/publish/basic-websockets-1
+
+fuzzing/apps/db_dump/db_dump_fuzz_load
+fuzzing/apps/db_dump/db_dump_fuzz_load_client_stats
+fuzzing/apps/db_dump/db_dump_fuzz_load_stats
+fuzzing/apps/mosquitto_passwd/mosquitto_passwd_fuzz_load
+fuzzing/broker/broker_fuzz_acl_file
+fuzzing/broker/broker_fuzz_handle_auth
+fuzzing/broker/broker_fuzz_handle_connect
+fuzzing/broker/broker_fuzz_handle_publish
+fuzzing/broker/broker_fuzz_handle_subscribe
+fuzzing/broker/broker_fuzz_handle_unsubscribe
+fuzzing/broker/broker_fuzz_initial_packet
+fuzzing/broker/broker_fuzz_initial_packet_with_init
+fuzzing/broker/broker_fuzz_password_file
+fuzzing/broker/broker_fuzz_proxy_v1
+fuzzing/broker/broker_fuzz_proxy_v2
+fuzzing/broker/broker_fuzz_psk_file
+fuzzing/broker/broker_fuzz_queue_msg
+fuzzing/broker/broker_fuzz_read_handle
+fuzzing/broker/broker_fuzz_second_packet
+fuzzing/broker/broker_fuzz_second_packet_with_init
+fuzzing/broker/broker_fuzz_test_config
+fuzzing/corpora/broker/*
+fuzzing/corpora/broker_packet_seed_corpus.zip
+fuzzing/corpora/client/*
+fuzzing/corpora/client_packet_seed_corpus.zip
+fuzzing/corpora/db_dump_seed_corpus.zip
+fuzzing/lib/lib_fuzz_pub_topic_check2
+fuzzing/lib/lib_fuzz_sub_topic_check2
+fuzzing/lib/lib_fuzz_utf8
+fuzzing/libcommon/libcommon_fuzz_property
+fuzzing/libcommon/libcommon_fuzz_property.pb.cc
+fuzzing/libcommon/libcommon_fuzz_property.pb.h
+fuzzing/libcommon/libcommon_fuzz_pub_topic_check2
+fuzzing/libcommon/libcommon_fuzz_sub_topic_check2
+fuzzing/libcommon/libcommon_fuzz_topic_matching
+fuzzing/libcommon/libcommon_fuzz_topic_matching.pb.cc
+fuzzing/libcommon/libcommon_fuzz_topic_matching.pb.h
+fuzzing/libcommon/libcommon_fuzz_topic_tokenise
+fuzzing/libcommon/libcommon_fuzz_utf8
+fuzzing/plugins/dynamic-security/dynsec_fuzz_load
 
 lib/cpp/libmosquittopp.so*
 lib/cpp/libmosquittopp.a
 lib/libmosquitto.so*
 lib/libmosquitto.a
 
-man/mosquitto.8
-man/mosquitto-tls.7
-man/mosquitto.conf.5
 man/libmosquitto.3
+man/mosquitto-tls.7
+man/mosquitto.7
+man/mosquitto.8
+man/mosquitto.conf.5
 man/mosquitto_ctrl.1
 man/mosquitto_ctrl_dynsec.1
+man/mosquitto_ctrl_shell.1
 man/mosquitto_passwd.1
 man/mosquitto_pub.1
 man/mosquitto_rr.1
+man/mosquitto_signal.1
 man/mosquitto_sub.1
 man/mqtt.7
 
 out/
 
 src/mosquitto
+src/mosquitto_broker.a
 
+test/apps/ctrl/ctrl_shell_broker_test
+test/apps/ctrl/ctrl_shell_completion_test
+test/apps/ctrl/ctrl_shell_dynsec_test
+test/apps/ctrl/ctrl_shell_help_test
+test/apps/ctrl/ctrl_shell_options_test
+test/apps/ctrl/ctrl_shell_pre_connect_test
+test/apps/ctrl/ctrl_shell_test
 test/broker/broker.pid
 test/test_client
 test/fake_user
@@ -76,18 +138,19 @@ test/ssl/signingCA/
 test/lib/c/*.test
 test/lib/cpp/*.test
 
-test/unit/bridge_topic_test
+test/unit/broker/bridge_topic_test
+test/unit/broker/keepalive_test
+test/unit/broker/persist_read_test
+test/unit/broker/persist_write_test
+test/unit/broker/subs_test
 test/unit/coverage.info
-test/unit/mosq_test
-test/unit/persist_read_test
-test/unit/persist_write_test
-test/unit/subs_test
+test/unit/lib/lib_test
+test/unit/libcommon/libcommon_test
 test/unit/tls_test
-test/unit/out/
 
 www/cache/
 __pycache__
-
+*.sync-conflict-*
 # Debian generated files
 debian/.debhelper/
 debian/debhelper-build-stamp
@@ -102,5 +165,12 @@ obj-*/
 # Emacs generated files
 *~
 
+# clangd
+.cache/
+
+# VSCode generated files
+.vscode/
+
 # Others
 tmp/
+failed-tests.json

@@ -10,16 +10,16 @@ def write_config1(filename, port1, port2):
     with open(filename, 'w') as f:
         f.write("allow_anonymous true\n")
         f.write("\n")
-        f.write("psk_file 08-tls-psk-bridge.psk\n")
+        f.write(f"psk_file {str(source_dir/'08-tls-psk-bridge.psk')}\n")
         f.write("\n")
-        f.write("port %d\n" % (port1))
+        f.write("listener %d\n" % (port1))
         f.write("\n")
         f.write("listener %d\n" % (port2))
         f.write("psk_hint hint\n")
 
 def write_config2(filename, port2, port3):
     with open(filename, 'w') as f:
-        f.write("port %d\n" % (port3))
+        f.write("listener %d\n" % (port3))
         f.write("allow_anonymous true\n")
         f.write("\n")
         f.write("connection bridge-psk\n")
@@ -34,18 +34,10 @@ conf_file2 = "08-tls-psk-bridge.conf2"
 write_config1(conf_file1, port1, port2)
 write_config2(conf_file2, port2, port3)
 
-env = dict(os.environ)
-env['LD_LIBRARY_PATH'] = '../../lib:../../lib/cpp'
-try:
-    pp = env['PYTHONPATH']
-except KeyError:
-    pp = ''
-env['PYTHONPATH'] = '../../lib/python:'+pp
-
+env = mosq_test.env_add_ld_library_path()
 
 rc = 1
-keepalive = 60
-connect_packet = mosq_test.gen_connect("no-psk-test-client", keepalive=keepalive)
+connect_packet = mosq_test.gen_connect("no-psk-test-client")
 connack_packet = mosq_test.gen_connack(rc=0)
 
 mid = 1
@@ -54,7 +46,7 @@ suback_packet = mosq_test.gen_suback(mid, 0)
 
 publish_packet = mosq_test.gen_publish(topic="psk/test", payload="message", qos=0)
 
-bridge_cmd = ['../../src/mosquitto', '-c', '08-tls-psk-bridge.conf2']
+bridge_cmd = [mosq_test.get_build_root() + '/src/mosquitto', '-c', '08-tls-psk-bridge.conf2']
 broker = mosq_test.start_broker(filename=os.path.basename(__file__), use_conf=True, port=port1)
 bridge = mosq_test.start_broker(filename=os.path.basename(__file__)+'_bridge', cmd=bridge_cmd, port=port3)
 
@@ -64,13 +56,14 @@ try:
 
     mosq_test.do_send_receive(sock, subscribe_packet, suback_packet, "suback")
 
-    pub = subprocess.Popen(['./c/08-tls-psk-bridge.test', str(port3)], env=env, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    if pub.wait():
+    pub = subprocess.run(['./c/08-tls-psk-bridge.test', str(port3)], env=env, capture_output=True, encoding='utf-8')
+    if pub.returncode != 0:
+        print("d")
+        print(pub.returncode)
         raise ValueError
-    (stdo, stde) = pub.communicate()
 
     mosq_test.expect_packet(sock, "publish", publish_packet)
-    rc = 0
+    rc = pub.returncode
 
     sock.close()
 except mosq_test.TestError:
@@ -78,20 +71,22 @@ except mosq_test.TestError:
 finally:
     os.remove(conf_file1)
     os.remove(conf_file2)
-    time.sleep(1)
     broker.terminate()
-    broker.wait()
-    time.sleep(1)
+    if mosq_test.wait_for_subprocess(broker):
+        print("broker not terminated")
+        if rc == 0: rc=1
     bridge.terminate()
-    bridge.wait()
+    if mosq_test.wait_for_subprocess(bridge):
+        print("bridge not terminated")
+        if rc == 0: rc=1
     (stdo, stde) = broker.communicate()
     if rc:
         print(stde.decode('utf-8'))
         (stdo, stde) = bridge.communicate()
         print(stde.decode('utf-8'))
         if pub:
-            (stdo, stde) = pub.communicate()
-            print(stdo.decode('utf-8'))
+            print(pub.stdout)
+            print(pub.stderr)
 
 exit(rc)
 

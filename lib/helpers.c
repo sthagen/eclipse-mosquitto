@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2016-2020 Roger Light <roger@atchoo.org>
+Copyright (c) 2016-2021 Roger Light <roger@atchoo.org>
 
 All rights reserved. This program and the accompanying materials
 are made available under the terms of the Eclipse Public License 2.0
@@ -60,6 +60,7 @@ static void on_message_callback(struct mosquitto *mosq, void *obj, const struct 
 	}
 }
 
+
 static int on_message_simple(struct mosquitto *mosq, void *obj, const struct mosquitto_message *message)
 {
 	struct userdata__simple *userdata = obj;
@@ -96,7 +97,7 @@ libmosq_EXPORT int mosquitto_subscribe_simple(
 		int qos,
 		const char *host,
 		int port,
-		const char *client_id,
+		const char *clientid,
 		int keepalive,
 		bool clean_session,
 		const char *username,
@@ -114,7 +115,7 @@ libmosq_EXPORT int mosquitto_subscribe_simple(
 
 	*messages = NULL;
 
-	userdata.messages = calloc((size_t)msg_count, sizeof(struct mosquitto_message));
+	userdata.messages = mosquitto_calloc((size_t)msg_count, sizeof(struct mosquitto_message));
 	if(!userdata.messages){
 		return MOSQ_ERR_NOMEM;
 	}
@@ -126,7 +127,7 @@ libmosq_EXPORT int mosquitto_subscribe_simple(
 			on_message_simple, &userdata,
 			topic, qos,
 			host, port,
-			client_id, keepalive, clean_session,
+			clientid, keepalive, clean_session,
 			username, password,
 			will, tls);
 
@@ -137,8 +138,7 @@ libmosq_EXPORT int mosquitto_subscribe_simple(
 		for(i=0; i<msg_count; i++){
 			mosquitto_message_free_contents(&userdata.messages[i]);
 		}
-		free(userdata.messages);
-		userdata.messages = NULL;
+		mosquitto_FREE(userdata.messages);
 		return rc;
 	}
 }
@@ -151,7 +151,7 @@ libmosq_EXPORT int mosquitto_subscribe_callback(
 		int qos,
 		const char *host,
 		int port,
-		const char *client_id,
+		const char *clientid,
 		int keepalive,
 		bool clean_session,
 		const char *username,
@@ -172,7 +172,7 @@ libmosq_EXPORT int mosquitto_subscribe_callback(
 	cb_userdata.userdata = userdata;
 	cb_userdata.callback = callback;
 
-	mosq = mosquitto_new(client_id, clean_session, &cb_userdata);
+	mosq = mosquitto_new(clientid, clean_session, &cb_userdata);
 	if(!mosq){
 		return MOSQ_ERR_NOMEM;
 	}

@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2010-2020 Roger Light <roger@atchoo.org>
+Copyright (c) 2010-2021 Roger Light <roger@atchoo.org>
 
 All rights reserved. This program and the accompanying materials
 are made available under the terms of the Eclipse Public License 2.0
@@ -34,6 +34,7 @@ typedef SSIZE_T ssize_t;
 
 #ifdef WIN32
 #  define COMPAT_CLOSE(a) closesocket(a)
+#  define COMPAT_SHUTDOWN(a) shutdown(a, SD_SEND)
 #  define COMPAT_ECONNRESET WSAECONNRESET
 #  define COMPAT_EINTR WSAEINTR
 #  define COMPAT_EWOULDBLOCK WSAEWOULDBLOCK
@@ -42,6 +43,7 @@ typedef SSIZE_T ssize_t;
 #  endif
 #else
 #  define COMPAT_CLOSE(a) close(a)
+#  define COMPAT_SHUTDOWN(a) shutdown(a, SHUT_WR)
 #  define COMPAT_ECONNRESET ECONNRESET
 #  define COMPAT_EINTR EINTR
 #  define COMPAT_EWOULDBLOCK EWOULDBLOCK
@@ -69,6 +71,7 @@ void net__init_tls(void);
 
 int net__socket_connect(struct mosquitto *mosq, const char *host, uint16_t port, const char *bind_address, bool blocking);
 int net__socket_close(struct mosquitto *mosq);
+int net__socket_shutdown(struct mosquitto *mosq);
 int net__try_connect(const char *host, uint16_t port, mosq_sock_t *sock, const char *bind_address, bool blocking);
 int net__try_connect_step1(struct mosquitto *mosq, const char *host);
 int net__try_connect_step2(struct mosquitto *mosq, uint16_t port, mosq_sock_t *sock);
@@ -78,18 +81,25 @@ int net__socketpair(mosq_sock_t *sp1, mosq_sock_t *sp2);
 bool net__is_connected(struct mosquitto *mosq);
 
 ssize_t net__read(struct mosquitto *mosq, void *buf, size_t count);
+ssize_t net__read_ws(struct mosquitto *mosq, void *buf, size_t count);
 ssize_t net__write(struct mosquitto *mosq, const void *buf, size_t count);
 
 #ifdef WITH_TLS
-void net__print_ssl_error(struct mosquitto *mosq);
+void net__print_ssl_error(struct mosquitto *mosq, const char *msg);
 int net__socket_apply_tls(struct mosquitto *mosq);
 int net__socket_connect_tls(struct mosquitto *mosq);
-int mosquitto__verify_ocsp_status_cb(SSL * ssl, void *arg);
+int mosquitto__verify_ocsp_status_cb(SSL *ssl, void *arg);
 UI_METHOD *net__get_ui_method(void);
 #define ENGINE_FINISH(e) if(e) ENGINE_finish(e)
 #define ENGINE_SECRET_MODE "SECRET_MODE"
 #define ENGINE_SECRET_MODE_SHA 0x1000
 #define ENGINE_PIN "PIN"
+#endif
+
+#if defined(WITH_WEBSOCKETS) && WITH_WEBSOCKETS == WS_IS_BUILTIN
+void ws__context_init(struct mosquitto *mosq);
+void ws__prepare_packet(struct mosquitto *mosq, struct mosquitto__packet *packet);
+int ws__create_accept_key(const char *client_key, size_t client_key_len, char **encoded);
 #endif
 
 #endif

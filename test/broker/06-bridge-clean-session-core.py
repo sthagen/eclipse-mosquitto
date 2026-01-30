@@ -18,10 +18,6 @@
 # directions, with two test clients, one at each end.
 
 # Disable on Travis for now, too unreliable
-import os
-if os.environ.get('TRAVIS') is not None:
-    exit(0)
-
 from mosq_test_helper import *
 from collections import namedtuple
 
@@ -34,35 +30,54 @@ def tprint(*args, **kwargs):
 # this is our "A" broker
 def write_config_edge(filename, persistence_file, remote_port, listen_port, protocol_version, cs=False, lcs=None):
     with open(filename, 'w') as f:
-        f.write("port %d\n" % (listen_port))
+        f.write("listener %d\n" % (listen_port))
         f.write("allow_anonymous true\n")
         f.write("\n")
         f.write("persistence true\n")
         f.write("persistence_file %s\n" % (persistence_file))
         f.write("\n")
         f.write("connection bridge_sample\n")
+        f.write("local_clientid id_local\n")
+        f.write("remote_clientid id_remote\n")
         f.write("address 127.0.0.1:%d\n" % (remote_port))
         f.write("topic br_out/# out 1\n")
         f.write("topic br_in/# in 1\n")
-        f.write("notifications false\n")
         # We need to ensure connections break fast enough to keep test times sane
         f.write("keepalive_interval 5\n")
-        f.write("restart_timeout 5\n")
+        f.write("restart_timeout 2\n")
         f.write("cleansession %s\n" % ("true" if cs else "false"))
         # Ensure defaults are tested
         if lcs is not None:
             f.write("local_cleansession %s\n" % ("true" if lcs else "false"))
         f.write("bridge_protocol_version %s\n" % (protocol_version))
+        f.write("bridge_max_topic_alias 0\n")
 
 
 # this is our "B" broker
 def write_config_core(filename, listen_port, persistence_file):
     with open(filename, 'w') as f:
-        f.write("port %d\n" % (listen_port))
+        f.write("listener %d\n" % (listen_port))
         f.write("allow_anonymous true\n")
         f.write("\n")
         f.write("persistence true\n")
         f.write("persistence_file %s\n" % (persistence_file))
+
+
+def wait_for_bridge_to_connect(port, clientid):
+    conn = mosq_test.gen_connect("helper", clean_session=True)
+    connack = mosq_test.gen_connack(rc=0)
+
+    sock = mosq_test.do_client_connect(conn, connack, port=port)
+    sub = mosq_test.gen_subscribe(1, f'$SYS/broker/connection/{clientid}/state', 0)
+    sub = mosq_test.gen_subscribe(1, f'$SYS/broker/connection/#', 0)
+    suback = mosq_test.gen_suback(1, 0)
+    mosq_test.do_send_receive(sock, sub, suback)
+    pub_r = mosq_test.gen_publish(topic=f"$SYS/broker/connection/{clientid}/state", payload="1", qos=0, retain=True)
+    pub_nr = mosq_test.gen_publish(topic=f"$SYS/broker/connection/{clientid}/state", payload="1", qos=0)
+    pub_rec = sock.recv(len(pub_r))
+    if pub_rec != pub_r and pub_rec != pub_nr:
+        raise ValueError(mosq_test.to_string(pub_rec))
+    sock.close()
 
 
 def do_test(proto_ver, cs, lcs=None):
@@ -96,8 +111,7 @@ def do_test(proto_ver, cs, lcs=None):
 
     def make_conn(client_tag, proto, cs, session_present=False):
         client_id = socket.gethostname() + "." + client_tag
-        keepalive = 60
-        conn = mosq_test.gen_connect(client_id, keepalive=keepalive, clean_session=cs, proto_ver=proto, session_expiry=0 if cs else 5000)
+        conn = mosq_test.gen_connect(client_id, clean_session=cs, proto_ver=proto, session_expiry=0 if cs else 5000)
         connack = mosq_test.gen_connack(rc=0, proto_ver=proto_ver, flags=1 if session_present else 0)
         return AckedPair(conn, connack)
 
@@ -141,6 +155,7 @@ def do_test(proto_ver, cs, lcs=None):
     pub_b3r = make_pub("br_in/test-queued3", mid=2, proto=proto_ver) # without queueing, there is no b2
 
     success = False
+    broker_termination_success = True
     stde_a1 = stde_b1 = None
     try:
         # b must start first, as it's the destination of a
@@ -162,7 +177,9 @@ def do_test(proto_ver, cs, lcs=None):
         tprint("Normal bi-dir bridging works. continuing")
 
         broker_b.terminate()
-        broker_b.wait()
+        if mosq_test.wait_for_subprocess(broker_b):
+            print("broker_b not terminated")
+            broker_termination_success = False
         (stdo_b1, stde_b1) = broker_b.communicate()
 
         # as we're _terminating_ the connections should close ~straight away
@@ -177,8 +194,7 @@ def do_test(proto_ver, cs, lcs=None):
 
         client_b = mosq_test.do_client_connect(reconn_b.p, reconn_b.ack, port=port_b_listen)
         tprint("client b reconnected after restarting broker b at ", time.time())
-        # Need to sleep long enough to be sure of a re-connection...
-        time.sleep(10)  # yuck, this makes the test run for ages!
+        wait_for_bridge_to_connect(port_b_listen, "id_remote")
 
         # should go through
         tprint("(B should be alive again now!) sending (after reconn!) a3 at ", time.time())
@@ -197,7 +213,9 @@ def do_test(proto_ver, cs, lcs=None):
 
         # ok, now repeat in the other direction...
         broker_a.terminate()
-        broker_a.wait()
+        if mosq_test.wait_for_subprocess(broker_a):
+            print("broker_a not terminated")
+            broker_termination_success = False
         (stdo_a1, stde_a1) = broker_a.communicate()
         time.sleep(0.5)
 
@@ -207,8 +225,7 @@ def do_test(proto_ver, cs, lcs=None):
         # client a needs to reconnect now!
         client_a = mosq_test.do_client_connect(reconn_a.p, reconn_a.ack, port=port_a_listen)
         tprint("client A reconnected after restarting broker A at ", time.time())
-        # Need to sleep long enough to be sure of a re-connection...
-        time.sleep(10)  # yuck, this makes the test run for ages!
+        wait_for_bridge_to_connect(port_a_listen, "id_remote")
 
         # should go through
         mosq_test.do_send_receive(client_b, pub_b3.p, pub_b3.ack, "puback_b3")
@@ -221,8 +238,10 @@ def do_test(proto_ver, cs, lcs=None):
             tprint("not expecting message b->a_2")
             mosq_test.do_receive_send(client_a, pub_b3r.p, pub_b3r.ack, "b->a_3(r)")
 
-        success = True
+        success = broker_termination_success
 
+    except Exception as e:
+        print(e)
     except mosq_test.TestError:
         pass
     finally:
@@ -230,8 +249,12 @@ def do_test(proto_ver, cs, lcs=None):
         os.remove(conf_file_b)
         broker_a.terminate()
         broker_b.terminate()
-        broker_a.wait()
-        broker_b.wait()
+        if mosq_test.wait_for_subprocess(broker_a):
+            print("broker_a not terminated")
+            success = False
+        if mosq_test.wait_for_subprocess(broker_b):
+            print("broker_b not terminated")
+            success = False
         (stdo_a, stde_a) = broker_a.communicate()
         (stdo_b, stde_b) = broker_b.communicate()
         # Must be after terminating!

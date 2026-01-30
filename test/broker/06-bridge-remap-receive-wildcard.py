@@ -10,7 +10,6 @@ def write_config(filename, port1, port2):
         f.write("allow_anonymous true\n")
         f.write("connection bridge1\n")
         f.write(f"address 127.0.0.1:{port1}\n")
-        f.write("keepalive_interval 60\n")
         f.write("topic room1/# both 2 sensor/ myhouse/\n")
         f.write("topic tst/ba both 2\n")
         f.write("topic # both 2\n")
@@ -27,7 +26,9 @@ def do_test(proto_ver):
     rc = 1
     keepalive = 600
     client_id = "mosquitto"
-    connect_packet = mosq_test.gen_connect(client_id, keepalive=keepalive, clean_session=False, proto_ver=proto_ver)
+    properties = mqtt5_props.gen_uint16_prop(mqtt5_props.TOPIC_ALIAS_MAXIMUM, 10)
+    properties += mqtt5_props.gen_uint16_prop(mqtt5_props.RECEIVE_MAXIMUM, 20)
+    connect_packet = mosq_test.gen_connect(client_id, keepalive=keepalive, clean_session=False, proto_ver=proto_ver, properties=properties)
     connack_packet = mosq_test.gen_connack(rc=0, proto_ver=proto_ver)
 
     if proto_ver == 5:

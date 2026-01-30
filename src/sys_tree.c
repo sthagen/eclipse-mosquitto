@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2009-2020 Roger Light <roger@atchoo.org>
+Copyright (c) 2009-2021 Roger Light <roger@atchoo.org>
 
 All rights reserved. This program and the accompanying materials
 are made available under the terms of the Eclipse Public License 2.0
@@ -22,29 +22,134 @@ Contributors:
 
 #include <math.h>
 #include <stdio.h>
+#include <inttypes.h>
 #include <limits.h>
 #include <inttypes.h>
 
 #include "mosquitto_broker_internal.h"
-#include "memory_mosq.h"
-#include "time_mosq.h"
+#include "sys_tree.h"
 
 #define BUFLEN 100
 
 #define SYS_TREE_QOS 2
 
-uint64_t g_bytes_received = 0;
-uint64_t g_bytes_sent = 0;
-uint64_t g_pub_bytes_received = 0;
-uint64_t g_pub_bytes_sent = 0;
-unsigned long g_msgs_received = 0;
-unsigned long g_msgs_sent = 0;
-unsigned long g_pub_msgs_received = 0;
-unsigned long g_pub_msgs_sent = 0;
-unsigned long g_msgs_dropped = 0;
-unsigned int g_clients_expired = 0;
-unsigned int g_socket_connections = 0;
-unsigned int g_connection_count = 0;
+#define METRIC_LOAD_1MIN 1
+#define METRIC_LOAD_5MIN 2
+#define METRIC_LOAD_15MIN 3
+
+struct metric {
+	int64_t current;
+	int64_t next;
+	const char *topic, *topic_alias;
+	bool is_max;
+};
+
+struct metric_load {
+	double current;
+	const char *topic;
+	int load_ref;
+	uint8_t interval;
+};
+
+struct metric metrics[mosq_metric_max] = {
+	{ 1, 0, "$SYS/broker/clients/total", NULL, false }, /* mosq_gauge_clients_total */
+	{ 1, 0, "$SYS/broker/clients/maximum", NULL, true }, /* metric_clients_maximum */
+	{ 1, 0, "$SYS/broker/clients/disconnected", "$SYS/broker/clients/inactive", false }, /* mosq_gauge_clients_disconnected */
+	{ 1, 0, "$SYS/broker/clients/connected", "$SYS/broker/clients/active", false }, /* mosq_gauge_clients_connected */
+	{ 1, 0, "$SYS/broker/clients/expired", NULL, false }, /* mosq_counter_clients_expired */
+	{ 1, 0, "$SYS/broker/messages/stored", "$SYS/broker/store/messages/count", false }, /* mosq_gauge_message_store_count */
+	{ 1, 0, "$SYS/broker/store/messages/bytes", NULL, false }, /* mosq_gauge_message_store_bytes */
+	{ 1, 0, "$SYS/broker/subscriptions/count", NULL, false }, /* mosq_gauge_subscription_count */
+	{ 1, 0, "$SYS/broker/shared_subscriptions/count", NULL, false }, /* mosq_gauge_shared_subscription_count */
+	{ 1, 0, "$SYS/broker/retained messages/count", NULL, false }, /* mosq_gauge_retained_message_count */
+#ifdef WITH_MEMORY_TRACKING
+	{ 1, 0, "$SYS/broker/heap/current", NULL, false }, /* mosq_gauge_heap_current */
+	{ 1, 0, "$SYS/broker/heap/maximum", NULL, true }, /* mosq_gauge_heap_maximum */
+#else
+	{ 1, 0, NULL, NULL, 0 }, /* mosq_gauge_heap_current */
+	{ 1, 0, NULL, NULL, 0 }, /* mosq_gauge_heap_maximum */
+#endif
+	{ 1, 0, "$SYS/broker/messages/received", NULL, false }, /* mosq_counter_messages_received */
+	{ 1, 0, "$SYS/broker/messages/sent", NULL, false }, /* mosq_counter_messages_sent */
+	{ 1, 0, "$SYS/broker/bytes/received", NULL, false }, /* mosq_counter_bytes_received */
+	{ 1, 0, "$SYS/broker/bytes/sent", NULL, false }, /* mosq_counter_bytes_sent */
+	{ 1, 0, "$SYS/broker/publish/bytes/received", NULL, false }, /* mosq_counter_pub_bytes_received */
+	{ 1, 0, "$SYS/broker/publish/bytes/sent", NULL, false }, /* mosq_counter_pub_bytes_sent */
+	{ 1, 0, "$SYS/broker/packet/out/count", NULL, false }, /* mosq_gauge_out_packet_count */
+	{ 1, 0, "$SYS/broker/packet/out/bytes", NULL, false }, /* mosq_gauge_out_packet_bytes */
+	{ 1, 0, "$SYS/broker/connections/socket/count", NULL, false }, /* mosq_counter_socket_connections */
+	{ 1, 0, NULL, NULL, false }, /* mosq_counter_mqtt_connect_received */
+	{ 1, 0, NULL, NULL, false }, /* mosq_counter_mqtt_connect_sent */
+	{ 1, 0, NULL, NULL, false }, /* mosq_counter_mqtt_connack_received */
+	{ 1, 0, NULL, NULL, false }, /* mosq_counter_mqtt_connack_sent */
+	{ 1, 0, "$SYS/broker/publish/messages/dropped", NULL, false }, /* mosq_counter_mqtt_publish_dropped */
+	{ 1, 0, "$SYS/broker/publish/messages/received", NULL, false }, /* mosq_counter_mqtt_publish_received */
+	{ 1, 0, "$SYS/broker/publish/messages/sent", NULL, false }, /* mosq_counter_mqtt_publish_sent */
+	{ 1, 0, NULL, NULL, false }, /* mosq_counter_mqtt_puback_received */
+	{ 1, 0, NULL, NULL, false }, /* mosq_counter_mqtt_puback_sent */
+	{ 1, 0, NULL, NULL, false }, /* mosq_counter_mqtt_pubrec_received */
+	{ 1, 0, NULL, NULL, false }, /* mosq_counter_mqtt_pubrec_sent */
+	{ 1, 0, NULL, NULL, false }, /* mosq_counter_mqtt_pubrel_received */
+	{ 1, 0, NULL, NULL, false }, /* mosq_counter_mqtt_pubrel_sent */
+	{ 1, 0, NULL, NULL, false }, /* mosq_counter_mqtt_pubcomp_received */
+	{ 1, 0, NULL, NULL, false }, /* mosq_counter_mqtt_pubcomp_sent */
+	{ 1, 0, NULL, NULL, false }, /* mosq_counter_mqtt_subscribe_received */
+	{ 1, 0, NULL, NULL, false }, /* mosq_counter_mqtt_subscribe_sent */
+	{ 1, 0, NULL, NULL, false }, /* mosq_counter_mqtt_suback_received */
+	{ 1, 0, NULL, NULL, false }, /* mosq_counter_mqtt_suback_sent */
+	{ 1, 0, NULL, NULL, false }, /* mosq_counter_mqtt_unsubscribe_received */
+	{ 1, 0, NULL, NULL, false }, /* mosq_counter_mqtt_unsubscribe_sent */
+	{ 1, 0, NULL, NULL, false }, /* mosq_counter_mqtt_unsuback_received */
+	{ 1, 0, NULL, NULL, false }, /* mosq_counter_mqtt_unsuback_sent */
+	{ 1, 0, NULL, NULL, false }, /* mosq_counter_mqtt_pingreq_received */
+	{ 1, 0, NULL, NULL, false }, /* mosq_counter_mqtt_pingreq_sent */
+	{ 1, 0, NULL, NULL, false }, /* mosq_counter_mqtt_pingresp_received */
+	{ 1, 0, NULL, NULL, false }, /* mosq_counter_mqtt_pingresp_sent */
+	{ 1, 0, NULL, NULL, false }, /* mosq_counter_mqtt_disconnect_received */
+	{ 1, 0, NULL, NULL, false }, /* mosq_counter_mqtt_disconnect_sent */
+	{ 1, 0, NULL, NULL, false }, /* mosq_counter_mqtt_auth_received */
+	{ 1, 0, NULL, NULL, false }, /* mosq_counter_mqtt_auth_sent */
+};
+
+struct metric_load metric_loads[mosq_metric_load_max] = {
+	{ 0.0, "$SYS/broker/load/messages/received/1min", mosq_counter_messages_received, METRIC_LOAD_1MIN }, /* metric_load_messages_received_1min */
+	{ 0.0, "$SYS/broker/load/messages/received/5min", mosq_counter_messages_received, METRIC_LOAD_5MIN }, /* metric_load_messages_received_5min */
+	{ 0.0, "$SYS/broker/load/messages/received/15min", mosq_counter_messages_received, METRIC_LOAD_15MIN }, /* metric_load_messages_received_15min */
+	{ 0.0, "$SYS/broker/load/messages/sent/1min", mosq_counter_messages_sent, METRIC_LOAD_1MIN }, /* metric_load_messages_sent_1min */
+	{ 0.0, "$SYS/broker/load/messages/sent/5min", mosq_counter_messages_sent, METRIC_LOAD_5MIN }, /* metric_load_messages_sent_5min */
+	{ 0.0, "$SYS/broker/load/messages/sent/15min", mosq_counter_messages_sent, METRIC_LOAD_15MIN }, /* metric_load_messages_sent_15min */
+	{ 0.0, "$SYS/broker/load/publish/dropped/1min", mosq_counter_mqtt_publish_dropped, METRIC_LOAD_1MIN }, /* metric_load_pub_messages_dropped_1min */
+	{ 0.0, "$SYS/broker/load/publish/dropped/5min", mosq_counter_mqtt_publish_dropped, METRIC_LOAD_5MIN }, /* metric_load_pub_messages_dropped_5min */
+	{ 0.0, "$SYS/broker/load/publish/dropped/15min", mosq_counter_mqtt_publish_dropped, METRIC_LOAD_15MIN }, /* metric_load_pub_messages_dropped_15min */
+	{ 0.0, "$SYS/broker/load/publish/received/1min", mosq_counter_mqtt_publish_received, METRIC_LOAD_1MIN }, /* metric_load_pub_messages_received_1min */
+	{ 0.0, "$SYS/broker/load/publish/received/5min", mosq_counter_mqtt_publish_received, METRIC_LOAD_5MIN }, /* metric_load_pub_messages_received_5min */
+	{ 0.0, "$SYS/broker/load/publish/received/15min", mosq_counter_mqtt_publish_received, METRIC_LOAD_15MIN }, /* metric_load_pub_messages_received_15min */
+	{ 0.0, "$SYS/broker/load/publish/sent/1min", mosq_counter_mqtt_publish_sent, METRIC_LOAD_1MIN }, /* metric_load_pub_messages_sent_1min */
+	{ 0.0, "$SYS/broker/load/publish/sent/5min", mosq_counter_mqtt_publish_sent, METRIC_LOAD_5MIN }, /* metric_load_pub_messages_sent_5min */
+	{ 0.0, "$SYS/broker/load/publish/sent/15min", mosq_counter_mqtt_publish_sent, METRIC_LOAD_15MIN }, /* metric_load_pub_messages_sent_15min */
+	{ 0.0, "$SYS/broker/load/bytes/received/1min", mosq_counter_bytes_received, METRIC_LOAD_1MIN }, /* metric_load_bytes_received_1min */
+	{ 0.0, "$SYS/broker/load/bytes/received/5min", mosq_counter_bytes_received, METRIC_LOAD_5MIN }, /* metric_load_bytes_received_5min */
+	{ 0.0, "$SYS/broker/load/bytes/received/15min", mosq_counter_bytes_received, METRIC_LOAD_15MIN }, /* metric_load_bytes_received_15min */
+	{ 0.0, "$SYS/broker/load/bytes/sent/1min", mosq_counter_bytes_sent, METRIC_LOAD_1MIN }, /* metric_load_bytes_sent_1min */
+	{ 0.0, "$SYS/broker/load/bytes/sent/5min", mosq_counter_bytes_sent, METRIC_LOAD_5MIN }, /* metric_load_bytes_sent_5min */
+	{ 0.0, "$SYS/broker/load/bytes/sent/15min", mosq_counter_bytes_sent, METRIC_LOAD_15MIN }, /* metric_load_bytes_sent_15min */
+	{ 0.0, "$SYS/broker/load/sockets/1min", mosq_counter_socket_connections, METRIC_LOAD_1MIN }, /* metric_load_socket_connections_1min */
+	{ 0.0, "$SYS/broker/load/sockets/5min", mosq_counter_socket_connections, METRIC_LOAD_5MIN }, /* metric_load_socket_connections_5min */
+	{ 0.0, "$SYS/broker/load/sockets/15min", mosq_counter_socket_connections, METRIC_LOAD_15MIN }, /* metric_load_socket_connections_15min */
+	{ 0.0, "$SYS/broker/load/connections/1min", mosq_counter_mqtt_connect_received, METRIC_LOAD_1MIN }, /* metric_load_connections_1min */
+	{ 0.0, "$SYS/broker/load/connections/5min", mosq_counter_mqtt_connect_received, METRIC_LOAD_5MIN }, /* metric_load_connections_5min */
+	{ 0.0, "$SYS/broker/load/connections/15min", mosq_counter_mqtt_connect_received, METRIC_LOAD_15MIN }, /* metric_load_connections_15min */
+};
+
+static time_t start_time = 0;
+static time_t last_update = 0;
+
+
+time_t broker_uptime(void)
+{
+	return db.now_s - start_time;
+}
+
 
 void sys_tree__init(void)
 {
@@ -57,95 +162,46 @@ void sys_tree__init(void)
 
 	/* Set static $SYS messages */
 	len = (uint32_t)snprintf(buf, 64, "mosquitto version %s", VERSION);
-	db__messages_easy_queue(NULL, "$SYS/broker/version", SYS_TREE_QOS, len, buf, 1, 0, NULL);
+	db__messages_easy_queue(NULL, "$SYS/broker/version", SYS_TREE_QOS, len, buf, 1, MSG_EXPIRY_INFINITE, NULL);
+
+	start_time = mosquitto_time();
+	last_update = start_time;
+
+	sys_tree__update(true);
 }
 
-static void sys_tree__update_clients(char *buf)
+
+void metrics__int_inc(enum mosq_metric_type m, int64_t value)
 {
-	static unsigned int client_count = UINT_MAX;
-	static unsigned int clients_expired = UINT_MAX;
-	static unsigned int client_max = 0;
-	static unsigned int disconnected_count = UINT_MAX;
-	static unsigned int connected_count = UINT_MAX;
-	uint32_t len;
-
-	unsigned int count_total, count_by_sock;
-
-	count_total = HASH_CNT(hh_id, db.contexts_by_id);
-	count_by_sock = HASH_CNT(hh_sock, db.contexts_by_sock);
-
-	if(client_count != count_total){
-		client_count = count_total;
-		len = (uint32_t)snprintf(buf, BUFLEN, "%d", client_count);
-		db__messages_easy_queue(NULL, "$SYS/broker/clients/total", SYS_TREE_QOS, len, buf, 1, 0, NULL);
-
-		if(client_count > client_max){
-			client_max = client_count;
-			len = (uint32_t)snprintf(buf, BUFLEN, "%d", client_max);
-			db__messages_easy_queue(NULL, "$SYS/broker/clients/maximum", SYS_TREE_QOS, len, buf, 1, 0, NULL);
-		}
-	}
-
-	if(disconnected_count != count_total-count_by_sock){
-		disconnected_count = count_total-count_by_sock;
-		len = (uint32_t)snprintf(buf, BUFLEN, "%d", disconnected_count);
-		db__messages_easy_queue(NULL, "$SYS/broker/clients/inactive", SYS_TREE_QOS, len, buf, 1, 0, NULL);
-		db__messages_easy_queue(NULL, "$SYS/broker/clients/disconnected", SYS_TREE_QOS, len, buf, 1, 0, NULL);
-	}
-	if(connected_count != count_by_sock){
-		connected_count = count_by_sock;
-		len = (uint32_t)snprintf(buf, BUFLEN, "%d", connected_count);
-		db__messages_easy_queue(NULL, "$SYS/broker/clients/active", SYS_TREE_QOS, len, buf, 1, 0, NULL);
-		db__messages_easy_queue(NULL, "$SYS/broker/clients/connected", SYS_TREE_QOS, len, buf, 1, 0, NULL);
-	}
-	if(g_clients_expired != clients_expired){
-		clients_expired = g_clients_expired;
-		len = (uint32_t)snprintf(buf, BUFLEN, "%d", clients_expired);
-		db__messages_easy_queue(NULL, "$SYS/broker/clients/expired", SYS_TREE_QOS, len, buf, 1, 0, NULL);
+	if(m < mosq_metric_max){
+		metrics[m].next += value;
 	}
 }
 
-#ifdef REAL_WITH_MEMORY_TRACKING
-static void sys_tree__update_memory(char *buf)
+
+void metrics__int_dec(enum mosq_metric_type m, int64_t value)
 {
-	static unsigned long current_heap = ULONG_MAX;
-	static unsigned long max_heap = ULONG_MAX;
-	unsigned long value_ul;
-	uint32_t len;
-
-	value_ul = mosquitto__memory_used();
-	if(current_heap != value_ul){
-		current_heap = value_ul;
-		len = (uint32_t)snprintf(buf, BUFLEN, "%lu", current_heap);
-		db__messages_easy_queue(NULL, "$SYS/broker/heap/current", SYS_TREE_QOS, len, buf, 1, 0, NULL);
-	}
-	value_ul =mosquitto__max_memory_used();
-	if(max_heap != value_ul){
-		max_heap = value_ul;
-		len = (uint32_t)snprintf(buf, BUFLEN, "%lu", max_heap);
-		db__messages_easy_queue(NULL, "$SYS/broker/heap/maximum", SYS_TREE_QOS, len, buf, 1, 0, NULL);
+	if(m < mosq_metric_max){
+		metrics[m].next -= value;
 	}
 }
-#endif
 
-static void calc_load(char *buf, const char *topic, bool initial, double exponent, double interval, double *current)
+
+static void calc_load(char *buf, double exponent, double i_mult, struct metric_load *m)
 {
 	double new_value;
 	uint32_t len;
+	double interval;
 
-	if (initial) {
-		new_value = *current;
+	interval = (double)(metrics[m->load_ref].next - metrics[m->load_ref].current)*i_mult;
+	new_value = interval + exponent*(m->current - interval);
+	if(fabs(new_value - (m->current)) >= 0.01){
 		len = (uint32_t)snprintf(buf, BUFLEN, "%.2f", new_value);
-		db__messages_easy_queue(NULL, topic, SYS_TREE_QOS, len, buf, 1, 0, NULL);
-	} else {
-		new_value = interval + exponent*((*current) - interval);
-		if(fabs(new_value - (*current)) >= 0.01){
-			len = (uint32_t)snprintf(buf, BUFLEN, "%.2f", new_value);
-			db__messages_easy_queue(NULL, topic, SYS_TREE_QOS, len, buf, 1, 0, NULL);
-		}
+		db__messages_easy_queue(NULL, m->topic, SYS_TREE_QOS, len, buf, 1, MSG_EXPIRY_INFINITE, NULL);
 	}
-	(*current) = new_value;
+	m->current = new_value;
 }
+
 
 /* Send messages for the $SYS hierarchy if the last update is longer than
  * 'interval' seconds ago.
@@ -153,228 +209,80 @@ static void calc_load(char *buf, const char *topic, bool initial, double exponen
  * messages are sent for the $SYS hierarchy.
  * 'start_time' is the result of time() that the broker was started at.
  */
-void sys_tree__update(int interval, time_t start_time)
+void sys_tree__update(bool force)
 {
-	static time_t last_update = 0;
 	time_t uptime;
 	char buf[BUFLEN];
-
-	static int msg_store_count = INT_MAX;
-	static unsigned long msg_store_bytes = ULONG_MAX;
-	static unsigned long msgs_received = ULONG_MAX;
-	static unsigned long msgs_sent = ULONG_MAX;
-	static unsigned long publish_dropped = ULONG_MAX;
-	static unsigned long pub_msgs_received = ULONG_MAX;
-	static unsigned long pub_msgs_sent = ULONG_MAX;
-	static unsigned long long bytes_received = ULLONG_MAX;
-	static unsigned long long bytes_sent = ULLONG_MAX;
-	static unsigned long long pub_bytes_received = ULLONG_MAX;
-	static unsigned long long pub_bytes_sent = ULLONG_MAX;
-	static int subscription_count = INT_MAX;
-	static int shared_subscription_count = INT_MAX;
-	static int retained_count = INT_MAX;
-
-	static double msgs_received_load1 = 0;
-	static double msgs_received_load5 = 0;
-	static double msgs_received_load15 = 0;
-	static double msgs_sent_load1 = 0;
-	static double msgs_sent_load5 = 0;
-	static double msgs_sent_load15 = 0;
-	static double publish_dropped_load1 = 0;
-	static double publish_dropped_load5 = 0;
-	static double publish_dropped_load15 = 0;
-	double msgs_received_interval, msgs_sent_interval, publish_dropped_interval;
-
-	static double publish_received_load1 = 0;
-	static double publish_received_load5 = 0;
-	static double publish_received_load15 = 0;
-	static double publish_sent_load1 = 0;
-	static double publish_sent_load5 = 0;
-	static double publish_sent_load15 = 0;
-	double publish_received_interval, publish_sent_interval;
-
-	static double bytes_received_load1 = 0;
-	static double bytes_received_load5 = 0;
-	static double bytes_received_load15 = 0;
-	static double bytes_sent_load1 = 0;
-	static double bytes_sent_load5 = 0;
-	static double bytes_sent_load15 = 0;
-	double bytes_received_interval, bytes_sent_interval;
-
-	static double socket_load1 = 0;
-	static double socket_load5 = 0;
-	static double socket_load15 = 0;
-	double socket_interval;
-
-	static double connection_load1 = 0;
-	static double connection_load5 = 0;
-	static double connection_load15 = 0;
-	double connection_interval;
-
-	double exponent;
-	double i_mult;
 	uint32_t len;
-	bool initial_publish;
+	time_t next_event;
+	static time_t last_update_real = 0;
 
-	if(interval && db.now_s - interval > last_update){
+	if(db.config->sys_interval){
+		next_event = db.config->sys_interval - db.now_real_s % db.config->sys_interval - 1;
+		if(next_event <= 0){
+			next_event = db.config->sys_interval;
+		}
+		loop__update_next_event(next_event*1000);
+	}
+
+	if(db.config->sys_interval
+			&& ((db.now_real_s % db.config->sys_interval == 0 && last_update_real != db.now_real_s) || force)){
+
 		uptime = db.now_s - start_time;
 		len = (uint32_t)snprintf(buf, BUFLEN, "%" PRIu64 " seconds", (uint64_t)uptime);
-		db__messages_easy_queue(NULL, "$SYS/broker/uptime", SYS_TREE_QOS, len, buf, 1, 0, NULL);
+		db__messages_easy_queue(NULL, "$SYS/broker/uptime", SYS_TREE_QOS, len, buf, 1, MSG_EXPIRY_INFINITE, NULL);
 
-		sys_tree__update_clients(buf);
-		initial_publish = false;
-		if(last_update == 0){
-			initial_publish = true;
-			last_update = 1;
-		}
-		if(last_update > 0){
-			i_mult = 60.0/(double)(db.now_s-last_update);
-
-			msgs_received_interval = (double)(g_msgs_received - msgs_received)*i_mult;
-			msgs_sent_interval = (double)(g_msgs_sent - msgs_sent)*i_mult;
-			publish_dropped_interval = (double)(g_msgs_dropped - publish_dropped)*i_mult;
-
-			publish_received_interval = (double)(g_pub_msgs_received - pub_msgs_received)*i_mult;
-			publish_sent_interval = (double)(g_pub_msgs_sent - pub_msgs_sent)*i_mult;
-
-			bytes_received_interval = (double)(g_bytes_received - bytes_received)*i_mult;
-			bytes_sent_interval = (double)(g_bytes_sent - bytes_sent)*i_mult;
-
-			socket_interval = g_socket_connections*i_mult;
-			g_socket_connections = 0;
-			connection_interval = g_connection_count*i_mult;
-			g_connection_count = 0;
-
-			/* 1 minute load */
-			exponent = exp(-1.0*(double)(db.now_s-last_update)/60.0);
-
-			calc_load(buf, "$SYS/broker/load/messages/received/1min", initial_publish, exponent, msgs_received_interval, &msgs_received_load1);
-			calc_load(buf, "$SYS/broker/load/messages/sent/1min", initial_publish, exponent, msgs_sent_interval, &msgs_sent_load1);
-			calc_load(buf, "$SYS/broker/load/publish/dropped/1min", initial_publish, exponent, publish_dropped_interval, &publish_dropped_load1);
-			calc_load(buf, "$SYS/broker/load/publish/received/1min", initial_publish, exponent, publish_received_interval, &publish_received_load1);
-			calc_load(buf, "$SYS/broker/load/publish/sent/1min", initial_publish, exponent, publish_sent_interval, &publish_sent_load1);
-			calc_load(buf, "$SYS/broker/load/bytes/received/1min", initial_publish, exponent, bytes_received_interval, &bytes_received_load1);
-			calc_load(buf, "$SYS/broker/load/bytes/sent/1min", initial_publish, exponent, bytes_sent_interval, &bytes_sent_load1);
-			calc_load(buf, "$SYS/broker/load/sockets/1min", initial_publish, exponent, socket_interval, &socket_load1);
-			calc_load(buf, "$SYS/broker/load/connections/1min", initial_publish, exponent, connection_interval, &connection_load1);
-
-			/* 5 minute load */
-			exponent = exp(-1.0*(double)(db.now_s-last_update)/300.0);
-
-			calc_load(buf, "$SYS/broker/load/messages/received/5min", initial_publish, exponent, msgs_received_interval, &msgs_received_load5);
-			calc_load(buf, "$SYS/broker/load/messages/sent/5min", initial_publish, exponent, msgs_sent_interval, &msgs_sent_load5);
-			calc_load(buf, "$SYS/broker/load/publish/dropped/5min", initial_publish, exponent, publish_dropped_interval, &publish_dropped_load5);
-			calc_load(buf, "$SYS/broker/load/publish/received/5min", initial_publish, exponent, publish_received_interval, &publish_received_load5);
-			calc_load(buf, "$SYS/broker/load/publish/sent/5min", initial_publish, exponent, publish_sent_interval, &publish_sent_load5);
-			calc_load(buf, "$SYS/broker/load/bytes/received/5min", initial_publish, exponent, bytes_received_interval, &bytes_received_load5);
-			calc_load(buf, "$SYS/broker/load/bytes/sent/5min", initial_publish, exponent, bytes_sent_interval, &bytes_sent_load5);
-			calc_load(buf, "$SYS/broker/load/sockets/5min", initial_publish, exponent, socket_interval, &socket_load5);
-			calc_load(buf, "$SYS/broker/load/connections/5min", initial_publish, exponent, connection_interval, &connection_load5);
-
-			/* 15 minute load */
-			exponent = exp(-1.0*(double)(db.now_s-last_update)/900.0);
-
-			calc_load(buf, "$SYS/broker/load/messages/received/15min", initial_publish, exponent, msgs_received_interval, &msgs_received_load15);
-			calc_load(buf, "$SYS/broker/load/messages/sent/15min", initial_publish, exponent, msgs_sent_interval, &msgs_sent_load15);
-			calc_load(buf, "$SYS/broker/load/publish/dropped/15min", initial_publish, exponent, publish_dropped_interval, &publish_dropped_load15);
-			calc_load(buf, "$SYS/broker/load/publish/received/15min", initial_publish, exponent, publish_received_interval, &publish_received_load15);
-			calc_load(buf, "$SYS/broker/load/publish/sent/15min", initial_publish, exponent, publish_sent_interval, &publish_sent_load15);
-			calc_load(buf, "$SYS/broker/load/bytes/received/15min", initial_publish, exponent, bytes_received_interval, &bytes_received_load15);
-			calc_load(buf, "$SYS/broker/load/bytes/sent/15min", initial_publish, exponent, bytes_sent_interval, &bytes_sent_load15);
-			calc_load(buf, "$SYS/broker/load/sockets/15min", initial_publish, exponent, socket_interval, &socket_load15);
-			calc_load(buf, "$SYS/broker/load/connections/15min", initial_publish, exponent, connection_interval, &connection_load15);
-		}
-
-		if(db.msg_store_count != msg_store_count){
-			msg_store_count = db.msg_store_count;
-			len = (uint32_t)snprintf(buf, BUFLEN, "%d", msg_store_count);
-			db__messages_easy_queue(NULL, "$SYS/broker/messages/stored", SYS_TREE_QOS, len, buf, 1, 0, NULL);
-			db__messages_easy_queue(NULL, "$SYS/broker/store/messages/count", SYS_TREE_QOS, len, buf, 1, 0, NULL);
-		}
-
-		if (db.msg_store_bytes != msg_store_bytes){
-			msg_store_bytes = db.msg_store_bytes;
-			len = (uint32_t)snprintf(buf, BUFLEN, "%lu", msg_store_bytes);
-			db__messages_easy_queue(NULL, "$SYS/broker/store/messages/bytes", SYS_TREE_QOS, len, buf, 1, 0, NULL);
-		}
-
-		if(db.subscription_count != subscription_count){
-			subscription_count = db.subscription_count;
-			len = (uint32_t)snprintf(buf, BUFLEN, "%d", subscription_count);
-			db__messages_easy_queue(NULL, "$SYS/broker/subscriptions/count", SYS_TREE_QOS, len, buf, 1, 0, NULL);
-		}
-
-		if(db.shared_subscription_count != shared_subscription_count){
-			shared_subscription_count = db.shared_subscription_count;
-			len = (uint32_t)snprintf(buf, BUFLEN, "%d", shared_subscription_count);
-			db__messages_easy_queue(NULL, "$SYS/broker/shared_subscriptions/count", SYS_TREE_QOS, len, buf, 1, 0, NULL);
-		}
-
-		if(db.retained_count != retained_count){
-			retained_count = db.retained_count;
-			len = (uint32_t)snprintf(buf, BUFLEN, "%d", retained_count);
-			db__messages_easy_queue(NULL, "$SYS/broker/retained messages/count", SYS_TREE_QOS, len, buf, 1, 0, NULL);
-		}
-
-#ifdef REAL_WITH_MEMORY_TRACKING
-		sys_tree__update_memory(buf);
+		/*  Update metrics values where not otherwise updated */
+		metrics[mosq_gauge_message_store_count].next = db.msg_store_count;
+		metrics[mosq_gauge_message_store_bytes].next = (int64_t)db.msg_store_bytes;
+		metrics[mosq_gauge_subscriptions].next = db.subscription_count;
+		metrics[mosq_gauge_shared_subscriptions].next = db.shared_subscription_count;
+		metrics[mosq_gauge_retained_messages].next = db.retained_count;
+#ifdef WITH_MEMORY_TRACKING
+		metrics[mosq_gauge_heap_current].next = (int64_t)mosquitto_memory_used();
+		metrics[mosq_counter_heap_maximum].next = (int64_t)mosquitto_max_memory_used();
 #endif
+		metrics[mosq_gauge_clients_total].next = HASH_CNT(hh_id, db.contexts_by_id);
+		metrics[mosq_counter_clients_maximum].next = HASH_CNT(hh_id, db.contexts_by_id);
+		metrics[mosq_gauge_clients_connected].next = HASH_CNT(hh_sock, db.contexts_by_sock);
+		metrics[mosq_gauge_clients_disconnected].next = HASH_CNT(hh_id, db.contexts_by_id) - HASH_CNT(hh_sock, db.contexts_by_sock);
 
-		if(msgs_received != g_msgs_received){
-			msgs_received = g_msgs_received;
-			len = (uint32_t)snprintf(buf, BUFLEN, "%lu", msgs_received);
-			db__messages_easy_queue(NULL, "$SYS/broker/messages/received", SYS_TREE_QOS, len, buf, 1, 0, NULL);
+		/* Handle loads first, because they reference other metrics and need next != current */
+		if(db.now_s > last_update){
+			double i_mult = 60.0/(double)(db.now_s-last_update);
+
+			double exponent_1min = exp(-1.0*(double)(db.now_s-last_update)/60.0);
+			double exponent_5min = exp(-1.0*(double)(db.now_s-last_update)/300.0);
+			double exponent_15min = exp(-1.0*(double)(db.now_s-last_update)/900.0);
+
+			for(int i=0; i<mosq_metric_load_max; i++){
+				if(metric_loads[i].interval == METRIC_LOAD_1MIN){
+					calc_load(buf, exponent_1min, i_mult, &metric_loads[i]);
+				}else if(metric_loads[i].interval == METRIC_LOAD_5MIN){
+					calc_load(buf, exponent_5min, i_mult, &metric_loads[i]);
+				}else{
+					calc_load(buf, exponent_15min, i_mult, &metric_loads[i]);
+				}
+			}
 		}
 
-		if(msgs_sent != g_msgs_sent){
-			msgs_sent = g_msgs_sent;
-			len = (uint32_t)snprintf(buf, BUFLEN, "%lu", msgs_sent);
-			db__messages_easy_queue(NULL, "$SYS/broker/messages/sent", SYS_TREE_QOS, len, buf, 1, 0, NULL);
-		}
+		for(int i=0; i<mosq_metric_max; i++){
+			if((metrics[i].is_max && metrics[i].next > metrics[i].current) ||
+					(!metrics[i].is_max && metrics[i].next != metrics[i].current)){
 
-		if(publish_dropped != g_msgs_dropped){
-			publish_dropped = g_msgs_dropped;
-			len = (uint32_t)snprintf(buf, BUFLEN, "%lu", publish_dropped);
-			db__messages_easy_queue(NULL, "$SYS/broker/publish/messages/dropped", SYS_TREE_QOS, len, buf, 1, 0, NULL);
-		}
-
-		if(pub_msgs_received != g_pub_msgs_received){
-			pub_msgs_received = g_pub_msgs_received;
-			len = (uint32_t)snprintf(buf, BUFLEN, "%lu", pub_msgs_received);
-			db__messages_easy_queue(NULL, "$SYS/broker/publish/messages/received", SYS_TREE_QOS, len, buf, 1, 0, NULL);
-		}
-
-		if(pub_msgs_sent != g_pub_msgs_sent){
-			pub_msgs_sent = g_pub_msgs_sent;
-			len = (uint32_t)snprintf(buf, BUFLEN, "%lu", pub_msgs_sent);
-			db__messages_easy_queue(NULL, "$SYS/broker/publish/messages/sent", SYS_TREE_QOS, len, buf, 1, 0, NULL);
-		}
-
-		if(bytes_received != g_bytes_received){
-			bytes_received = g_bytes_received;
-			len = (uint32_t)snprintf(buf, BUFLEN, "%llu", bytes_received);
-			db__messages_easy_queue(NULL, "$SYS/broker/bytes/received", SYS_TREE_QOS, len, buf, 1, 0, NULL);
-		}
-
-		if(bytes_sent != g_bytes_sent){
-			bytes_sent = g_bytes_sent;
-			len = (uint32_t)snprintf(buf, BUFLEN, "%llu", bytes_sent);
-			db__messages_easy_queue(NULL, "$SYS/broker/bytes/sent", SYS_TREE_QOS, len, buf, 1, 0, NULL);
-		}
-
-		if(pub_bytes_received != g_pub_bytes_received){
-			pub_bytes_received = g_pub_bytes_received;
-			len = (uint32_t)snprintf(buf, BUFLEN, "%llu", pub_bytes_received);
-			db__messages_easy_queue(NULL, "$SYS/broker/publish/bytes/received", SYS_TREE_QOS, len, buf, 1, 0, NULL);
-		}
-
-		if(pub_bytes_sent != g_pub_bytes_sent){
-			pub_bytes_sent = g_pub_bytes_sent;
-			len = (uint32_t)snprintf(buf, BUFLEN, "%llu", pub_bytes_sent);
-			db__messages_easy_queue(NULL, "$SYS/broker/publish/bytes/sent", SYS_TREE_QOS, len, buf, 1, 0, NULL);
+				metrics[i].current = metrics[i].next;
+				len = (uint32_t)snprintf(buf, BUFLEN, "%lu", metrics[i].current);
+				if(metrics[i].topic){
+					db__messages_easy_queue(NULL, metrics[i].topic, SYS_TREE_QOS, len, buf, 1, MSG_EXPIRY_INFINITE, NULL);
+				}
+				if(metrics[i].topic_alias){
+					db__messages_easy_queue(NULL, metrics[i].topic_alias, SYS_TREE_QOS, len, buf, 1, MSG_EXPIRY_INFINITE, NULL);
+				}
+			}
 		}
 
 		last_update = db.now_s;
+		last_update_real = db.now_real_s;
 	}
 }
 

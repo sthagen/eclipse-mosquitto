@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2014-2019 Roger Light <roger@atchoo.org>
+Copyright (c) 2014-2021 Roger Light <roger@atchoo.org>
 
 All rights reserved. This program and the accompanying materials
 are made available under the terms of the Eclipse Public License 2.0
@@ -20,11 +20,12 @@ Contributors:
 
 #include "config.h"
 
-#include <libwebsockets.h>
+#if defined(WITH_WEBSOCKETS) && WITH_WEBSOCKETS == WS_IS_LWS
+#  include <libwebsockets.h>
+#endif
 #include "mosquitto_internal.h"
 #include "mosquitto_broker_internal.h"
-#include "mqtt_protocol.h"
-#include "memory_mosq.h"
+#include "mosquitto/mqtt_protocol.h"
 #include "packet_mosq.h"
 #include "sys_tree.h"
 #include "util_mosq.h"
@@ -37,6 +38,7 @@ Contributors:
 #  include <sys/socket.h>
 #endif
 
+#if defined(WITH_WEBSOCKETS) && WITH_WEBSOCKETS == WS_IS_LWS
 /* Be careful if changing these, if TX is not bigger than SERV then there can
  * be very large write performance penalties.
  */
@@ -51,16 +53,16 @@ static int callback_mqtt(
 		size_t len);
 
 static int callback_http(
-	struct lws *wsi,
-	enum lws_callback_reasons reason,
-	void *user,
-	void *in,
-	size_t len);
+		struct lws *wsi,
+		enum lws_callback_reasons reason,
+		void *user,
+		void *in,
+		size_t len);
 
 enum mosq_ws_protocols {
 	PROTOCOL_HTTP = 0,
 	PROTOCOL_MQTT,
-	DEMO_PROTOCOL_COUNT
+	DEMO_PROTOCOL_COUNT,
 };
 
 struct libws_http_data {
@@ -70,51 +72,53 @@ struct libws_http_data {
 static struct lws_protocols protocols[] = {
 	/* first protocol must always be HTTP handler */
 	{
-		"http-only",						/* name */
-		callback_http,						/* lws_callback_function */
-		sizeof (struct libws_http_data),	/* per_session_data_size */
-		0,									/* rx_buffer_size */
-		0,									/* id */
-		NULL,								/* user v1.4 on */
-		WS_TX_BUF_SIZE						/* tx_packet_size v2.3.0 */
+		"http-only",                        /* name */
+		callback_http,                      /* lws_callback_function */
+		sizeof (struct libws_http_data),    /* per_session_data_size */
+		0,                                  /* rx_buffer_size */
+		0,                                  /* id */
+		NULL,                               /* user v1.4 on */
+		WS_TX_BUF_SIZE                      /* tx_packet_size v2.3.0 */
 	},
 	{
 		"mqtt",
 		callback_mqtt,
 		sizeof(struct libws_mqtt_data),
-		0,									/* rx_buffer_size */
-		1,									/* id */
-		NULL,								/* user v1.4 on */
-		WS_TX_BUF_SIZE						/* tx_packet_size v2.3.0 */
+		0,                                  /* rx_buffer_size */
+		1,                                  /* id */
+		NULL,                               /* user v1.4 on */
+		WS_TX_BUF_SIZE                      /* tx_packet_size v2.3.0 */
 	},
 	{
 		"mqttv3.1",
 		callback_mqtt,
 		sizeof(struct libws_mqtt_data),
-		0,									/* rx_buffer_size */
-		2,									/* id */
-		NULL,								/* user v1.4 on */
-		WS_TX_BUF_SIZE						/* tx_packet_size v2.3.0 */
+		0,                                  /* rx_buffer_size */
+		2,                                  /* id */
+		NULL,                               /* user v1.4 on */
+		WS_TX_BUF_SIZE                      /* tx_packet_size v2.3.0 */
 	},
 	{
 		NULL,
 		NULL,
 		0,
-		0,									/* rx_buffer_size */
-		0,									/* id */
-		NULL,								/* user v1.4 on */
-		0									/* tx_packet_size v2.3.0 */
+		0,                                  /* rx_buffer_size */
+		0,                                  /* id */
+		NULL,                               /* user v1.4 on */
+		0                                   /* tx_packet_size v2.3.0 */
 	}
 };
+
 
 static void easy_address(int sock, struct mosquitto *mosq)
 {
 	char address[1024];
 
 	if(!net__socket_get_address(sock, address, 1024, &mosq->remote_port)){
-		mosq->address = mosquitto__strdup(address);
+		mosq->address = mosquitto_strdup(address);
 	}
 }
+
 
 static int callback_mqtt(
 		struct lws *wsi,
@@ -135,14 +139,14 @@ static int callback_mqtt(
 	uint8_t byte;
 	char ip_addr_buff[1024];
 
-	switch (reason) {
+	switch(reason){
 		case LWS_CALLBACK_ESTABLISHED:
-			mosq = context__init(WEBSOCKET_CLIENT);
+			mosq = context__init();
 			if(mosq){
 				p = lws_get_protocol(wsi);
 				mosq->listener = p->user;
 				if(!mosq->listener){
-					mosquitto__free(mosq);
+					mosquitto_FREE(mosq);
 					return -1;
 				}
 				mosq->wsi = wsi;
@@ -159,29 +163,27 @@ static int callback_mqtt(
 				return -1;
 			}
 
-			if (lws_hdr_copy(wsi, ip_addr_buff, sizeof(ip_addr_buff), WSI_TOKEN_X_FORWARDED_FOR) > 0) {
-				mosq->address = mosquitto__strdup(ip_addr_buff);
-			} else {
-				easy_address(lws_get_socket_fd(wsi), mosq);
-			}
+			easy_address(lws_get_socket_fd(wsi), mosq);
 			if(!mosq->address){
 				/* getpeername and inet_ntop failed and not a bridge */
-				mosquitto__free(mosq);
+				mosquitto_FREE(mosq);
 				u->mosq = NULL;
 				return -1;
 			}
-			if(mosq->listener->max_connections > 0 && mosq->listener->client_count > mosq->listener->max_connections){
+			if((mosq->listener->max_connections > 0 && mosq->listener->client_count > mosq->listener->max_connections)
+					|| (db.config->global_max_connections > 0 && HASH_CNT(hh_sock, db.contexts_by_sock) > (unsigned int)db.config->global_max_connections)){
+
 				if(db.config->connection_messages == true){
 					log__printf(NULL, MOSQ_LOG_NOTICE, "Client connection from %s denied: max_connections exceeded.", mosq->address);
 				}
-				mosquitto__free(mosq->address);
-				mosquitto__free(mosq);
+				mosquitto_FREE(mosq->address);
+				mosquitto_FREE(mosq);
 				u->mosq = NULL;
 				return -1;
 			}
 			mosq->sock = lws_get_socket_fd(wsi);
 			HASH_ADD(hh_sock, db.contexts_by_sock, sock, sizeof(mosq->sock), mosq);
-			mux__add_in(mosq);
+			mux__new(mosq);
 			break;
 
 		case LWS_CALLBACK_CLOSED:
@@ -213,35 +215,19 @@ static int callback_mqtt(
 			}
 
 			rc = db__message_write_inflight_out_latest(mosq);
-			if(rc) return -1;
+			if(rc){
+				return -1;
+			}
 			rc = db__message_write_queued_out(mosq);
-			if(rc) return -1;
-
-			if(mosq->out_packet && !mosq->current_out_packet){
-				mosq->current_out_packet = mosq->out_packet;
-				mosq->out_packet = mosq->out_packet->next;
-				if(!mosq->out_packet){
-					mosq->out_packet_last = NULL;
-				}
-				mosq->out_packet_count--;
+			if(rc){
+				return -1;
 			}
 
-			while(mosq->current_out_packet && !lws_send_pipe_choked(mosq->wsi)){
-				packet = mosq->current_out_packet;
-
-				if(packet->pos == 0 && packet->to_process == packet->packet_length){
-					/* First time this packet has been dealt with.
-					 * libwebsockets requires that the payload has
-					 * LWS_PRE space available before the
-					 * actual data.
-					 * We've already made the payload big enough to allow this,
-					 * but need to move it into position here. */
-					memmove(&packet->payload[LWS_PRE], packet->payload, packet->packet_length);
-					packet->pos += LWS_PRE;
-				}
+			while(mosq->out_packet && !lws_send_pipe_choked(mosq->wsi)){
+				packet = mosq->out_packet;
 				count = lws_write(wsi, &packet->payload[packet->pos], packet->to_process, LWS_WRITE_BINARY);
 				if(count < 0){
-					if (mosq->state == mosq_cs_disconnect_ws
+					if(mosq->state == mosq_cs_disconnect_ws
 							|| mosq->state == mosq_cs_disconnecting
 							|| mosq->state == mosq_cs_disused){
 
@@ -251,12 +237,12 @@ static int callback_mqtt(
 				}
 				ucount = (unsigned int)count;
 #ifdef WITH_SYS_TREE
-				g_bytes_sent += ucount;
+				metrics__int_inc(mosq_counter_bytes_sent, ucount);
 #endif
 				packet->to_process -= ucount;
 				packet->pos += ucount;
 				if(packet->to_process > 0){
-					if (mosq->state == mosq_cs_disconnect_ws
+					if(mosq->state == mosq_cs_disconnect_ws
 							|| mosq->state == mosq_cs_disconnecting
 							|| mosq->state == mosq_cs_disused){
 
@@ -266,34 +252,24 @@ static int callback_mqtt(
 				}
 
 #ifdef WITH_SYS_TREE
-				g_msgs_sent++;
+				metrics__int_inc(mosq_counter_messages_sent, 1);
 				if(((packet->command)&0xF0) == CMD_PUBLISH){
-					g_pub_msgs_sent++;
+					metrics__int_inc(mosq_counter_mqtt_publish_sent, 1);
 				}
 #endif
 
-				/* Free data and reset values */
-				mosq->current_out_packet = mosq->out_packet;
-				if(mosq->out_packet){
-					mosq->out_packet = mosq->out_packet->next;
-					if(!mosq->out_packet){
-						mosq->out_packet_last = NULL;
-					}
-					mosq->out_packet_count--;
-				}
-
-				packet__cleanup(packet);
-				mosquitto__free(packet);
+				packet__get_next_out(mosq);
+				mosquitto_FREE(packet);
 
 				mosq->next_msg_out = db.now_s + mosq->keepalive;
 			}
-			if (mosq->state == mosq_cs_disconnect_ws
+			if(mosq->state == mosq_cs_disconnect_ws
 					|| mosq->state == mosq_cs_disconnecting
 					|| mosq->state == mosq_cs_disused){
 
 				return -1;
 			}
-			if(mosq->current_out_packet){
+			if(mosq->out_packet){
 				lws_callback_on_writable(mosq->wsi);
 			}
 			break;
@@ -305,7 +281,7 @@ static int callback_mqtt(
 			mosq = u->mosq;
 			pos = 0;
 			buf = (uint8_t *)in;
-			G_BYTES_RECEIVED_INC(len);
+			metrics__int_inc(mosq_counter_bytes_received, (int64_t)len);
 			while(pos < len){
 				if(!mosq->in_packet.command){
 					mosq->in_packet.command = buf[pos];
@@ -337,7 +313,7 @@ static int callback_mqtt(
 					mosq->in_packet.remaining_count = (int8_t)(mosq->in_packet.remaining_count * -1);
 
 					if(mosq->in_packet.remaining_length > 0){
-						mosq->in_packet.payload = mosquitto__malloc(mosq->in_packet.remaining_length*sizeof(uint8_t));
+						mosq->in_packet.payload = mosquitto_malloc(mosq->in_packet.remaining_length*sizeof(uint8_t));
 						if(!mosq->in_packet.payload){
 							return -1;
 						}
@@ -361,10 +337,7 @@ static int callback_mqtt(
 				mosq->in_packet.pos = 0;
 
 #ifdef WITH_SYS_TREE
-				G_MSGS_RECEIVED_INC(1);
-				if(((mosq->in_packet.command)&0xF0) == CMD_PUBLISH){
-					G_PUB_MSGS_RECEIVED_INC(1);
-				}
+				metrics__int_inc(mosq_counter_messages_received, 1);
 #endif
 				rc = handle__packet(mosq);
 
@@ -373,12 +346,12 @@ static int callback_mqtt(
 
 				keepalive__update(mosq);
 
-				if(rc && (mosq->out_packet || mosq->current_out_packet)) {
+				if(rc && mosq->out_packet){
 					if(mosq->state != mosq_cs_disconnecting){
 						mosquitto__set_state(mosq, mosq_cs_disconnect_ws);
 					}
 					lws_callback_on_writable(mosq->wsi);
-				} else if (rc) {
+				}else if(rc){
 					do_disconnect(mosq, MOSQ_ERR_CONN_LOST);
 					return -1;
 				}
@@ -407,7 +380,7 @@ static char *http__canonical_filename(
 	}else{
 		slen = strlen(http_dir) + inlen + 2;
 	}
-	filename = mosquitto__malloc(slen);
+	filename = mosquitto_malloc(slen);
 	if(!filename){
 		lws_return_http_status(wsi, HTTP_STATUS_INTERNAL_SERVER_ERROR, NULL);
 		return NULL;
@@ -422,14 +395,14 @@ static char *http__canonical_filename(
 	/* Get canonical path and check it is within our http_dir */
 #ifdef WIN32
 	filename_canonical = _fullpath(NULL, filename, 0);
-	mosquitto__free(filename);
+	mosquitto_FREE(filename);
 	if(!filename_canonical){
 		lws_return_http_status(wsi, HTTP_STATUS_INTERNAL_SERVER_ERROR, NULL);
 		return NULL;
 	}
 #else
 	filename_canonical = realpath(filename, NULL);
-	mosquitto__free(filename);
+	mosquitto_FREE(filename);
 	if(!filename_canonical){
 		if(errno == EACCES){
 			lws_return_http_status(wsi, HTTP_STATUS_FORBIDDEN, NULL);
@@ -445,7 +418,7 @@ static char *http__canonical_filename(
 #endif
 	if(strncmp(http_dir, filename_canonical, strlen(http_dir))){
 		/* Requested file isn't within http_dir, deny access. */
-		free(filename_canonical);
+		SAFE_FREE(filename_canonical);
 		lws_return_http_status(wsi, HTTP_STATUS_FORBIDDEN, NULL);
 		return NULL;
 	}
@@ -472,10 +445,11 @@ static int callback_http(
 	struct stat filestat;
 	struct mosquitto *mosq;
 	struct lws_pollargs *pollargs = (struct lws_pollargs *)in;
+	int hlen;
 
 	/* FIXME - ssl cert verification is done here. */
 
-	switch (reason) {
+	switch(reason){
 		case LWS_CALLBACK_HTTP:
 			if(!u){
 				return -1;
@@ -499,16 +473,18 @@ static int callback_http(
 			}
 
 			filename_canonical = http__canonical_filename(wsi, (char *)in, http_dir);
-			if(!filename_canonical) return -1;
+			if(!filename_canonical){
+				return -1;
+			}
 
 			u->fptr = fopen(filename_canonical, "rb");
 			if(!u->fptr){
-				free(filename_canonical);
+				SAFE_FREE(filename_canonical);
 				lws_return_http_status(wsi, HTTP_STATUS_NOT_FOUND, NULL);
 				return -1;
 			}
 			if(fstat(fileno(u->fptr), &filestat) < 0){
-				free(filename_canonical);
+				SAFE_FREE(filename_canonical);
 				lws_return_http_status(wsi, HTTP_STATUS_INTERNAL_SERVER_ERROR, NULL);
 				fclose(u->fptr);
 				u->fptr = NULL;
@@ -519,12 +495,12 @@ static int callback_http(
 			if((filestat.st_mode & S_IFDIR) == S_IFDIR){
 				fclose(u->fptr);
 				u->fptr = NULL;
-				free(filename_canonical);
+				SAFE_FREE(filename_canonical);
 
 				/* FIXME - use header functions from lws 2.x */
 				buflen = (size_t)snprintf((char *)buf, 4096, "HTTP/1.0 302 OK\r\n"
-												"Location: %s/\r\n\r\n",
-												(char *)in);
+						"Location: %s/\r\n\r\n",
+						(char *)in);
 				return lws_write(wsi, buf, buflen, LWS_WRITE_HTTP);
 			}
 
@@ -532,17 +508,17 @@ static int callback_http(
 				lws_return_http_status(wsi, HTTP_STATUS_FORBIDDEN, NULL);
 				fclose(u->fptr);
 				u->fptr = NULL;
-				free(filename_canonical);
+				SAFE_FREE(filename_canonical);
 				return -1;
 			}
 
 			log__printf(NULL, MOSQ_LOG_DEBUG, "http serving file \"%s\".", filename_canonical);
-			free(filename_canonical);
+			SAFE_FREE(filename_canonical);
 			/* FIXME - use header functions from lws 2.x */
 			buflen = (size_t)snprintf((char *)buf, 4096, "HTTP/1.0 200 OK\r\n"
-												"Server: mosquitto\r\n"
-												"Content-Length: %u\r\n\r\n",
-												(unsigned int)filestat.st_size);
+					"Server: mosquitto\r\n"
+					"Content-Length: %u\r\n\r\n",
+					(unsigned int)filestat.st_size);
 			if(lws_write(wsi, buf, buflen, LWS_WRITE_HTTP) < 0){
 				fclose(u->fptr);
 				u->fptr = NULL;
@@ -562,6 +538,26 @@ static int callback_http(
 		case LWS_CALLBACK_FILTER_HTTP_CONNECTION:
 			/* Access control here */
 			return 0;
+
+#if LWS_LIBRARY_VERSION_NUMBER >= 3001000
+		case LWS_CALLBACK_HTTP_CONFIRM_UPGRADE:
+			hack = lws_context_user(lws_get_context(wsi));
+			if(hack->listener->ws_origin_count){
+				hlen = lws_hdr_total_length(wsi, WSI_TOKEN_ORIGIN);
+				if(hlen <= 0 || hlen >= (int)sizeof(buf)){
+					return -1;
+				}
+				for(int i=0; i<hack->listener->ws_origin_count; i++){
+					lws_hdr_copy(wsi, (char *)buf, sizeof(buf), WSI_TOKEN_ORIGIN);
+					if((!strcmp(hack->listener->ws_origins[i], (char *)buf))){
+						return 0;
+					}
+				}
+				return -1;
+			}else{
+				return 0;
+			}
+#endif
 
 		case LWS_CALLBACK_HTTP_WRITEABLE:
 			/* Send our data here */
@@ -615,7 +611,6 @@ static int callback_http(
 			if(mosq){
 				if(pollargs->events & LWS_POLLOUT){
 					mux__add_out(mosq);
-					mosq->ws_want_write = true;
 				}else{
 					mux__remove_out(mosq);
 				}
@@ -641,7 +636,6 @@ static int callback_http(
 					return 1;
 				}else if(pollargs->events & LWS_POLLOUT){
 					mux__add_out(mosq);
-					mosq->ws_want_write = true;
 				}else{
 					mux__remove_out(mosq);
 				}
@@ -650,7 +644,7 @@ static int callback_http(
 
 #ifdef WITH_TLS
 		case LWS_CALLBACK_OPENSSL_PERFORM_CLIENT_CERT_VERIFICATION:
-			if(!len || (SSL_get_verify_result((SSL*)in) != X509_V_OK)){
+			if(!len || (SSL_get_verify_result((SSL *)in) != X509_V_OK)){
 				return 1;
 			}
 			break;
@@ -663,6 +657,7 @@ static int callback_http(
 	return 0;
 }
 
+
 static void log_wrap(int level, const char *line)
 {
 	char *l = (char *)line;
@@ -670,6 +665,7 @@ static void log_wrap(int level, const char *line)
 	l[strlen(line)-1] = '\0'; /* Remove \n */
 	log__printf(NULL, MOSQ_LOG_WEBSOCKETS, "%s", l);
 }
+
 
 void mosq_websockets_init(struct mosquitto__listener *listener, const struct mosquitto__config *conf)
 {
@@ -680,9 +676,11 @@ void mosq_websockets_init(struct mosquitto__listener *listener, const struct mos
 	struct libws_mqtt_hack *user;
 
 	/* Count valid protocols */
-	for(protocol_count=0; protocols[protocol_count].name; protocol_count++);
+	for(protocol_count=0; protocols[protocol_count].name; protocol_count++){
+		;
+	}
 
-	p = mosquitto__calloc(protocol_count+1, sizeof(struct lws_protocols));
+	p = mosquitto_calloc(protocol_count+1, sizeof(struct lws_protocols));
 	if(!p){
 		log__printf(NULL, MOSQ_LOG_ERR, "Out of memory.");
 		return;
@@ -704,8 +702,7 @@ void mosq_websockets_init(struct mosquitto__listener *listener, const struct mos
 #ifdef WITH_TLS
 	if(listener->cafile){
 		info.ssl_ca_filepath = listener->cafile;
-	}
-	else if(listener->capath){
+	}else if(listener->capath){
 		log__printf(NULL, MOSQ_LOG_WARNING, "Warning: CA path option is not supported for websockets");
 	}
 	info.ssl_cert_filepath = listener->certfile;
@@ -727,11 +724,11 @@ void mosq_websockets_init(struct mosquitto__listener *listener, const struct mos
 	if(listener->socket_domain == AF_INET){
 		info.options |= LWS_SERVER_OPTION_DISABLE_IPV6;
 	}
-	info.max_http_header_data = conf->websockets_headers_size;
+	info.max_http_header_data = conf->packet_buffer_size;
 
-	user = mosquitto__calloc(1, sizeof(struct libws_mqtt_hack));
+	user = mosquitto_calloc(1, sizeof(struct libws_mqtt_hack));
 	if(!user){
-		mosquitto__free(p);
+		mosquitto_FREE(p);
 		log__printf(NULL, MOSQ_LOG_ERR, "Out of memory.");
 		return;
 	}
@@ -743,8 +740,8 @@ void mosq_websockets_init(struct mosquitto__listener *listener, const struct mos
 		user->http_dir = realpath(listener->http_dir, NULL);
 #endif
 		if(!user->http_dir){
-			mosquitto__free(user);
-			mosquitto__free(p);
+			mosquitto_FREE(user);
+			mosquitto_FREE(p);
 			log__printf(NULL, MOSQ_LOG_ERR, "Error: Unable to open http dir \"%s\".", listener->http_dir);
 			return;
 		}
@@ -763,5 +760,5 @@ void mosq_websockets_init(struct mosquitto__listener *listener, const struct mos
 	listener->ws_in_init = false;
 }
 
-
+#endif
 #endif

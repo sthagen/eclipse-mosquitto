@@ -1,23 +1,16 @@
 option(WITH_LIB_CPP "Build C++ library?" ON)
-if (WITH_LIB_CPP)
+if(WITH_LIB_CPP)
 	add_subdirectory(cpp)
-endif (WITH_LIB_CPP)
-
-include_directories(${mosquitto_SOURCE_DIR} ${mosquitto_SOURCE_DIR}/lib
-			${OPENSSL_INCLUDE_DIR} # Required for cross compilation
-			${mosquitto_SOURCE_DIR}/include
-			${STDBOOL_H_PATH} ${STDINT_H_PATH})
-
-link_directories(${mosquitto_SOURCE_DIR}/lib)
-
-if (WITH_BUNDLED_DEPS)
-        include_directories(${mosquitto_SOURCE_DIR} ${mosquitto_SOURCE_DIR}/deps)
-endif (WITH_BUNDLED_DEPS)
+endif()
 
 set(C_SRC
-	actions.c
+	actions_publish.c
+	actions_subscribe.c
+	actions_unsubscribe.c
+	alias_mosq.c alias_mosq.h
 	callbacks.c
 	connect.c
+	extended_auth.c
 	handle_auth.c
 	handle_connack.c
 	handle_disconnect.c
@@ -29,15 +22,16 @@ set(C_SRC
 	handle_suback.c
 	handle_unsuback.c
 	helpers.c
+	http_client.c http_client.h
+	libmosquitto.c
 	logging_mosq.c logging_mosq.h
 	loop.c
-	memory_mosq.c memory_mosq.h
 	messages_mosq.c messages_mosq.h
-	misc_mosq.c misc_mosq.h
-	mosquitto.c ../include/mosquitto.h
 	mosquitto_internal.h
-	../include/mqtt_protocol.h
+	../include/mosquitto.h
+	../include/mosquitto/mqtt_protocol.h
 	net_mosq_ocsp.c net_mosq.c net_mosq.h
+	net_ws.c
 	options.c
 	packet_datatypes.c
 	packet_mosq.c packet_mosq.h
@@ -52,46 +46,68 @@ set(C_SRC
 	send_mosq.c send_mosq.h
 	socks_mosq.c
 	srv_mosq.c
-	strings_mosq.c
 	thread_mosq.c
-	time_mosq.c
 	tls_mosq.c
-	utf8_mosq.c
-	util_mosq.c util_topic.c util_mosq.h
+	util_mosq.c util_mosq.h
 	will_mosq.c will_mosq.h)
 
-if (WITH_TLS)
-	set (LIBRARIES OpenSSL::SSL)
+set(LIBRARIES common-options libmosquitto_common)
+
+if(WITH_TLS)
+	set (LIBRARIES ${LIBRARIES} OpenSSL::SSL)
 endif()
 
-if (UNIX AND NOT APPLE AND NOT ANDROID)
-	find_library(LIBRT rt)
-	if (LIBRT)
-		set (LIBRARIES ${LIBRARIES} rt)
-	endif (LIBRT)
-endif (UNIX AND NOT APPLE AND NOT ANDROID)
-
-if (WIN32)
+if(WIN32)
 	set (LIBRARIES ${LIBRARIES} ws2_32)
-endif (WIN32)
+endif()
 
-if (WITH_SRV)
+if(WITH_SRV)
 	# Simple detect c-ares
 	find_path(ARES_HEADER ares.h)
-	if (ARES_HEADER)
+	if(ARES_HEADER)
 		add_definitions("-DWITH_SRV")
 		set (LIBRARIES ${LIBRARIES} cares)
-	else (ARES_HEADER)
+	else()
 		message(WARNING "c-ares library not found.")
-	endif (ARES_HEADER)
-endif (WITH_SRV)
+	endif()
+endif()
 
-add_library(libmosquitto SHARED ${C_SRC})
-set_target_properties(libmosquitto PROPERTIES
-	POSITION_INDEPENDENT_CODE 1
+if(WITH_WEBSOCKETS AND WITH_WEBSOCKETS_BUILTIN)
+	add_definitions("-DWITH_WEBSOCKETS=WS_IS_BUILTIN")
+	set(C_SRC ${C_SRC}
+		../deps/picohttpparser/picohttpparser.c
+		http_client.c http_client.h
+		net_ws.c
+		)
+endif()
+
+add_library(libmosquitto SHARED
+	${C_SRC}
 )
 
-if (WITH_THREADING)
+if(WITH_WEBSOCKETS AND WITH_WEBSOCKETS_BUILTIN)
+	target_include_directories(libmosquitto PRIVATE
+		"${mosquitto_SOURCE_DIR}/deps/picohttpparser")
+endif()
+
+target_include_directories(libmosquitto
+	PUBLIC
+		"${mosquitto_SOURCE_DIR}/include"
+		"${mosquitto_SOURCE_DIR}/lib"
+	PRIVATE
+		"${mosquitto_SOURCE_DIR}"
+		"${mosquitto_SOURCE_DIR}/common"
+		"${mosquitto_SOURCE_DIR}/libcommon"
+		"${OPENSSL_INCLUDE_DIR}" # Required for cross compilation
+)
+
+if(WITH_BUNDLED_DEPS)
+	target_include_directories(libmosquitto PRIVATE
+		"${mosquitto_SOURCE_DIR}/deps"
+	)
+endif()
+
+if(WITH_THREADING)
 	if(WIN32)
 		set (LIBRARIES ${LIBRARIES} PThreads4W::PThreads4W)
 	else()
@@ -102,12 +118,13 @@ if (WITH_THREADING)
 	endif()
 endif()
 
-target_link_libraries(libmosquitto ${LIBRARIES})
+target_link_libraries(libmosquitto PUBLIC ${LIBRARIES})
 
 set_target_properties(libmosquitto PROPERTIES
 	OUTPUT_NAME mosquitto
 	VERSION ${VERSION}
 	SOVERSION 1
+	POSITION_INDEPENDENT_CODE 1
 )
 
 if(UNIX AND NOT APPLE)
@@ -120,17 +137,24 @@ endif()
 install(TARGETS libmosquitto
 	RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
 	ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
-	LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}")
+	LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+)
 
-if (WITH_STATIC_LIBRARIES)
+if(WITH_STATIC_LIBRARIES)
 	add_library(libmosquitto_static STATIC ${C_SRC})
-	if (WITH_PIC)
+	if(WITH_PIC)
 		set_target_properties(libmosquitto_static PROPERTIES
 			POSITION_INDEPENDENT_CODE 1
 		)
-	endif (WITH_PIC)
+	endif()
 
-	target_link_libraries(libmosquitto_static ${LIBRARIES})
+	target_link_libraries(libmosquitto_static PRIVATE ${LIBRARIES})
+
+	target_include_directories(libmosquitto_static PRIVATE
+		"${mosquitto_SOURCE_DIR}"
+		"${mosquitto_SOURCE_DIR}/include"
+		"${mosquitto_SOURCE_DIR}/lib"
+	)
 
 	set_target_properties(libmosquitto_static PROPERTIES
 		OUTPUT_NAME mosquitto_static
@@ -138,8 +162,7 @@ if (WITH_STATIC_LIBRARIES)
 	)
 
 	target_compile_definitions(libmosquitto_static PUBLIC "LIBMOSQUITTO_STATIC")
-	install(TARGETS libmosquitto_static ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}")
-endif (WITH_STATIC_LIBRARIES)
-
-install(FILES ../include/mosquitto.h DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}")
-install(FILES ../include/mqtt_protocol.h DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}")
+	install(TARGETS libmosquitto_static
+		ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+	)
+endif()

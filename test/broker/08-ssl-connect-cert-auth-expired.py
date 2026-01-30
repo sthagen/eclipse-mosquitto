@@ -11,12 +11,12 @@ if sys.version < '2.7':
 
 def write_config(filename, port1, port2):
     with open(filename, 'w') as f:
-        f.write("port %d\n" % (port2))
+        f.write("listener %d\n" % (port2))
         f.write("\n")
         f.write("listener %d\n" % (port1))
-        f.write("cafile ../ssl/all-ca.crt\n")
-        f.write("certfile ../ssl/server.crt\n")
-        f.write("keyfile ../ssl/server.key\n")
+        f.write(f"cafile {ssl_dir}/all-ca.crt\n")
+        f.write(f"certfile {ssl_dir}/server.crt\n")
+        f.write(f"keyfile {ssl_dir}/server.key\n")
         f.write("require_certificate true\n")
 
 (port1, port2) = mosq_test.get_port(2)
@@ -28,8 +28,9 @@ broker = mosq_test.start_broker(filename=os.path.basename(__file__), port=port2,
 
 ssl_eof = False
 try:
-    context = ssl.create_default_context(ssl.Purpose.SERVER_AUTH, cafile="../ssl/test-root-ca.crt")
-    context.load_cert_chain(certfile="../ssl/client-expired.crt", keyfile="../ssl/client-expired.key")
+    context = ssl.create_default_context(ssl.Purpose.SERVER_AUTH, cafile=f"{ssl_dir}/test-root-ca.crt")
+    context.minimum_version = ssl.TLSVersion.TLSv1_2
+    context.load_cert_chain(certfile=f"{ssl_dir}/client-expired.crt", keyfile=f"{ssl_dir}/client-expired.key")
     with socket.create_connection(("localhost", port1)) as sock:
         ssock = context.wrap_socket(sock, server_hostname="localhost", suppress_ragged_eofs=True)
         ssock.settimeout(None)
@@ -55,7 +56,9 @@ finally:
     os.remove(conf_file)
     time.sleep(0.5)
     broker.terminate()
-    broker.wait()
+    if mosq_test.wait_for_subprocess(broker):
+        print("broker not terminated")
+        if rc == 0: rc=1
     (stdo, stde) = broker.communicate()
 
     if ssl_eof:

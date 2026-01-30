@@ -9,7 +9,7 @@ jobs:
   coverity:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
       with:
         ref: develop
 
@@ -18,12 +18,15 @@ jobs:
         sudo apt-get update
         sudo apt-get install -y \
             docbook-xsl \
+            google-mock \
+            googletest \
             lcov \
             libc-ares-dev \
             libcjson-dev \
             libcjson1 \
             libcunit1-dev \
             libedit-dev \
+            libgmock-dev \
             libmicrohttpd-dev \
             libssl-dev \
             libwrap0-dev \
@@ -40,5 +43,4 @@ jobs:
         project: "eclipse/mosquitto"
         token: ${{ secrets.COVERITY_SCAN_TOKEN }}
         email: ${{ secrets.COVERITY_SCAN_EMAIL }}
-        command: "make binary"
-
+        command: "make binary-all"

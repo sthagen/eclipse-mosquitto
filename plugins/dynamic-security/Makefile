@@ -1,86 +1,50 @@
-include ../../config.mk
-
-.PHONY : all binary check clean reallyclean test install uninstall
+R=../..
+include ${R}/config.mk
 
 PLUGIN_NAME=mosquitto_dynamic_security
-LOCAL_CPPFLAGS=-I../../src/ -DWITH_CJSON
 
-OBJS=	\
-		acl.o \
-		auth.o \
-		clients.o \
-		clientlist.o \
-		groups.o \
-		grouplist.o \
-		json_help.o \
-		plugin.o \
-		roles.o \
-		rolelist.o \
-		sub_matches_sub.o
+LOCAL_CFLAGS+=
+LOCAL_CPPFLAGS+=-I${R}/lib/ -I${R}/src/ -I${R}/plugins/common
+LOCAL_LIBADD+=-lcjson -lm $(LIBMOSQ_COMMON)
+LOCAL_LDFLAGS+=
 
-ifeq ($(WITH_CJSON),yes)
+WITH_PW_CACHE:=yes
+ifeq ($(WITH_PW_CACHE),yes)
+        LOCAL_CPPFLAGS+=-DWITH_PW_CACHE
+endif
+
+OBJS = \
+	acl.o \
+	auth.o \
+	clients.o \
+	clientlist.o \
+	config.o \
+	config_init.o \
+	control.o \
+	default_acl.o \
+	details.o \
+	groups.o \
+	grouplist.o \
+	kicklist.o \
+	plugin.o \
+	roles.o \
+	rolelist.o \
+	tick.o
+
+OBJS_EXTERNAL = \
+	json_help.o
+
+EXTRA_DEPS:=dynamic_security.h
+
 ifeq ($(WITH_TLS),yes)
 ALL_DEPS:= binary
 else
 ALL_DEPS:=
 endif
-else
-ALL_DEPS:=
-endif
 
 all : ${ALL_DEPS}
-binary : ${PLUGIN_NAME}.so
 
-${PLUGIN_NAME}.so : ${OBJS}
-	${CROSS_COMPILE}${CC} $(PLUGIN_LDFLAGS) -fPIC -shared $^ -o $@ -lcjson
+json_help.o : ${R}/common/json_help.c ${R}/common/json_help.h
+	${CROSS_COMPILE}${CC} $(LOCAL_CPPFLAGS) $(LOCAL_CFLAGS) -c $< -o $@
 
-acl.o : acl.c dynamic_security.h
-	${CROSS_COMPILE}${CC} $(LOCAL_CPPFLAGS) $(PLUGIN_CPPFLAGS) $(PLUGIN_CFLAGS) -c $< -o $@
-
-auth.o : auth.c dynamic_security.h
-	${CROSS_COMPILE}${CC} $(LOCAL_CPPFLAGS) $(PLUGIN_CPPFLAGS) $(PLUGIN_CFLAGS) -c $< -o $@
-
-clients.o : clients.c dynamic_security.h
-	${CROSS_COMPILE}${CC} $(LOCAL_CPPFLAGS) $(PLUGIN_CPPFLAGS) $(PLUGIN_CFLAGS) -c $< -o $@
-
-clientlist.o : clientlist.c dynamic_security.h
-	${CROSS_COMPILE}${CC} $(LOCAL_CPPFLAGS) $(PLUGIN_CPPFLAGS) $(PLUGIN_CFLAGS) -c $< -o $@
-
-groups.o : groups.c dynamic_security.h
-	${CROSS_COMPILE}${CC} $(LOCAL_CPPFLAGS) $(PLUGIN_CPPFLAGS) $(PLUGIN_CFLAGS) -c $< -o $@
-
-grouplist.o : grouplist.c dynamic_security.h
-	${CROSS_COMPILE}${CC} $(LOCAL_CPPFLAGS) $(PLUGIN_CPPFLAGS) $(PLUGIN_CFLAGS) -c $< -o $@
-
-json_help.o : json_help.c dynamic_security.h
-	${CROSS_COMPILE}${CC} $(LOCAL_CPPFLAGS) $(PLUGIN_CPPFLAGS) $(PLUGIN_CFLAGS) -c $< -o $@
-
-plugin.o : plugin.c dynamic_security.h
-	${CROSS_COMPILE}${CC} $(LOCAL_CPPFLAGS) $(PLUGIN_CPPFLAGS) $(PLUGIN_CFLAGS) -c $< -o $@
-
-roles.o : roles.c dynamic_security.h
-	${CROSS_COMPILE}${CC} $(LOCAL_CPPFLAGS) $(PLUGIN_CPPFLAGS) $(PLUGIN_CFLAGS) -c $< -o $@
-
-rolelist.o : rolelist.c dynamic_security.h
-	${CROSS_COMPILE}${CC} $(LOCAL_CPPFLAGS) $(PLUGIN_CPPFLAGS) $(PLUGIN_CFLAGS) -c $< -o $@
-
-sub_matches_sub.o : sub_matches_sub.c dynamic_security.h
-	${CROSS_COMPILE}${CC} $(LOCAL_CPPFLAGS) $(PLUGIN_CPPFLAGS) $(PLUGIN_CFLAGS) -c $< -o $@
-
-reallyclean : clean
-clean:
-	-rm -f *.o ${PLUGIN_NAME}.so *.gcda *.gcno
-
-check: test
-test:
-
-install: all
-ifeq ($(WITH_CJSON),yes)
-ifeq ($(WITH_TLS),yes)
-	$(INSTALL) -d "${DESTDIR}$(libdir)"
-	$(INSTALL) ${STRIP_OPTS} ${PLUGIN_NAME}.so "${DESTDIR}${libdir}/${PLUGIN_NAME}.so"
-endif
-endif
-
-uninstall :
-	-rm -f "${DESTDIR}${libdir}/${PLUGIN_NAME}.so"
+include ${R}/plugins/plugin.mk

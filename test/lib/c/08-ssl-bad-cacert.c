@@ -4,10 +4,14 @@
 #include <stdlib.h>
 #include <mosquitto.h>
 
+
 int main(int argc, char *argv[])
 {
 	int rc = 1;
 	struct mosquitto *mosq;
+
+	(void)argc;
+	(void)argv;
 
 	mosquitto_lib_init();
 

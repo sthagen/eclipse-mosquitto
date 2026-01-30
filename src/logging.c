@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2009-2020 Roger Light <roger@atchoo.org>
+Copyright (c) 2009-2021 Roger Light <roger@atchoo.org>
 
 All rights reserved. This program and the accompanying materials
 are made available under the terms of the Eclipse Public License 2.0
@@ -17,6 +17,7 @@ Contributors:
 */
 #include "config.h"
 
+#include <inttypes.h>
 #include <stdarg.h>
 #include <stdio.h>
 #include <string.h>
@@ -37,15 +38,19 @@ Contributors:
 
 #include "logging_mosq.h"
 #include "mosquitto_broker_internal.h"
-#include "memory_mosq.h"
-#include "misc_mosq.h"
 #include "util_mosq.h"
 
 #ifdef WIN32
 HANDLE syslog_h;
 #endif
 
+#ifdef ANDROID
+#include <android/log.h>
+static const char *LOG_TAG = "mosquitto";
+#endif
+
 static char log_fptr_buffer[BUFSIZ];
+static void libcommon__vprintf(const char *fmt, va_list va);
 
 /* Options for logging should be:
  *
@@ -66,10 +71,10 @@ static unsigned int log_priorities = MOSQ_LOG_ERR | MOSQ_LOG_WARNING | MOSQ_LOG_
 static DltContext dltContext;
 static bool dlt_allowed = false;
 
+
 void dlt_fifo_check(void)
 {
 	struct stat statbuf;
-	int fd;
 
 	/* If we start DLT but the /tmp/dlt fifo doesn't exist, or isn't available
 	 * for writing then there is a big delay when we try and close the log
@@ -79,7 +84,7 @@ void dlt_fifo_check(void)
 	memset(&statbuf, 0, sizeof(statbuf));
 	if(stat("/tmp/dlt", &statbuf) == 0){
 		if(S_ISFIFO(statbuf.st_mode)){
-			fd = open("/tmp/dlt", O_NONBLOCK | O_WRONLY);
+			int fd = open("/tmp/dlt", O_NONBLOCK | O_WRONLY);
 			if(fd != -1){
 				dlt_allowed = true;
 				close(fd);
@@ -88,6 +93,7 @@ void dlt_fifo_check(void)
 	}
 }
 #endif
+
 
 static int get_time(struct tm **ti)
 {
@@ -109,6 +115,8 @@ int log__init(struct mosquitto__config *config)
 {
 	int rc = 0;
 
+	libcommon_vprintf = libcommon__vprintf;
+
 	log_priorities = config->log_type;
 	log_destinations = config->log_dest;
 
@@ -121,7 +129,7 @@ int log__init(struct mosquitto__config *config)
 	}
 
 	if(log_destinations & MQTT3_LOG_FILE){
-		config->log_fptr = mosquitto__fopen(config->log_file, "at", true);
+		config->log_fptr = mosquitto_fopen(config->log_file, "at", true);
 		if(config->log_fptr){
 			setvbuf(config->log_fptr, log_fptr_buffer, _IOLBF, sizeof(log_fptr_buffer));
 		}else{
@@ -139,13 +147,14 @@ int log__init(struct mosquitto__config *config)
 	if(log_destinations & MQTT3_LOG_DLT){
 		dlt_fifo_check();
 		if(dlt_allowed){
-			DLT_REGISTER_APP("MQTT","mosquitto log");
+			DLT_REGISTER_APP("MQTT", "mosquitto log");
 			dlt_register_context(&dltContext, "MQTT", "mosquitto DLT context");
 		}
 	}
 #endif
 	return rc;
 }
+
 
 int log__close(struct mosquitto__config *config)
 {
@@ -174,9 +183,11 @@ int log__close(struct mosquitto__config *config)
 }
 
 #ifdef WITH_DLT
+
+
 DltLogLevelType get_dlt_level(unsigned int priority)
 {
-	switch (priority) {
+	switch(priority){
 		case MOSQ_LOG_ERR:
 			return DLT_LOG_ERROR;
 		case MOSQ_LOG_WARNING:
@@ -194,6 +205,31 @@ DltLogLevelType get_dlt_level(unsigned int priority)
 	}
 }
 #endif
+
+#ifdef ANDROID
+
+
+android_LogPriority get_android_level(unsigned int priority)
+{
+	switch(priority){
+		case MOSQ_LOG_ERR:
+			return ANDROID_LOG_ERROR;
+		case MOSQ_LOG_WARNING:
+			return ANDROID_LOG_WARN;
+		case MOSQ_LOG_INFO:
+			return ANDROID_LOG_INFO;
+		case MOSQ_LOG_DEBUG:
+			return ANDROID_LOG_DEBUG;
+		case MOSQ_LOG_NOTICE:
+		case MOSQ_LOG_SUBSCRIBE:
+		case MOSQ_LOG_UNSUBSCRIBE:
+			return ANDROID_LOG_VERBOSE;
+		default:
+			return ANDROID_LOG_DEBUG;
+	}
+}
+#endif
+
 
 static int log__vprintf(unsigned int priority, const char *fmt, va_list va)
 {
@@ -272,7 +308,7 @@ static int log__vprintf(unsigned int priority, const char *fmt, va_list va)
 				syslog_priority = EVENTLOG_INFORMATION_TYPE;
 #endif
 				break;
-#ifdef WITH_WEBSOCKETS
+#if defined(WITH_WEBSOCKETS) && WITH_WEBSOCKETS == WS_IS_LWS
 			case MOSQ_LOG_WEBSOCKETS:
 				topic = "$SYS/broker/log/WS";
 #ifndef WIN32
@@ -342,10 +378,16 @@ static int log__vprintf(unsigned int priority, const char *fmt, va_list va)
 			DLT_LOG_STRING(dltContext, get_dlt_level(priority), log_line);
 		}
 #endif
+#ifdef ANDROID
+		if(log_destinations & MQTT3_LOG_ANDROID && priority != MOSQ_LOG_INTERNAL){
+			__android_log_write(get_android_level(priority), LOG_TAG, log_line);
+		}
+#endif
 	}
 
 	return MOSQ_ERR_SUCCESS;
 }
+
 
 int log__printf(struct mosquitto *mosq, unsigned int priority, const char *fmt, ...)
 {
@@ -360,6 +402,7 @@ int log__printf(struct mosquitto *mosq, unsigned int priority, const char *fmt, 
 
 	return rc;
 }
+
 
 void log__internal(const char *fmt, ...)
 {
@@ -383,12 +426,14 @@ void log__internal(const char *fmt, ...)
 #endif
 }
 
-int mosquitto_log_vprintf(int level, const char *fmt, va_list va)
+
+BROKER_EXPORT int mosquitto_log_vprintf(int level, const char *fmt, va_list va)
 {
 	return log__vprintf((unsigned int)level, fmt, va);
 }
 
-void mosquitto_log_printf(int level, const char *fmt, ...)
+
+BROKER_EXPORT void mosquitto_log_printf(int level, const char *fmt, ...)
 {
 	va_list va;
 
@@ -397,3 +442,8 @@ void mosquitto_log_printf(int level, const char *fmt, ...)
 	va_end(va);
 }
 
+
+static void libcommon__vprintf(const char *fmt, va_list va)
+{
+	log__vprintf(MOSQ_LOG_INFO, fmt, va);
+}

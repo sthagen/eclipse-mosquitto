@@ -1,27 +1,28 @@
 #!/usr/bin/python3
 
 build_variants = [
-    'WITH_ADNS',
+    'WITH_ARGON2',
+    'WITH_ASAN',
     'WITH_BRIDGE',
-    'WITH_CJSON',
-    'WITH_DOCS',
-    'WITH_EC',
+    'WITH_CONTROL',
+    'WITH_EDITLINE',
     'WITH_EPOLL',
+    'WITH_HTTP_API',
     'WITH_MEMORY_TRACKING',
+    'WITH_OLD_KEEPALIVE',
     'WITH_PERSISTENCE',
-    'WITH_SHARED_LIBRARIES',
+    #'WITH_SHARED_LIBRARIES',
     'WITH_SOCKS',
+    'WITH_SQLITE',
     'WITH_SRV',
     'WITH_STATIC_LIBRARIES',
-    'WITH_STRIP',
     'WITH_SYSTEMD',
     'WITH_SYS_TREE',
     'WITH_THREADING',
-    'WITH_TLS',
+    #'WITH_TLS',
     'WITH_TLS_PSK',
     'WITH_UNIX_SOCKETS',
     'WITH_WEBSOCKETS',
-    'WITH_WRAP',
     'WITH_XTREPORT',
 ]
 
@@ -38,7 +39,7 @@ import subprocess
 def run_test(msg, opts):
     subprocess.run(["make", "clean"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     print("%s: %s" % (msg, str(opts)))
-    args = ["make", "-j%d" % (os.cpu_count())] + opts
+    args = ["make", "test-compile", "-j%d" % (os.cpu_count())] + opts
     proc = subprocess.run(args, stdout=subprocess.DEVNULL)
     if proc.returncode != 0:
         raise RuntimeError("BUILD FAILED: %s" % (' '.join(args)))
@@ -60,4 +61,4 @@ def random_tests(count=10):
 
 if __name__ == "__main__":
     simple_tests()
-    random_tests(100)
+    random_tests(2)

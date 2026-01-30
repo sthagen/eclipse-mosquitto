@@ -95,9 +95,11 @@ NAVIGATION_LINKS = {
                 ("/man/mosquitto-conf-5.html", "mosquitto.conf"),
                 ("/man/mosquitto_ctrl-1.html", "mosquitto_ctrl"),
                 ("/man/mosquitto_ctrl_dynsec-1.html", "mosquitto_ctrl_dynsec"),
+                ("/man/mosquitto_ctrl_shell-1.html", "mosquitto_ctrl_shell"),
                 ("/man/mosquitto_passwd-1.html", "mosquitto_passwd"),
                 ("/man/mosquitto_pub-1.html", "mosquitto_pub"),
                 ("/man/mosquitto_rr-1.html", "mosquitto_rr"),
+                ("/man/mosquitto_signal-1.html", "mosquitto_signal"),
                 ("/man/mosquitto_sub-1.html", "mosquitto_sub"),
                 ("/man/mosquitto-tls-7.html", "mosquitto-tls"),
                 ("/man/mqtt-7.html", "mqtt"),
@@ -285,7 +287,7 @@ WRITE_TAG_CLOUD = True
 
 # Generate pages for each section. The site must have at least two sections
 # for this option to take effect. It wouldn't build for just one section.
-POSTS_SECTIONS = True
+#POSTS_SECTIONS = True
 
 # Setting this to False generates a list page instead of an index. Indexes
 # are the default and will apply GENERATE_ATOM if set.
@@ -1154,7 +1156,7 @@ PRETTY_URLS = True
 # feature yet, it's faster and the output looks better.
 # USE_KATEX = False
 
-# KaTeX auto-render settings. If you want support for the $.$ syntax (wihch may
+# KaTeX auto-render settings. If you want support for the $.$ syntax (which may
 # conflict with running text!), just use this config:
 # KATEX_AUTO_RENDER = """
 # delimiters: [
@@ -1253,7 +1255,7 @@ COPY_SOURCES = False
 
 # Include preview image as a <figure><img></figure> at the top of the entry.
 # Requires FEED_PLAIN = False. If the preview image is found in the content,
-# it will not be included again. Image will be included as-is, aim to optmize
+# it will not be included again. Image will be included as-is, aim to optimize
 # the image source for Feedly, Apple News, Flipboard, and other popular clients.
 # FEED_PREVIEWIMAGE = True
 
@@ -1343,7 +1345,7 @@ COPY_SOURCES = False
 
 # If you hate "Filenames with Capital Letters and Spaces.md", you should
 # set this to true.
-UNSLUGIFY_TITLES = True
+FILE_METADATA_UNSLUGIFY_TITLES = True
 
 # Additional metadata that is added to a post when creating a new_post
 # ADDITIONAL_METADATA = {}
@@ -1389,7 +1391,7 @@ USE_BUNDLES = False
 # Add the absolute paths to directories containing plugins to use them.
 # For example, the `plugins` directory of your clone of the Nikola plugins
 # repository.
-# EXTRA_PLUGINS_DIRS = []
+EXTRA_PLUGINS_DIRS = ['plugins']
 
 # Add the absolute paths to directories containing themes to use them.
 # For example, the `v7` directory of your clone of the Nikola themes

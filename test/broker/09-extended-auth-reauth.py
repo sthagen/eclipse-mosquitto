@@ -14,20 +14,18 @@ write_config(conf_file, port)
 rc = 1
 
 # First authentication succeeds
-props = mqtt5_props.gen_string_prop(mqtt5_props.PROP_AUTHENTICATION_METHOD, "repeat")
-props += mqtt5_props.gen_string_prop(mqtt5_props.PROP_AUTHENTICATION_DATA, "repeat")
-connect_packet = mosq_test.gen_connect("client-params-test", keepalive=42, proto_ver=5, properties=props)
+props = mqtt5_props.gen_string_prop(mqtt5_props.AUTHENTICATION_METHOD, "repeat")
+props += mqtt5_props.gen_string_prop(mqtt5_props.AUTHENTICATION_DATA, "repeat")
+connect_packet = mosq_test.gen_connect("client-params-test", proto_ver=5, properties=props)
 
-props = mqtt5_props.gen_uint16_prop(mqtt5_props.PROP_TOPIC_ALIAS_MAXIMUM, 10)
-props += mqtt5_props.gen_string_prop(mqtt5_props.PROP_AUTHENTICATION_METHOD, "repeat")
-props += mqtt5_props.gen_uint16_prop(mqtt5_props.PROP_RECEIVE_MAXIMUM, 20)
-connack_packet = mosq_test.gen_connack(rc=0, proto_ver=5, properties=props, property_helper=False)
+props = mqtt5_props.gen_string_prop(mqtt5_props.AUTHENTICATION_METHOD, "repeat")
+connack_packet = mosq_test.gen_connack(rc=0, proto_ver=5, properties=props)
 
 # Reauthentication fails
-props = mqtt5_props.gen_string_prop(mqtt5_props.PROP_AUTHENTICATION_METHOD, "repeat")
-props += mqtt5_props.gen_string_prop(mqtt5_props.PROP_AUTHENTICATION_DATA, "repeat")
-auth_packet = mosq_test.gen_auth(reason_code=mqtt5_rc.MQTT_RC_REAUTHENTICATE, properties=props)
-disconnect_packet = mosq_test.gen_disconnect(reason_code=mqtt5_rc.MQTT_RC_NOT_AUTHORIZED, proto_ver=5)
+props = mqtt5_props.gen_string_prop(mqtt5_props.AUTHENTICATION_METHOD, "repeat")
+props += mqtt5_props.gen_string_prop(mqtt5_props.AUTHENTICATION_DATA, "repeat")
+auth_packet = mosq_test.gen_auth(reason_code=mqtt5_rc.REAUTHENTICATE, properties=props)
+disconnect_packet = mosq_test.gen_disconnect(reason_code=mqtt5_rc.NOT_AUTHORIZED, proto_ver=5)
 
 broker = mosq_test.start_broker(filename=os.path.basename(__file__), use_conf=True, port=port)
 
@@ -42,7 +40,9 @@ except mosq_test.TestError:
 finally:
     os.remove(conf_file)
     broker.terminate()
-    broker.wait()
+    if mosq_test.wait_for_subprocess(broker):
+        print("broker not terminated")
+        if rc == 0: rc=1
     (stdo, stde) = broker.communicate()
     if rc:
         print(stde.decode('utf-8'))

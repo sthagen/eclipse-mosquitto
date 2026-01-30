@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2009-2020 Roger Light <roger@atchoo.org>
+Copyright (c) 2009-2021 Roger Light <roger@atchoo.org>
 
 All rights reserved. This program and the accompanying materials
 are made available under the terms of the Eclipse Public License 2.0
@@ -28,14 +28,14 @@ Contributors:
 
 #include "mosquitto.h"
 #include "logging_mosq.h"
-#include "memory_mosq.h"
 #include "messages_mosq.h"
-#include "mqtt_protocol.h"
+#include "mosquitto/mqtt_protocol.h"
 #include "net_mosq.h"
 #include "packet_mosq.h"
 #include "read_handle.h"
 #include "send_mosq.h"
 #include "util_mosq.h"
+
 
 int handle__pingreq(struct mosquitto *mosq)
 {
@@ -47,17 +47,18 @@ int handle__pingreq(struct mosquitto *mosq)
 #endif
 		return MOSQ_ERR_PROTOCOL;
 	}
-	if(mosq->in_packet.command != CMD_PINGREQ){
+	if(mosq->in_packet.command != CMD_PINGREQ || mosq->in_packet.remaining_length != 0){
 		return MOSQ_ERR_MALFORMED_PACKET;
 	}
 
 #ifdef WITH_BROKER
 	log__printf(NULL, MOSQ_LOG_DEBUG, "Received PINGREQ from %s", SAFE_PRINT(mosq->id));
+	return send__pingresp(mosq);
 #else
 	return MOSQ_ERR_PROTOCOL;
 #endif
-	return send__pingresp(mosq);
 }
+
 
 int handle__pingresp(struct mosquitto *mosq)
 {
@@ -68,6 +69,9 @@ int handle__pingresp(struct mosquitto *mosq)
 		log__printf(NULL, MOSQ_LOG_INFO, "Protocol error from %s: PINGRESP before session is active.", mosq->id);
 #endif
 		return MOSQ_ERR_PROTOCOL;
+	}
+	if(mosq->in_packet.command != CMD_PINGRESP || mosq->in_packet.remaining_length != 0){
+		return MOSQ_ERR_MALFORMED_PACKET;
 	}
 
 	mosq->ping_t = 0; /* No longer waiting for a PINGRESP. */

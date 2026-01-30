@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2019-2020 Roger Light <roger@atchoo.org>
+Copyright (c) 2019-2021 Roger Light <roger@atchoo.org>
 
 All rights reserved. This program and the accompanying materials
 are made available under the terms of the Eclipse Public License 2.0
@@ -23,9 +23,7 @@ Contributors:
 #include <utlist.h>
 
 #include "mosquitto_broker_internal.h"
-#include "memory_mosq.h"
 #include "sys_tree.h"
-#include "time_mosq.h"
 
 static struct session_expiry_list *expiry_list = NULL;
 static time_t last_check = 0;
@@ -74,21 +72,25 @@ int session_expiry__add(struct mosquitto *context)
 	}
 
 	if(db.config->persistent_client_expiration == 0){
-		if(context->session_expiry_interval == UINT32_MAX){
+		if(context->session_expiry_interval == MQTT_SESSION_EXPIRY_NEVER){
 			/* There isn't a global expiry set, and the client has asked to
 			 * never expire, so we don't add it to the list. */
 			return MOSQ_ERR_SUCCESS;
 		}
 	}
 
-	item = mosquitto__calloc(1, sizeof(struct session_expiry_list));
-	if(!item) return MOSQ_ERR_NOMEM;
+	item = mosquitto_calloc(1, sizeof(struct session_expiry_list));
+	if(!item){
+		return MOSQ_ERR_NOMEM;
+	}
 
 	item->context = context;
 	set_session_expiry_time(item->context);
 	context->expiry_list_item = item;
 
 	DL_INSERT_INORDER(expiry_list, item, session_expiry__cmp);
+
+	plugin_persist__handle_client_update(context);
 
 	return MOSQ_ERR_SUCCESS;
 }
@@ -105,15 +107,17 @@ int session_expiry__add_from_persistence(struct mosquitto *context, time_t expir
 	}
 
 	if(db.config->persistent_client_expiration == 0){
-		if(context->session_expiry_interval == UINT32_MAX){
+		if(context->session_expiry_interval == MQTT_SESSION_EXPIRY_NEVER){
 			/* There isn't a global expiry set, and the client has asked to
 			 * never expire, so we don't add it to the list. */
 			return MOSQ_ERR_SUCCESS;
 		}
 	}
 
-	item = mosquitto__calloc(1, sizeof(struct session_expiry_list));
-	if(!item) return MOSQ_ERR_NOMEM;
+	item = mosquitto_calloc(1, sizeof(struct session_expiry_list));
+	if(!item){
+		return MOSQ_ERR_NOMEM;
+	}
 
 	item->context = context;
 	if(expiry_time){
@@ -134,8 +138,7 @@ void session_expiry__remove(struct mosquitto *context)
 {
 	if(context->expiry_list_item){
 		DL_DELETE(expiry_list, context->expiry_list_item);
-		mosquitto__free(context->expiry_list_item);
-		context->expiry_list_item = NULL;
+		mosquitto_FREE(context->expiry_list_item);
 	}
 }
 
@@ -149,19 +152,32 @@ void session_expiry__remove_all(void)
 	DL_FOREACH_SAFE(expiry_list, item, tmp){
 		context = item->context;
 		session_expiry__remove(context);
-		context->session_expiry_interval = 0;
+		context->session_expiry_interval = MQTT_SESSION_EXPIRY_IMMEDIATE;
 		context->will_delay_interval = 0;
 		will_delay__remove(context);
-		context__disconnect(context);
+		context__disconnect(context, -1);
 	}
 }
+
 
 void session_expiry__check(void)
 {
 	struct session_expiry_list *item, *tmp;
 	struct mosquitto *context;
+	time_t timeout;
 
-	if(db.now_real_s <= last_check) return;
+	if(last_check != 0 && db.now_real_s <= last_check){
+		if(expiry_list){
+			/* Next event is the first item of the list, we must set the timeout even if we aren't
+			 * checking the full list */
+			timeout = (expiry_list->context->session_expiry_time - db.now_real_s) * 1000;
+			if(timeout <= 0){
+				timeout = 100;
+			}
+			loop__update_next_event(timeout);
+		}
+		return;
+	}
 
 	last_check = db.now_real_s;
 
@@ -174,16 +190,22 @@ void session_expiry__check(void)
 			if(context->id){
 				log__printf(NULL, MOSQ_LOG_NOTICE, "Expiring client %s due to timeout.", context->id);
 			}
-			G_CLIENTS_EXPIRED_INC();
+			metrics__int_inc(mosq_counter_clients_expired, 1);
 
 			/* Session has now expired, so clear interval */
-			context->session_expiry_interval = 0;
+			context->session_expiry_interval = MQTT_SESSION_EXPIRY_IMMEDIATE;
 			/* Session has expired, so will delay should be cleared. */
 			context->will_delay_interval = 0;
 			will_delay__remove(context);
 			context__send_will(context);
+			plugin_persist__handle_client_delete(context);
 			context__add_to_disused(context);
 		}else{
+			timeout = (item->context->session_expiry_time - db.now_real_s + 1) * 1000;
+			if(timeout <= 0){
+				timeout = 100;
+			}
+			loop__update_next_event(timeout);
 			return;
 		}
 	}

@@ -1,0 +1,10 @@
+<varlistentry>
+	<term><option>-s</option></term>
+	<term><option>--stdin-file</option></term>
+	<listitem>
+		<para>
+			Send a request message read from stdin, sending the entire content
+			as a single message.
+		</para>
+	</listitem>
+</varlistentry>

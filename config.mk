@@ -9,7 +9,7 @@
 #
 # Modify the variable below to enable/disable features.
 #
-# Can also be overriden at the command line, e.g.:
+# Can also be overridden at the command line, e.g.:
 #
 # make WITH_TLS=no
 # =============================================================================
@@ -48,6 +48,17 @@ WITH_PERSISTENCE:=yes
 # size', but will use slightly less memory and CPU time.
 WITH_MEMORY_TRACKING:=yes
 
+# Uncomment to activate a consistency check on the usage of the memory tracking
+# alloc/free function use. Any memory allocated without a tracking function,
+# but freed with the tracking function will trigger an invalid memory read in
+# memory trackers like valgrind memcheck or ASAN.
+#ALLOC_MISMATCH_INVALID_READ:=yes
+
+# Uncomment to activate consistency check on the usage of the memory tracking
+# alloc/free function use. Any memory allocated without a tracking function,
+# but freed with the tracking function will trigger an abort.
+#ALLOC_MISMATCH_ABORT:=yes
+
 # Compile with database upgrading support? If disabled, mosquitto won't
 # automatically upgrade old database versions.
 # Not currently supported.
@@ -67,10 +78,10 @@ WITH_SYSTEMD:=no
 WITH_SRV:=no
 
 # Build with websockets support on the broker.
-WITH_WEBSOCKETS:=no
-
-# Use elliptic keys in broker
-WITH_EC:=yes
+# Set to yes to build with new websockets support
+# Set to lws to build with old libwebsockets code
+# Set to no to disable
+WITH_WEBSOCKETS:=yes
 
 # Build man page documentation by default.
 WITH_DOCS:=yes
@@ -107,9 +118,6 @@ WITH_COVERAGE:=no
 # Build with unix domain socket support
 WITH_UNIX_SOCKETS:=yes
 
-# Build mosquitto_sub with cJSON support
-WITH_CJSON:=yes
-
 # Build mosquitto with support for the $CONTROL topics.
 WITH_CONTROL:=yes
 
@@ -124,8 +132,28 @@ WITH_XTREPORT=no
 # check routine. See src/keepalive.c for notes on this.
 WITH_OLD_KEEPALIVE=no
 
+# Use link time optimisation - note that enabling this currently prevents
+# broker plugins from working.
+#WITH_LTO=yes
+
+# Build with sqlite3 support - this enables the sqlite persistence plugin.
+WITH_SQLITE=yes
+
+# Use gmock for testing
+WITH_GMOCK:=yes
+
+# Build broker for fuzzing only - does not work as a normal broker. This is
+# currently only suitable for use with oss-fuzz.
+WITH_FUZZING=no
+
 # Build using clang and with address sanitiser enabled
 WITH_ASAN=no
+
+# Build with editline support to allow the mosquitto_ctrl shell
+WITH_EDITLINE=yes
+
+# Build with basic HTTP API support
+WITH_HTTP_API=yes
 
 # =============================================================================
 # End of user configuration
@@ -134,7 +162,7 @@ WITH_ASAN=no
 
 # Also bump lib/mosquitto.h, CMakeLists.txt,
 # installer/mosquitto.nsi, installer/mosquitto64.nsi
-VERSION=2.0.23
+VERSION=2.1.0
 
 # Client library SO version. Bump if incompatible API/ABI changes are made.
 SOVERSION=1
@@ -146,208 +174,10 @@ DB_HTML_XSL=man/html.xsl
 
 #MANCOUNTRIES=en_GB
 
+MAKE_ALL:=mosquitto
+
 UNAME:=$(shell uname -s)
 ARCH:=$(shell uname -p)
-
-ifeq ($(UNAME),SunOS)
-	ifeq ($(CC),cc)
-		CFLAGS?=-O
-	else
-		CFLAGS?=-Wall -ggdb -O2
-	endif
-else
-	CFLAGS?=-Wall -ggdb -O2 -Wconversion -Wextra
-endif
-
-ifeq ($(WITH_ASAN),yes)
-	CC:=clang
-	CFLAGS+=-fsanitize=address
-	LDFLAGS+=-fsanitize=address
-endif
-
-STATIC_LIB_DEPS:=
-
-APP_CPPFLAGS=$(CPPFLAGS) -I. -I../../ -I../../include -I../../src -I../../lib
-APP_CFLAGS=$(CFLAGS) -DVERSION=\""${VERSION}\""
-APP_LDFLAGS:=$(LDFLAGS)
-
-LIB_CPPFLAGS=$(CPPFLAGS) -I. -I.. -I../include -I../../include
-LIB_CFLAGS:=$(CFLAGS)
-LIB_CXXFLAGS:=$(CXXFLAGS)
-LIB_LDFLAGS:=$(LDFLAGS)
-LIB_LIBADD:=$(LIBADD)
-
-BROKER_CPPFLAGS:=$(LIB_CPPFLAGS) -I../lib
-BROKER_CFLAGS:=${CFLAGS} -DVERSION="\"${VERSION}\"" -DWITH_BROKER
-BROKER_LDFLAGS:=${LDFLAGS}
-BROKER_LDADD:=
-
-CLIENT_CPPFLAGS:=$(CPPFLAGS) -I.. -I../include
-CLIENT_CFLAGS:=${CFLAGS} -DVERSION="\"${VERSION}\""
-CLIENT_LDFLAGS:=$(LDFLAGS) -L../lib
-CLIENT_LDADD:=
-
-PASSWD_LDADD:=
-
-PLUGIN_CPPFLAGS:=$(CPPFLAGS) -I../.. -I../../include
-PLUGIN_CFLAGS:=$(CFLAGS) -fPIC
-PLUGIN_LDFLAGS:=$(LDFLAGS)
-
-ifneq ($(or $(findstring $(UNAME),FreeBSD), $(findstring $(UNAME),OpenBSD), $(findstring $(UNAME),NetBSD)),)
-	BROKER_LDADD:=$(BROKER_LDADD) -lm
-	BROKER_LDFLAGS:=$(BROKER_LDFLAGS) -Wl,--dynamic-list=linker.syms
-	SEDINPLACE:=-i ""
-else
-	BROKER_LDADD:=$(BROKER_LDADD) -ldl -lm
-	SEDINPLACE:=-i
-endif
-
-ifeq ($(UNAME),Linux)
-	BROKER_LDADD:=$(BROKER_LDADD) -lrt
-	BROKER_LDFLAGS:=$(BROKER_LDFLAGS) -Wl,--dynamic-list=linker.syms
-	LIB_LIBADD:=$(LIB_LIBADD) -lrt
-endif
-
-ifeq ($(WITH_SHARED_LIBRARIES),yes)
-	CLIENT_LDADD:=${CLIENT_LDADD} ../lib/libmosquitto.so.${SOVERSION}
-endif
-
-ifeq ($(UNAME),SunOS)
-	SEDINPLACE:=
-	ifeq ($(ARCH),sparc)
-		ifeq ($(CC),cc)
-			LIB_CFLAGS:=$(LIB_CFLAGS) -xc99 -KPIC
-		else
-			LIB_CFLAGS:=$(LIB_CFLAGS) -fPIC
-		endif
-	endif
-	ifeq ($(ARCH),i386)
-		LIB_CFLAGS:=$(LIB_CFLAGS) -fPIC
-	endif
-
-	ifeq ($(CXX),CC)
-		LIB_CXXFLAGS:=$(LIB_CXXFLAGS) -KPIC
-	else
-		LIB_CXXFLAGS:=$(LIB_CXXFLAGS) -fPIC
-	endif
-else
-	LIB_CFLAGS:=$(LIB_CFLAGS) -fPIC
-	LIB_CXXFLAGS:=$(LIB_CXXFLAGS) -fPIC
-endif
-
-ifneq ($(UNAME),SunOS)
-	LIB_LDFLAGS:=$(LIB_LDFLAGS) -Wl,--version-script=linker.version -Wl,-soname,libmosquitto.so.$(SOVERSION)
-endif
-
-ifeq ($(UNAME),QNX)
-	BROKER_LDADD:=$(BROKER_LDADD) -lsocket
-	LIB_LIBADD:=$(LIB_LIBADD) -lsocket
-endif
-
-ifeq ($(WITH_WRAP),yes)
-	BROKER_LDADD:=$(BROKER_LDADD) -lwrap
-	BROKER_CPPFLAGS:=$(BROKER_CPPFLAGS) -DWITH_WRAP
-endif
-
-ifeq ($(WITH_TLS),yes)
-	APP_CPPFLAGS:=$(APP_CPPFLAGS) -DWITH_TLS -DOPENSSL_API_COMPAT=0x10100000L
-	BROKER_CPPFLAGS:=$(BROKER_CPPFLAGS) -DWITH_TLS -DOPENSSL_API_COMPAT=0x10100000L
-	BROKER_LDADD:=$(BROKER_LDADD) -lssl -lcrypto
-	CLIENT_CPPFLAGS:=$(CLIENT_CPPFLAGS) -DWITH_TLS -DOPENSSL_API_COMPAT=0x10100000L
-	LIB_CPPFLAGS:=$(LIB_CPPFLAGS) -DWITH_TLS -DOPENSSL_API_COMPAT=0x10100000L
-	LIB_LIBADD:=$(LIB_LIBADD) -lssl -lcrypto
-	PASSWD_LDADD:=$(PASSWD_LDADD) -lcrypto
-	STATIC_LIB_DEPS:=$(STATIC_LIB_DEPS) -lssl -lcrypto
-
-	ifeq ($(WITH_TLS_PSK),yes)
-		BROKER_CPPFLAGS:=$(BROKER_CPPFLAGS) -DWITH_TLS_PSK
-		LIB_CPPFLAGS:=$(LIB_CPPFLAGS) -DWITH_TLS_PSK
-		CLIENT_CPPFLAGS:=$(CLIENT_CPPFLAGS) -DWITH_TLS_PSK
-	endif
-endif
-
-ifeq ($(WITH_THREADING),yes)
-	LIB_LDFLAGS:=$(LIB_LDFLAGS) -pthread
-	LIB_CPPFLAGS:=$(LIB_CPPFLAGS) -DWITH_THREADING
-	CLIENT_CPPFLAGS:=$(CLIENT_CPPFLAGS) -DWITH_THREADING
-	STATIC_LIB_DEPS:=$(STATIC_LIB_DEPS) -pthread
-endif
-
-ifeq ($(WITH_SOCKS),yes)
-	LIB_CPPFLAGS:=$(LIB_CPPFLAGS) -DWITH_SOCKS
-	CLIENT_CPPFLAGS:=$(CLIENT_CPPFLAGS) -DWITH_SOCKS
-endif
-
-ifeq ($(WITH_BRIDGE),yes)
-	BROKER_CPPFLAGS:=$(BROKER_CPPFLAGS) -DWITH_BRIDGE
-endif
-
-ifeq ($(WITH_PERSISTENCE),yes)
-	BROKER_CPPFLAGS:=$(BROKER_CPPFLAGS) -DWITH_PERSISTENCE
-endif
-
-ifeq ($(WITH_MEMORY_TRACKING),yes)
-	ifneq ($(UNAME),SunOS)
-		BROKER_CPPFLAGS:=$(BROKER_CPPFLAGS) -DWITH_MEMORY_TRACKING
-	endif
-endif
-
-ifeq ($(WITH_SYS_TREE),yes)
-	BROKER_CPPFLAGS:=$(BROKER_CPPFLAGS) -DWITH_SYS_TREE
-endif
-
-ifeq ($(WITH_SYSTEMD),yes)
-	BROKER_CPPFLAGS:=$(BROKER_CPPFLAGS) -DWITH_SYSTEMD
-	BROKER_LDADD:=$(BROKER_LDADD) -lsystemd
-endif
-
-ifeq ($(WITH_SRV),yes)
-	LIB_CPPFLAGS:=$(LIB_CPPFLAGS) -DWITH_SRV
-	LIB_LIBADD:=$(LIB_LIBADD) -lcares
-	CLIENT_CPPFLAGS:=$(CLIENT_CPPFLAGS) -DWITH_SRV
-	STATIC_LIB_DEPS:=$(STATIC_LIB_DEPS) -lcares
-endif
-
-ifeq ($(UNAME),SunOS)
-	BROKER_LDADD:=$(BROKER_LDADD) -lsocket -lnsl
-	LIB_LIBADD:=$(LIB_LIBADD) -lsocket -lnsl
-endif
-
-ifeq ($(WITH_EC),yes)
-	BROKER_CPPFLAGS:=$(BROKER_CPPFLAGS) -DWITH_EC
-endif
-
-ifeq ($(WITH_ADNS),yes)
-	NEED_LIBANL:=$(shell printf 'int main(){return 0;}' | gcc -D_GNU_SOURCE -lanl -o /dev/null -x c - 2>/dev/null || echo yes)
-	ifeq ($(NEED_LIBANL),yes)
-		BROKER_LDADD+=-lanl
-	endif
-	BROKER_CPPFLAGS:=$(BROKER_CPPFLAGS) -DWITH_ADNS
-endif
-
-ifeq ($(WITH_CONTROL),yes)
-	BROKER_CPPFLAGS:=$(BROKER_CPPFLAGS) -DWITH_CONTROL
-endif
-
-MAKE_ALL:=mosquitto
-ifeq ($(WITH_DOCS),yes)
-	MAKE_ALL:=$(MAKE_ALL) docs
-endif
-
-ifeq ($(WITH_JEMALLOC),yes)
-	BROKER_LDADD:=$(BROKER_LDADD) -ljemalloc
-endif
-
-ifeq ($(WITH_UNIX_SOCKETS),yes)
-	BROKER_CPPFLAGS:=$(BROKER_CPPFLAGS) -DWITH_UNIX_SOCKETS
-	LIB_CPPFLAGS:=$(LIB_CPPFLAGS) -DWITH_UNIX_SOCKETS
-	CLIENT_CPPFLAGS:=$(CLIENT_CPPFLAGS) -DWITH_UNIX_SOCKETS
-endif
-
-ifeq ($(WITH_WEBSOCKETS),yes)
-	BROKER_CPPFLAGS:=$(BROKER_CPPFLAGS) -DWITH_WEBSOCKETS
-	BROKER_LDADD:=$(BROKER_LDADD) -lwebsockets
-endif
 
 INSTALL?=install
 prefix?=/usr/local
@@ -357,48 +187,121 @@ localedir?=${prefix}/share/locale
 mandir?=${prefix}/share/man
 STRIP?=strip
 
+ifeq ($(UNAME),SunOS)
+	ifeq ($(CC),cc)
+		CFLAGS?=-O
+	else
+		CFLAGS?=-Wall -ggdb -O2
+	endif
+else
+	CFLAGS?=-Wall -ggdb -O3 -Wconversion -Wextra -std=gnu99 -Werror=switch
+	CXXFLAGS?=-Wall -ggdb -O3 -Wconversion -Wextra
+endif
+
+LOCAL_CPPFLAGS=$(CPPFLAGS)
+LOCAL_CFLAGS=$(CFLAGS)
+LOCAL_CXXFLAGS=$(CXXFLAGS)
+LOCAL_LDFLAGS=$(LDFLAGS)
+LOCAL_LIBADD=$(LIBADD)
+
+LOCAL_CPPFLAGS+=-DVERSION=\""${VERSION}\"" -I${R} -I. -I${R}/include -I${R}/common
+
+ifneq ($(or $(findstring $(UNAME),FreeBSD), $(findstring $(UNAME),OpenBSD), $(findstring $(UNAME),NetBSD)),)
+	SEDINPLACE:=-i ""
+else
+ifeq ($(UNAME),SunOS)
+	SEDINPLACE:=
+else
+	SEDINPLACE:=-i
+endif
+endif
+
+ifeq ($(UNAME),QNX)
+	LOCAL_LDADD+=-lsocket
+endif
+
+ifeq ($(UNAME),SunOS)
+	LOCAL_LDADD+=-lsocket -lnsl
+	LOCAL_LIBADD+=-lsocket -lnsl
+endif
+
+ifeq ($(WITH_FUZZING),yes)
+	WITH_GMOCK:=no
+	WITH_SHARED_LIBRARIES:=no
+	WITH_STATIC_LIBRARIES:=yes
+endif
+
+ifeq ($(WITH_SHARED_LIBRARIES),yes)
+	LIBMOSQ:=${R}/lib/libmosquitto.so.${SOVERSION}
+else
+	LIBMOSQ:=${R}/lib/libmosquitto.a
+endif
+LIBMOSQ_COMMON:=-Wl,--whole-archive ${R}/libcommon/libmosquitto_common.a -Wl,--no-whole-archive -lcjson
+
+ifeq ($(WITH_TLS),yes)
+	LOCAL_CPPFLAGS+=-DWITH_TLS
+	ifeq ($(WITH_TLS_PSK),yes)
+		LOCAL_CPPFLAGS+=-DWITH_TLS_PSK
+	endif
+endif
+
+ifeq ($(WITH_ASAN),yes)
+	CC:=clang
+	CXX:=clang++
+	LOCAL_CFLAGS+=-fsanitize=address -fno-omit-frame-pointer
+	LOCAL_CXXFLAGS+=-fsanitize=address -fno-omit-frame-pointer
+	LOCAL_LDFLAGS+=-fsanitize=address -fno-omit-frame-pointer -static-libsan
+endif
+
+ifeq ($(WITH_LTO),yes)
+	LOCAL_CFLAGS+=-flto
+	LOCAL_LDFLAGS+=-flto
+endif
+
+ifeq ($(WITH_DOCS),yes)
+	MAKE_ALL+=docs
+endif
+
+ifeq ($(WITH_JEMALLOC),yes)
+	LOCAL_LDADD+=-ljemalloc
+endif
+
+ifeq ($(WITH_UNIX_SOCKETS),yes)
+	LOCAL_CPPFLAGS+=-DWITH_UNIX_SOCKETS
+endif
+
+ifeq ($(WITH_WEBSOCKETS),yes)
+	LOCAL_CPPFLAGS+=-DWITH_WEBSOCKETS=WS_IS_BUILTIN -I${R}/deps/picohttpparser
+endif
+
+ifeq ($(WITH_WEBSOCKETS),lws)
+	LOCAL_CPPFLAGS+=-DWITH_WEBSOCKETS=WS_IS_LWS
+	LOCAL_LDADD+=-lwebsockets
+endif
+
 ifeq ($(WITH_STRIP),yes)
 	STRIP_OPTS?=-s --strip-program=${CROSS_COMPILE}${STRIP}
 endif
 
-ifeq ($(WITH_EPOLL),yes)
-	ifeq ($(UNAME),Linux)
-		BROKER_CPPFLAGS:=$(BROKER_CPPFLAGS) -DWITH_EPOLL
-	endif
-endif
-
 ifeq ($(WITH_BUNDLED_DEPS),yes)
-	BROKER_CPPFLAGS:=$(BROKER_CPPFLAGS) -I../deps
-	LIB_CPPFLAGS:=$(LIB_CPPFLAGS) -I../deps
-	PLUGIN_CPPFLAGS:=$(PLUGIN_CPPFLAGS) -I../../deps
+	LOCAL_CPPFLAGS+=-I${R}/deps
 endif
 
 ifeq ($(WITH_COVERAGE),yes)
-	BROKER_CFLAGS:=$(BROKER_CFLAGS) -coverage
-	BROKER_LDFLAGS:=$(BROKER_LDFLAGS) -coverage
-	PLUGIN_CFLAGS:=$(PLUGIN_CFLAGS) -coverage
-	PLUGIN_LDFLAGS:=$(PLUGIN_LDFLAGS) -coverage
-	LIB_CFLAGS:=$(LIB_CFLAGS) -coverage
-	LIB_LDFLAGS:=$(LIB_LDFLAGS) -coverage
-	CLIENT_CFLAGS:=$(CLIENT_CFLAGS) -coverage
-	CLIENT_LDFLAGS:=$(CLIENT_LDFLAGS) -coverage
+	LOCAL_CFLAGS+=-coverage
+	LOCAL_CXXFLAGS+=-coverage
+	LOCAL_LDFLAGS+=-coverage
 endif
 
-ifeq ($(WITH_CJSON),yes)
-	CLIENT_CFLAGS:=$(CLIENT_CFLAGS) -DWITH_CJSON
-	CLIENT_LDADD:=$(CLIENT_LDADD) -lcjson
-	CLIENT_STATIC_LDADD:=$(CLIENT_STATIC_LDADD) -lcjson
-	CLIENT_LDFLAGS:=$(CLIENT_LDFLAGS)
+ifeq ($(WITH_FUZZING),yes)
+	MAKE_ALL+=fuzzing
+	LOCAL_CPPFLAGS+=-DWITH_FUZZING
+	LOCAL_CFLAGS+=-fPIC
+	LOCAL_LDFLAGS+=-shared $(LOCAL_CFLAGS)
 endif
 
-ifeq ($(WITH_XTREPORT),yes)
-	BROKER_CFLAGS:=$(BROKER_CFLAGS) -DWITH_XTREPORT
+ifeq ($(WITH_ARGON2),yes)
+	LOCAL_CPPFLAGS+=-DWITH_ARGON2
+	LIB_ARGON2=-largon2
+	LIBMOSQ_COMMON+=${LIB_ARGON2}
 endif
-
-ifeq ($(WITH_OLD_KEEPALIVE),yes)
-	BROKER_CPPFLAGS:=$(BROKER_CPPFLAGS) -DWITH_OLD_KEEPALIVE
-endif
-
-BROKER_LDADD:=${BROKER_LDADD} ${LDADD}
-CLIENT_LDADD:=${CLIENT_LDADD} ${LDADD}
-PASSWD_LDADD:=${PASSWD_LDADD} ${LDADD}

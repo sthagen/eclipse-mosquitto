@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2009-2020 Roger Light <roger@atchoo.org>
+Copyright (c) 2009-2021 Roger Light <roger@atchoo.org>
 
 All rights reserved. This program and the accompanying materials
 are made available under the terms of the Eclipse Public License 2.0
@@ -19,7 +19,7 @@ Contributors:
 #include "config.h"
 
 #include "mosquitto_broker_internal.h"
-#include "mqtt_protocol.h"
+#include "mosquitto/mqtt_protocol.h"
 #include "packet_mosq.h"
 #include "property_mosq.h"
 #include "send_mosq.h"
@@ -44,11 +44,15 @@ int handle__disconnect(struct mosquitto *context)
 	if(context->protocol == mosq_p_mqtt5 && context->in_packet.remaining_length > 0){
 		/* FIXME - must handle reason code */
 		rc = packet__read_byte(&context->in_packet, &reason_code);
-		if(rc) return rc;
+		if(rc){
+			return rc;
+		}
 
 		if(context->in_packet.remaining_length > 1){
 			rc = property__read_all(CMD_DISCONNECT, &context->in_packet, &properties);
-			if(rc) return rc;
+			if(rc){
+				return rc;
+			}
 		}
 	}
 	rc = property__process_disconnect(context, &properties);

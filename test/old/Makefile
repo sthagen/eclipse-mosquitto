@@ -1,8 +1,9 @@
-include ../../config.mk
+R=../..
+include ${R}/config.mk
 
 CC=cc
-CFLAGS=-I../../src -I../../include -I. -I../.. -Wall -ggdb -DDEBUG -DWITH_CLIENT
-LDFLAGS=
+LOCAL_CFLAGS=-I${R}/src -I${R}/include -I. -I${R} -Wall -ggdb -DDEBUG -DWITH_CLIENT
+LOCAL_LDFLAGS=
 SOVERSION=1
 
 .PHONY: all test clean
@@ -10,16 +11,16 @@ SOVERSION=1
 all : msgsps_pub msgsps_sub
 
 msgsps_pub : msgsps_pub.o
-	${CC} $^ -o $@ ../../lib/libmosquitto.so.${SOVERSION}
+	${CC} $^ -o $@ ${LIBMOSQ}
 
 msgsps_pub.o : msgsps_pub.c msgsps_common.h
-	${CC} $(CFLAGS) -c $< -o $@
+	${CC} $(LOCAL_CFLAGS) -c $< -o $@
 
 msgsps_sub : msgsps_sub.o
-	${CC} $^ -o $@ ../../lib/libmosquitto.so.${SOVERSION}
+	${CC} $^ -o $@ ${LIBMOSQ}
 
 msgsps_sub.o : msgsps_sub.c msgsps_common.h
-	${CC} $(CFLAGS) -c $< -o $@
+	${CC} $(LOCAL_CFLAGS) -c $< -o $@
 
 clean :
 	-rm -f *.o msgsps_pub msgsps_sub

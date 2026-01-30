@@ -17,7 +17,7 @@ def do_send(port, socks, payload):
     sock.connect(("127.0.0.1", port))
     try:
         sock.send(payload)
-    except ConnectionResetError:
+    except (ConnectionResetError, BrokenPipeError):
         pass
 
 def do_test(port):
@@ -27,6 +27,8 @@ def do_test(port):
     write_config(conf_file, port)
     broker = mosq_test.start_broker(filename=os.path.basename(__file__), port=port, use_conf=True)
 
+    # Get the base memory useage before any connection attempt has happen
+    base_mem = psutil.Process(broker.pid).memory_info().vms
     try:
         socks = []
 
@@ -45,15 +47,12 @@ def do_test(port):
         do_send(port, socks, b"\xE0\x80\x80\x80t" + b"\01"*100000000) # DISCONNECT
         do_send(port, socks, b"\xF0\x80\x80\x80t" + b"\01"*100000000) # AUTH
 
-        mem = psutil.Process(broker.pid).memory_info().vms
+        mem = psutil.Process(broker.pid).memory_info().vms - base_mem
 
         for s in socks:
             s.close()
 
-        if os.environ.get('MOSQ_USE_VALGRIND') is None:
-            limit = 25000000
-        else:
-            limit = 120000000
+        limit = 20000000
         if mem > limit:
             raise mosq_test.TestError(f"Process memory {mem} greater than limit of {limit}")
 

@@ -25,8 +25,7 @@ def do_test(per_listener, proto_ver, clean_start, allow_zero, client_port, expec
     write_config(conf_file, port1, port2, per_listener, allow_zero)
 
     rc = 1
-    keepalive = 10
-    connect_packet = mosq_test.gen_connect("", keepalive=keepalive, proto_ver=proto_ver, clean_session=clean_start)
+    connect_packet = mosq_test.gen_connect("", proto_ver=proto_ver, clean_session=clean_start)
     if proto_ver == 4:
         if expect_fail == True:
             connack_packet = mosq_test.gen_connack(rc=2, proto_ver=proto_ver)
@@ -36,12 +35,12 @@ def do_test(per_listener, proto_ver, clean_start, allow_zero, client_port, expec
         if expect_fail == True:
             connack_packet = mosq_test.gen_connack(rc=128, proto_ver=proto_ver, properties=None)
         else:
-            props = mqtt5_props.gen_string_prop(mqtt5_props.PROP_ASSIGNED_CLIENT_IDENTIFIER, "auto-xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx")
+            props = mqtt5_props.gen_string_prop(mqtt5_props.ASSIGNED_CLIENT_IDENTIFIER, "auto-xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx")
             connack_packet = mosq_test.gen_connack(rc=0, proto_ver=proto_ver, properties=props)
             # Remove the "xxxx" part - this means the front part of the packet
             # is correct (so remaining length etc. is correct), but we don't
             # need to match against the random id.
-            connack_packet = connack_packet[:-39]
+            connack_packet = connack_packet[:-44]
 
     broker = mosq_test.start_broker(filename=os.path.basename(__file__), port=port1, use_conf=True)
 
@@ -53,7 +52,9 @@ def do_test(per_listener, proto_ver, clean_start, allow_zero, client_port, expec
         pass
     finally:
         broker.terminate()
-        broker.wait()
+        if mosq_test.wait_for_subprocess(broker):
+            print("broker not terminated")
+            if rc == 0: rc=1
         (stdo, stde) = broker.communicate()
         os.remove(conf_file)
         if rc:

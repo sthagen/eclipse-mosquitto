@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2020 Roger Light <roger@atchoo.org>
+Copyright (c) 2020-2021 Roger Light <roger@atchoo.org>
 
 All rights reserved. This program and the accompanying materials
 are made available under the terms of the Eclipse Public License 2.0
@@ -22,11 +22,8 @@ Contributors:
 #include <stdio.h>
 #include <uthash.h>
 
-#include "mosquitto.h"
-#include "mosquitto_broker.h"
-#include "json_help.h"
-
 #include "dynamic_security.h"
+#include "json_help.h"
 
 /* ################################################################
  * #
@@ -53,6 +50,7 @@ Contributors:
  * #
  * ################################################################ */
 
+
 static int dynsec_clientlist__cmp(void *a, void *b)
 {
 	struct dynsec__clientlist *clientlist_a = a;
@@ -62,14 +60,15 @@ static int dynsec_clientlist__cmp(void *a, void *b)
 }
 
 
-void dynsec_clientlist__kick_all(struct dynsec__clientlist *base_clientlist)
+void dynsec_clientlist__kick_all(struct dynsec__data *data, struct dynsec__clientlist *base_clientlist)
 {
 	struct dynsec__clientlist *clientlist, *clientlist_tmp;
 
 	HASH_ITER(hh, base_clientlist, clientlist, clientlist_tmp){
-		mosquitto_kick_client_by_username(clientlist->client->username, false);
+		dynsec_kicklist__add(data, clientlist->client->username);
 	}
 }
+
 
 cJSON *dynsec_clientlist__all_to_json(struct dynsec__clientlist *base_clientlist)
 {
@@ -77,7 +76,9 @@ cJSON *dynsec_clientlist__all_to_json(struct dynsec__clientlist *base_clientlist
 	cJSON *j_clients, *j_client;
 
 	j_clients = cJSON_CreateArray();
-	if(j_clients == NULL) return NULL;
+	if(j_clients == NULL){
+		return NULL;
+	}
 
 	HASH_ITER(hh, base_clientlist, clientlist, clientlist_tmp){
 		j_client = cJSON_CreateObject();

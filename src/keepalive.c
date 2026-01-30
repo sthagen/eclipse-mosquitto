@@ -64,11 +64,14 @@ static struct mosquitto **keepalive_list = NULL;
 #endif
 
 #ifndef WITH_OLD_KEEPALIVE
+
+
 static int calc_index(struct mosquitto *context)
 {
 	return (int)(context->last_msg_in + context->keepalive*3/2) % keepalive_list_max;
 }
 #endif
+
 
 int keepalive__init(void)
 {
@@ -98,6 +101,7 @@ int keepalive__init(void)
 	return MOSQ_ERR_SUCCESS;
 }
 
+
 void keepalive__cleanup(void)
 {
 #ifndef WITH_OLD_KEEPALIVE
@@ -113,12 +117,17 @@ void keepalive__cleanup(void)
 #endif
 }
 
+
 int keepalive__add(struct mosquitto *context)
 {
 #ifndef WITH_OLD_KEEPALIVE
-	if(context->keepalive <= 0 || !net__is_connected(context)) return MOSQ_ERR_SUCCESS;
+	if(context->keepalive <= 0 || !net__is_connected(context)){
+		return MOSQ_ERR_SUCCESS;
+	}
 #ifdef WITH_BRIDGE
-	if(context->bridge) return MOSQ_ERR_SUCCESS;
+	if(context->bridge){
+		return MOSQ_ERR_SUCCESS;
+	}
 #endif
 
 	DL_APPEND2(keepalive_list[calc_index(context)], context, keepalive_prev, keepalive_next);
@@ -131,10 +140,25 @@ int keepalive__add(struct mosquitto *context)
 
 
 #ifndef WITH_OLD_KEEPALIVE
+
+
 void keepalive__check(void)
 {
 	struct mosquitto *context, *ctxt_tmp;
+	time_t timeout;
 
+	if(db.contexts_by_sock){
+		/* Check the next 5 seconds for upcoming expiries */
+		/* FIXME - find the actual next entry without having to iterate over
+		 * the whole list */
+		timeout = 5;
+		for(time_t i=5; i>0; i--){
+			if(keepalive_list[(db.now_s + i) % keepalive_list_max]){
+				timeout = i;
+			}
+		}
+		loop__update_next_event(timeout*1000);
+	}
 	for(time_t i=last_keepalive_check; i<db.now_s; i++){
 		int idx = (int)(i % keepalive_list_max);
 		if(keepalive_list[idx]){
@@ -154,10 +178,20 @@ void keepalive__check(void)
 	last_keepalive_check = db.now_s;
 }
 #else
+
+
 void keepalive__check(void)
 {
 	struct mosquitto *context, *ctxt_tmp;
+	time_t timeout;
 
+	if(db.contexts_by_sock){
+		timeout = (last_keepalive_check + 5 - db.now_s);
+		if(timeout <= 0){
+			timeout = 5;
+		}
+		loop__update_next_event(timeout*1000);
+	}
 	if(last_keepalive_check + 5 <= db.now_s){
 		last_keepalive_check = db.now_s;
 
@@ -184,7 +218,9 @@ int keepalive__remove(struct mosquitto *context)
 #ifndef WITH_OLD_KEEPALIVE
 	int idx;
 
-	if(context->keepalive <= 0 || context->keepalive_prev == NULL) return MOSQ_ERR_SUCCESS;
+	if(context->keepalive <= 0 || context->keepalive_prev == NULL){
+		return MOSQ_ERR_SUCCESS;
+	}
 
 	idx = calc_index(context);
 	if(keepalive_list[idx]){

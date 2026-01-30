@@ -1,0 +1,10 @@
+<varlistentry>
+	<term><option>--will-payload</option></term>
+	<listitem>
+		<para>
+			Specify a message that will be stored by the broker and sent out if
+			this client disconnects unexpectedly. This must be used in
+			conjunction with <option>--will-topic</option>.
+		</para>
+	</listitem>
+</varlistentry>

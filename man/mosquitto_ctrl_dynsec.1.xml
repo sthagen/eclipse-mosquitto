@@ -26,13 +26,14 @@
 
 	<refsect1>
 		<title>Description</title>
-		<para>This page describes the <command>dynsec</command> module for
-		<citerefentry><refentrytitle><link xlink:href="mosquitto_ctrl-1.html">mosquitto_ctrl</link></refentrytitle>
+		<para>
+			This page describes the <command>dynsec</command> module for
+			<citerefentry><refentrytitle><link xlink:href="mosquitto_ctrl-1.html">mosquitto_ctrl</link></refentrytitle>
 			<manvolnum>1</manvolnum></citerefentry>. See the mosquitto_ctrl
 			man page for details of the options for connecting to remote brokers,
 			in particular since this module works with authentication and access
 			control, it is crucial that secure encrypted connections are used.
-        </para>
+		</para>
 	</refsect1>
 
 	<refsect1>
@@ -47,15 +48,17 @@
 		</refsect2>
 	</refsect1>
 
-	<refsect1>
-		<title>Bugs</title>
-		<para><command>mosquitto</command> bug information can be found at
-			<ulink url="https://github.com/eclipse/mosquitto/issues"/></para>
-	</refsect1>
+	<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="common/section-bugs.xml" />
 
 	<refsect1>
 		<title>See Also</title>
 		<simplelist type="inline">
+			<member>
+				<citerefentry>
+					<refentrytitle><link xlink:href="mosquitto-7.html">mosquitto</link></refentrytitle>
+					<manvolnum>7</manvolnum>
+				</citerefentry>
+			</member>
 			<member>
 				<citerefentry>
 					<refentrytitle><link xlink:href="mqtt-7.html">mqtt</link></refentrytitle>

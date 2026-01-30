@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2013-2020 Roger Light <roger@atchoo.org>
+Copyright (c) 2013-2021 Roger Light <roger@atchoo.org>
 
 All rights reserved. This program and the accompanying materials
 are made available under the terms of the Eclipse Public License 2.0
@@ -29,9 +29,10 @@ Contributors:
 
 #include <openssl/ssl.h>
 #include <openssl/engine.h>
+#include "mosquitto.h"
 
 int mosquitto__server_certificate_verify(int preverify_ok, X509_STORE_CTX *ctx);
-int mosquitto__verify_certificate_hostname(X509 *cert, const char *hostname);
+int tls__set_verify_hostname(struct mosquitto *mosq, const char *hostname);
 
 #endif /* WITH_TLS */
 

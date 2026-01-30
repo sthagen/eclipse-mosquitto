@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2018-2020 Roger Light <roger@atchoo.org>
+Copyright (c) 2018-2021 Roger Light <roger@atchoo.org>
 
 All rights reserved. This program and the accompanying materials
 are made available under the terms of the Eclipse Public License 2.0
@@ -22,8 +22,7 @@ Contributors:
 #include <string.h>
 
 #include "mosquitto_broker_internal.h"
-#include "mqtt_protocol.h"
-#include "memory_mosq.h"
+#include "mosquitto/mqtt_protocol.h"
 #include "packet_mosq.h"
 #include "property_mosq.h"
 #include "send_mosq.h"
@@ -42,7 +41,9 @@ int handle__auth(struct mosquitto *context)
 	void *auth_data_out = NULL;
 	uint16_t auth_data_out_len = 0;
 
-	if(!context) return MOSQ_ERR_INVAL;
+	if(!context){
+		return MOSQ_ERR_INVAL;
+	}
 
 	if(context->protocol != mosq_p_mqtt5){
 		log__printf(NULL, MOSQ_LOG_INFO, "Protocol error from %s: AUTH packet when session not MQTT v5.0.", context->id);
@@ -57,7 +58,9 @@ int handle__auth(struct mosquitto *context)
 	}
 
 	if(context->in_packet.remaining_length > 0){
-		if(packet__read_byte(&context->in_packet, &reason_code)) return MOSQ_ERR_MALFORMED_PACKET;
+		if(packet__read_byte(&context->in_packet, &reason_code)){
+			return MOSQ_ERR_MALFORMED_PACKET;
+		}
 		if(reason_code != MQTT_RC_CONTINUE_AUTHENTICATION
 				&& reason_code != MQTT_RC_REAUTHENTICATE){
 
@@ -69,7 +72,7 @@ int handle__auth(struct mosquitto *context)
 
 		if((reason_code == MQTT_RC_REAUTHENTICATE && context->state != mosq_cs_active)
 				|| (reason_code == MQTT_RC_CONTINUE_AUTHENTICATION
-					&& context->state != mosq_cs_authenticating && context->state != mosq_cs_reauthenticating)){
+				&& context->state != mosq_cs_authenticating && context->state != mosq_cs_reauthenticating)){
 
 			send__disconnect(context, MQTT_RC_PROTOCOL_ERROR, NULL);
 			log__printf(NULL, MOSQ_LOG_INFO, "Protocol error from %s: AUTH reauthentication packet before session is active,",
@@ -95,14 +98,14 @@ int handle__auth(struct mosquitto *context)
 
 		if(!auth_method || strcmp(auth_method, context->auth_method)){
 			/* No method, or non-matching method */
-			mosquitto__free(auth_method);
+			mosquitto_FREE(auth_method);
 			mosquitto_property_free_all(&properties);
 			send__disconnect(context, MQTT_RC_PROTOCOL_ERROR, NULL);
 			log__printf(NULL, MOSQ_LOG_INFO, "Protocol error from %s: AUTH packet with non-matching auth-method property (%s:%s).",
 					context->id, context->auth_method, auth_method);
 			return MOSQ_ERR_PROTOCOL;
 		}
-		mosquitto__free(auth_method);
+		mosquitto_FREE(auth_method);
 
 		mosquitto_property_read_binary(properties, MQTT_PROP_AUTHENTICATION_DATA, &auth_data, &auth_data_len, false);
 
@@ -122,22 +125,22 @@ int handle__auth(struct mosquitto *context)
 		}
 		rc = mosquitto_security_auth_continue(context, auth_data, auth_data_len, &auth_data_out, &auth_data_out_len);
 	}
-	mosquitto__free(auth_data);
+	mosquitto_FREE(auth_data);
 	if(rc == MOSQ_ERR_SUCCESS){
 		if(context->state == mosq_cs_authenticating){
 			return connect__on_authorised(context, auth_data_out, auth_data_out_len);
 		}else{
 			mosquitto__set_state(context, mosq_cs_active);
 			rc = send__auth(context, MQTT_RC_SUCCESS, auth_data_out, auth_data_out_len);
-			free(auth_data_out);
+			SAFE_FREE(auth_data_out);
 			return rc;
 		}
 	}else if(rc == MOSQ_ERR_AUTH_CONTINUE){
 		rc = send__auth(context, MQTT_RC_CONTINUE_AUTHENTICATION, auth_data_out, auth_data_out_len);
-		free(auth_data_out);
+		SAFE_FREE(auth_data_out);
 		return rc;
 	}else{
-		free(auth_data_out);
+		SAFE_FREE(auth_data_out);
 		if(context->state == mosq_cs_authenticating && context->will){
 			/* Free will without sending if this is our first authentication attempt */
 			will__clear(context);
@@ -145,8 +148,7 @@ int handle__auth(struct mosquitto *context)
 		if(rc == MOSQ_ERR_AUTH){
 			if(context->state == mosq_cs_authenticating){
 				send__connack(context, 0, MQTT_RC_NOT_AUTHORIZED, NULL);
-				mosquitto__free(context->id);
-				context->id = NULL;
+				mosquitto_FREE(context->id);
 			}else{
 				send__disconnect(context, MQTT_RC_NOT_AUTHORIZED, NULL);
 			}
@@ -155,16 +157,14 @@ int handle__auth(struct mosquitto *context)
 			/* Client has requested extended authentication, but we don't support it. */
 			if(context->state == mosq_cs_authenticating){
 				send__connack(context, 0, MQTT_RC_BAD_AUTHENTICATION_METHOD, NULL);
-				mosquitto__free(context->id);
-				context->id = NULL;
+				mosquitto_FREE(context->id);
 			}else{
 				send__disconnect(context, MQTT_RC_BAD_AUTHENTICATION_METHOD, NULL);
 			}
 			return MOSQ_ERR_PROTOCOL;
 		}else{
 			if(context->state == mosq_cs_authenticating){
-				mosquitto__free(context->id);
-				context->id = NULL;
+				mosquitto_FREE(context->id);
 			}
 			return rc;
 		}

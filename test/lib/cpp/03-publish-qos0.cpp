@@ -1,22 +1,22 @@
 #include <cstring>
 
-#include <mosquittopp.h>
+#include <mosquitto/libmosquittopp.h>
 
-static int run = -1;
 static int sent_mid = -1;
 
 class mosquittopp_test : public mosqpp::mosquittopp
 {
-	public:
-		mosquittopp_test(const char *id);
+public:
+	mosquittopp_test(const char *id);
 
-		void on_connect(int rc);
-		void on_publish(int mid);
+	void on_connect(int rc);
+	void on_publish(int mid);
 };
 
 mosquittopp_test::mosquittopp_test(const char *id) : mosqpp::mosquittopp(id)
 {
 }
+
 
 void mosquittopp_test::on_connect(int rc)
 {
@@ -27,6 +27,7 @@ void mosquittopp_test::on_connect(int rc)
 	}
 }
 
+
 void mosquittopp_test::on_publish(int mid)
 {
 	if(sent_mid == mid){
@@ -36,10 +37,15 @@ void mosquittopp_test::on_publish(int mid)
 	}
 }
 
+
 int main(int argc, char *argv[])
 {
-	struct mosquittopp_test *mosq;
+	mosquittopp_test *mosq;
+	int rc;
 
+	if(argc != 2){
+		return 1;
+	}
 	int port = atoi(argv[1]);
 
 	mosqpp::lib_init();
@@ -48,13 +54,10 @@ int main(int argc, char *argv[])
 
 	mosq->connect("localhost", port, 60);
 
-	while(run == -1){
-		mosq->loop();
-	}
-	delete mosq;
+	rc = mosq->loop_forever();
 
 	delete mosq;
 	mosqpp::lib_cleanup();
 
-	return run;
+	return rc;
 }

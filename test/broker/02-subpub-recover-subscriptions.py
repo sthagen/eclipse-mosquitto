@@ -18,7 +18,7 @@ def publish_helper(port):
 def do_test(proto_ver):
     rc = 1
     if proto_ver == 5:
-        props = mqtt5_props.gen_uint32_prop(mqtt5_props.PROP_SESSION_EXPIRY_INTERVAL, 60)
+        props = mqtt5_props.gen_uint32_prop(mqtt5_props.SESSION_EXPIRY_INTERVAL, 60)
         connect_packet = mosq_test.gen_connect("subpub-sub-test", proto_ver=proto_ver, clean_session=False, properties=props)
     else:
         connect_packet = mosq_test.gen_connect("subpub-sub-test", proto_ver=proto_ver, clean_session=False)
@@ -69,7 +69,9 @@ def do_test(proto_ver):
         print(err)
     finally:
         broker.terminate()
-        broker.wait()
+        if mosq_test.wait_for_subprocess(broker):
+            print("broker not terminated")
+            if rc == 0: rc=1
         (stdo, stde) = broker.communicate()
         if rc:
             print(stde.decode('utf-8'))

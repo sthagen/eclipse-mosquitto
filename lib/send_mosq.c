@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2009-2020 Roger Light <roger@atchoo.org>
+Copyright (c) 2009-2021 Roger Light <roger@atchoo.org>
 
 All rights reserved. This program and the accompanying materials
 are made available under the terms of the Eclipse Public License 2.0
@@ -25,21 +25,18 @@ Contributors:
 #ifdef WITH_BROKER
 #  include "mosquitto_broker_internal.h"
 #  include "sys_tree.h"
-#else
-#  define G_PUB_BYTES_SENT_INC(A)
 #endif
 
 #include "mosquitto.h"
 #include "mosquitto_internal.h"
 #include "logging_mosq.h"
-#include "mqtt_protocol.h"
-#include "memory_mosq.h"
+#include "mosquitto/mqtt_protocol.h"
 #include "net_mosq.h"
 #include "packet_mosq.h"
 #include "property_mosq.h"
 #include "send_mosq.h"
-#include "time_mosq.h"
 #include "util_mosq.h"
+
 
 int send__pingreq(struct mosquitto *mosq)
 {
@@ -53,24 +50,31 @@ int send__pingreq(struct mosquitto *mosq)
 	rc = send__simple_command(mosq, CMD_PINGREQ);
 	if(rc == MOSQ_ERR_SUCCESS){
 		mosq->ping_t = mosquitto_time();
+#ifdef WITH_BROKER
+		metrics__int_inc(mosq_counter_mqtt_pingreq_sent, 1);
+#endif
 	}
 	return rc;
 }
+
 
 int send__pingresp(struct mosquitto *mosq)
 {
 #ifdef WITH_BROKER
 	log__printf(NULL, MOSQ_LOG_DEBUG, "Sending PINGRESP to %s", SAFE_PRINT(mosq->id));
+	metrics__int_inc(mosq_counter_mqtt_pingresp_sent, 1);
 #else
 	log__printf(mosq, MOSQ_LOG_DEBUG, "Client %s sending PINGRESP", SAFE_PRINT(mosq->id));
 #endif
 	return send__simple_command(mosq, CMD_PINGRESP);
 }
 
+
 int send__puback(struct mosquitto *mosq, uint16_t mid, uint8_t reason_code, const mosquitto_property *properties)
 {
 #ifdef WITH_BROKER
 	log__printf(NULL, MOSQ_LOG_DEBUG, "Sending PUBACK to %s (m%d, rc%d)", SAFE_PRINT(mosq->id), mid, reason_code);
+	metrics__int_inc(mosq_counter_mqtt_puback_sent, 1);
 #else
 	log__printf(mosq, MOSQ_LOG_DEBUG, "Client %s sending PUBACK (m%d, rc%d)", SAFE_PRINT(mosq->id), mid, reason_code);
 #endif
@@ -79,10 +83,12 @@ int send__puback(struct mosquitto *mosq, uint16_t mid, uint8_t reason_code, cons
 	return send__command_with_mid(mosq, CMD_PUBACK, mid, false, reason_code, properties);
 }
 
+
 int send__pubcomp(struct mosquitto *mosq, uint16_t mid, const mosquitto_property *properties)
 {
 #ifdef WITH_BROKER
 	log__printf(NULL, MOSQ_LOG_DEBUG, "Sending PUBCOMP to %s (m%d)", SAFE_PRINT(mosq->id), mid);
+	metrics__int_inc(mosq_counter_mqtt_pubcomp_sent, 1);
 #else
 	log__printf(mosq, MOSQ_LOG_DEBUG, "Client %s sending PUBCOMP (m%d)", SAFE_PRINT(mosq->id), mid);
 #endif
@@ -96,6 +102,7 @@ int send__pubrec(struct mosquitto *mosq, uint16_t mid, uint8_t reason_code, cons
 {
 #ifdef WITH_BROKER
 	log__printf(NULL, MOSQ_LOG_DEBUG, "Sending PUBREC to %s (m%d, rc%d)", SAFE_PRINT(mosq->id), mid, reason_code);
+	metrics__int_inc(mosq_counter_mqtt_pubrec_sent, 1);
 #else
 	log__printf(mosq, MOSQ_LOG_DEBUG, "Client %s sending PUBREC (m%d, rc%d)", SAFE_PRINT(mosq->id), mid, reason_code);
 #endif
@@ -106,10 +113,12 @@ int send__pubrec(struct mosquitto *mosq, uint16_t mid, uint8_t reason_code, cons
 	return send__command_with_mid(mosq, CMD_PUBREC, mid, false, reason_code, properties);
 }
 
+
 int send__pubrel(struct mosquitto *mosq, uint16_t mid, const mosquitto_property *properties)
 {
 #ifdef WITH_BROKER
 	log__printf(NULL, MOSQ_LOG_DEBUG, "Sending PUBREL to %s (m%d)", SAFE_PRINT(mosq->id), mid);
+	metrics__int_inc(mosq_counter_mqtt_pubrel_sent, 1);
 #else
 	log__printf(mosq, MOSQ_LOG_DEBUG, "Client %s sending PUBREL (m%d)", SAFE_PRINT(mosq->id), mid);
 #endif
@@ -117,35 +126,33 @@ int send__pubrel(struct mosquitto *mosq, uint16_t mid, const mosquitto_property 
 	return send__command_with_mid(mosq, CMD_PUBREL|2, mid, false, 0, properties);
 }
 
+
 /* For PUBACK, PUBCOMP, PUBREC, and PUBREL */
 int send__command_with_mid(struct mosquitto *mosq, uint8_t command, uint16_t mid, bool dup, uint8_t reason_code, const mosquitto_property *properties)
 {
 	struct mosquitto__packet *packet = NULL;
 	int rc;
+	uint32_t remaining_length;
 
 	assert(mosq);
-	packet = mosquitto__calloc(1, sizeof(struct mosquitto__packet));
-	if(!packet) return MOSQ_ERR_NOMEM;
 
-	packet->command = command;
 	if(dup){
-		packet->command |= 8;
+		command |= 8;
 	}
-	packet->remaining_length = 2;
+	remaining_length = 2;
 
 	if(mosq->protocol == mosq_p_mqtt5){
 		if(reason_code != 0 || properties){
-			packet->remaining_length += 1;
+			remaining_length += 1;
 		}
 
 		if(properties){
-			packet->remaining_length += property__get_remaining_length(properties);
+			remaining_length += mosquitto_property_get_remaining_length(properties);
 		}
 	}
 
-	rc = packet__alloc(packet);
+	rc = packet__alloc(&packet, command, remaining_length);
 	if(rc){
-		mosquitto__free(packet);
 		return rc;
 	}
 
@@ -163,6 +170,7 @@ int send__command_with_mid(struct mosquitto *mosq, uint8_t command, uint16_t mid
 	return packet__queue(mosq, packet);
 }
 
+
 /* For DISCONNECT, PINGREQ and PINGRESP */
 int send__simple_command(struct mosquitto *mosq, uint8_t command)
 {
@@ -170,18 +178,11 @@ int send__simple_command(struct mosquitto *mosq, uint8_t command)
 	int rc;
 
 	assert(mosq);
-	packet = mosquitto__calloc(1, sizeof(struct mosquitto__packet));
-	if(!packet) return MOSQ_ERR_NOMEM;
 
-	packet->command = command;
-	packet->remaining_length = 0;
-
-	rc = packet__alloc(packet);
+	rc = packet__alloc(&packet, command, 0);
 	if(rc){
-		mosquitto__free(packet);
 		return rc;
 	}
 
 	return packet__queue(mosq, packet);
 }
-

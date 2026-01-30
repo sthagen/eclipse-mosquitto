@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2009-2020 Roger Light <roger@atchoo.org>
+Copyright (c) 2009-2021 Roger Light <roger@atchoo.org>
 
 All rights reserved. This program and the accompanying materials
 are made available under the terms of the Eclipse Public License 2.0
@@ -26,16 +26,17 @@ Contributors:
 #  include "mosquitto_broker_internal.h"
 #endif
 
+#include "callbacks.h"
 #include "mosquitto.h"
 #include "logging_mosq.h"
-#include "memory_mosq.h"
 #include "messages_mosq.h"
-#include "mqtt_protocol.h"
+#include "mosquitto/mqtt_protocol.h"
 #include "net_mosq.h"
 #include "packet_mosq.h"
 #include "read_handle.h"
 #include "send_mosq.h"
 #include "util_mosq.h"
+
 
 int handle__pubrec(struct mosquitto *mosq)
 {
@@ -57,7 +58,9 @@ int handle__pubrec(struct mosquitto *mosq)
 	}
 
 	rc = packet__read_uint16(&mosq->in_packet, &mid);
-	if(rc) return rc;
+	if(rc){
+		return rc;
+	}
 	if(mid == 0){
 #ifdef WITH_BROKER
 		log__printf(NULL, MOSQ_LOG_INFO, "Protocol error from %s: PUBREC with mid = 0.",
@@ -68,7 +71,9 @@ int handle__pubrec(struct mosquitto *mosq)
 
 	if(mosq->protocol == mosq_p_mqtt5 && mosq->in_packet.remaining_length > 2){
 		rc = packet__read_byte(&mosq->in_packet, &reason_code);
-		if(rc) return rc;
+		if(rc){
+			return rc;
+		}
 
 		if(reason_code != MQTT_RC_SUCCESS
 				&& reason_code != MQTT_RC_NO_MATCHING_SUBSCRIBERS
@@ -114,7 +119,7 @@ int handle__pubrec(struct mosquitto *mosq)
 	log__printf(NULL, MOSQ_LOG_DEBUG, "Received PUBREC from %s (Mid: %d)", SAFE_PRINT(mosq->id), mid);
 
 	if(reason_code < 0x80){
-		rc = db__message_update_outgoing(mosq, mid, mosq_ms_wait_for_pubcomp, 2);
+		rc = db__message_update_outgoing(mosq, mid, mosq_ms_wait_for_pubcomp, 2, true);
 	}else{
 		return db__message_delete_outgoing(mosq, mid, mosq_ms_wait_for_pubrec, 2);
 	}
@@ -127,16 +132,7 @@ int handle__pubrec(struct mosquitto *mosq)
 	}else{
 		if(!message__delete(mosq, mid, mosq_md_out, 2)){
 			/* Only inform the client the message has been sent once. */
-			void (*on_publish_v5)(struct mosquitto *, void *userdata, int mid, int reason_code, const mosquitto_property *props);
-
-			COMPAT_pthread_mutex_lock(&mosq->callback_mutex);
-			on_publish_v5 = mosq->on_publish_v5;
-			COMPAT_pthread_mutex_unlock(&mosq->callback_mutex);
-			if(on_publish_v5){
-				mosq->in_callback = true;
-				on_publish_v5(mosq, mosq->userdata, mid, reason_code, properties);
-				mosq->in_callback = false;
-			}
+			callback__on_publish(mosq, mid, reason_code, properties);
 		}
 		util__increment_send_quota(mosq);
 		COMPAT_pthread_mutex_lock(&mosq->msgs_out.mutex);
@@ -151,8 +147,9 @@ int handle__pubrec(struct mosquitto *mosq)
 		return rc;
 	}
 	rc = send__pubrel(mosq, mid, NULL);
-	if(rc) return rc;
+	if(rc){
+		return rc;
+	}
 
 	return MOSQ_ERR_SUCCESS;
 }
-

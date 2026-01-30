@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2009-2019 Roger Light <roger@atchoo.org>
+Copyright (c) 2009-2021 Roger Light <roger@atchoo.org>
 
 All rights reserved. This program and the accompanying materials
 are made available under the terms of the Eclipse Public License 2.0
@@ -18,7 +18,7 @@ Contributors:
 
 #include "config.h"
 
-#ifndef WITH_EPOLL
+#if !defined(WITH_EPOLL) && !defined(WITH_KQUEUE)
 
 #ifndef WIN32
 #  define _GNU_SOURCE
@@ -43,73 +43,82 @@ Contributors:
 #endif
 #include <time.h>
 
-#ifdef WITH_WEBSOCKETS
+#if defined(WITH_WEBSOCKETS) && WITH_WEBSOCKETS == WS_IS_LWS
 #  include <libwebsockets.h>
 #endif
 
 #include "mosquitto_broker_internal.h"
-#include "memory_mosq.h"
 #include "packet_mosq.h"
 #include "send_mosq.h"
 #include "sys_tree.h"
-#include "time_mosq.h"
 #include "util_mosq.h"
 #include "mux.h"
 
 static void loop_handle_reads_writes(void);
 
 static struct pollfd *pollfds = NULL;
-static size_t pollfd_max, pollfd_current_max;
-#ifndef WIN32
-static sigset_t my_sigblock;
-#endif
+static size_t pollfd_max, pollfd_current_max = 0;
 
-int mux_poll__init(struct mosquitto__listener_sock *listensock, int listensock_count)
+
+int mux_poll__init(void)
 {
-	size_t i;
-	size_t pollfd_index = 0;
-
-#ifndef WIN32
-	sigemptyset(&my_sigblock);
-	sigaddset(&my_sigblock, SIGINT);
-	sigaddset(&my_sigblock, SIGTERM);
-	sigaddset(&my_sigblock, SIGUSR1);
-	sigaddset(&my_sigblock, SIGUSR2);
-	sigaddset(&my_sigblock, SIGHUP);
-#endif
-
 #ifdef WIN32
 	pollfd_max = (size_t)_getmaxstdio();
 #else
 	pollfd_max = (size_t)sysconf(_SC_OPEN_MAX);
 #endif
 
-	pollfds = mosquitto__calloc(pollfd_max, sizeof(struct pollfd));
+	pollfds = mosquitto_calloc(pollfd_max, sizeof(struct pollfd));
 	if(!pollfds){
 		log__printf(NULL, MOSQ_LOG_ERR, "Error: Out of memory.");
 		return MOSQ_ERR_NOMEM;
 	}
 	memset(pollfds, 0, sizeof(struct pollfd)*pollfd_max);
-	for(i=0; i<pollfd_max; i++) {
+	for(size_t i=0; i<pollfd_max; i++){
 		pollfds[i].fd = INVALID_SOCKET;
 	}
 
-	for(i=0; i<(size_t )listensock_count; i++){
+	return MOSQ_ERR_SUCCESS;
+}
+
+
+int mux_poll__add_listeners(struct mosquitto__listener_sock *listensock, int listensock_count)
+{
+	size_t pollfd_index = 0;
+
+	for(size_t i=0; i<(size_t )listensock_count; i++){
 		pollfds[pollfd_index].fd = listensock[i].sock;
 		pollfds[pollfd_index].events = POLLIN;
 		pollfds[pollfd_index].revents = 0;
 		pollfd_index++;
 	}
 
-	pollfd_current_max = pollfd_index-1;
+	if(pollfd_current_max == 0){
+		pollfd_current_max = pollfd_index-1;
+	}
 	return MOSQ_ERR_SUCCESS;
 }
 
 
-static int mux_poll__add(struct mosquitto* context, uint16_t evt)
+int mux_poll__delete_listeners(struct mosquitto__listener_sock *listensock, int listensock_count)
 {
-	size_t i;
+	size_t pollfd_index = 0;
 
+	UNUSED(listensock);
+
+	for(size_t i=0; i<(size_t )listensock_count; i++){
+		pollfds[pollfd_index].fd = INVALID_SOCKET;
+		pollfds[pollfd_index].events = 0;
+		pollfds[pollfd_index].revents = 0;
+		pollfd_index++;
+	}
+
+	return MOSQ_ERR_SUCCESS;
+}
+
+
+static int mux_poll__add(struct mosquitto *context, uint16_t evt)
+{
 	if(context->events == evt){
 		return MOSQ_ERR_SUCCESS;
 	}
@@ -119,7 +128,7 @@ static int mux_poll__add(struct mosquitto* context, uint16_t evt)
 		pollfds[context->pollfd_index].events = (short int)evt;
 		pollfds[context->pollfd_index].revents = 0;
 	}else{
-		for(i=0; i<pollfd_max; i++) {
+		for(size_t i=0; i<pollfd_max; i++){
 			if(pollfds[i].fd == INVALID_SOCKET){
 				pollfds[i].fd = context->sock;
 				pollfds[i].events = POLLIN;
@@ -146,18 +155,19 @@ int mux_poll__add_out(struct mosquitto *context)
 
 int mux_poll__remove_out(struct mosquitto *context)
 {
-	if(context->events & POLLOUT) {
-		return mux_poll__add_in(context);
+	if(context->events & POLLOUT){
+		return mux_poll__new(context);
 	}else{
 		return MOSQ_ERR_SUCCESS;
 	}
 }
 
 
-int mux_poll__add_in(struct mosquitto *context)
+int mux_poll__new(struct mosquitto *context)
 {
 	return mux_poll__add(context, POLLIN);
 }
+
 
 int mux_poll__delete(struct mosquitto *context)
 {
@@ -185,23 +195,22 @@ int mux_poll__delete(struct mosquitto *context)
 }
 
 
-
-
 int mux_poll__handle(struct mosquitto__listener_sock *listensock, int listensock_count)
 {
 	struct mosquitto *context;
-	int i;
 	int fdcount;
-#ifndef WIN32
-	sigset_t origsig;
+	int timeout;
+
+#ifdef WITH_WEBSOCKETS
+	timeout = 100;
+#else
+	timeout = db.next_event_ms;
 #endif
 
 #ifndef WIN32
-	sigprocmask(SIG_SETMASK, &my_sigblock, &origsig);
-	fdcount = poll(pollfds, pollfd_current_max+1, 100);
-	sigprocmask(SIG_SETMASK, &origsig, NULL);
+	fdcount = poll(pollfds, pollfd_current_max+1, timeout);
 #else
-	fdcount = WSAPoll(pollfds, pollfd_current_max+1, 100);
+	fdcount = WSAPoll(pollfds, pollfd_current_max+1, timeout);
 #endif
 
 	db.now_s = mosquitto_time();
@@ -223,9 +232,9 @@ int mux_poll__handle(struct mosquitto__listener_sock *listensock, int listensock
 	}else{
 		loop_handle_reads_writes();
 
-		for(i=0; i<listensock_count; i++){
+		for(int i=0; i<listensock_count; i++){
 			if(pollfds[i].revents & POLLIN){
-#ifdef WITH_WEBSOCKETS
+#if defined(WITH_WEBSOCKETS) && WITH_WEBSOCKETS == WS_IS_LWS
 				if(listensock[i].listener->ws_context){
 					/* Nothing needs to happen here, because we always call lws_service in the loop.
 					 * The important point is we've been woken up for this listener. */
@@ -233,8 +242,6 @@ int mux_poll__handle(struct mosquitto__listener_sock *listensock, int listensock
 #endif
 				{
 					while((context = net__socket_accept(&listensock[i])) != NULL){
-						context->pollfd_index = -1;
-						mux__add_in(context);
 					}
 				}
 			}
@@ -246,8 +253,7 @@ int mux_poll__handle(struct mosquitto__listener_sock *listensock, int listensock
 
 int mux_poll__cleanup(void)
 {
-	mosquitto__free(pollfds);
-	pollfds = NULL;
+	mosquitto_FREE(pollfds);
 
 	return MOSQ_ERR_SUCCESS;
 }
@@ -271,7 +277,7 @@ static void loop_handle_reads_writes(void)
 
 		assert(pollfds[context->pollfd_index].fd == context->sock);
 
-#ifdef WITH_WEBSOCKETS
+#if defined(WITH_WEBSOCKETS) && WITH_WEBSOCKETS == WS_IS_LWS
 		if(context->wsi){
 			struct lws_pollfd wspoll;
 			wspoll.fd = pollfds[context->pollfd_index].fd;
@@ -318,7 +324,7 @@ static void loop_handle_reads_writes(void)
 		if(context->pollfd_index < 0){
 			continue;
 		}
-#ifdef WITH_WEBSOCKETS
+#if defined(WITH_WEBSOCKETS) && WITH_WEBSOCKETS == WS_IS_LWS
 		if(context->wsi){
 			// Websocket are already handled above
 			continue;
@@ -332,7 +338,29 @@ static void loop_handle_reads_writes(void)
 		if(pollfds[context->pollfd_index].revents & POLLIN){
 #endif
 			do{
-				rc = packet__read(context);
+				switch(context->transport){
+					case mosq_t_tcp:
+					case mosq_t_ws:
+						rc = packet__read(context);
+						break;
+#if defined(WITH_WEBSOCKETS) && WITH_WEBSOCKETS == WS_IS_BUILTIN
+					case mosq_t_http:
+						rc = http__read(context);
+						break;
+#endif
+#if !defined(WITH_WEBSOCKETS) || WITH_WEBSOCKETS == WS_IS_BUILTIN
+					/* Not supported with LWS */
+					case mosq_t_proxy_v2:
+						rc = proxy_v2__read(context);
+						break;
+					case mosq_t_proxy_v1:
+						rc = proxy_v1__read(context);
+						break;
+#endif
+					default:
+						rc = MOSQ_ERR_INVAL;
+						break;
+				}
 				if(rc){
 					do_disconnect(context, rc);
 					continue;

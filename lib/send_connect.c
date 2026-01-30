@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2009-2020 Roger Light <roger@atchoo.org>
+Copyright (c) 2009-2021 Roger Light <roger@atchoo.org>
 
 All rights reserved. This program and the accompanying materials
 are made available under the terms of the Eclipse Public License 2.0
@@ -23,16 +23,17 @@ Contributors:
 
 #ifdef WITH_BROKER
 #  include "mosquitto_broker_internal.h"
+#  include "sys_tree.h"
 #endif
 
 #include "logging_mosq.h"
-#include "memory_mosq.h"
 #include "mosquitto.h"
 #include "mosquitto_internal.h"
-#include "mqtt_protocol.h"
+#include "mosquitto/mqtt_protocol.h"
 #include "packet_mosq.h"
 #include "property_mosq.h"
 #include "send_mosq.h"
+
 
 int send__connect(struct mosquitto *mosq, uint16_t keepalive, bool clean_session, const mosquitto_property *properties)
 {
@@ -50,7 +51,9 @@ int send__connect(struct mosquitto *mosq, uint16_t keepalive, bool clean_session
 
 	assert(mosq);
 
-	if(mosq->protocol == mosq_p_mqtt31 && !mosq->id) return MOSQ_ERR_PROTOCOL;
+	if(mosq->protocol == mosq_p_mqtt31 && !mosq->id){
+		return MOSQ_ERR_PROTOCOL;
+	}
 
 #if defined(WITH_BROKER) && defined(WITH_BRIDGE)
 	if(mosq->bridge){
@@ -72,7 +75,9 @@ int send__connect(struct mosquitto *mosq, uint16_t keepalive, bool clean_session
 		/* Generate properties from options */
 		if(!mosquitto_property_read_int16(properties, MQTT_PROP_RECEIVE_MAXIMUM, &receive_maximum, false)){
 			rc = mosquitto_property_add_int16(&local_props, MQTT_PROP_RECEIVE_MAXIMUM, mosq->msgs_in.inflight_maximum);
-			if(rc) return rc;
+			if(rc){
+				return rc;
+			}
 		}else{
 			mosq->msgs_in.inflight_maximum = receive_maximum;
 			mosq->msgs_in.inflight_quota = receive_maximum;
@@ -81,9 +86,9 @@ int send__connect(struct mosquitto *mosq, uint16_t keepalive, bool clean_session
 		version = MQTT_PROTOCOL_V5;
 		headerlen = 10;
 		proplen = 0;
-		proplen += property__get_length_all(properties);
-		proplen += property__get_length_all(local_props);
-		varbytes = packet__varint_bytes(proplen);
+		proplen += mosquitto_property_get_length_all(properties);
+		proplen += mosquitto_property_get_length_all(local_props);
+		varbytes = mosquitto_varint_bytes(proplen);
 		headerlen += proplen + varbytes;
 	}else if(mosq->protocol == mosq_p_mqtt311){
 		version = MQTT_PROTOCOL_V311;
@@ -94,9 +99,6 @@ int send__connect(struct mosquitto *mosq, uint16_t keepalive, bool clean_session
 	}else{
 		return MOSQ_ERR_INVAL;
 	}
-
-	packet = mosquitto__calloc(1, sizeof(struct mosquitto__packet));
-	if(!packet) return MOSQ_ERR_NOMEM;
 
 	if(clientid){
 		payloadlen = (uint32_t)(2U+strlen(clientid));
@@ -113,7 +115,7 @@ int send__connect(struct mosquitto *mosq, uint16_t keepalive, bool clean_session
 
 		payloadlen += (uint32_t)(2+strlen(mosq->will->msg.topic) + 2+(uint32_t)mosq->will->msg.payloadlen);
 		if(mosq->protocol == mosq_p_mqtt5){
-			payloadlen += property__get_remaining_length(mosq->will->properties);
+			payloadlen += mosquitto_property_get_remaining_length(mosq->will->properties);
 		}
 	}
 
@@ -122,7 +124,6 @@ int send__connect(struct mosquitto *mosq, uint16_t keepalive, bool clean_session
 	 * username before checking password. */
 	if(mosq->protocol == mosq_p_mqtt31 || mosq->protocol == mosq_p_mqtt311){
 		if(password != NULL && username == NULL){
-			mosquitto__free(packet);
 			return MOSQ_ERR_INVAL;
 		}
 	}
@@ -134,11 +135,9 @@ int send__connect(struct mosquitto *mosq, uint16_t keepalive, bool clean_session
 		payloadlen += (uint32_t)(2+strlen(password));
 	}
 
-	packet->command = CMD_CONNECT;
-	packet->remaining_length = headerlen + payloadlen;
-	rc = packet__alloc(packet);
+	rc = packet__alloc(&packet, CMD_CONNECT, headerlen + payloadlen);
 	if(rc){
-		mosquitto__free(packet);
+		mosquitto_FREE(packet);
 		return rc;
 	}
 
@@ -206,6 +205,7 @@ int send__connect(struct mosquitto *mosq, uint16_t keepalive, bool clean_session
 # ifdef WITH_BRIDGE
 	log__printf(mosq, MOSQ_LOG_DEBUG, "Bridge %s sending CONNECT", SAFE_PRINT(clientid));
 # endif
+	metrics__int_inc(mosq_counter_mqtt_connect_sent, 1);
 #else
 	log__printf(mosq, MOSQ_LOG_DEBUG, "Client %s sending CONNECT", SAFE_PRINT(clientid));
 #endif

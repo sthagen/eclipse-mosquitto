@@ -55,7 +55,10 @@ class CompileDocbookManpage(PageCompiler):
         binary = self.site.config.get('XSLTPROC_BINARY', 'xsltproc')
         xslpath = os.path.join(os.path.split(__file__)[0], 'html.xsl')
         try:
-            subprocess.check_call((binary, '-o', dest, xslpath, source))
+            source = os.path.abspath(source)
+            dest = os.path.abspath(dest)
+            xslpath = os.path.abspath(xslpath)
+            subprocess.check_call((binary, '--xinclude', '-o', dest, xslpath, source))
             if post is None:
                 if shortcode_deps:
                     self.logger.error(

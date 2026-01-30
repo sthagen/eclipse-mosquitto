@@ -223,7 +223,7 @@ unstructuredName		= An optional company name
 # This goes against PKIX guidelines but some CAs do it and some software
 # requires this to avoid interpreting an end user certificate as a CA.
 
-basicConstraints=CA:FALSE
+basicConstraints=critical,CA:FALSE
 
 # Here are some examples of the usage of nsCertType. If it is omitted
 # the certificate can be used for anything *except* object signing.
@@ -274,7 +274,7 @@ authorityKeyIdentifier=keyid,issuer
 
 # Extensions to add to a certificate request
 
-basicConstraints = CA:FALSE
+basicConstraints = critical,CA:FALSE
 keyUsage = nonRepudiation, digitalSignature, keyEncipherment
 
 [ v3_ca ]
@@ -326,7 +326,7 @@ authorityKeyIdentifier=keyid:always
 # This goes against PKIX guidelines but some CAs do it and some software
 # requires this to avoid interpreting an end user certificate as a CA.
 
-basicConstraints=CA:FALSE
+basicConstraints=critical,CA:FALSE
 
 # Here are some examples of the usage of nsCertType. If it is omitted
 # the certificate can be used for anything *except* object signing.
@@ -402,3 +402,10 @@ tsa_name		= yes	# Must the TSA name be included in the reply?
 				# (optional, default: no)
 ess_cert_id_chain	= no	# Must the ESS cert id chain be included?
 				# (optional, default: no)
+
+[ test_SAN ]
+basicConstraints = critical,CA:FALSE
+subjectKeyIdentifier = hash
+authorityKeyIdentifier = keyid,issuer
+subjectAltName = "IP:127.0.0.1,DNS:localhost,IP:::1"
+keyUsage = nonRepudiation, digitalSignature, keyEncipherment

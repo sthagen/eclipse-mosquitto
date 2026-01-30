@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2009-2020 Roger Light <roger@atchoo.org>
+Copyright (c) 2009-2021 Roger Light <roger@atchoo.org>
 
 All rights reserved. This program and the accompanying materials
 are made available under the terms of the Eclipse Public License 2.0
@@ -26,11 +26,11 @@ Contributors:
 #  include "mosquitto_broker_internal.h"
 #endif
 
+#include "callbacks.h"
 #include "mosquitto.h"
 #include "logging_mosq.h"
-#include "memory_mosq.h"
 #include "messages_mosq.h"
-#include "mqtt_protocol.h"
+#include "mosquitto/mqtt_protocol.h"
 #include "net_mosq.h"
 #include "packet_mosq.h"
 #include "read_handle.h"
@@ -65,7 +65,9 @@ int handle__pubackcomp(struct mosquitto *mosq, const char *type)
 	COMPAT_pthread_mutex_unlock(&mosq->msgs_out.mutex);
 
 	rc = packet__read_uint16(&mosq->in_packet, &mid);
-	if(rc) return rc;
+	if(rc){
+		return rc;
+	}
 	if(type[3] == 'A'){ /* pubAck or pubComp */
 		if(mosq->in_packet.command != CMD_PUBACK){
 			return MOSQ_ERR_MALFORMED_PACKET;
@@ -92,7 +94,9 @@ int handle__pubackcomp(struct mosquitto *mosq, const char *type)
 
 		if(mosq->in_packet.remaining_length > 3){
 			rc = property__read_all(CMD_PUBACK, &mosq->in_packet, &properties);
-			if(rc) return rc;
+			if(rc){
+				return rc;
+			}
 		}
 		if(type[3] == 'A'){ /* pubAck or pubComp */
 			if(reason_code != MQTT_RC_SUCCESS
@@ -150,29 +154,17 @@ int handle__pubackcomp(struct mosquitto *mosq, const char *type)
 
 	rc = message__delete(mosq, mid, mosq_md_out, qos);
 	if(rc == MOSQ_ERR_SUCCESS){
-		void (*on_publish)(struct mosquitto *, void *userdata, int mid);
-		void (*on_publish_v5)(struct mosquitto *, void *userdata, int mid, int reason_code, const mosquitto_property *props);
-
 		/* Only inform the client the message has been sent once. */
-		COMPAT_pthread_mutex_lock(&mosq->callback_mutex);
-		on_publish = mosq->on_publish;
-		on_publish_v5 = mosq->on_publish_v5;
-		COMPAT_pthread_mutex_unlock(&mosq->callback_mutex);
-
-		if(on_publish){
-			mosq->in_callback = true;
-			on_publish(mosq, mosq->userdata, mid);
-			mosq->in_callback = false;
-		}
-		if(on_publish_v5){
-			mosq->in_callback = true;
-			on_publish_v5(mosq, mosq->userdata, mid, reason_code, properties);
-			mosq->in_callback = false;
-		}
+		callback__on_publish(mosq, mid, reason_code, properties);
 		mosquitto_property_free_all(&properties);
-	}else if(rc != MOSQ_ERR_NOT_FOUND){
-		return rc;
+	}else{
+		mosquitto_property_free_all(&properties);
+
+		if(rc != MOSQ_ERR_NOT_FOUND){
+			return rc;
+		}
 	}
+
 	COMPAT_pthread_mutex_lock(&mosq->msgs_out.mutex);
 	message__release_to_inflight(mosq, mosq_md_out);
 	COMPAT_pthread_mutex_unlock(&mosq->msgs_out.mutex);
@@ -180,4 +172,3 @@ int handle__pubackcomp(struct mosquitto *mosq, const char *type)
 	return MOSQ_ERR_SUCCESS;
 #endif
 }
-

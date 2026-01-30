@@ -1,0 +1,71 @@
+{
+   openssl_CRYPTO_get_ex_new_index
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   ...
+   fun:CRYPTO_get_ex_new_index
+   ...
+}
+{
+   dl_reachable_leaks
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   ...
+   fun:_dl_catch_error
+}
+{
+   openssl_CRYPTO_THREAD_run_once
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   ...
+   fun:CRYPTO_THREAD_run_once
+   ...
+}
+{
+   dl_open_reachable
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   ...
+   fun:_dl_open
+   ...
+}
+{
+   MHD_quick_close
+   CoreError:FdBadClose
+   fun:__syscall_cancel
+   fun:close
+   fun:MHD_start_daemon_va
+   fun:MHD_start_daemon
+   ...
+}
+{
+   openssl_LH_new
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:CRYPTO_zalloc
+   fun:OPENSSL_LH_new
+   ...
+   fun:__pthread_once_slow
+}
+{
+   openssl_THREAD_lock_new
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:CRYPTO_zalloc
+   fun:CRYPTO_THREAD_lock_new
+   ...
+   fun:__pthread_once_slow
+}
+{
+   openssl_CRYPTO_set_ex_data
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:CRYPTO_zalloc
+   ...
+   fun:CRYPTO_set_ex_data
+   ...
+   fun:__pthread_once_slow
+}
