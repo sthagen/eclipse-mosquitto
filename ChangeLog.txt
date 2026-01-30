@@ -10,6 +10,10 @@
 - Fix inconsistent disconnect log message format, and add address:port.
 - Fix `plugin`/`global_plugin` option not allowing space characters.
 
+# Plugins
+- Fix incorrect linking of libmosquitto_common.so for the acl and password
+  file plugins. Closes #3460.
+
 
 2.1.0 - 2026-01-29
 ==================
