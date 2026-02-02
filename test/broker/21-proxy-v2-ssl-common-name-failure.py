@@ -92,5 +92,5 @@ data = b"\xC0\x00\x02\x05" + b"\x00\x00\x00\x00" + b"\x18\x83" + b"\x00\x00" \
     + b"\x21" \
     + b"\x00\x07" \
     + b"\x54\x4C\x53\x76\x31\x2E\x33"
-expect_log = "Client proxy-test disconnected, not authorised."
+expect_log = "Client proxy-test [192.0.2.5:6275] disconnected: not authorised."
 do_test(data, expect_log)
