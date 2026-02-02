@@ -1,7 +1,10 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <?xml-stylesheet type="text/xsl" href="manpage.xsl"?>
 
-<refentry xml:id="mosquitto.conf" xmlns:xlink="http://www.w3.org/1999/xlink">
+<refentry xml:id="mosquitto.conf"
+		xmlns:xlink="http://www.w3.org/1999/xlink"
+		xmlns:xi="http://www.w3.org/2001/XInclude">
+
 	<refmeta>
 		<refentrytitle>mosquitto.conf</refentrytitle>
 		<manvolnum>5</manvolnum>
@@ -2775,7 +2778,7 @@ topic clients/total in 0 test/mosquitto/org/ $SYS/broker/
 		<para>mosquitto.conf</para>
 	</refsect1>
 
-	<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="common/section-bugs.xml" />
+	<xi:include href="common/section-bugs.xml" />
 
 	<refsect1>
 		<title>See Also</title>

@@ -1,7 +1,10 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <?xml-stylesheet type="text/xsl" href="manpage.xsl"?>
 
-<refentry xml:id="mosquitto" xmlns:xlink="http://www.w3.org/1999/xlink">
+<refentry xml:id="mosquitto"
+		xmlns:xlink="http://www.w3.org/1999/xlink"
+		xmlns:xi="http://www.w3.org/2001/XInclude">
+
 	<refmeta>
 		<refentrytitle>mosquitto</refentrytitle>
 		<manvolnum>8</manvolnum>
@@ -977,7 +980,7 @@
 	<refsect1>
 		<title>Environment Variables</title>
 		<variablelist>
-			<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="common/env-var-mosquitto-unsafe-allow-symlinks.xml" />
+			<xi:include href="common/env-var-mosquitto-unsafe-allow-symlinks.xml" />
 		</variablelist>
 	</refsect1>
 
@@ -1006,7 +1009,7 @@
 		</variablelist>
 	</refsect1>
 
-	<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="common/section-bugs.xml" />
+	<xi:include href="common/section-bugs.xml" />
 
 	<refsect1>
 		<title>See Also</title>
