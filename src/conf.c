@@ -1192,10 +1192,7 @@ static int config__read_file_core(struct mosquitto__config *config, bool reload,
 						conf__set_cur_security_options(config, &cur_listener, &cur_security_options, token);
 					}
 
-					char *plugin_path = strtok_r(NULL, " ", &saveptr);
-					REQUIRE_NON_EMPTY_OPTION(plugin_path, token);
-
-					cur_plugin = config__plugin_load(NULL, plugin_path);
+					cur_plugin = config__plugin_load(NULL, saveptr);
 					if(cur_plugin == NULL){
 						return MOSQ_ERR_INVAL;
 					}

@@ -8,6 +8,7 @@
   restrictions on reading files through symlinks to be lifted in safe
   environments like kubernetes. Closes #3461.
 - Fix inconsistent disconnect log message format, and add address:port.
+- Fix `plugin`/`global_plugin` option not allowing space characters.
 
 
 2.1.0 - 2026-01-29
