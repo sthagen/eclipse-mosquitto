@@ -917,6 +917,11 @@ static mosquitto_plugin_id_t *config__plugin_load(const char *name, const char *
 		return NULL;
 	}
 
+	if(!path || !strcmp(path, "")){
+		log__printf(NULL, MOSQ_LOG_ERR, "Error: Missing plugin path for plugin name '%s'.", name);
+		return NULL;
+	}
+
 	plugin = mosquitto_calloc(1, sizeof(mosquitto_plugin_id_t));
 	if(!plugin){
 		goto error;
