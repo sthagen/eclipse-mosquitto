@@ -8,28 +8,34 @@
 #include "mosquitto.h"
 
 #define ALLOW_SYMLINKS "MOSQUITTO_UNSAFE_ALLOW_SYMLINKS"
+#define SYMLINK "test_symlink"
+#define DATAFILE "test_data"
 
 #ifndef WIN32
-static bool symlink_create(void)
+static bool symlink_test_init(void)
 {
-	FILE *fptr = mosquitto_fopen("libcommon_test", "rb", false);
+	unsetenv(ALLOW_SYMLINKS);
 
-	/* Verify we are in the right path */
+	/* Create a file to open */
+	FILE *fptr = mosquitto_fopen(DATAFILE, "wb", false);
 	CU_ASSERT_PTR_NOT_NULL(fptr);
 	if(!fptr){
 		return false;
 	}
 	fclose(fptr);
 
-	int rc = symlink("libcommon_test", "libcommon_symlink");
+	/* Add a symlink */
+	int rc = symlink(DATAFILE, SYMLINK);
 	CU_ASSERT_EQUAL(rc, 0);
 	return rc == 0?true:false;
 }
 
 
-static void symlink_remove(void)
+static void symlink_test_cleanup(void)
 {
-	unlink("libcommon_symlink");
+	unlink(SYMLINK);
+	unlink(DATAFILE);
+	unsetenv(ALLOW_SYMLINKS);
 }
 #endif
 
@@ -39,26 +45,25 @@ static void TEST_restrict_read_default(void)
 {
 	FILE *fptr;
 
-	if(!symlink_create()){
+	if(!symlink_test_init()){
 		return;
 	}
-	unsetenv(ALLOW_SYMLINKS);
 
 	/* No restrict read, so symlink ok */
-	fptr = mosquitto_fopen("libcommon_symlink", "rb", false);
+	fptr = mosquitto_fopen(SYMLINK, "rb", false);
 	CU_ASSERT_PTR_NOT_NULL(fptr);
 	if(fptr){
 		fclose(fptr);
 	}
 
 	/* Restricted read, so symlink not allowed */
-	fptr = mosquitto_fopen("libcommon_symlink", "rb", true);
+	fptr = mosquitto_fopen(SYMLINK, "rb", true);
 	CU_ASSERT_PTR_NULL(fptr);
 	if(fptr){
 		fclose(fptr);
 	}
 
-	symlink_remove();
+	symlink_test_cleanup();
 }
 
 
@@ -66,7 +71,7 @@ static void TEST_restrict_read_with_symlinks(void)
 {
 	FILE *fptr;
 
-	if(!symlink_create()){
+	if(!symlink_test_init()){
 		return;
 	}
 
@@ -74,21 +79,20 @@ static void TEST_restrict_read_with_symlinks(void)
 	CU_ASSERT_EQUAL(rc, 0);
 
 	/* No restrict read, so symlink ok */
-	fptr = mosquitto_fopen("libcommon_symlink", "rb", false);
+	fptr = mosquitto_fopen(SYMLINK, "rb", false);
 	CU_ASSERT_PTR_NOT_NULL(fptr);
 	if(fptr){
 		fclose(fptr);
 	}
 
 	/* Restricted read but with override so symlink ok */
-	fptr = mosquitto_fopen("libcommon_symlink", "rb", true);
+	fptr = mosquitto_fopen(SYMLINK, "rb", true);
 	CU_ASSERT_PTR_NOT_NULL(fptr);
 	if(fptr){
 		fclose(fptr);
 	}
 
-	symlink_remove();
-	unsetenv(ALLOW_SYMLINKS);
+	symlink_test_cleanup();
 }
 #endif
 
