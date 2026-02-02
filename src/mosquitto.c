@@ -327,6 +327,9 @@ static void report_features(void)
 #else
 	log__printf(NULL, MOSQ_LOG_INFO, "Websockets support NOT available.");
 #endif
+	if(getenv("MOSQUITTO_UNSAFE_ALLOW_SYMLINKS")){
+		log__printf(NULL, MOSQ_LOG_NOTICE, "MOSQUITTO_UNSAFE_ALLOW_SYMLINKS is set, loading of sensitive files through symbolic links is allowed.");
+	}
 }
 
 

@@ -267,6 +267,14 @@
 	</refsect1>
 
 	<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="common/section-exit-status.xml" />
+
+	<refsect1>
+		<title>Environment Variables</title>
+		<variablelist>
+			<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="common/env-var-mosquitto-unsafe-allow-symlinks.xml" />
+		</variablelist>
+	</refsect1>
+
 	<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="common/section-bugs.xml" />
 
 	<refsect1>

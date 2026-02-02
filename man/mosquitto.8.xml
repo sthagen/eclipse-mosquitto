@@ -975,6 +975,13 @@
 	</refsect1>
 
 	<refsect1>
+		<title>Environment Variables</title>
+		<variablelist>
+			<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="common/env-var-mosquitto-unsafe-allow-symlinks.xml" />
+		</variablelist>
+	</refsect1>
+
+	<refsect1>
 		<title>Files</title>
 		<variablelist>
 			<varlistentry>

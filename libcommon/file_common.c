@@ -166,7 +166,10 @@ FILE *mosquitto_fopen(const char *path, const char *mode, bool restrict_read)
 
 		old_mask = umask(0077);
 
-		int open_flags = O_NOFOLLOW;
+		int open_flags = 0;
+		if(!getenv("MOSQUITTO_UNSAFE_ALLOW_SYMLINKS")){
+			open_flags |= O_NOFOLLOW;
+		}
 		for(size_t i = 0; i<strlen(mode); i++){
 			if(mode[i] == 'r'){
 				open_flags |= O_RDONLY;

@@ -3,6 +3,9 @@
 
 # Broker
 - Fix PUID/PGID checking for docker
+- Add MOSQUITTO_UNSAFE_ALLOW_SYMLINKS environment variable to allow the
+  restrictions on reading files through symlinks to be lifted in safe
+  environments like kubernetes. Closes #3461.
 
 
 2.1.0 - 2026-01-29
