@@ -4,12 +4,16 @@ on:
   workflow_dispatch:
   push:
     branches:
+      - master
       - develop
       - fixes
+      - release/*
   pull_request:
     branches:
+      - master
       - develop
       - fixes
+      - release/*
 
 jobs:
   coverage:
