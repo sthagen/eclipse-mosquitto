@@ -10,6 +10,8 @@
 - Fix inconsistent disconnect log message format, and add address:port.
 - Fix `plugin`/`global_plugin` option not allowing space characters.
 - Fix $SYS load values not being published initially. Closes #3459.
+- Fix max_connections not being honoured on libwebsockets listeners. This does
+  not affect the built-in websockets support. Closes #3455.
 
 # Plugins
 - Fix incorrect linking of libmosquitto_common.so for the acl and password
