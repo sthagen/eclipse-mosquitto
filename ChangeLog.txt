@@ -9,6 +9,7 @@
   environments like kubernetes. Closes #3461.
 - Fix inconsistent disconnect log message format, and add address:port.
 - Fix `plugin`/`global_plugin` option not allowing space characters.
+- Fix $SYS load values not being published initially. Closes #3459.
 
 # Plugins
 - Fix incorrect linking of libmosquitto_common.so for the acl and password
