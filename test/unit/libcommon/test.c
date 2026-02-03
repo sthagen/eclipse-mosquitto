@@ -27,7 +27,9 @@ int main(int argc, char *argv[])
 	}
 
 	if(0
+#ifdef WITH_TLS
 			|| init_base64_tests()
+#endif
 			|| init_file_tests()
 			|| init_property_add_tests()
 			|| init_property_value_tests()

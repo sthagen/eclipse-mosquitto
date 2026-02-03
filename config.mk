@@ -271,7 +271,9 @@ ifeq ($(WITH_UNIX_SOCKETS),yes)
 endif
 
 ifeq ($(WITH_WEBSOCKETS),yes)
-	LOCAL_CPPFLAGS+=-DWITH_WEBSOCKETS=WS_IS_BUILTIN -I${R}/deps/picohttpparser
+	ifeq ($(WITH_TLS),yes)
+		LOCAL_CPPFLAGS+=-DWITH_WEBSOCKETS=WS_IS_BUILTIN -I${R}/deps/picohttpparser
+	endif
 endif
 
 ifeq ($(WITH_WEBSOCKETS),lws)
