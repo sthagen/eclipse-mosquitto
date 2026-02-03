@@ -3,10 +3,12 @@ name: Mosquitto - Make ASAN
 on:
   push:
     branches:
+      - master
       - develop
       - fixes
   pull_request:
     branches:
+      - master
       - develop
       - fixes
 
