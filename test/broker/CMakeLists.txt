@@ -8,14 +8,10 @@ list(APPEND PY_TEST_FILES "${CMAKE_CURRENT_SOURCE_DIR}/msg_sequence_test.py")
 set(PERSIST_LIST
     persist_sqlite
 )
-set(PERSIST_LMDB_EXCLUDE_LIST
-    15-persist-migrate-db
-    15-persist-migrate-db
-)
-
 set(EXCLUDE_LIST
     01-connect-uname-password-success-no-tls
     03-publish-qos1-queued-bytes
+    03-publish-qos2-max-inflight-exceeded
     09-extended-auth-single2
     # Not a test
     06-bridge-clean-session-core
@@ -44,9 +40,6 @@ endforeach()
 foreach(PERSIST_TYPE ${PERSIST_LIST})
     foreach(PY_TEST_FILE ${PY_PERSIST_TEST_FILES})
         get_filename_component(PY_TEST_NAME ${PY_TEST_FILE} NAME_WE)
-        if("${PERSIST_TYPE}" STREQUAL "persist_lmdb" AND ${PY_TEST_NAME} IN_LIST PERSIST_LMDB_EXCLUDE_LIST)
-	    continue()
-	endif()
         add_test(NAME broker-${PY_TEST_NAME}-${PERSIST_TYPE}
             COMMAND ${PY_TEST_FILE} ${PERSIST_TYPE}
         )

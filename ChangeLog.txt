@@ -12,6 +12,8 @@
 - Fix $SYS load values not being published initially. Closes #3459.
 - Fix max_connections not being honoured on libwebsockets listeners. This does
   not affect the built-in websockets support. Closes #3455.
+- Don't enforce receive-maximum, just log a warning. This allows badly
+  behaving clients to be fixed. Closes #3471.
 
 # Plugins
 - Fix incorrect linking of libmosquitto_common.so for the acl and password
