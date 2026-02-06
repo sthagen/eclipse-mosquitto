@@ -67,6 +67,7 @@ RUN set -x && \
         argon2-libs \
         ca-certificates \
         cjson \
+        libedit \
         libmicrohttpd \
         sqlite-libs \
         tzdata && \

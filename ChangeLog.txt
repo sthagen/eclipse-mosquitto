@@ -1,3 +1,11 @@
+2.1.2 - 2026-02-xx
+==================
+
+Build:
+- Build fixes for OpenBSD. Closes #3474.
+- Add missing libedit to docker builds. Closes #3476.
+
+
 2.1.1 - 2026-02-04
 ==================
 

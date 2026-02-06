@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 """
 Migration script to migrate from Snapshot persistence to Persist SQLite Plugin.
 """
@@ -283,7 +284,7 @@ class SQLite3Persistence:
             # self.__add_base_msgs must be executed before self.__add_retained_messages gets invoked
             self.__add_base_msgs(snapshot_persistence.base_messages)
             self.__add_retained_messages(snapshot_persistence.retained_messages)
-            self.__add_subscriptions(snapshot_persistence.retained_messages)
+            self.__add_subscriptions(snapshot_persistence.subscriptions)
             self.__add_clients(snapshot_persistence.clients)
             self.__add_client_msgs(snapshot_persistence.client_messages)
         except (sqlite3.Error, TypeError) as err:
@@ -294,22 +295,22 @@ class SQLite3Persistence:
 # Migration
 
 
-def find_mosquitto_dump_tool() -> str:
-    mosquitto_dump_tool = shutil.which("mosquitto_dump_tool")
-    if mosquitto_dump_tool is None:
+def find_mosquitto_db_dump() -> str:
+    mosquitto_db_dump = shutil.which("mosquitto_db_dump")
+    if mosquitto_db_dump is None:
         raise RuntimeError(
-            'Could not find mosquitto_dump_tool. Provide the path via the "--dump-tool" argument '
+            'Could not find mosquitto_db_dump. Provide the path via the "--dump-tool" argument '
             "or make sure the executable is contained in your system's path."
         )
-    return mosquitto_dump_tool
+    return mosquitto_db_dump
 
 
 def dump_mosquitto_db_to_json(
-    mosquitto_dump_tool: str, persistence_db_path: Path
+    mosquitto_db_dump: str, persistence_db_path: Path
 ) -> str:
     return subprocess.check_output(
         [
-            mosquitto_dump_tool,
+            mosquitto_db_dump,
             "--json",
             str(persistence_db_path),
         ]
@@ -350,8 +351,8 @@ def main():
 
     args = parser.parse_args()
     persistence_db_path = Path(args.persistence_db)
-    mosquitto_dump_tool = (
-        args.dump_tool if args.dump_tool else find_mosquitto_dump_tool()
+    mosquitto_db_dump = (
+        args.dump_tool if args.dump_tool else find_mosquitto_db_dump()
     )
 
     if args.conf is not None:
@@ -376,7 +377,7 @@ def main():
 
     # Dump Snapshot persistence and parse JSON
     snapshot_persistence = SnapshotPersistence(
-        dump_mosquitto_db_to_json(mosquitto_dump_tool, persistence_db_path)
+        dump_mosquitto_db_to_json(mosquitto_db_dump, persistence_db_path)
     )
 
     # Migrate Snapshot persistence and write SQLite3 file
