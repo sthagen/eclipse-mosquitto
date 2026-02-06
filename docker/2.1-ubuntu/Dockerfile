@@ -85,6 +85,7 @@ RUN set -x && \
         ca-certificates \
         libargon2-1 \
         libcjson1 \
+        libedit2 \
         libmicrohttpd12 \
         libsqlite3-0 && \
     apt-get clean && \
