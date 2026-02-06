@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 """
 Migration script to migrate from Snapshot persistence to Persist SQLite Plugin.
 """
