@@ -284,7 +284,7 @@ class SQLite3Persistence:
             # self.__add_base_msgs must be executed before self.__add_retained_messages gets invoked
             self.__add_base_msgs(snapshot_persistence.base_messages)
             self.__add_retained_messages(snapshot_persistence.retained_messages)
-            self.__add_subscriptions(snapshot_persistence.retained_messages)
+            self.__add_subscriptions(snapshot_persistence.subscriptions)
             self.__add_clients(snapshot_persistence.clients)
             self.__add_client_msgs(snapshot_persistence.client_messages)
         except (sqlite3.Error, TypeError) as err:
