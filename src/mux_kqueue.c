@@ -165,7 +165,6 @@ int mux_kqueue__handle(void)
 	timeout.tv_nsec = (db.next_event_ms - timeout.tv_sec*1000) * 1000000;
 #endif
 
-	memset(&event_list, 0, sizeof(event_list));
 	event_count = kevent(db.kqueuefd,
 			NULL, 0,
 			event_list, MAX_EVENTS,
