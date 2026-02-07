@@ -231,8 +231,20 @@ static void loop_handle_reads_writes(struct mosquitto *context, short event)
 	if(context->wsi){
 		struct lws_pollfd wspoll;
 		wspoll.fd = context->sock;
-		wspoll.events = (int16_t)context->events;
-		wspoll.revents = (int16_t)events;
+		int16_t lws_events;
+		switch(event){
+			case EVFILT_READ:
+				lws_events = LWS_POLLIN;
+				break;
+			case EVFILT_WRITE:
+				lws_events = LWS_POLLOUT;
+				break;
+			default:
+				lws_events = LWS_POLLHUP;
+				break;
+		}
+		wspoll.events = lws_events;
+		wspoll.revents = lws_events;
 		lws_service_fd(lws_get_context(context->wsi), &wspoll);
 		return;
 	}
