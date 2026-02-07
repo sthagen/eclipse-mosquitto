@@ -162,7 +162,7 @@ int mux_kqueue__handle(void)
 	timeout.tv_nsec = 100000000; /* 100 ms */
 #else
 	timeout.tv_sec = db.next_event_ms/1000;
-	timeout.tv_nsec = (db.next_event_ms - timeout.tv_sec*100) * 1000000;
+	timeout.tv_nsec = (db.next_event_ms - timeout.tv_sec*1000) * 1000000;
 #endif
 
 	memset(&event_list, 0, sizeof(event_list));
