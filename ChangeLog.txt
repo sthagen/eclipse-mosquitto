@@ -1,6 +1,10 @@
 2.1.2 - 2026-02-xx
 ==================
 
+Broker:
+- Forbid running with `persistence true` and with a persistence plugin at the
+  same time.
+
 Build:
 - Build fixes for OpenBSD. Closes #3474.
 - Add missing libedit to docker builds. Closes #3476.
