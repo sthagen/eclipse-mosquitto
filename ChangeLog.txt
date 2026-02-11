@@ -1,3 +1,18 @@
+2.1.3 - 2026-02-xx
+==================
+
+# Broker:
+- Fix MOSQ_EVT_DISCONNECT being called before MOSQ_EVT_ACL_CHECK for the will
+  of that client. Closes #3487.
+
+# Plugins
+- Fix migrate_to_persist_sqlite.py not base64 decoding message payloads when
+  migrating. Closes #3492.
+
+# Build:
+- Fix test building with WITH_EDITLINE=no. Closes #3484.
+
+
 2.1.2 - 2026-02-09
 ==================
 
