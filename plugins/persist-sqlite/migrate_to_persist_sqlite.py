@@ -4,6 +4,7 @@ Migration script to migrate from Snapshot persistence to Persist SQLite Plugin.
 """
 
 import argparse
+import base64
 import json
 import shutil
 import sqlite3
@@ -228,6 +229,9 @@ class SQLite3Persistence:
     def __add_base_msgs(self, base_msgs: list[dict]):
         for base_msg in base_msgs:
             self.__store_id_topic_map.update({base_msg["storeid"]: base_msg["topic"]})
+
+            payload = base64.b64decode(base_msg["payload"]) if "payload" in base_msg else None
+
             self.__cursor.execute(
                 "INSERT INTO base_msgs "
                 "(store_id, expiry_time, topic, payload, source_id, source_username, "
@@ -237,10 +241,10 @@ class SQLite3Persistence:
                     base_msg["storeid"],
                     base_msg["expiry-time"],
                     base_msg["topic"],
-                    base_msg["payload"] if "payload" in base_msg else None,
+                    payload if "payload" in base_msg else None,
                     base_msg["clientid"] if "clientid" in base_msg else None,
                     base_msg["username"] if "username" in base_msg else None,
-                    len(base_msg["payload"]) if "username" in base_msg else 0,
+                    len(payload) if "username" in base_msg else 0,
                     base_msg["source-mid"],
                     base_msg["source-port"],
                     base_msg["qos"],
