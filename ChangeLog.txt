@@ -5,6 +5,10 @@
 - Fix MOSQ_EVT_DISCONNECT being called before MOSQ_EVT_ACL_CHECK for the will
   of that client. Closes #3487.
 
+# Common lib:
+- Fix potential crash if reading a file in restricted mode and the group id
+  does not have an entry in /etc/groups. Closes #3498.
+
 # Plugins
 - Fix migrate_to_persist_sqlite.py not base64 decoding message payloads when
   migrating. Closes #3492.
