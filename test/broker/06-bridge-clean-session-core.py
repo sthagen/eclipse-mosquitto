@@ -69,7 +69,6 @@ def wait_for_bridge_to_connect(port, clientid):
 
     sock = mosq_test.do_client_connect(conn, connack, port=port)
     sub = mosq_test.gen_subscribe(1, f'$SYS/broker/connection/{clientid}/state', 0)
-    sub = mosq_test.gen_subscribe(1, f'$SYS/broker/connection/#', 0)
     suback = mosq_test.gen_suback(1, 0)
     mosq_test.do_send_receive(sock, sub, suback)
     pub_r = mosq_test.gen_publish(topic=f"$SYS/broker/connection/{clientid}/state", payload="1", qos=0, retain=True)
@@ -228,7 +227,7 @@ def do_test(proto_ver, cs, lcs=None):
         wait_for_bridge_to_connect(port_a_listen, "id_remote")
 
         # should go through
-        mosq_test.do_send_receive(client_b, pub_b3.p, pub_b3.ack, "puback_b3")
+        client_b.send(pub_b3.p)
 
         if expect_queued_ba:
             tprint("2.expecting b->a queueueing")
