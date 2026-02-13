@@ -277,15 +277,9 @@ target_include_directories(mosquitto
 		"${mosquitto_SOURCE_DIR}/src"
 		"${CJSON_INCLUDE_DIRS}"
 )
-if(WITH_BUNDLED_DEPS)
-	target_include_directories(mosquitto PRIVATE
-		"${mosquitto_SOURCE_DIR}/deps"
-	)
-endif()
 
 target_link_libraries(mosquitto
 	PUBLIC
-		config-header
 		libmosquitto_common
 	PRIVATE
 		common-options

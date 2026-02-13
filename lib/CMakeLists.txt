@@ -95,17 +95,10 @@ target_include_directories(libmosquitto
 		"${mosquitto_SOURCE_DIR}/include"
 		"${mosquitto_SOURCE_DIR}/lib"
 	PRIVATE
-		"${mosquitto_SOURCE_DIR}"
 		"${mosquitto_SOURCE_DIR}/common"
 		"${mosquitto_SOURCE_DIR}/libcommon"
 		"${OPENSSL_INCLUDE_DIR}" # Required for cross compilation
 )
-
-if(WITH_BUNDLED_DEPS)
-	target_include_directories(libmosquitto PRIVATE
-		"${mosquitto_SOURCE_DIR}/deps"
-	)
-endif()
 
 if(WITH_THREADING)
 	if(WIN32)

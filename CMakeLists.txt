@@ -135,17 +135,24 @@ option(WITH_APPS "Build apps?" ON)
 option(WITH_PLUGINS "Build plugins?" ON)
 option(WITH_DOCS "Build documentation?" ON)
 
-add_library(config-header INTERFACE)
-target_sources(config-header INTERFACE config.h)
-target_include_directories(config-header
+target_sources(common-options INTERFACE config.h)
+target_include_directories(common-options
 	INTERFACE
 		${mosquitto_SOURCE_DIR}
+		${mosquitto_SOURCE_DIR}/include
 )
 
 if(WITH_TLS)
-	target_include_directories(config-header
+	target_include_directories(common-options
 		INTERFACE
 			"${OPENSSL_INCLUDE_DIR}"
+	)
+endif()
+
+if(WITH_BUNDLED_DEPS)
+	target_include_directories(common-options
+		INTERFACE
+			"${mosquitto_SOURCE_DIR}/deps"
 	)
 endif()
 

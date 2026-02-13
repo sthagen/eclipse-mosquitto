@@ -13,7 +13,6 @@ target_include_directories(common-unit-test-header
 target_link_libraries(common-unit-test-header
     INTERFACE
         common-options
-        config-header
         CUnit::CUnit
 )
 
