@@ -12,6 +12,8 @@
 
 
 #ifdef WITH_TLS
+
+
 static void check_encode(const char *input, size_t in_len, const char *expected_output)
 {
 	char *encoded;

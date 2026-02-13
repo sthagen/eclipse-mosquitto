@@ -198,7 +198,7 @@ struct mosquitto_evt_basic_auth {
 	struct mosquitto *client;
 	char *username;
 	char *password;
-	union{
+	union {
 		void *future2[4];
 		struct {
 			uint16_t password_len;
