@@ -255,7 +255,9 @@ endif
 	./12-prop-subpub-payload-format.py
 
 13 :
+ifneq ($(WITH_WEBSOCKETS),no)
 	./13-websocket-bad-origin.py
+endif
 
 14 :
 ifeq ($(WITH_TLS),yes)
