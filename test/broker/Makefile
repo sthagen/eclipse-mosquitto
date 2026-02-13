@@ -356,11 +356,13 @@ endif
 	./21-proxy-v2-ssl-require-tls-success.py
 
 22:
+ifeq ($(WITH_HTTP_API),yes)
 	./22-http-api-acl.py
 	./22-http-api-api.py
 	./22-http-api-auth.py
 	./22-http-api-file.py
 	./22-http-api-tls.py
+endif
 
 23:
 	./23-security-acl-file-reload.py
