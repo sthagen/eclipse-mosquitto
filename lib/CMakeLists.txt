@@ -141,12 +141,19 @@ if(WITH_STATIC_LIBRARIES)
 		)
 	endif()
 
+	if(WITH_WEBSOCKETS AND WITH_WEBSOCKETS_BUILTIN)
+		target_include_directories(libmosquitto_static PRIVATE
+			"${mosquitto_SOURCE_DIR}/deps/picohttpparser")
+	endif()
+
+
 	target_link_libraries(libmosquitto_static PRIVATE ${LIBRARIES})
 
 	target_include_directories(libmosquitto_static PRIVATE
 		"${mosquitto_SOURCE_DIR}"
 		"${mosquitto_SOURCE_DIR}/include"
 		"${mosquitto_SOURCE_DIR}/lib"
+		"${mosquitto_SOURCE_DIR}/libcommon"
 	)
 
 	set_target_properties(libmosquitto_static PROPERTIES

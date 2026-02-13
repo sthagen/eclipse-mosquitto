@@ -22,6 +22,7 @@
 
 # Build:
 - Fix test building with WITH_EDITLINE=no. Closes #3484.
+- Fix libmosquitto_static cmake build.
 
 
 2.1.2 - 2026-02-09
