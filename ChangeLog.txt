@@ -21,7 +21,8 @@
   migrating. Closes #3492.
 
 # Build:
-- Fix test building with WITH_EDITLINE=no. Closes #3484.
+- Fix test when nbuilding with WITH_EDITLINE=no. Closes #3484.
+- Fix tests when building with WITH_WEBSOCKETS=no. Closes #3502.
 - Fix libmosquitto_static cmake build.
 
 

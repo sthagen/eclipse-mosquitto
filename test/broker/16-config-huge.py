@@ -5,6 +5,7 @@
 # options being set.
 
 from mosq_test_helper import *
+import os
 import platform
 import signal
 
@@ -50,8 +51,9 @@ def write_config(filename, ports, per_listener_settings, plugver, acl_file):
         f.write("set_tcp_nodelay true\n")
         f.write("sys_interval 60\n")
         f.write("upgrade_outgoing_qos true\n")
-        f.write("websockets_log_level 255\n")
-        f.write("websockets_headers_size 4096\n")
+        if os.environ.get('WITH_WEBSOCKETS') != "no":
+            f.write("websockets_log_level 255\n")
+            f.write("websockets_headers_size 4096\n")
 
         # Listener and global
         if not per_listener_settings:
@@ -142,7 +144,8 @@ def write_config(filename, ports, per_listener_settings, plugver, acl_file):
         f.write("max_connections 10\n")
         f.write("max_qos 1\n")
         f.write("mount_point mount/\n")
-        f.write("protocol websockets\n")
+        if os.environ.get('WITH_WEBSOCKETS') != "no":
+            f.write("protocol websockets\n")
         f.write("require_certificate true\n")
         f.write("socket_domain ipv4\n")
         f.write("tls_version tlsv1.2\n")
@@ -151,7 +154,8 @@ def write_config(filename, ports, per_listener_settings, plugver, acl_file):
         f.write("use_identity_as_username true\n")
         f.write("use_subject_as_username true\n")
         f.write("use_username_as_clientid true\n")
-        f.write("websockets_origin localhost\n")
+        if os.environ.get('WITH_WEBSOCKETS') != "no":
+            f.write("websockets_origin localhost\n")
         if per_listener_settings:
             f.write("allow_zero_length_clientid false\n")
             f.write("auto_id_prefix pre\n")

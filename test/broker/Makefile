@@ -326,7 +326,9 @@ endif
 endif
 
 17 :
+ifneq ($(WITH_WEBSOCKETS),no)
 	./17-control-list-listeners.py
+endif
 	./17-control-list-plugins.py
 	./17-control-missing-endpoint.py
 
@@ -344,7 +346,9 @@ endif
 	./21-proxy-v2-ipv4.py
 	./21-proxy-v2-ipv6.py
 	./21-proxy-v2-unix.py
+ifneq ($(WITH_WEBSOCKETS),no)
 	./21-proxy-v2-websockets.py
+endif
 	./21-proxy-v2-long-tlv.py
 	./21-proxy-v2-lost-connection.py
 	./21-proxy-v2-ssl-require-cert-failure.py
