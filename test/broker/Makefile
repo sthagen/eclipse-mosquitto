@@ -255,7 +255,9 @@ endif
 	./12-prop-subpub-payload-format.py
 
 13 :
+ifneq ($(WITH_WEBSOCKETS),no)
 	./13-websocket-bad-origin.py
+endif
 
 14 :
 ifeq ($(WITH_TLS),yes)
@@ -324,7 +326,9 @@ endif
 endif
 
 17 :
+ifneq ($(WITH_WEBSOCKETS),no)
 	./17-control-list-listeners.py
+endif
 	./17-control-list-plugins.py
 	./17-control-missing-endpoint.py
 
@@ -342,7 +346,9 @@ endif
 	./21-proxy-v2-ipv4.py
 	./21-proxy-v2-ipv6.py
 	./21-proxy-v2-unix.py
+ifneq ($(WITH_WEBSOCKETS),no)
 	./21-proxy-v2-websockets.py
+endif
 	./21-proxy-v2-long-tlv.py
 	./21-proxy-v2-lost-connection.py
 	./21-proxy-v2-ssl-require-cert-failure.py
@@ -354,11 +360,13 @@ endif
 	./21-proxy-v2-ssl-require-tls-success.py
 
 22:
+ifeq ($(WITH_HTTP_API),yes)
 	./22-http-api-acl.py
 	./22-http-api-api.py
 	./22-http-api-auth.py
 	./22-http-api-file.py
 	./22-http-api-tls.py
+endif
 
 23:
 	./23-security-acl-file-reload.py

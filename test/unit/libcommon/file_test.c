@@ -12,6 +12,8 @@
 #define DATAFILE "test_data"
 
 #ifndef WIN32
+
+
 static bool symlink_test_init(void)
 {
 	unsetenv(ALLOW_SYMLINKS);
@@ -41,6 +43,8 @@ static void symlink_test_cleanup(void)
 
 
 #ifndef WIN32
+
+
 static void TEST_restrict_read_default(void)
 {
 	FILE *fptr;

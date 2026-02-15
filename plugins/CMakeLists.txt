@@ -6,9 +6,6 @@ function(add_mosquitto_plugin_no_install PLUGIN_NAME SRCLIST INCLIST LINKLIST)
 		"${mosquitto_SOURCE_DIR}/common"
 		"${mosquitto_SOURCE_DIR}/include"
 	)
-	if(WITH_BUNDLED_DEPS)
-		target_include_directories(${PLUGIN_NAME} PRIVATE "${mosquitto_SOURCE_DIR}/deps")
-	endif()
 
 	set_target_properties(${PLUGIN_NAME} PROPERTIES
 		PREFIX ""

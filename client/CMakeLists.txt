@@ -5,7 +5,6 @@ target_link_libraries(client-common INTERFACE common-options)
 target_include_directories(client-common INTERFACE
 	"${CJSON_INCLUDE_DIRS}"
 	"${OPENSSL_INCLUDE_DIR}"
-	"${mosquitto_SOURCE_DIR}"
 )
 
 target_sources(client-common INTERFACE ${shared_src})
@@ -32,11 +31,6 @@ if (WITH_THREADING AND NOT WIN32)
 	find_package(Threads REQUIRED)
 
 	target_link_libraries(client-common INTERFACE Threads::Threads)
-endif()
-
-if(WITH_BUNDLED_DEPS)
-	target_include_directories(mosquitto_sub PRIVATE "${mosquitto_SOURCE_DIR}/deps")
-	target_include_directories(mosquitto_rr PRIVATE "${mosquitto_SOURCE_DIR}/deps")
 endif()
 
 if(CJSON_FOUND)

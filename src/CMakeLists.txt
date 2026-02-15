@@ -126,7 +126,7 @@ endif()
 option(USE_LIBWRAP "Include tcp-wrappers support?" OFF)
 
 if(USE_LIBWRAP)
-	target_sources(mosquitto wrap)
+	target_link_libraries(mosquitto PRIVATE wrap)
 	target_compile_definitions(mosquitto PRIVATE "WITH_WRAP")
 endif()
 
@@ -277,15 +277,9 @@ target_include_directories(mosquitto
 		"${mosquitto_SOURCE_DIR}/src"
 		"${CJSON_INCLUDE_DIRS}"
 )
-if(WITH_BUNDLED_DEPS)
-	target_include_directories(mosquitto PRIVATE
-		"${mosquitto_SOURCE_DIR}/deps"
-	)
-endif()
 
 target_link_libraries(mosquitto
 	PUBLIC
-		config-header
 		libmosquitto_common
 	PRIVATE
 		common-options
@@ -309,7 +303,7 @@ if(UNIX)
 		set_target_properties(mosquitto PROPERTIES
 			LINK_FLAGS "-Wl,-exported_symbols_list -Wl,${mosquitto_SOURCE_DIR}/src/linker-macosx.syms"
 		)
-	elseif (${CMAKE_SYSTEM_NAME} MATCHES "AIX")
+	elseif (AIX)
 	else()
 		set_target_properties(mosquitto PROPERTIES
 			LINK_FLAGS "-Wl,-dynamic-list=${mosquitto_SOURCE_DIR}/src/linker.syms"

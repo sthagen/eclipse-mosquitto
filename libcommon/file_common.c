@@ -235,7 +235,7 @@ FILE *mosquitto_fopen(const char *path, const char *mode, bool restrict_read)
 			char buf[4096];
 			struct group grp, *result;
 
-			if(getgrgid_r(getgid(), &grp, buf, sizeof(buf), &result) == 0){
+			if(getgrgid_r(getgid(), &grp, buf, sizeof(buf), &result) == 0 && result){
 				libcommon_printf(
 						"Warning: File %s group is not %s. Future versions will refuse to load this file.\n",
 						path, result->gr_name);

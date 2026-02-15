@@ -95,17 +95,10 @@ target_include_directories(libmosquitto
 		"${mosquitto_SOURCE_DIR}/include"
 		"${mosquitto_SOURCE_DIR}/lib"
 	PRIVATE
-		"${mosquitto_SOURCE_DIR}"
 		"${mosquitto_SOURCE_DIR}/common"
 		"${mosquitto_SOURCE_DIR}/libcommon"
 		"${OPENSSL_INCLUDE_DIR}" # Required for cross compilation
 )
-
-if(WITH_BUNDLED_DEPS)
-	target_include_directories(libmosquitto PRIVATE
-		"${mosquitto_SOURCE_DIR}/deps"
-	)
-endif()
 
 if(WITH_THREADING)
 	if(WIN32)
@@ -127,7 +120,7 @@ set_target_properties(libmosquitto PROPERTIES
 	POSITION_INDEPENDENT_CODE 1
 )
 
-if(UNIX AND NOT APPLE)
+if(UNIX AND NOT APPLE AND NOT AIX)
 	set_target_properties(libmosquitto PROPERTIES
 		LINK_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/linker.version
 		LINK_FLAGS "-Wl,--version-script=${CMAKE_CURRENT_SOURCE_DIR}/linker.version"
@@ -148,12 +141,19 @@ if(WITH_STATIC_LIBRARIES)
 		)
 	endif()
 
+	if(WITH_WEBSOCKETS AND WITH_WEBSOCKETS_BUILTIN)
+		target_include_directories(libmosquitto_static PRIVATE
+			"${mosquitto_SOURCE_DIR}/deps/picohttpparser")
+	endif()
+
+
 	target_link_libraries(libmosquitto_static PRIVATE ${LIBRARIES})
 
 	target_include_directories(libmosquitto_static PRIVATE
 		"${mosquitto_SOURCE_DIR}"
 		"${mosquitto_SOURCE_DIR}/include"
 		"${mosquitto_SOURCE_DIR}/lib"
+		"${mosquitto_SOURCE_DIR}/libcommon"
 	)
 
 	set_target_properties(libmosquitto_static PROPERTIES
