@@ -17,6 +17,10 @@
 				{"type":"send", "payload":"10 r15 s6 'MQIsdp' 02 00 k10 s1 'p'", "comment":"CONNECT"},
 				{"type":"recv", "payload":"20 r3 00 84 00", "comment": "CONNACK identifier rejected"}
 			]},
+			{ "name": "10 proto ver 4", "msgs":[
+				{"type":"send", "payload":"10 r15 s6 'MQIsdp' 04 00 k10 s1 'p'", "comment":"CONNECT"},
+				{"type":"recv", "payload":"20 r2 00 01", "comment": "CONNACK refused protocol version"}
+			]},
 			{ "name": "10 proto ver 6", "msgs":[
 				{"type":"send", "payload":"10 r15 s6 'MQIsdp' 06 00 k10 s1 'p'", "comment":"CONNECT"},
 				{"type":"recv", "payload":"20 r3 00 84 00", "comment": "CONNACK identifier rejected"}
@@ -42,6 +46,31 @@
 			{ "name": "10 ok ", "expect_disconnect":false, "msgs":[
 				{"type":"send", "payload":"10 r13 s4 'MQTT' 04 02 k10 s1 'p'", "comment":"minimal valid CONNECT"},
 				{"type":"recv", "payload":"20 r2 00 00", "comment": "CONNACK"}
+			]},
+			{ "name": "10 missing protocol string length", "msgs":[
+				{"type":"send", "payload":"10 r0", "comment": "CONNECT"}
+			]},
+			{ "name": "10 incorrect protocol string length", "msgs":[
+				{"type":"send", "payload":"10 r12 s3 'MQT' 04 02 k10 s1 'p'", "comment":"CONNECT"}
+			]},
+			{ "name": "10 missing protocol string", "msgs":[
+				{"type":"send", "payload":"10 r2 s4", "comment": "CONNECT"}
+			]},
+			{ "name": "10 missing protocol version", "msgs":[
+				{"type":"send", "payload":"10 r6 s4 'MQTT'", "comment": "CONNECT"}
+			]},
+			{ "name": "10 incorrect protocol version ", "msgs":[
+				{"type":"send", "payload":"10 r13 s4 'MQTT' 03 02 k10 s1 'p'", "comment":"CONNECT"},
+				{"type":"recv", "payload":"20 r2 00 01", "comment": "CONNACK"}
+			]},
+			{ "name": "10 incorrect command flags", "msgs":[
+				{"type":"send", "payload":"1F r13 s4 'MQTT' 05 02 k10 s1 'p'", "comment":"CONNECT"}
+			]},
+			{ "name": "10 missing keepalive", "msgs":[
+				{"type":"send", "payload":"10 r8 s4 'MQTT' 05 02", "comment":"CONNECT"}
+			]},
+			{ "name": "10 excess bytes ", "msgs":[
+				{"type":"send", "payload":"10 r14 s4 'MQTT' 04 02 k10 s1 'p' 00", "comment":"CONNECT"}
 			]},
 			{ "name": "10 [MQTT-3.1.0-2]", "msgs":[
 				{"type":"send", "payload":"10 r13 s4 'MQTT' 04 02 k10 s1 'p'", "comment":"minimal valid CONNECT"},
@@ -268,6 +297,10 @@
 			{ "name": "receive-maximum (two byte integer) missing", "msgs": [
 				{"type":"send", "payload":"10 r15 s4 'MQTT' 05 02 k10 01 21 s1 'p'"},
 				{"type":"recv", "payload":"20 r3 00 81 00"}
+			]},
+			{ "name": "receive-maximum (two byte integer) == 0", "msgs": [
+				{"type":"send", "payload":"10 r17 s4 'MQTT' 05 02 k10 03 21 0000 s1 'p'"},
+				{"type":"recv", "payload":"20 r3 00 82 00"}
 			]},
 
 			{ "name": "maximum-packet-size (four byte integer)", "expect_disconnect":false, "msgs":[

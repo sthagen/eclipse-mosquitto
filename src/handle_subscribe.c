@@ -90,7 +90,7 @@ int handle__subscribe(struct mosquitto *context)
 			/* If the identifier was force set to 0, this is an error */
 			if(subscription_identifier == 0){
 				mosquitto_property_free_all(&properties);
-				return MOSQ_ERR_MALFORMED_PACKET;
+				return MOSQ_ERR_PROTOCOL;
 			}
 		}
 
